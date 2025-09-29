@@ -2,103 +2,156 @@ import { type } from 'arktype';
 
 export const serviceSchemaArk = type({
   // Required fields
-  image: 'string',
-  name: 'string',
-  internalPort: '0 < number < 65536',
+  image: type('string').configure({ message: 'CUSTOM_APP_ERROR_IMAGE_REQUIRED' }),
+  name: type('string').configure({ message: 'CUSTOM_APP_ERROR_NAME_REQUIRED' }),
+  internalPort: type('0 < number < 65536').configure({ message: 'CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID' }),
 
   // Optional fields
-  'isMain?': 'boolean',
-  'networkMode?': 'string',
-  'extraHosts?': 'string[]',
-  'ulimits?': {
-    'nproc?': type.or('number', { soft: 'number', hard: 'number' }),
-    'nofile?': type.or('number', { soft: 'number', hard: 'number' }),
-    'core?': type.or('number', { soft: 'number', hard: 'number' }),
-    'memlock?': type.or('number', { soft: 'number', hard: 'number' }),
-  },
-  'addToMainNetwork?': 'boolean',
-  'addPorts?': type({
-    containerPort: '0 < number < 65536',
-    hostPort: '0 < number < 65536',
-    'udp?': 'boolean',
-    'tcp?': 'boolean',
-    'interface?': 'string',
-  }).array(),
-  'command?': 'string | string[]',
-  'volumes?': type({
-    hostPath: 'string',
-    containerPath: 'string',
-    'readOnly?': 'boolean',
-    'shared?': 'boolean',
-    'private?': 'boolean',
-  }).array(),
-  'environment?': type({
-    key: 'string > 0',
-    value: 'string > 0 | number | boolean',
-  }).array(),
-  'sysctls?': { '[string]': 'number' },
-  'healthCheck?': {
-    test: 'string',
-    'interval?': 'string',
-    'timeout?': 'string',
-    'retries?': 'number',
-    'startInterval?': 'string',
-    'startPeriod?': 'string',
-  },
-  'dependsOn?': type.or('string[]', {
-    '[string]': {
-      condition: "'service_healthy' | 'service_started' | 'service_completed_successfully'",
-    },
-  }),
-  'capAdd?': 'string[]',
-  'deploy?': {
+  isMain: type('boolean').optional(),
+  networkMode: type('string | undefined').optional(),
+  extraHosts: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_EXTRA_HOST_INVALID' }).optional(),
+  ulimits: type({
+    nproc: type
+      .or(
+        type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_NPROC_INVALID' }),
+        type({
+          soft: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID' }),
+          hard: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID' }),
+        }),
+      )
+      .optional(),
+    nofile: type
+      .or(
+        type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_NOFILE_INVALID' }),
+        type({
+          soft: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID' }),
+          hard: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID' }),
+        }),
+      )
+      .optional(),
+    core: type
+      .or(
+        type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_CORE_INVALID' }),
+        type({
+          soft: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID' }),
+          hard: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID' }),
+        }),
+      )
+      .optional(),
+    memlock: type
+      .or(
+        type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_MEMLOCK_INVALID' }),
+        type({
+          soft: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID' }),
+          hard: type('number').configure({ message: 'CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID' }),
+        }),
+      )
+      .optional(),
+  }).optional(),
+  addToMainNetwork: type('boolean').optional(),
+  addPorts: type({
+    containerPort: type('0 < number < 65536').configure({ message: 'CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID' }),
+    hostPort: type('0 < number < 65536').configure({ message: 'CUSTOM_APP_ERROR_HOST_PORT_INVALID' }),
+    udp: type('boolean').optional(),
+    tcp: type('boolean').optional(),
+    interface: type('string | undefined').optional(),
+  })
+    .array()
+    .optional(),
+  command: type('string | string[]').configure({ message: 'CUSTOM_APP_ERROR_COMMAND_INVALID' }).optional(),
+  volumes: type({
+    hostPath: type('string').configure({ message: 'CUSTOM_APP_ERROR_HOST_PATH_REQUIRED' }),
+    containerPath: type('string').configure({ message: 'CUSTOM_APP_ERROR_CONTAINER_PATH_REQUIRED' }),
+    readOnly: type('boolean').optional(),
+    shared: type('boolean').optional(),
+    private: type('boolean').optional(),
+  })
+    .array()
+    .optional(),
+  environment: type({
+    key: type('string > 0').configure({ message: 'CUSTOM_APP_ERROR_ENV_KEY_REQUIRED' }),
+    value: type('string > 0 | number | boolean').configure({ message: 'CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED' }),
+  })
+    .array()
+    .optional(),
+  sysctls: type({ '[string]': type('number').configure({ message: 'CUSTOM_APP_ERROR_SYSCTL_VALUE_INVALID' }) })
+    .configure({ message: 'CUSTOM_APP_ERROR_SYSCTL_KEY_INVALID' })
+    .optional(),
+  healthCheck: type({
+    test: type('string').configure({ message: 'CUSTOM_APP_ERROR_HEALTH_CHECK_TEST_REQUIRED' }),
+    interval: type('string').optional(),
+    timeout: type('string').optional(),
+    retries: type('number').configure({ message: 'CUSTOM_APP_ERROR_HEALTH_CHECK_RETRIES_INVALID' }).optional(),
+    startInterval: type('string').optional(),
+    startPeriod: type('string').optional(),
+  }).optional(),
+  dependsOn: type
+    .or(
+      type('string[]').configure({ message: 'CUSTOM_APP_ERROR_DEPENDS_ON_SERVICE_INVALID' }),
+      type({
+        '[string]': type({
+          condition: type("'service_healthy' | 'service_started' | 'service_completed_successfully'").configure({
+            message: 'CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID',
+          }),
+        }),
+      }),
+    )
+    .optional(),
+  capAdd: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_CAP_ADD_INVALID' }).optional(),
+  deploy: type({
     resources: {
-      'limits?': {
-        'cpus?': 'string',
-        'memory?': 'string',
-        'pids?': 'number',
-      },
-      'reservations?': {
-        'cpus?': 'string',
-        'memory?': 'string',
+      limits: type({
+        cpus: type('string').optional(),
+        memory: type('string').optional(),
+        pids: type('number').configure({ message: 'CUSTOM_APP_ERROR_DEPLOY_PIDS_INVALID' }).optional(),
+      }).optional(),
+      reservations: type({
+        cpus: type('string').optional(),
+        memory: type('string').optional(),
         devices: type({
-          capabilities: 'string[]',
-          'driver?': 'string',
-          'count?': "'all' | number",
-          'deviceIds?': 'string[]',
+          capabilities: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_DEVICE_CAPABILITY_INVALID' }),
+          driver: type('string').optional(),
+          count: type("'all' | number").configure({ message: 'CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID' }).optional(),
+          deviceIds: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_DEVICE_ID_INVALID' }).optional(),
         }).array(),
-      },
+      }).optional(),
     },
-  },
-  'hostname?': 'string',
-  'devices?': 'string[]',
-  'entrypoint?': 'string | string[]',
-  'pid?': 'string',
-  'privileged?': 'boolean',
-  'tty?': 'boolean',
-  'user?': 'string',
-  'workingDir?': 'string',
-  'shmSize?': 'string',
-  'capDrop?': 'string[]',
-  'logging?': {
-    driver: 'string',
-    'options?': { '[string]': 'string' },
-  },
-  'readOnly?': 'boolean',
-  'securityOpt?': 'string[]',
-  'stopSignal?': 'string',
-  'stopGracePeriod?': 'string',
-  'stdinOpen?': 'boolean',
-  'extraLabels?': { '[string]': 'string | boolean' },
-  'dns?': 'string | string[]',
+  }).optional(),
+  hostname: type('string | undefined').optional(),
+  devices: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_DEVICE_INVALID' }).optional(),
+  entrypoint: type('string | string[]').configure({ message: 'CUSTOM_APP_ERROR_ENTRYPOINT_INVALID' }).optional(),
+  pid: type('string | undefined').optional(),
+  privileged: type('boolean').optional(),
+  tty: type('boolean').optional(),
+  user: type('string | undefined').optional(),
+  workingDir: type('string | undefined').optional(),
+  shmSize: type('string | undefined').optional(),
+  capDrop: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_CAP_DROP_INVALID' }).optional(),
+  logging: type({
+    driver: type('string').configure({ message: 'CUSTOM_APP_ERROR_LOGGING_DRIVER_REQUIRED' }),
+    options: type({ '[string]': type('string').configure({ message: 'CUSTOM_APP_ERROR_LOGGING_OPTION_VALUE_INVALID' }) })
+      .configure({ message: 'CUSTOM_APP_ERROR_LOGGING_OPTION_KEY_INVALID' })
+      .optional(),
+  }).optional(),
+  readOnly: type('boolean').optional(),
+  securityOpt: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_SECURITY_OPT_INVALID' }).optional(),
+  stopSignal: type('string').optional(),
+  stopGracePeriod: type('string').optional(),
+  stdinOpen: type('boolean').optional(),
+  extraLabels: type({ '[string]': type('string | boolean').configure({ message: 'CUSTOM_APP_ERROR_LABEL_VALUE_INVALID' }) })
+    .configure({ message: 'CUSTOM_APP_ERROR_LABEL_KEY_INVALID' })
+    .optional(),
+  dns: type('string | string[]').configure({ message: 'CUSTOM_APP_ERROR_DNS_INVALID' }).optional(),
 });
 
 // dynamicComposeSchemaV2
 export const dynamicComposeSchemaArk = type({
   schemaVersion: type.unit(2),
-  services: type(serviceSchemaArk).array().moreThanLength(0),
-  'overrides?': type({
-    'architecture?': "'arm64' | 'amd64'",
+  services: type(serviceSchemaArk).array().moreThanLength(0).configure({ message: 'CUSTOM_APP_ERROR_SERVICES_MIN_LENGTH' }),
+  overrides: type({
+    architecture: type("'arm64' | 'amd64'").configure({ message: 'CUSTOM_APP_ERROR_ARCHITECTURE_INVALID' }).optional(),
     services: type(serviceSchemaArk).partial().array(),
-  }).array(),
+  })
+    .array()
+    .optional(),
 });

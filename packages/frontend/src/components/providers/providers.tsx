@@ -1,6 +1,5 @@
 import { UserContextProvider } from '@/context/user-context';
 import { MutationCache, QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type PropsWithChildren, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorPage } from '../error/error-page';
@@ -56,7 +55,6 @@ export const Providers = ({ children }: PropsWithChildren) => {
           </ErrorBoundary>
         )}
       </QueryErrorResetBoundary>
-      <ReactQueryDevtools initialIsOpen={false} />
       <DebugPanel />
     </QueryClientProvider>
   );

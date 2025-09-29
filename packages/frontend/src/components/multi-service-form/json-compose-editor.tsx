@@ -8,7 +8,7 @@ import { json } from '@codemirror/lang-json';
 import { copilot } from '@uiw/codemirror-theme-copilot';
 import { useTranslation } from 'react-i18next';
 
-const schema = dynamicComposeSchemaArk.omit('schemaVersion').toJsonSchema();
+const schema = dynamicComposeSchemaArk.omit('schemaVersion').toJsonSchema({ fallback: { default: (ctx) => ctx.base } });
 
 type Props = {
   onChange: (json: string, error?: string) => void;

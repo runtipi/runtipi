@@ -4437,20 +4437,24 @@
             "properties": {
               "services": {
                 "type": "array",
+                "message": "CUSTOM_APP_ERROR_SERVICES_MIN_LENGTH",
                 "minItems": 1,
                 "items": {
                   "type": "object",
                   "properties": {
                     "image": {
-                      "type": "string"
+                      "type": "string",
+                      "message": "CUSTOM_APP_ERROR_IMAGE_REQUIRED"
                     },
                     "internalPort": {
                       "type": "number",
+                      "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
                       "exclusiveMaximum": 65536,
                       "exclusiveMinimum": 0
                     },
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "message": "CUSTOM_APP_ERROR_NAME_REQUIRED"
                     },
                     "addPorts": {
                       "type": "array",
@@ -4459,16 +4463,22 @@
                         "properties": {
                           "containerPort": {
                             "type": "number",
+                            "message": "CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
                           "hostPort": {
                             "type": "number",
+                            "message": "CUSTOM_APP_ERROR_HOST_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
                           "interface": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           },
                           "tcp": {
                             "type": "boolean"
@@ -4488,12 +4498,14 @@
                     },
                     "capAdd": {
                       "type": "array",
+                      "message": "CUSTOM_APP_ERROR_CAP_ADD_INVALID",
                       "items": {
                         "type": "string"
                       }
                     },
                     "capDrop": {
                       "type": "array",
+                      "message": "CUSTOM_APP_ERROR_CAP_DROP_INVALID",
                       "items": {
                         "type": "string"
                       }
@@ -4501,15 +4513,18 @@
                     "command": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "message": "CUSTOM_APP_ERROR_COMMAND_INVALID"
                         },
                         {
                           "type": "array",
+                          "message": "CUSTOM_APP_ERROR_COMMAND_INVALID",
                           "items": {
                             "type": "string"
                           }
                         }
-                      ]
+                      ],
+                      "message": "CUSTOM_APP_ERROR_COMMAND_INVALID"
                     },
                     "dependsOn": {
                       "anyOf": [
@@ -4519,11 +4534,21 @@
                             "type": "object",
                             "properties": {
                               "condition": {
-                                "enum": [
-                                  "service_completed_successfully",
-                                  "service_healthy",
-                                  "service_started"
-                                ]
+                                "anyOf": [
+                                  {
+                                    "const": "service_completed_successfully",
+                                    "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
+                                  },
+                                  {
+                                    "const": "service_healthy",
+                                    "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
+                                  },
+                                  {
+                                    "const": "service_started",
+                                    "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
+                                  }
+                                ],
+                                "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
                               }
                             },
                             "required": [
@@ -4533,6 +4558,7 @@
                         },
                         {
                           "type": "array",
+                          "message": "CUSTOM_APP_ERROR_DEPENDS_ON_SERVICE_INVALID",
                           "items": {
                             "type": "string"
                           }
@@ -4555,16 +4581,14 @@
                                   "type": "string"
                                 },
                                 "pids": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_DEPLOY_PIDS_INVALID"
                                 }
                               }
                             },
                             "reservations": {
                               "type": "object",
                               "properties": {
-                                "cpus": {
-                                  "type": "string"
-                                },
                                 "devices": {
                                   "type": "array",
                                   "items": {
@@ -4572,6 +4596,7 @@
                                     "properties": {
                                       "capabilities": {
                                         "type": "array",
+                                        "message": "CUSTOM_APP_ERROR_DEVICE_CAPABILITY_INVALID",
                                         "items": {
                                           "type": "string"
                                         }
@@ -4579,15 +4604,19 @@
                                       "count": {
                                         "anyOf": [
                                           {
-                                            "type": "number"
+                                            "type": "number",
+                                            "message": "CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID"
                                           },
                                           {
-                                            "const": "all"
+                                            "const": "all",
+                                            "message": "CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID"
                                           }
-                                        ]
+                                        ],
+                                        "message": "CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID"
                                       },
                                       "deviceIds": {
                                         "type": "array",
+                                        "message": "CUSTOM_APP_ERROR_DEVICE_ID_INVALID",
                                         "items": {
                                           "type": "string"
                                         }
@@ -4601,10 +4630,16 @@
                                     ]
                                   }
                                 },
+                                "cpus": {
+                                  "type": "string"
+                                },
                                 "memory": {
                                   "type": "string"
                                 }
-                              }
+                              },
+                              "required": [
+                                "devices"
+                              ]
                             }
                           }
                         }
@@ -4615,6 +4650,7 @@
                     },
                     "devices": {
                       "type": "array",
+                      "message": "CUSTOM_APP_ERROR_DEVICE_INVALID",
                       "items": {
                         "type": "string"
                       }
@@ -4622,28 +4658,34 @@
                     "dns": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "message": "CUSTOM_APP_ERROR_DNS_INVALID"
                         },
                         {
                           "type": "array",
+                          "message": "CUSTOM_APP_ERROR_DNS_INVALID",
                           "items": {
                             "type": "string"
                           }
                         }
-                      ]
+                      ],
+                      "message": "CUSTOM_APP_ERROR_DNS_INVALID"
                     },
                     "entrypoint": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "message": "CUSTOM_APP_ERROR_ENTRYPOINT_INVALID"
                         },
                         {
                           "type": "array",
+                          "message": "CUSTOM_APP_ERROR_ENTRYPOINT_INVALID",
                           "items": {
                             "type": "string"
                           }
                         }
-                      ]
+                      ],
+                      "message": "CUSTOM_APP_ERROR_ENTRYPOINT_INVALID"
                     },
                     "environment": {
                       "type": "array",
@@ -4652,21 +4694,25 @@
                         "properties": {
                           "key": {
                             "type": "string",
+                            "message": "CUSTOM_APP_ERROR_ENV_KEY_REQUIRED",
                             "minLength": 1
                           },
                           "value": {
                             "anyOf": [
                               {
-                                "type": "number"
+                                "type": "number",
+                                "message": "CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED"
                               },
                               {
                                 "type": "string",
+                                "message": "CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED",
                                 "minLength": 1
                               },
                               {
                                 "type": "boolean"
                               }
-                            ]
+                            ],
+                            "message": "CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED"
                           }
                         },
                         "required": [
@@ -4677,34 +4723,40 @@
                     },
                     "extraHosts": {
                       "type": "array",
+                      "message": "CUSTOM_APP_ERROR_EXTRA_HOST_INVALID",
                       "items": {
                         "type": "string"
                       }
                     },
                     "extraLabels": {
                       "type": "object",
+                      "message": "CUSTOM_APP_ERROR_LABEL_KEY_INVALID",
                       "additionalProperties": {
                         "anyOf": [
                           {
-                            "type": "string"
+                            "type": "string",
+                            "message": "CUSTOM_APP_ERROR_LABEL_VALUE_INVALID"
                           },
                           {
                             "type": "boolean"
                           }
-                        ]
+                        ],
+                        "message": "CUSTOM_APP_ERROR_LABEL_VALUE_INVALID"
                       }
                     },
                     "healthCheck": {
                       "type": "object",
                       "properties": {
                         "test": {
-                          "type": "string"
+                          "type": "string",
+                          "message": "CUSTOM_APP_ERROR_HEALTH_CHECK_TEST_REQUIRED"
                         },
                         "interval": {
                           "type": "string"
                         },
                         "retries": {
-                          "type": "number"
+                          "type": "number",
+                          "message": "CUSTOM_APP_ERROR_HEALTH_CHECK_RETRIES_INVALID"
                         },
                         "startInterval": {
                           "type": "string"
@@ -4721,7 +4773,11 @@
                       ]
                     },
                     "hostname": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     },
                     "isMain": {
                       "type": "boolean"
@@ -4730,12 +4786,15 @@
                       "type": "object",
                       "properties": {
                         "driver": {
-                          "type": "string"
+                          "type": "string",
+                          "message": "CUSTOM_APP_ERROR_LOGGING_DRIVER_REQUIRED"
                         },
                         "options": {
                           "type": "object",
+                          "message": "CUSTOM_APP_ERROR_LOGGING_OPTION_KEY_INVALID",
                           "additionalProperties": {
-                            "type": "string"
+                            "type": "string",
+                            "message": "CUSTOM_APP_ERROR_LOGGING_OPTION_VALUE_INVALID"
                           }
                         }
                       },
@@ -4744,10 +4803,18 @@
                       ]
                     },
                     "networkMode": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     },
                     "pid": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     },
                     "privileged": {
                       "type": "boolean"
@@ -4757,12 +4824,17 @@
                     },
                     "securityOpt": {
                       "type": "array",
+                      "message": "CUSTOM_APP_ERROR_SECURITY_OPT_INVALID",
                       "items": {
                         "type": "string"
                       }
                     },
                     "shmSize": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     },
                     "stdinOpen": {
                       "type": "boolean"
@@ -4775,8 +4847,10 @@
                     },
                     "sysctls": {
                       "type": "object",
+                      "message": "CUSTOM_APP_ERROR_SYSCTL_KEY_INVALID",
                       "additionalProperties": {
-                        "type": "number"
+                        "type": "number",
+                        "message": "CUSTOM_APP_ERROR_SYSCTL_VALUE_INVALID"
                       }
                     },
                     "tty": {
@@ -4788,16 +4862,19 @@
                         "core": {
                           "anyOf": [
                             {
-                              "type": "number"
+                              "type": "number",
+                              "message": "CUSTOM_APP_ERROR_ULIMIT_CORE_INVALID"
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "hard": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                 },
                                 "soft": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                 }
                               },
                               "required": [
@@ -4810,16 +4887,19 @@
                         "memlock": {
                           "anyOf": [
                             {
-                              "type": "number"
+                              "type": "number",
+                              "message": "CUSTOM_APP_ERROR_ULIMIT_MEMLOCK_INVALID"
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "hard": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                 },
                                 "soft": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                 }
                               },
                               "required": [
@@ -4832,16 +4912,19 @@
                         "nofile": {
                           "anyOf": [
                             {
-                              "type": "number"
+                              "type": "number",
+                              "message": "CUSTOM_APP_ERROR_ULIMIT_NOFILE_INVALID"
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "hard": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                 },
                                 "soft": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                 }
                               },
                               "required": [
@@ -4854,16 +4937,19 @@
                         "nproc": {
                           "anyOf": [
                             {
-                              "type": "number"
+                              "type": "number",
+                              "message": "CUSTOM_APP_ERROR_ULIMIT_NPROC_INVALID"
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "hard": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                 },
                                 "soft": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                 }
                               },
                               "required": [
@@ -4876,7 +4962,11 @@
                       }
                     },
                     "user": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     },
                     "volumes": {
                       "type": "array",
@@ -4884,10 +4974,12 @@
                         "type": "object",
                         "properties": {
                           "containerPath": {
-                            "type": "string"
+                            "type": "string",
+                            "message": "CUSTOM_APP_ERROR_CONTAINER_PATH_REQUIRED"
                           },
                           "hostPath": {
-                            "type": "string"
+                            "type": "string",
+                            "message": "CUSTOM_APP_ERROR_HOST_PATH_REQUIRED"
                           },
                           "private": {
                             "type": "boolean"
@@ -4906,7 +4998,11 @@
                       }
                     },
                     "workingDir": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -4933,16 +5029,22 @@
                               "properties": {
                                 "containerPort": {
                                   "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID",
                                   "exclusiveMaximum": 65536,
                                   "exclusiveMinimum": 0
                                 },
                                 "hostPort": {
                                   "type": "number",
+                                  "message": "CUSTOM_APP_ERROR_HOST_PORT_INVALID",
                                   "exclusiveMaximum": 65536,
                                   "exclusiveMinimum": 0
                                 },
                                 "interface": {
-                                  "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    }
+                                  ]
                                 },
                                 "tcp": {
                                   "type": "boolean"
@@ -4962,12 +5064,14 @@
                           },
                           "capAdd": {
                             "type": "array",
+                            "message": "CUSTOM_APP_ERROR_CAP_ADD_INVALID",
                             "items": {
                               "type": "string"
                             }
                           },
                           "capDrop": {
                             "type": "array",
+                            "message": "CUSTOM_APP_ERROR_CAP_DROP_INVALID",
                             "items": {
                               "type": "string"
                             }
@@ -4975,15 +5079,18 @@
                           "command": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "message": "CUSTOM_APP_ERROR_COMMAND_INVALID"
                               },
                               {
                                 "type": "array",
+                                "message": "CUSTOM_APP_ERROR_COMMAND_INVALID",
                                 "items": {
                                   "type": "string"
                                 }
                               }
-                            ]
+                            ],
+                            "message": "CUSTOM_APP_ERROR_COMMAND_INVALID"
                           },
                           "dependsOn": {
                             "anyOf": [
@@ -4993,11 +5100,21 @@
                                   "type": "object",
                                   "properties": {
                                     "condition": {
-                                      "enum": [
-                                        "service_completed_successfully",
-                                        "service_healthy",
-                                        "service_started"
-                                      ]
+                                      "anyOf": [
+                                        {
+                                          "const": "service_completed_successfully",
+                                          "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
+                                        },
+                                        {
+                                          "const": "service_healthy",
+                                          "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
+                                        },
+                                        {
+                                          "const": "service_started",
+                                          "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
+                                        }
+                                      ],
+                                      "message": "CUSTOM_APP_ERROR_DEPENDS_ON_CONDITION_INVALID"
                                     }
                                   },
                                   "required": [
@@ -5007,6 +5124,7 @@
                               },
                               {
                                 "type": "array",
+                                "message": "CUSTOM_APP_ERROR_DEPENDS_ON_SERVICE_INVALID",
                                 "items": {
                                   "type": "string"
                                 }
@@ -5029,16 +5147,14 @@
                                         "type": "string"
                                       },
                                       "pids": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_DEPLOY_PIDS_INVALID"
                                       }
                                     }
                                   },
                                   "reservations": {
                                     "type": "object",
                                     "properties": {
-                                      "cpus": {
-                                        "type": "string"
-                                      },
                                       "devices": {
                                         "type": "array",
                                         "items": {
@@ -5046,6 +5162,7 @@
                                           "properties": {
                                             "capabilities": {
                                               "type": "array",
+                                              "message": "CUSTOM_APP_ERROR_DEVICE_CAPABILITY_INVALID",
                                               "items": {
                                                 "type": "string"
                                               }
@@ -5053,15 +5170,19 @@
                                             "count": {
                                               "anyOf": [
                                                 {
-                                                  "type": "number"
+                                                  "type": "number",
+                                                  "message": "CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID"
                                                 },
                                                 {
-                                                  "const": "all"
+                                                  "const": "all",
+                                                  "message": "CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID"
                                                 }
-                                              ]
+                                              ],
+                                              "message": "CUSTOM_APP_ERROR_DEVICE_COUNT_INVALID"
                                             },
                                             "deviceIds": {
                                               "type": "array",
+                                              "message": "CUSTOM_APP_ERROR_DEVICE_ID_INVALID",
                                               "items": {
                                                 "type": "string"
                                               }
@@ -5075,10 +5196,16 @@
                                           ]
                                         }
                                       },
+                                      "cpus": {
+                                        "type": "string"
+                                      },
                                       "memory": {
                                         "type": "string"
                                       }
-                                    }
+                                    },
+                                    "required": [
+                                      "devices"
+                                    ]
                                   }
                                 }
                               }
@@ -5089,6 +5216,7 @@
                           },
                           "devices": {
                             "type": "array",
+                            "message": "CUSTOM_APP_ERROR_DEVICE_INVALID",
                             "items": {
                               "type": "string"
                             }
@@ -5096,28 +5224,34 @@
                           "dns": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "message": "CUSTOM_APP_ERROR_DNS_INVALID"
                               },
                               {
                                 "type": "array",
+                                "message": "CUSTOM_APP_ERROR_DNS_INVALID",
                                 "items": {
                                   "type": "string"
                                 }
                               }
-                            ]
+                            ],
+                            "message": "CUSTOM_APP_ERROR_DNS_INVALID"
                           },
                           "entrypoint": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "message": "CUSTOM_APP_ERROR_ENTRYPOINT_INVALID"
                               },
                               {
                                 "type": "array",
+                                "message": "CUSTOM_APP_ERROR_ENTRYPOINT_INVALID",
                                 "items": {
                                   "type": "string"
                                 }
                               }
-                            ]
+                            ],
+                            "message": "CUSTOM_APP_ERROR_ENTRYPOINT_INVALID"
                           },
                           "environment": {
                             "type": "array",
@@ -5126,21 +5260,25 @@
                               "properties": {
                                 "key": {
                                   "type": "string",
+                                  "message": "CUSTOM_APP_ERROR_ENV_KEY_REQUIRED",
                                   "minLength": 1
                                 },
                                 "value": {
                                   "anyOf": [
                                     {
-                                      "type": "number"
+                                      "type": "number",
+                                      "message": "CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED"
                                     },
                                     {
                                       "type": "string",
+                                      "message": "CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED",
                                       "minLength": 1
                                     },
                                     {
                                       "type": "boolean"
                                     }
-                                  ]
+                                  ],
+                                  "message": "CUSTOM_APP_ERROR_ENV_VALUE_REQUIRED"
                                 }
                               },
                               "required": [
@@ -5151,34 +5289,40 @@
                           },
                           "extraHosts": {
                             "type": "array",
+                            "message": "CUSTOM_APP_ERROR_EXTRA_HOST_INVALID",
                             "items": {
                               "type": "string"
                             }
                           },
                           "extraLabels": {
                             "type": "object",
+                            "message": "CUSTOM_APP_ERROR_LABEL_KEY_INVALID",
                             "additionalProperties": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "message": "CUSTOM_APP_ERROR_LABEL_VALUE_INVALID"
                                 },
                                 {
                                   "type": "boolean"
                                 }
-                              ]
+                              ],
+                              "message": "CUSTOM_APP_ERROR_LABEL_VALUE_INVALID"
                             }
                           },
                           "healthCheck": {
                             "type": "object",
                             "properties": {
                               "test": {
-                                "type": "string"
+                                "type": "string",
+                                "message": "CUSTOM_APP_ERROR_HEALTH_CHECK_TEST_REQUIRED"
                               },
                               "interval": {
                                 "type": "string"
                               },
                               "retries": {
-                                "type": "number"
+                                "type": "number",
+                                "message": "CUSTOM_APP_ERROR_HEALTH_CHECK_RETRIES_INVALID"
                               },
                               "startInterval": {
                                 "type": "string"
@@ -5195,13 +5339,19 @@
                             ]
                           },
                           "hostname": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           },
                           "image": {
-                            "type": "string"
+                            "type": "string",
+                            "message": "CUSTOM_APP_ERROR_IMAGE_REQUIRED"
                           },
                           "internalPort": {
                             "type": "number",
+                            "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
@@ -5212,12 +5362,15 @@
                             "type": "object",
                             "properties": {
                               "driver": {
-                                "type": "string"
+                                "type": "string",
+                                "message": "CUSTOM_APP_ERROR_LOGGING_DRIVER_REQUIRED"
                               },
                               "options": {
                                 "type": "object",
+                                "message": "CUSTOM_APP_ERROR_LOGGING_OPTION_KEY_INVALID",
                                 "additionalProperties": {
-                                  "type": "string"
+                                  "type": "string",
+                                  "message": "CUSTOM_APP_ERROR_LOGGING_OPTION_VALUE_INVALID"
                                 }
                               }
                             },
@@ -5226,13 +5379,22 @@
                             ]
                           },
                           "name": {
-                            "type": "string"
+                            "type": "string",
+                            "message": "CUSTOM_APP_ERROR_NAME_REQUIRED"
                           },
                           "networkMode": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           },
                           "pid": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           },
                           "privileged": {
                             "type": "boolean"
@@ -5242,12 +5404,17 @@
                           },
                           "securityOpt": {
                             "type": "array",
+                            "message": "CUSTOM_APP_ERROR_SECURITY_OPT_INVALID",
                             "items": {
                               "type": "string"
                             }
                           },
                           "shmSize": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           },
                           "stdinOpen": {
                             "type": "boolean"
@@ -5260,8 +5427,10 @@
                           },
                           "sysctls": {
                             "type": "object",
+                            "message": "CUSTOM_APP_ERROR_SYSCTL_KEY_INVALID",
                             "additionalProperties": {
-                              "type": "number"
+                              "type": "number",
+                              "message": "CUSTOM_APP_ERROR_SYSCTL_VALUE_INVALID"
                             }
                           },
                           "tty": {
@@ -5273,16 +5442,19 @@
                               "core": {
                                 "anyOf": [
                                   {
-                                    "type": "number"
+                                    "type": "number",
+                                    "message": "CUSTOM_APP_ERROR_ULIMIT_CORE_INVALID"
                                   },
                                   {
                                     "type": "object",
                                     "properties": {
                                       "hard": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                       },
                                       "soft": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                       }
                                     },
                                     "required": [
@@ -5295,16 +5467,19 @@
                               "memlock": {
                                 "anyOf": [
                                   {
-                                    "type": "number"
+                                    "type": "number",
+                                    "message": "CUSTOM_APP_ERROR_ULIMIT_MEMLOCK_INVALID"
                                   },
                                   {
                                     "type": "object",
                                     "properties": {
                                       "hard": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                       },
                                       "soft": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                       }
                                     },
                                     "required": [
@@ -5317,16 +5492,19 @@
                               "nofile": {
                                 "anyOf": [
                                   {
-                                    "type": "number"
+                                    "type": "number",
+                                    "message": "CUSTOM_APP_ERROR_ULIMIT_NOFILE_INVALID"
                                   },
                                   {
                                     "type": "object",
                                     "properties": {
                                       "hard": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                       },
                                       "soft": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                       }
                                     },
                                     "required": [
@@ -5339,16 +5517,19 @@
                               "nproc": {
                                 "anyOf": [
                                   {
-                                    "type": "number"
+                                    "type": "number",
+                                    "message": "CUSTOM_APP_ERROR_ULIMIT_NPROC_INVALID"
                                   },
                                   {
                                     "type": "object",
                                     "properties": {
                                       "hard": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_HARD_INVALID"
                                       },
                                       "soft": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "message": "CUSTOM_APP_ERROR_ULIMIT_SOFT_INVALID"
                                       }
                                     },
                                     "required": [
@@ -5361,7 +5542,11 @@
                             }
                           },
                           "user": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           },
                           "volumes": {
                             "type": "array",
@@ -5369,10 +5554,12 @@
                               "type": "object",
                               "properties": {
                                 "containerPath": {
-                                  "type": "string"
+                                  "type": "string",
+                                  "message": "CUSTOM_APP_ERROR_CONTAINER_PATH_REQUIRED"
                                 },
                                 "hostPath": {
-                                  "type": "string"
+                                  "type": "string",
+                                  "message": "CUSTOM_APP_ERROR_HOST_PATH_REQUIRED"
                                 },
                                 "private": {
                                   "type": "boolean"
@@ -5391,16 +5578,27 @@
                             }
                           },
                           "workingDir": {
-                            "type": "string"
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              }
+                            ]
                           }
                         }
                       }
                     },
                     "architecture": {
-                      "enum": [
-                        "amd64",
-                        "arm64"
-                      ]
+                      "anyOf": [
+                        {
+                          "const": "amd64",
+                          "message": "CUSTOM_APP_ERROR_ARCHITECTURE_INVALID"
+                        },
+                        {
+                          "const": "arm64",
+                          "message": "CUSTOM_APP_ERROR_ARCHITECTURE_INVALID"
+                        }
+                      ],
+                      "message": "CUSTOM_APP_ERROR_ARCHITECTURE_INVALID"
                     }
                   },
                   "required": [
