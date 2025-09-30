@@ -139,6 +139,7 @@
   "CUSTOM_APP_ERROR_SERVICES_MIN_LENGTH": "At least one service is required",
   "CUSTOM_APP_ERROR_ARCHITECTURE_INVALID": "Architecture must be either 'arm64' or 'amd64'",
   "CUSTOM_APP_ERROR_LABEL_VALUE_INVALID": "Label value must be a valid string",
+  "CUSTOM_APP_ERROR_UPDATE_FAILED": "Failed to update custom app, see logs for more details",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Choose an option...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Display on guest dashboard",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Domain name",
