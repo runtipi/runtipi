@@ -6,7 +6,7 @@ export const createCustomAppSchema = type({
   name: type(/^[a-z0-9-]+$/)
     .lessThanLength(51)
     .moreThanLength(0),
-  config: dynamicComposeSchemaArk.omit('schemaVersion'),
+  config: dynamicComposeSchemaArk,
 });
 
 export class CreateCustomAppDto extends createArkDto(createCustomAppSchema, { name: 'CreateCustomAppDto' }) {}
@@ -20,7 +20,7 @@ export const createCustomAppResponseSchema = type({
 export class CreateCustomAppResponseDto extends createArkDto(createCustomAppResponseSchema, { name: 'CreateCustomAppResponseDto' }) {}
 
 export const updateCustomAppSchema = type({
-  config: dynamicComposeSchemaArk.omit('schemaVersion'),
+  config: dynamicComposeSchemaArk,
 });
 
 export class UpdateCustomAppDto extends createArkDto(updateCustomAppSchema, { name: 'UpdateCustomAppDto' }) {}

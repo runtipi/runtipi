@@ -42,7 +42,7 @@ export default () => {
       return;
     }
 
-    createCustomApp.mutate({ body: { config: data, name: appName } });
+    createCustomApp.mutate({ body: { config: { ...data, schemaVersion: 2 }, name: appName } });
   };
 
   return (

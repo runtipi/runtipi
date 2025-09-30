@@ -60,7 +60,7 @@ export default function EditPageContent() {
   }
 
   const onSubmit = (data: typeof dynamicComposeSchemaArk.infer) => {
-    updateCustomApp.mutate({ body: { config: data }, path: { urn: `${params.appId}:_user` } });
+    updateCustomApp.mutate({ body: { config: { ...data, schemaVersion: 2 } }, path: { urn: `${params.appId}:_user` } });
   };
 
   if (!ready) {

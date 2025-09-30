@@ -576,6 +576,7 @@ export type UpdateUserConfigDto = {
 
 export type CreateCustomAppDto = {
     config: {
+        schemaVersion: 2;
         services: Array<{
             image: string;
             internalPort: number;
@@ -805,6 +806,7 @@ export type CreateCustomAppResponseDto = {
 
 export type UpdateCustomAppDto = {
     config: {
+        schemaVersion: 2;
         services: Array<{
             image: string;
             internalPort: number;

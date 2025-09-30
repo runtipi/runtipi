@@ -155,7 +155,11 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   );
 
   const EditConfigListItem = (
-    <DropdownMenuItem onClick={() => navigate(`/apps/${info.id}/edit`)} key="edit-config">
+    <DropdownMenuItem
+      onClick={() => navigate(`/apps/${info.id}/edit`)}
+      key="edit-config"
+      disabled={app?.status !== 'stopped' && app?.status !== 'missing'}
+    >
       <IconEdit className="me-2" size={16} />
       {t('CUSTOM_APP_EDIT_CONFIG')}
     </DropdownMenuItem>
