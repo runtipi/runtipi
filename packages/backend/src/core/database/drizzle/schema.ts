@@ -52,7 +52,7 @@ export const app = pgTable('app', {
   isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
   openPort: boolean('open_port').default(true).notNull(),
   port: integer(),
-  exposedLocal: boolean('exposed_local').default(true).notNull(),
+  exposedLocal: boolean('exposed_local').default(false).notNull(),
   appStoreSlug: varchar('app_store_slug').notNull(),
   appName: varchar('app_name').notNull(),
   enableAuth: boolean('enable_auth').default(false).notNull(),

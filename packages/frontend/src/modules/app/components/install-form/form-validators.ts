@@ -82,7 +82,7 @@ const validateDomain = (domain?: unknown): ValidationError | undefined => {
 };
 
 const validateLocalSubdomain = (subdomain?: unknown): ValidationError | undefined => {
-  if (!subdomain) return undefined;
+  if (!subdomain) return { messageKey: 'APP_INSTALL_FORM_ERROR_REQUIRED', params: { label: 'localSubdomain' } };
 
   if (typeof subdomain !== 'string') {
     return { messageKey: 'APP_INSTALL_FORM_ERROR_LOCAL_SUBDOMAIN_INVALID' };
@@ -118,7 +118,7 @@ export const validateAppConfig = (values: Record<string, unknown>, fields: FormF
     }
   }
 
-  if (exposedLocal && localSubdomain) {
+  if (exposedLocal) {
     const error = validateLocalSubdomain(localSubdomain);
 
     if (error) {

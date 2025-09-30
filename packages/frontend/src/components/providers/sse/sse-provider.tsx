@@ -5,10 +5,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 export const SSEProvider = ({ children }: PropsWithChildren) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useSSE({
     topic: 'app',
@@ -17,9 +19,13 @@ export const SSEProvider = ({ children }: PropsWithChildren) => {
         console.error(error);
       }
 
-      const { appName } = extractAppUrn(appUrn as AppUrn);
+      const { appName, appStoreId } = extractAppUrn(appUrn as AppUrn);
 
       queryClient.invalidateQueries();
+
+      if (appStoreId === '_user' && event === 'uninstall_success') {
+        navigate('/apps', { replace: true });
+      }
 
       switch (event) {
         case 'status_change':

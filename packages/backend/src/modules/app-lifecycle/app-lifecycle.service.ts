@@ -100,13 +100,14 @@ export class AppLifecycleService {
 
     const app = await this.appRepository.getAppByUrn(appUrn);
 
-    if (app) {
-      return this.startApp({ appUrn });
-    }
-
     const parsedForm = appFormSchema(form);
     if (parsedForm instanceof type.errors) {
       throw new TranslatableError('SYSTEM_ERROR_INVALID_BODY', undefined, HttpStatus.BAD_REQUEST, { cause: parsedForm });
+    }
+
+    if (app) {
+      await this.appRepository.updateAppById(app.id, { config: parsedForm, ...parsedForm });
+      return this.startApp({ appUrn });
     }
 
     const { exposed, exposedLocal, openPort, domain, isVisibleOnGuestDashboard, enableAuth, port } = parsedForm;

@@ -187,7 +187,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
               {sslPort !== 443 ? `:${sslPort}` : ''}
             </DropdownMenuItem>
           )}
-          {(app?.exposedLocal || !info.dynamic_config) && (
+          {app?.exposedLocal && (
             <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
               <IconLock className="text-muted me-2" size={16} />
               {appLocalDomain}
@@ -251,6 +251,9 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       break;
     case 'missing':
       buttons.push(InstallButton);
+      if (info.urn.split(':')[1] === '_user') {
+        listItemsDestructive.push(RemoveListItem);
+      }
       break;
     default:
       break;

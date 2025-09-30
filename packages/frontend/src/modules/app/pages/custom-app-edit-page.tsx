@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate, useParams } from 'react-router';
+import { redirect, useNavigate, useParams } from 'react-router';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
@@ -10,8 +10,24 @@ import { useEffect, useState } from 'react';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import { getAppComposeDiffOptions, updateCustomAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { type } from 'arktype';
+import type { Route } from './+types/custom-app-edit-page';
+import { getAppComposeDiff } from '@/api-client';
 
-export default function EditPageContent() {
+export async function clientLoader({ params }: Route.ActionArgs) {
+  if (!params.appId) {
+    return redirect('/apps');
+  }
+
+  const composeDiff = await getAppComposeDiff({ path: { urn: `${params.appId}:_user` } });
+
+  if (!composeDiff.data?.current) {
+    return redirect('/apps');
+  }
+
+  return { composeDiff: composeDiff.data };
+}
+
+export default function EditPageContent({ loaderData }: Route.ComponentProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
@@ -22,6 +38,7 @@ export default function EditPageContent() {
 
   const { data: currentConfig } = useSuspenseQuery({
     ...getAppComposeDiffOptions({ path: { urn: `${params.appId}:_user` } }),
+    initialData: loaderData?.composeDiff,
   });
 
   useEffect(() => {
@@ -54,10 +71,6 @@ export default function EditPageContent() {
       toast.error(t(error.message || 'CUSTOM_APP_UPDATE_ERROR'));
     },
   });
-
-  if (!params.appId) {
-    return <Navigate to="/apps" replace={true} />;
-  }
 
   const onSubmit = (data: typeof dynamicComposeSchemaArk.infer) => {
     updateCustomApp.mutate({ body: { config: { ...data, schemaVersion: 2 } }, path: { urn: `${params.appId}:_user` } });
