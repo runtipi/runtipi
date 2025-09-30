@@ -1,119 +1,36 @@
 'use client';
 
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 import clsx from 'clsx';
 import type * as React from 'react';
-import { createContext, useContext, useState } from 'react';
 import './tabs.css';
 
-interface TabsContextType {
-  value: string;
-  onValueChange?: (value: string) => void;
-}
+const Tabs = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) => (
+  <TabsPrimitive.Root className={clsx('card', className)} {...props}>
+    {children}
+  </TabsPrimitive.Root>
+);
 
-const TabsContext = createContext<TabsContextType | null>(null);
-
-interface TabsProps {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-  className?: string;
-  children: React.ReactNode;
-  orientation?: string;
-  style?: React.CSSProperties;
-}
-
-const Tabs = ({ className, children, value, defaultValue, onValueChange, orientation, style, ...props }: TabsProps) => {
-  const [internalValue, setInternalValue] = useState(defaultValue || '');
-
-  const currentValue = value !== undefined ? value : internalValue;
-
-  const handleValueChange = (newValue: string) => {
-    if (value === undefined) {
-      setInternalValue(newValue);
-    }
-    onValueChange?.(newValue);
-  };
-
-  return (
-    <TabsContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
-      <div className={clsx('card', className)} style={style} {...props}>
-        {children}
-      </div>
-    </TabsContext.Provider>
-  );
-};
-
-interface TabsListProps {
-  className?: string;
-  children: React.ReactNode;
-}
-
-const TabsList = ({ className, children, ...props }: TabsListProps) => (
-  <div className={clsx('', className)} {...props}>
+const TabsList = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) => (
+  <TabsPrimitive.List className={clsx('', className)} {...props}>
     <div className="card-header">
       <div className="nav nav-tabs card-header-tabs">{children}</div>
     </div>
-  </div>
+  </TabsPrimitive.List>
 );
 
-interface TabsTriggerProps {
-  value: string;
-  className?: string;
-  children: React.ReactNode;
-  // biome-ignore lint/suspicious/noConfusingVoidType: false positive
-  onClick?: (event?: React.MouseEvent) => boolean | undefined | void;
-  disabled?: boolean;
-}
-
-const TabsTrigger = ({ className, children, value, onClick, disabled, ...props }: TabsTriggerProps) => {
-  const context = useContext(TabsContext);
-
-  const handleClick = (event: React.MouseEvent) => {
-    if (disabled) return;
-
-    const result = onClick?.(event);
-
-    if (result === false) {
-      return;
-    }
-
-    if (!event.defaultPrevented) {
-      context?.onValueChange?.(value);
-    }
-  };
-
+const TabsTrigger = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
   return (
-    <button
-      type="button"
-      className={clsx('trigger nav-link', disabled && 'disabled', className)}
-      onClick={handleClick}
-      disabled={disabled}
-      data-state={context?.value === value ? 'active' : 'inactive'}
-      {...props}
-    >
+    <TabsPrimitive.Trigger className={clsx('trigger nav-link', className)} {...props}>
       <li className="nav-item">{children}</li>
-    </button>
+    </TabsPrimitive.Trigger>
   );
 };
 
-interface TabsContentProps {
-  value: string;
-  className?: string;
-  children: React.ReactNode;
-}
-
-const TabsContent = ({ className, children, value, ...props }: TabsContentProps) => {
-  const context = useContext(TabsContext);
-
-  if (context?.value !== value) {
-    return null;
-  }
-
-  return (
-    <div className={clsx('', className)} {...props}>
-      <div className="card-body">{children}</div>
-    </div>
-  );
-};
+const TabsContent = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) => (
+  <TabsPrimitive.Content className={clsx('', className)} {...props}>
+    <div className="card-body">{children}</div>
+  </TabsPrimitive.Content>
+);
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };
