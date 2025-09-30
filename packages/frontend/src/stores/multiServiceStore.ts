@@ -27,6 +27,7 @@ interface MultiServiceState {
   updateFromJson: (services: MultiServiceFormData['services']) => void;
   resetToDefaults: () => void;
   setIsDirty: (dirty: boolean) => void;
+  setServices: (services: ServiceWithId[]) => void;
 }
 
 const defaultService: ServiceFormData = {
@@ -58,6 +59,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   activeService: 0,
   isDirty: false,
   error: '',
+  setServices: (services: ServiceWithId[]) => set({ services }),
   validate: (values: typeof dynamicComposeSchemaArk.infer) => {
     const res = dynamicComposeSchemaArk.omit('schemaVersion')(values);
 

@@ -30,7 +30,7 @@ export default () => {
       navigate(`/apps/${appName}`);
     },
     onError: (error: TranslatableError) => {
-      toast.error(t(error.message || 'CUSTOM_APP_CREATE_ERROR'));
+      toast.error(t(error.message || 'CUSTOM_APP_CREATE_ERROR', { ...error.intlParams }));
     },
   });
 

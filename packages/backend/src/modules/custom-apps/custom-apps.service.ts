@@ -7,7 +7,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import path from 'node:path';
 import { AppsRepository } from '../apps/apps.repository';
-import type { CreateCustomAppDto } from './dto/custom-apps.dto';
+import type { CreateCustomAppDto, UpdateCustomAppDto } from './dto/custom-apps.dto';
 
 const APPS_FOLDER = '_user';
 
@@ -56,6 +56,21 @@ export class CustomAppService {
       });
       console.error(error);
       throw new TranslatableError('CUSTOM_APP_ERROR_CREATION_FAILED', { name }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async updateCustomApp(appUrn: AppUrn, config: UpdateCustomAppDto['config']) {
+    const existingApp = await this.appsRepository.getAppByUrn(appUrn);
+    if (!existingApp) {
+      throw new TranslatableError('CUSTOM_APP_ERROR_NOT_FOUND', { urn: appUrn }, HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      await this.writeDockerComposeConfig(appUrn, config);
+      this.logger.info(`Custom app ${appUrn} updated successfully`);
+    } catch (error) {
+      this.logger.error(`Failed to update custom app ${appUrn}:`, error);
+      throw new TranslatableError('CUSTOM_APP_ERROR_UPDATE_FAILED', { urn: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

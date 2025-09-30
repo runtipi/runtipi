@@ -59,6 +59,8 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
     try {
       const parsedValue = JSON.parse(newValue);
       const ajv = new Ajv({ allErrors: true });
+      ajv.addKeyword('message');
+
       const validate = ajv.compile(schema);
       const valid = validate(parsedValue);
 
@@ -68,7 +70,8 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
         const formattedErrors = betterAjvErrors(schema, parsedValue, validate.errors, { format: 'cli', indent: 2 });
         setError(formattedErrors);
       }
-    } catch (_) {
+    } catch (err) {
+      console.error(err);
       setError(t('MULTI_SERVICE_JSON_INVALID_FORMAT'));
     }
 

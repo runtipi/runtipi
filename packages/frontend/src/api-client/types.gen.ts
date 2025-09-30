@@ -803,6 +803,228 @@ export type CreateCustomAppResponseDto = {
     storeId: string;
 };
 
+export type UpdateCustomAppDto = {
+    config: {
+        services: Array<{
+            image: string;
+            internalPort: number;
+            name: string;
+            addPorts?: Array<{
+                containerPort: number;
+                hostPort: number;
+                interface?: string;
+                tcp?: boolean;
+                udp?: boolean;
+            }>;
+            addToMainNetwork?: boolean;
+            capAdd?: Array<string>;
+            capDrop?: Array<string>;
+            command?: string | Array<string>;
+            dependsOn?: {
+                [key: string]: {
+                    condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
+                };
+            } | Array<string>;
+            deploy?: {
+                resources: {
+                    limits?: {
+                        cpus?: string;
+                        memory?: string;
+                        pids?: number;
+                    };
+                    reservations?: {
+                        devices: Array<{
+                            capabilities: Array<string>;
+                            count?: number | 'all';
+                            deviceIds?: Array<string>;
+                            driver?: string;
+                        }>;
+                        cpus?: string;
+                        memory?: string;
+                    };
+                };
+            };
+            devices?: Array<string>;
+            dns?: string | Array<string>;
+            entrypoint?: string | Array<string>;
+            environment?: Array<{
+                key: string;
+                value: number | string | boolean;
+            }>;
+            extraHosts?: Array<string>;
+            extraLabels?: {
+                [key: string]: string | boolean;
+            };
+            healthCheck?: {
+                test: string;
+                interval?: string;
+                retries?: number;
+                startInterval?: string;
+                startPeriod?: string;
+                timeout?: string;
+            };
+            hostname?: string;
+            isMain?: boolean;
+            logging?: {
+                driver: string;
+                options?: {
+                    [key: string]: string;
+                };
+            };
+            networkMode?: string;
+            pid?: string;
+            privileged?: boolean;
+            readOnly?: boolean;
+            securityOpt?: Array<string>;
+            shmSize?: string;
+            stdinOpen?: boolean;
+            stopGracePeriod?: string;
+            stopSignal?: string;
+            sysctls?: {
+                [key: string]: number;
+            };
+            tty?: boolean;
+            ulimits?: {
+                core?: number | {
+                    hard: number;
+                    soft: number;
+                };
+                memlock?: number | {
+                    hard: number;
+                    soft: number;
+                };
+                nofile?: number | {
+                    hard: number;
+                    soft: number;
+                };
+                nproc?: number | {
+                    hard: number;
+                    soft: number;
+                };
+            };
+            user?: string;
+            volumes?: Array<{
+                containerPath: string;
+                hostPath: string;
+                private?: boolean;
+                readOnly?: boolean;
+                shared?: boolean;
+            }>;
+            workingDir?: string;
+        }>;
+        overrides?: Array<{
+            services: Array<{
+                addPorts?: Array<{
+                    containerPort: number;
+                    hostPort: number;
+                    interface?: string;
+                    tcp?: boolean;
+                    udp?: boolean;
+                }>;
+                addToMainNetwork?: boolean;
+                capAdd?: Array<string>;
+                capDrop?: Array<string>;
+                command?: string | Array<string>;
+                dependsOn?: {
+                    [key: string]: {
+                        condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
+                    };
+                } | Array<string>;
+                deploy?: {
+                    resources: {
+                        limits?: {
+                            cpus?: string;
+                            memory?: string;
+                            pids?: number;
+                        };
+                        reservations?: {
+                            devices: Array<{
+                                capabilities: Array<string>;
+                                count?: number | 'all';
+                                deviceIds?: Array<string>;
+                                driver?: string;
+                            }>;
+                            cpus?: string;
+                            memory?: string;
+                        };
+                    };
+                };
+                devices?: Array<string>;
+                dns?: string | Array<string>;
+                entrypoint?: string | Array<string>;
+                environment?: Array<{
+                    key: string;
+                    value: number | string | boolean;
+                }>;
+                extraHosts?: Array<string>;
+                extraLabels?: {
+                    [key: string]: string | boolean;
+                };
+                healthCheck?: {
+                    test: string;
+                    interval?: string;
+                    retries?: number;
+                    startInterval?: string;
+                    startPeriod?: string;
+                    timeout?: string;
+                };
+                hostname?: string;
+                image?: string;
+                internalPort?: number;
+                isMain?: boolean;
+                logging?: {
+                    driver: string;
+                    options?: {
+                        [key: string]: string;
+                    };
+                };
+                name?: string;
+                networkMode?: string;
+                pid?: string;
+                privileged?: boolean;
+                readOnly?: boolean;
+                securityOpt?: Array<string>;
+                shmSize?: string;
+                stdinOpen?: boolean;
+                stopGracePeriod?: string;
+                stopSignal?: string;
+                sysctls?: {
+                    [key: string]: number;
+                };
+                tty?: boolean;
+                ulimits?: {
+                    core?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                    memlock?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                    nofile?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                    nproc?: number | {
+                        hard: number;
+                        soft: number;
+                    };
+                };
+                user?: string;
+                volumes?: Array<{
+                    containerPath: string;
+                    hostPath: string;
+                    private?: boolean;
+                    readOnly?: boolean;
+                    shared?: boolean;
+                }>;
+                workingDir?: string;
+            }>;
+            architecture?: 'amd64' | 'arm64';
+        }>;
+    };
+};
+
 export type UserContextData = {
     body?: never;
     path?: never;
@@ -1659,6 +1881,19 @@ export type CreateCustomAppResponses = {
 };
 
 export type CreateCustomAppResponse = CreateCustomAppResponses[keyof CreateCustomAppResponses];
+
+export type UpdateCustomAppData = {
+    body: UpdateCustomAppDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/custom-apps/{urn}';
+};
+
+export type UpdateCustomAppResponses = {
+    default: unknown;
+};
 
 export type SeedDatabaseData = {
     body?: never;

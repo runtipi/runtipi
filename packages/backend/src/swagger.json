@@ -1815,6 +1815,39 @@
         ]
       }
     },
+    "/api/custom-apps/{urn}": {
+      "patch": {
+        "operationId": "updateCustomApp",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomAppDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "CustomApp"
+        ]
+      }
+    },
     "/api/debug/seed": {
       "post": {
         "operationId": "seedDatabase",
@@ -5610,36 +5643,10 @@
             "required": [
               "services"
             ]
-          },
-          "name": {
-            "type": "string",
-            "pattern": "^[a-z0-9-]+$",
-            "maxLength": 50,
-            "minLength": 1
           }
         },
         "required": [
-          "config",
-          "name"
-        ]
-      },
-      "CreateCustomAppResponseDto": {
-        "type": "object",
-        "properties": {
-          "appName": {
-            "type": "string"
-          },
-          "appUrn": {
-            "type": "string"
-          },
-          "storeId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "appName",
-          "appUrn",
-          "storeId"
+          "config"
         ]
       }
     }

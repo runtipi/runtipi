@@ -18,3 +18,9 @@ export const createCustomAppResponseSchema = type({
 });
 
 export class CreateCustomAppResponseDto extends createArkDto(createCustomAppResponseSchema, { name: 'CreateCustomAppResponseDto' }) {}
+
+export const updateCustomAppSchema = type({
+  config: dynamicComposeSchemaArk.omit('schemaVersion'),
+});
+
+export class UpdateCustomAppDto extends createArkDto(updateCustomAppSchema, { name: 'UpdateCustomAppDto' }) {}

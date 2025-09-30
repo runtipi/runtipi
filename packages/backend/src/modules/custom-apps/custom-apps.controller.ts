@@ -1,8 +1,9 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { CustomAppService } from './custom-apps.service';
-import { CreateCustomAppDto, CreateCustomAppResponseDto } from './dto/custom-apps.dto';
+import { CreateCustomAppDto, CreateCustomAppResponseDto, UpdateCustomAppDto } from './dto/custom-apps.dto';
 import { ApiResponse } from '@nestjs/swagger';
+import { castAppUrn } from '@/common/helpers/app-helpers';
 
 @Controller('custom-apps')
 export class CustomAppController {
@@ -21,5 +22,12 @@ export class CustomAppController {
       },
       { reportOnly: true },
     );
+  }
+
+  @Patch(':urn')
+  @UseGuards(AuthGuard)
+  @ApiResponse({})
+  async updateCustomApp(@Param('urn') appUrn: string, @Body() body: UpdateCustomAppDto) {
+    return await this.customAppService.updateCustomApp(castAppUrn(appUrn), body.config);
   }
 }
