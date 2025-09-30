@@ -1,5 +1,5 @@
 import { type dynamicComposeSchema, dynamicComposeUnion } from '../dynamic-compose.js';
-import type z from 'zod';
+import type { z } from 'zod';
 import { composeV1ToLatest } from './converters/v1.js';
 
 export const parseComposeJson = (data: unknown): z.infer<typeof dynamicComposeSchema> => {

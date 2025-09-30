@@ -29,14 +29,7 @@ type AccordionProps = React.HTMLAttributes<HTMLDivElement> & {
 export function Accordion({ id, multiple, className, children, ...props }: AccordionProps) {
   return (
     <AccordionContext.Provider value={{ rootId: id, multiple }}>
-      <div
-        id={id}
-        data-slot="accordion"
-        className={cx('accordion accordion-tabs', className)}
-        role="tablist"
-        aria-multiselectable={multiple ? 'true' : 'false'}
-        {...props}
-      >
+      <div id={id} data-slot="accordion" className={cx('accordion accordion-tabs', className)} {...props}>
         {children}
       </div>
     </AccordionContext.Provider>

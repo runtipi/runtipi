@@ -33,7 +33,7 @@ export class CustomAppService {
     try {
       await this.createAppDirectories(appUrn);
       await this.writeDockerComposeConfig(appUrn, config);
-      await this.createAppInfo(appUrn, name);
+      await this.createAppInfo(appUrn, name, config);
 
       await this.appsRepository.createApp({
         appStoreSlug: APPS_FOLDER,
@@ -66,7 +66,10 @@ export class CustomAppService {
     const appPath = path.join(dataDir, 'apps', appStoreId, appName);
     const dataPath = path.join(dataDir, 'app-data', appStoreId, appName);
 
-    await this.filesystem.createDirectories([appPath, dataPath]);
+    const ok = await this.filesystem.createDirectories([appPath, dataPath]);
+    if (!ok) {
+      throw new Error(`Failed to create app directories at ${appPath} and ${dataPath}`);
+    }
   }
 
   private async writeDockerComposeConfig(appUrn: AppUrn, config: CreateCustomAppDto['config']): Promise<void> {
@@ -76,14 +79,20 @@ export class CustomAppService {
     const configPath = path.join(dataDir, 'apps', appStoreId, appName, 'docker-compose.json');
     const configContent = JSON.stringify(config, null, 2);
 
-    await this.filesystem.writeTextFile(configPath, configContent);
+    const ok = await this.filesystem.writeTextFile(configPath, configContent);
+    if (!ok) {
+      throw new Error(`Failed to write docker-compose config at ${configPath}`);
+    }
   }
 
-  private async createAppInfo(appUrn: AppUrn, name: string): Promise<void> {
+  private async createAppInfo(appUrn: AppUrn, name: string, config: CreateCustomAppDto['config']): Promise<void> {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const { dataDir } = this.configService.get('directories');
 
     const infoPath = path.join(dataDir, 'apps', appStoreId, appName, 'config.json');
+
+    const main = config.services.find((s) => s.isMain) ?? config.services[0];
+    const inferredPort = main?.internalPort ?? 80;
 
     // Create a minimal app.info file for custom apps
     const appInfo = {
@@ -91,7 +100,7 @@ export class CustomAppService {
       name: name,
       urn: appUrn,
       available: true,
-      port: 80,
+      port: inferredPort,
       categories: ['utilities'],
       description: `Custom application: ${name}`,
       short_desc: 'User-created custom app',
@@ -106,7 +115,10 @@ export class CustomAppService {
       dynamic_config: true,
     };
 
-    await this.filesystem.writeJsonFile(infoPath, appInfo);
+    const ok = await this.filesystem.writeJsonFile(infoPath, appInfo);
+    if (!ok) {
+      throw new Error(`Failed to write app info at ${infoPath}`);
+    }
   }
 
   private async cleanupAppDirectories(appUrn: AppUrn): Promise<void> {

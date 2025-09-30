@@ -1,6 +1,6 @@
-import type * as React from 'react';
 import type * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import clsx from 'clsx';
+import { useId } from 'react';
 
 type RootProps = typeof CheckboxPrimitive.Root;
 
@@ -10,17 +10,23 @@ type CheckboxProps = React.ComponentPropsWithoutRef<RootProps> & {
 };
 
 function Checkbox({ className, label, ...props }: CheckboxProps) {
+  const generatedId = useId();
+  const baseId = props.name ? `${props.name}-${generatedId}` : generatedId;
+  const inputId = props.id || baseId;
+  const labelId = `${baseId}-label`;
+
   return (
-    <label htmlFor={props.name} aria-labelledby={props.name} className={clsx('form-check', className)}>
+    <label htmlFor={inputId} className={clsx('form-check', className)}>
       <input
         type="checkbox"
         className="form-check-input"
         checked={props.checked as boolean}
         onChange={(e) => props.onCheckedChange?.(e.target.checked)}
         name={props.name}
-        id={props.name}
+        id={inputId}
+        aria-labelledby={labelId}
       />
-      <span id={props.name} className="form-check-label text-muted">
+      <span id={labelId} className="form-check-label text-muted">
         {label}
       </span>
     </label>

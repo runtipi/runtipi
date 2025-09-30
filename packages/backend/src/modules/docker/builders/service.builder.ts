@@ -278,15 +278,16 @@ export class ServiceBuilder {
    * @example
    * ```typescript
    * const service = new ServiceBuilder();
-   * service.setEnvironment({ key: 'value' });
+   * service.setEnvironment([{ key: 'NODE_ENV', value: 'production' }]);
    * ```
    */
   setEnvironment(environment?: Array<{ key: string; value: string | number | boolean }>) {
     if (environment && environment.length > 0) {
+      if (!this.service.environment) {
+        this.service.environment = {};
+      }
+
       for (const env of environment) {
-        if (!this.service.environment) {
-          this.service.environment = {};
-        }
         this.service.environment[env.key] = env.value;
       }
     }

@@ -60,10 +60,9 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   function saveBeforeAction<T extends (...args: any[]) => any>(action: T) {
     return (...args: Parameters<T>): ReturnType<T> => {
       if (isDirty && jsonEditorOpen) {
-        // eslint-disable-next-line no-alert
         const confirmLeave = window.confirm(t('MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM'));
         if (!confirmLeave) {
-          return {} as ReturnType<T>;
+          return undefined as ReturnType<T>;
         }
 
         setIsDirty(false);

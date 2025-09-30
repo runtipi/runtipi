@@ -5,7 +5,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
-import z from 'zod';
+import { z } from 'zod';
 
 interface Network {
   key: string;
