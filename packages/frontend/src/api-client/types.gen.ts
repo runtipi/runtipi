@@ -604,13 +604,13 @@ export type CreateCustomAppDto = {
                         pids?: number;
                     };
                     reservations?: {
-                        cpus?: string;
-                        devices?: Array<{
+                        devices: Array<{
                             capabilities: Array<string>;
                             count?: number | 'all';
                             deviceIds?: Array<string>;
                             driver?: string;
                         }>;
+                        cpus?: string;
                         memory?: string;
                     };
                 };
@@ -709,13 +709,13 @@ export type CreateCustomAppDto = {
                             pids?: number;
                         };
                         reservations?: {
-                            cpus?: string;
-                            devices?: Array<{
+                            devices: Array<{
                                 capabilities: Array<string>;
                                 count?: number | 'all';
                                 deviceIds?: Array<string>;
                                 driver?: string;
                             }>;
+                            cpus?: string;
                             memory?: string;
                         };
                     };
