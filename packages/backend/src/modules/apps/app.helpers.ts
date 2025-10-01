@@ -19,6 +19,10 @@ export class AppHelpers {
 
   /**
    * This function generates an env file for the provided app.
+   * 
+   * All environment variables from the system .env file are included, which means
+   * all RUNTIPI_* prefixed variables (such as RUNTIPI_APP_DATA_PATH, RUNTIPI_MEDIA_PATH)
+   * are automatically available to apps for use in docker-compose.yml volumes and environment variables.
    * It reads the config.json file for the app, parses it,
    * and uses the app's form fields and domain to generate the env file
    * if the app is exposed and has a domain set, it adds the domain to the env file,

@@ -280,5 +280,73 @@ describe('AppHelpers', () => {
       // Assert
       expect(appFilesManager.writeAppEnv).toHaveBeenCalledWith(testAppUrn, transformedEnv);
     });
+
+    it('should pass RUNTIPI_* variables from base env to app env', async () => {
+      // Arrange
+      const baseEnvMap = new Map<string, string>([
+        ['RUNTIPI_APP_DATA_PATH', '/opt/runtipi'],
+        ['RUNTIPI_FORWARD_AUTH_URL', 'http://runtipi:3000/api/auth/traefik'],
+        ['RUNTIPI_MEDIA_PATH', '/mnt/media'],
+        ['RUNTIPI_CUSTOM_VAR', 'custom-value'],
+        ['OTHER_VAR', 'should-not-be-copied'],
+      ]);
+      envUtils.envStringToMap.mockReturnValue(baseEnvMap);
+
+      // Act
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      // Assert
+      expect(baseEnvMap.get('RUNTIPI_APP_DATA_PATH')).toBe('/opt/runtipi');
+      expect(baseEnvMap.get('RUNTIPI_FORWARD_AUTH_URL')).toBe('http://runtipi:3000/api/auth/traefik');
+      expect(baseEnvMap.get('RUNTIPI_MEDIA_PATH')).toBe('/mnt/media');
+      expect(baseEnvMap.get('RUNTIPI_CUSTOM_VAR')).toBe('custom-value');
+    });
+
+    it('should not override existing RUNTIPI_* variables in app env', async () => {
+      // Arrange
+      const baseEnvMap = new Map<string, string>([
+        ['RUNTIPI_APP_DATA_PATH', '/opt/runtipi'],
+        ['RUNTIPI_MEDIA_PATH', '/mnt/media'],
+      ]);
+      envUtils.envStringToMap.mockReturnValue(baseEnvMap);
+
+      config.getConfig.mockReturnValue(
+        fromPartial({
+          internalIp: '127.0.0.1',
+          envFilePath: '/data/.env',
+          rootFolderHost: '/opt/runtipi',
+          userSettings: {
+            appDataPath: '/custom/path',
+          },
+        }),
+      );
+
+      // Act
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      // Assert
+      // APP_DATA_DIR should use the config value, not be overridden
+      expect(baseEnvMap.get('APP_DATA_DIR')).toBe('/custom/path/app-data/test-store/test-app');
+      // RUNTIPI_* variables should remain from base env
+      expect(baseEnvMap.get('RUNTIPI_APP_DATA_PATH')).toBe('/opt/runtipi');
+      expect(baseEnvMap.get('RUNTIPI_MEDIA_PATH')).toBe('/mnt/media');
+    });
+
+    it('should handle empty RUNTIPI_* variables correctly', async () => {
+      // Arrange
+      const baseEnvMap = new Map<string, string>([
+        ['RUNTIPI_APP_DATA_PATH', '/opt/runtipi'],
+        ['RUNTIPI_EMPTY', ''],
+      ]);
+      envUtils.envStringToMap.mockReturnValue(baseEnvMap);
+
+      // Act
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      // Assert
+      // Empty RUNTIPI_* variables should still be included
+      expect(baseEnvMap.has('RUNTIPI_EMPTY')).toBe(true);
+      expect(baseEnvMap.get('RUNTIPI_EMPTY')).toBe('');
+    });
   });
 });
