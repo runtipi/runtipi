@@ -95,7 +95,7 @@ describe('AppStoreService', () => {
         url: 'old-url',
       });
 
-      appStoreRepository.getAppStoreByHash.mockResolvedValue(mockExistingStore);
+      appStoreRepository.getAppStoreByHash.mockResolvedValue(mockExistingStore as any);
 
       // Act
       await appStoreService.migrateLegacyRepo();
@@ -119,7 +119,7 @@ describe('AppStoreService', () => {
         }),
       );
 
-      appStoreRepository.getAppStoreByHash.mockResolvedValue(null);
+      appStoreRepository.getAppStoreByHash.mockResolvedValue(null as any);
 
       // Act
       await appStoreService.migrateLegacyRepo();
@@ -136,7 +136,7 @@ describe('AppStoreService', () => {
         fromPartial({ slug: 'legacy', name: 'legacy', enabled: true }),
         fromPartial({ slug: 'custom', name: 'Custom Store', enabled: true }),
       ];
-      appStoreRepository.getEnabledAppStores.mockResolvedValue(mockStores);
+      appStoreRepository.getEnabledAppStores.mockResolvedValue(mockStores as any);
 
       // Act
       const result = await appStoreService.getEnabledAppStores();
@@ -154,7 +154,7 @@ describe('AppStoreService', () => {
         fromPartial({ slug: 'legacy', name: 'legacy', enabled: true }),
         fromPartial({ slug: 'custom', name: 'Custom Store', enabled: false }),
       ];
-      appStoreRepository.getAllAppStores.mockResolvedValue(mockStores);
+      appStoreRepository.getAllAppStores.mockResolvedValue(mockStores as any);
 
       // Act
       const result = await appStoreService.getAllAppStores();
