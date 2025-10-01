@@ -197,7 +197,13 @@
       "when": 1758128400070,
       "tag": "0027_petite_dexter_bennett",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1759334400000,
+      "tag": "0028_rename_migrated_to_legacy",
+      "breakpoints": true
     }
   ]
 }
-
