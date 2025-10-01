@@ -65,7 +65,7 @@ export class AppStoreService {
   /**
    * Migrate the legacy repo to the new app store system
    *
-   * @returns The ID of the migrated repo
+   * @returns The ID of the legacy repo
    */
   public async migrateLegacyRepo() {
     const { deprecatedAppsRepoUrl, deprecatedAppsRepoId } = this.config.getConfig();
@@ -75,7 +75,7 @@ export class AppStoreService {
       return;
     }
 
-    const existing = await this.appStoreRepository.getAppStoreByHash('migrated');
+    const existing = await this.appStoreRepository.getAppStoreByHash('legacy');
     if (existing) {
       this.logger.info('Migrating default repo');
       await this.appStoreRepository.updateAppStoreHashAndUrl(existing.slug, { url: deprecatedAppsRepoUrl, hash: deprecatedAppsRepoId });
