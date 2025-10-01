@@ -134,4 +134,52 @@ export class DockerService {
       throw new InternalServerErrorException('Error getting log stream');
     }
   };
+
+  public clearAppLogs = async (appUrn: AppUrn) => {
+    try {
+      const { args } = await this.getBaseComposeArgsApp(appUrn);
+      
+      // Get list of containers for this app
+      const psArgs = [...args, 'ps', '-q'];
+      const psCmd = spawn('docker-compose', psArgs, { stdio: 'pipe' });
+      
+      const containerIds: string[] = [];
+      
+      await new Promise<void>((resolve, reject) => {
+        psCmd.stdout.on('data', (data) => {
+          const ids = data.toString().trim().split('\n').filter(Boolean);
+          containerIds.push(...ids);
+        });
+        
+        psCmd.on('close', (code) => {
+          if (code === 0) {
+            resolve();
+          } else {
+            reject(new Error(`Failed to get container list: exit code ${code}`));
+          }
+        });
+        
+        psCmd.on('error', reject);
+      });
+      
+      // Clear logs for each container
+      for (const containerId of containerIds) {
+        if (containerId) {
+          const logPath = `/var/lib/docker/containers/${containerId}/${containerId}-json.log`;
+          await execAsync(`truncate -s 0 ${logPath} 2>/dev/null || true`).catch(() => {
+            // If truncate fails, try docker command
+            return execAsync(`docker exec ${containerId} sh -c "echo -n > $(docker inspect --format='{{.LogPath}}' ${containerId})" 2>/dev/null || true`);
+          });
+        }
+      }
+      
+      this.logger.info(`Logs cleared for app ${appUrn}`);
+      return { success: true };
+    } catch (error) {
+      this.logger.error(`Error clearing logs for app ${appUrn}`, error);
+      Sentry.captureException(error, { tags: { source: 'clear app logs', appUrn } });
+      throw new InternalServerErrorException('Error clearing app logs');
+    }
+  };
+
 }

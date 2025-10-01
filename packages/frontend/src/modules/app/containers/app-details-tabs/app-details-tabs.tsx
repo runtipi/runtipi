@@ -125,7 +125,7 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
       <TabsContent value="logs">
         {app?.status === 'running' && (
           <Suspense>
-            <AppLogs appUrn={info.urn} />
+            <AppLogs appUrn={info.urn} info={info} />
           </Suspense>
         )}
       </TabsContent>

@@ -144,6 +144,25 @@ export class LoggerService {
     }
   };
 
+  public clearLogs = async () => {
+    try {
+      const logFiles = ['app.log', 'error.log', 'app.log.history', 'error.log.history'];
+
+      for (const logFile of logFiles) {
+        const logFilePath = path.join(this.logsFolder, logFile);
+        if (fs.existsSync(logFilePath)) {
+          await fs.promises.unlink(logFilePath);
+        }
+      }
+
+      this.winstonLogger.info('Logs cleared successfully');
+    } catch (error) {
+      this.winstonLogger.error('Error clearing logs', error);
+      throw error;
+    }
+  };
+
+
   private log = (level: string, messages: unknown[]) => {
     const stringMessages = messages.flatMap((m) => {
       if (m instanceof Error) {
