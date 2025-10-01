@@ -423,5 +423,6 @@
   "APP_INSTALL_FORM_SHOW_PASSWORD": "Mostrar senha",
   "APP_INSTALL_FORM_HIDE_PASSWORD": "Ocultar Senha",
   "SAVE": "Salvar",
-  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Este é uma fusão <a>docker</a> arquivo de substituição. Será mesclado com o arquivo base <code>docker-compose</code> do aplicativo. Você pode encontrar o arquivo de base na pasta <code>apps</code>."
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Este é uma fusão <a>docker</a> arquivo de substituição. Será mesclado com o arquivo base <code>docker-compose</code> do aplicativo. Você pode encontrar o arquivo de base na pasta <code>apps</code>.",
+  "APP_INSTALLED": "INSTALLED"
 }
