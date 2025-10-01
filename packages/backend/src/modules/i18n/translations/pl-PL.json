@@ -81,7 +81,7 @@
   "CUSTOM_APP_NAME_REQUIRED": "Nazwa aplikacji jest wymagana",
   "CUSTOM_APP_NAME_MAX_LENGTH": "Nazwa aplikacji musi mieć nie więcej niż 50 znaków",
   "CUSTOM_APP_NAME_NO_HYPHEN_EDGES": "Nazwa aplikacji nie może zaczynać się lub kończyć myślnikiem",
-  "CUSTOM_APP_NAME_RESERVED": "This app name is reserved",
+  "CUSTOM_APP_NAME_RESERVED": "Ta nazwa aplikacji jest zarezerwowana",
   "CUSTOM_APP_INVALID_CONFIG": "Nieprawidłowa konfiguracja. Sprawdź swoje usługi.",
   "CUSTOM_APP_CREATE_ERROR": "Nie udało się utworzyć niestandardowej aplikacji",
   "CUSTOM_APP_EDIT_TITLE": "Edytuj {{name}}",
