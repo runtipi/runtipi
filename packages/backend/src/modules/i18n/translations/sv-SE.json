@@ -81,6 +81,7 @@
   "CUSTOM_APP_NAME_REQUIRED": "App name is required",
   "CUSTOM_APP_NAME_MAX_LENGTH": "App name must be 50 characters or less",
   "CUSTOM_APP_NAME_NO_HYPHEN_EDGES": "App name cannot start or end with a hyphen",
+  "CUSTOM_APP_NAME_RESERVED": "This app name is reserved",
   "CUSTOM_APP_INVALID_CONFIG": "Invalid configuration. Please check your services.",
   "CUSTOM_APP_CREATE_ERROR": "Failed to create custom app",
   "CUSTOM_APP_EDIT_TITLE": "Edit {{name}}",
