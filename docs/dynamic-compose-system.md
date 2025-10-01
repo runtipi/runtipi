@@ -348,7 +348,7 @@ When working with the dynamic compose system:
                     "containerPath": "/config"
                 },
                 {
-                    "hostPath": "${RUNTIPI_MEDIA_DIR}",
+                    "hostPath": "${RUNTIPI_MEDIA_PATH}",
                     "containerPath": "/media"
                 }
             ]

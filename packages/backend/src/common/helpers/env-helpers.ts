@@ -112,6 +112,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set('DOMAIN', settings.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath || rootFolderHost);
   envMap.set('RUNTIPI_FORWARD_AUTH_URL', settings.forwardAuthUrl || envMap.get('RUNTIPI_FORWARD_AUTH_URL') || 'http://runtipi:3000/api/auth/traefik');
+  envMap.set('RUNTIPI_MEDIA_PATH', envMap.get('RUNTIPI_MEDIA_PATH') || path.join(rootFolderHost, 'media'));
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');
   envMap.set('POSTGRES_USERNAME', 'tipi');
