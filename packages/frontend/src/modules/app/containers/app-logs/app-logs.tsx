@@ -1,11 +1,15 @@
 import { useSSE } from '@/lib/hooks/use-sse';
+import { Button } from '@/components/ui/Button';
 import { Suspense, lazy, useRef, useState } from 'react';
+import { ClearLogsDialog } from '../../components/dialogs/clear-logs-dialog/clear-logs-dialog';
+import type { AppInfo } from '@/types/app.types';
 
 const LogsTerminal = lazy(() => import('@/components/logs-terminal/logs-terminal').then((module) => ({ default: module.LogsTerminal })));
 
-export const AppLogs = ({ appUrn }: { appUrn: string }) => {
+export const AppLogs = ({ appUrn, info }: { appUrn: string; info: AppInfo }) => {
   let nextId = 0;
   const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
+  const [showClearDialog, setShowClearDialog] = useState(false);
   const maxLines = useRef(300);
 
   useSSE({
@@ -25,6 +29,11 @@ export const AppLogs = ({ appUrn }: { appUrn: string }) => {
     },
   });
 
+  const handleClearLogs = () => {
+    setLogs([]);
+    setShowClearDialog(false);
+  };
+
   const updateMaxLines = (lines: number) => {
     const linesToKeep = Math.max(1, lines);
     maxLines.current = linesToKeep;
@@ -32,8 +41,20 @@ export const AppLogs = ({ appUrn }: { appUrn: string }) => {
   };
 
   return (
-    <Suspense>
-      <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
-    </Suspense>
+    <>
+      <div className="mb-3 d-flex justify-content-end">
+        <Button onClick={() => setShowClearDialog(true)} intent="danger" size="sm">
+          Clear Logs
+        </Button>
+      </div>
+      <Suspense>
+        <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
+      </Suspense>
+      <ClearLogsDialog
+        info={info}
+        isOpen={showClearDialog}
+        onClose={() => setShowClearDialog(false)}
+      />
+    </>
   );
 };

@@ -524,4 +524,30 @@ export class AppLifecycleService {
       }
     })();
   }
+
+  public async clearAppLogs(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
+    }
+
+    try {
+      // Clear Docker container logs
+      await this.dockerService.clearAppLogs(appUrn);
+      
+      // Clear app data folder logs if they exist
+      const appFilesManager = this.appFilesManager as any;
+      if (appFilesManager.logger && typeof appFilesManager.logger.clearLogs === 'function') {
+        await appFilesManager.logger.clearLogs();
+      }
+
+      this.logger.info(`Logs cleared for app ${appUrn}`);
+      return { success: true };
+    } catch (error) {
+      this.logger.error(`Failed to clear logs for app ${appUrn}`, error);
+      throw new TranslatableError('APP_ERROR_CLEAR_LOGS_FAILED', { id: appUrn });
+    }
+  }
 }

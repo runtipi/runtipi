@@ -70,4 +70,12 @@ export class AppLifecycleController {
   async updateAllApps() {
     return this.appLifecycleService.updateAllApps();
   }
+
+  @Delete(':urn/logs')
+  @ApiResponse({ type: LifecycleRequestDto })
+  async clearAppLogs(@Param('urn') urn: string) {
+    const res = await this.appLifecycleService.clearAppLogs({ appUrn: castAppUrn(urn) });
+    return { success: res.success };
+  }
 }
+
