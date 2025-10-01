@@ -423,5 +423,6 @@
   "APP_INSTALL_FORM_SHOW_PASSWORD": "Voir le mot de passe",
   "APP_INSTALL_FORM_HIDE_PASSWORD": "Cacher le mot de passe",
   "SAVE": "Sauvegarder",
-  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Il s'agit d'un fichier de remplacement <a>docker fusionné</a>. Il sera fusionné avec le fichier de base <code>docker-compose</code> de l'application. Vous pouvez trouver le fichier de base dans le dossier <code>apps</code>."
+  "USER_CONFIG_DOCKER_MERGE_DESCRIPTION": "Il s'agit d'un fichier de remplacement <a>docker fusionné</a>. Il sera fusionné avec le fichier de base <code>docker-compose</code> de l'application. Vous pouvez trouver le fichier de base dans le dossier <code>apps</code>.",
+  "APP_INSTALLED": "INSTALLED"
 }

@@ -1,10 +1,11 @@
-import { searchAppsInfiniteOptions } from '@/api-client/@tanstack/react-query.gen';
+import { searchAppsInfiniteOptions, getInstalledAppsOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import { useInfiniteScroll } from '@/lib/hooks/use-infinite-scroll';
 import { useAppStoreState } from '@/stores/app-store';
-import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { Navigate, useParams } from 'react-router';
 import { StoreTile } from '../components/store-tile/store-tile';
+import { useMemo } from 'react';
 
 export const AppStorePageSuspense = () => {
   return <div className="card px-3 pb-3" style={{ height: 4000 }} />;
@@ -20,6 +21,17 @@ export default () => {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     placeholderData: keepPreviousData,
   });
+
+  // Fetch installed apps to identify which apps are already installed
+  const { data: installedAppsData } = useQuery({
+    ...getInstalledAppsOptions(),
+  });
+
+  // Create a Set of installed app URNs for O(1) lookup performance
+  const installedUrns = useMemo(() => {
+    if (!installedAppsData?.installed) return new Set<string>();
+    return new Set(installedAppsData.installed.map((item) => item.info.urn));
+  }, [installedAppsData]);
 
   const isLoading = !data;
   const apps = data?.pages.flatMap((page) => page.data) ?? [];
@@ -47,7 +59,7 @@ export default () => {
       <div className="row row-cards">
         {apps.map((app, index) => (
           <div ref={index === apps.length - 1 ? lastElementRef : null} key={app.urn} className="cursor-pointer col-sm-6 col-lg-4 p-2 mt-4">
-            <StoreTile app={app} isLoading={isLoading} />
+            <StoreTile app={app} isLoading={isLoading} isInstalled={installedUrns.has(app.urn)} />
           </div>
         ))}
       </div>

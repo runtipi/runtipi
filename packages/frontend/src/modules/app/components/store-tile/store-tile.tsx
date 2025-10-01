@@ -8,7 +8,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { colorSchemeForCategory } from '../../helpers/table-helpers';
 
-export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = ({ app, isLoading }) => {
+interface StoreTileProps {
+  app: AppInfoSimple;
+  isLoading: boolean;
+  isInstalled?: boolean;
+}
+
+export const StoreTile: React.FC<StoreTileProps> = ({ app, isLoading, isInstalled = false }) => {
   const { t } = useTranslation();
 
   const isNew = (app.created_at ?? 0) + 14 * 24 * 60 * 60 * 1000 > Date.now();
@@ -16,7 +22,11 @@ export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = (
   const [appId, storeId] = app.urn.split(':');
 
   return (
-    <Link aria-label={app.name} className="app-tile" to={`/app-store/${storeId}/${appId}`}>
+    <Link 
+      aria-label={app.name} 
+      className={`app-tile ${isInstalled ? 'installed' : ''}`} 
+      to={`/app-store/${storeId}/${appId}`}
+    >
       <div key={app.id} className="d-flex overflow-hidden align-items-center py-2 ps-2">
         <Skeleton loading={isLoading}>
           <AppLogo className="logo" urn={app.urn} placeholder={isLoading} />
@@ -27,6 +37,7 @@ export const StoreTile: React.FC<{ app: AppInfoSimple; isLoading: boolean }> = (
               <Skeleton loading={isLoading}>{limitText(app.name, 20)}</Skeleton>
             </h3>
             {isNew ? <div className="text-white badge me-1 bg-green">{t('APP_NEW')}</div> : null}
+            {isInstalled ? <div className="text-white badge me-1 bg-blue installed-badge">✓ {t('APP_INSTALLED')}</div> : null}
           </div>
           <p className="text-muted text-nowrap mb-2">
             <Skeleton loading={isLoading}>{limitText(app.short_desc, 30)}</Skeleton>
