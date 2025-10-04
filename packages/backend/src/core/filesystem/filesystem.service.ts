@@ -95,6 +95,17 @@ export class FilesystemService {
     }
   }
 
+  async writeBinaryFile(filePath: string, data: Buffer): Promise<boolean> {
+    try {
+      await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
+      await fs.promises.writeFile(this.getSafeFilePath(filePath), data);
+      return true;
+    } catch (error) {
+      this.logger.error(`Error writing binary file ${filePath}:`, error);
+      return false;
+    }
+  }
+
   async pathExists(filePath: string): Promise<boolean> {
     return fs.promises
       .access(this.getSafeFilePath(filePath))
@@ -180,5 +191,14 @@ export class FilesystemService {
 
   async getStats(filePath: string) {
     return await fs.promises.stat(this.getSafeFilePath(filePath));
+  }
+
+  async getFileEtag(filePath: string): Promise<string | null> {
+    try {
+      const stats = await this.getStats(filePath);
+      return `"${stats.size.toString(16)}-${stats.mtime.getTime().toString(16)}"`;
+    } catch {
+      return null;
+    }
   }
 }

@@ -1,7 +1,21 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { AppStoreService } from '../app-stores/app-store.service';
 import { AuthGuard } from '../auth/auth.guard';
 import {
@@ -39,16 +53,26 @@ export class MarketplaceController {
   }
 
   @Get('apps/:urn/image')
-  async getImage(@Param('urn') urn: string, @Res() res: Response) {
-    const image = await this.marketplaceService.getAppImage(castAppUrn(urn));
+  async getImage(@Param('urn') urn: string, @Res() res: Response, @Req() req: Request) {
+    const { image, etag } = await this.marketplaceService.getAppImage(castAppUrn(urn));
 
     if (!image) {
       throw new NotFoundException('App image not found');
     }
 
+    if (req.headers['if-none-match'] === etag) {
+      res.set({
+        'Cache-Control': 'public, max-age=0, stale-while-revalidate=86400, stale-if-error=86400',
+        'Content-Type': 'image/jpeg',
+        ETag: etag,
+      });
+      return res.status(304).end();
+    }
+
     res.set({
+      'Cache-Control': 'public, max-age=0, stale-while-revalidate=86400, stale-if-error=86400',
       'Content-Type': 'image/jpeg',
-      'Cache-Control': 'public, max-age=86400',
+      ETag: etag,
     });
 
     return res.send(image);

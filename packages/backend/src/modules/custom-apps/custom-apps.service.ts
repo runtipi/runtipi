@@ -136,6 +136,37 @@ export class CustomAppService {
     }
   }
 
+  async uploadAppImage(appUrn: AppUrn, imageBuffer: Buffer): Promise<void> {
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+
+    if (appStoreId !== APPS_FOLDER) {
+      throw new TranslatableError('CUSTOM_APP_ERROR_NOT_CUSTOM', { urn: appUrn }, HttpStatus.BAD_REQUEST);
+    }
+
+    const existingApp = await this.appsRepository.getAppByUrn(appUrn);
+    if (!existingApp) {
+      throw new TranslatableError('CUSTOM_APP_ERROR_NOT_FOUND', { urn: appUrn }, HttpStatus.NOT_FOUND);
+    }
+
+    try {
+      const { dataDir } = this.configService.get('directories');
+      const metadataDir = path.join(dataDir, 'apps', appStoreId, appName, 'metadata');
+      const logoPath = path.join(metadataDir, 'logo.jpg');
+
+      await this.filesystem.createDirectory(metadataDir);
+
+      const ok = await this.filesystem.writeBinaryFile(logoPath, imageBuffer);
+      if (!ok) {
+        throw new Error(`Failed to write logo at ${logoPath}`);
+      }
+
+      this.logger.info(`Custom app ${appUrn} logo uploaded successfully`);
+    } catch (error) {
+      this.logger.error(`Failed to upload logo for custom app ${appUrn}:`, error);
+      throw new TranslatableError('CUSTOM_APP_ERROR_UPLOAD_FAILED', { urn: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   private async cleanupAppDirectories(appUrn: AppUrn): Promise<void> {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const { dataDir } = this.configService.get('directories');

@@ -1897,6 +1897,24 @@ export type UpdateCustomAppResponses = {
     default: unknown;
 };
 
+export type UploadAppImageData = {
+    body: {
+        image?: Blob | File;
+    };
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/custom-apps/{urn}/image';
+};
+
+export type UploadAppImageResponses = {
+    /**
+     * Logo uploaded successfully
+     */
+    200: unknown;
+};
+
 export type SeedDatabaseData = {
     body?: never;
     path?: never;

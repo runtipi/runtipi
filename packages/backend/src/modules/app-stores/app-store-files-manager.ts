@@ -296,7 +296,9 @@ export class AppStoreFilesManager {
     }
 
     const file = await this.filesystem.readBinaryFile(filePath);
-    return file;
+    const etag = await this.filesystem.getFileEtag(filePath);
+
+    return { image: file, etag };
   }
 
   public async getConfigJson(appUrn: AppUrn) {
