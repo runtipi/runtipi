@@ -36,15 +36,34 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
     setIsDirty,
   } = useMultiServiceStore();
   const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
-  const [json, setJson] = useState<{ value: string; error?: string }>({ value: '', error: undefined });
+  const [json, setJson] = useState<{ value: string; error?: string }>({
+    value: '',
+    error: undefined,
+  });
   const [activeTab, setActiveTab] = useState('essentials');
 
   const tabs = [
-    { id: 'essentials', label: t('MULTI_SERVICE_TAB_ESSENTIALS'), icon: IconSettings },
-    { id: 'environment', label: t('MULTI_SERVICE_TAB_ENVIRONMENT'), icon: IconVariable },
+    {
+      id: 'essentials',
+      label: t('MULTI_SERVICE_TAB_ESSENTIALS'),
+      icon: IconSettings,
+    },
+    {
+      id: 'environment',
+      label: t('MULTI_SERVICE_TAB_ENVIRONMENT'),
+      icon: IconVariable,
+    },
     { id: 'volumes', label: t('MULTI_SERVICE_TAB_VOLUMES'), icon: IconServer },
-    { id: 'ports', label: t('MULTI_SERVICE_TAB_PORTS'), icon: IconArrowsDownUp },
-    { id: 'advanced', label: t('MULTI_SERVICE_TAB_ADVANCED'), icon: IconCloudDataConnection },
+    {
+      id: 'ports',
+      label: t('MULTI_SERVICE_TAB_PORTS'),
+      icon: IconArrowsDownUp,
+    },
+    {
+      id: 'advanced',
+      label: t('MULTI_SERVICE_TAB_ADVANCED'),
+      icon: IconCloudDataConnection,
+    },
   ];
 
   const form = useForm<typeof dynamicComposeSchemaArk.infer>({
@@ -164,7 +183,12 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
                     >
                       <div className="d-flex justify-content-between align-items-center w-full">
                         <div>
-                          <span>{service.name || t('MULTI_SERVICE_SERVICE_NAME', { index: index + 1 })}</span>
+                          <span>
+                            {service.name ||
+                              t('MULTI_SERVICE_SERVICE_NAME', {
+                                index: index + 1,
+                              })}
+                          </span>
                           {serviceHasError(index) && <span className="ms-1 text-danger">*</span>}
                         </div>
                         {!service.isMain && (
@@ -196,10 +220,18 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
                 {services.map((service, index) => {
                   return (
                     <div key={service._id} className={clsx({ 'd-none': index !== activeService })}>
-                      <div className={clsx({ 'd-none': activeTab !== 'essentials' })}>
+                      <div
+                        className={clsx({
+                          'd-none': activeTab !== 'essentials',
+                        })}
+                      >
                         <EssentialConfig register={form.register} serviceIndex={index} errors={form.formState.errors} />
                       </div>
-                      <div className={clsx({ 'd-none': activeTab !== 'environment' })}>
+                      <div
+                        className={clsx({
+                          'd-none': activeTab !== 'environment',
+                        })}
+                      >
                         <EnvironmentConfig control={form.control} register={form.register} serviceIndex={index} errors={form.formState.errors} />
                       </div>
                       <div className={clsx({ 'd-none': activeTab !== 'volumes' })}>
@@ -233,7 +265,11 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
           >
             {t('MULTI_SERVICE_JSON_SAVE')}
           </Button>
-          <div className={clsx('text-muted small', { 'd-none': !jsonEditorOpen })}>
+          <div
+            className={clsx('text-muted small text-center', {
+              'd-none': !jsonEditorOpen,
+            })}
+          >
             <a
               href="https://runtipi.io/docs/reference/dynamic-compose"
               target="_blank"

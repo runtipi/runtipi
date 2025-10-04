@@ -1,0 +1,5 @@
+.ribbon-top.bg-warning:before {
+  border-color: var(--tblr-warning);
+  border-left-color: transparent;
+  border-top-color: transparent;
+}

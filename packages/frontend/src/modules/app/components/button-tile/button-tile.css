@@ -1,0 +1,12 @@
+.button-tile {
+  background: none;
+  border: none;
+  outline: none;
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.button-tile:hover {
+  color: color-mix(in srgb, transparent, var(--tblr-link-color) var(--tblr-link-opacity, 100%));
+}

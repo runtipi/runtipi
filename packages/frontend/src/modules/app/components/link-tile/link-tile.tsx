@@ -32,17 +32,11 @@ export const LinkTile: React.FC<LinkTileProps> = ({ link }) => {
         <ContextMenuTrigger>
           <div data-testid={`link-tile-${link.title}`}>
             <div className="card card-sm card-link">
-              <div className="card-body">
-                <div className="d-flex align-items-center overflow-hidden">
-                  <span className="me-3">
-                    <AppLogo url={link.iconUrl || ''} size={60} />
-                  </span>
-                  <div>
-                    <div className="d-flex h-3 align-items-center">
-                      <span className="h4 me-2 mb-1 fw-bolder">{link.title}</span>
-                    </div>
-                    {link.description?.length !== 0 && <div className="text-muted text-break">{link.description}</div>}
-                  </div>
+              <div className="card-body d-flex align-items-center gap-3">
+                <AppLogo url={link.iconUrl || ''} size={60} />
+                <div>
+                  <span className="fw-bolder">{link.title}</span>
+                  {link.description?.length !== 0 && <div className="text-muted text-break">{link.description}</div>}
                 </div>
               </div>
             </div>

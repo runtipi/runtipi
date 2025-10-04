@@ -1,13 +1,16 @@
-import { Link } from 'react-router';
-import './page.css';
+import { Link, useNavigate } from 'react-router';
 import { getInstalledAppsOptions, getLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import type { CustomLink } from '@/types/app.types';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { AddCustomAppButton } from '../components/add-custom-app-button/add-custom-app-button';
-import { AddLinkButton } from '../components/add-link-tile/add-link-tile';
 import { AppTile } from '../components/app-tile/app-tile';
 import { LinkTile } from '../components/link-tile/link-tile';
+import { ButtonTile } from '../components/button-tile/button-tile';
+import { IconLayoutGridAdd, IconLinkPlus } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import { useDisclosure } from '@/lib/hooks/use-disclosure';
+import { AddLinkDialog } from '../components/dialogs/add-link/add-link-dialog';
+import './page.css';
 
 export default () => {
   const { data: apps } = useSuspenseQuery({
@@ -17,6 +20,10 @@ export default () => {
   const { data: links } = useSuspenseQuery({
     ...getLinksOptions(),
   });
+
+  const addLinkDisclosure = useDisclosure();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { installed } = apps;
   const { links: customLinks = [] } = links;
@@ -28,7 +35,7 @@ export default () => {
 
     if (info.available) {
       return (
-        <Link key={app.id} to={`/apps/${storeId}/${appName}`} className="col-sm-6 col-lg-4 my-apps-link">
+        <Link key={app.id} to={`/apps/${storeId}/${appName}`} className="app-link">
           <AppTile key={info.urn} status={app.status} info={info} updateAvailable={updateAvailable} pendingRestart={app.pendingRestart} />
         </Link>
       );
@@ -39,7 +46,7 @@ export default () => {
 
   const renderLink = (link: CustomLink) => {
     return (
-      <Link key={link.id} to={link.url} target="_blank" className="col-sm-6 col-lg-4 my-apps-link">
+      <Link key={link.id} to={link.url} target="_blank" className="app-link">
         <LinkTile key={link.id} link={link} />
       </Link>
     );
@@ -47,15 +54,31 @@ export default () => {
 
   return (
     <>
-      {installed.length === 0 && customLinks.length === 0 && (
+      {installed.length === 0 && customLinks.length === 0 ? (
         <EmptyPage title="MY_APPS_EMPTY_TITLE" subtitle="MY_APPS_EMPTY_SUBTITLE" redirectPath="/app-store" actionLabel="MY_APPS_EMPTY_ACTION" />
+      ) : (
+        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3" data-testid="apps-list">
+          {installed.map(renderApp)}
+          {customLinks.map(renderLink)}
+          {installed.length > 0 ? (
+            <ButtonTile
+              title={t('CUSTOM_APP_ADD_TITLE')}
+              subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
+              action={() => navigate('/apps/create')}
+              icon={<IconLayoutGridAdd size={50} stroke={1.5} color="currentColor" />}
+            />
+          ) : null}
+          {installed.length > 0 ? (
+            <ButtonTile
+              title={t('LINKS_ADD_TITLE')}
+              subtitle={t('LINKS_ADD_SUBTITLE')}
+              action={() => addLinkDisclosure.open()}
+              icon={<IconLinkPlus size={50} stroke={1.5} color="currentColor" />}
+            />
+          ) : null}
+          <AddLinkDialog isOpen={addLinkDisclosure.isOpen} onClose={() => addLinkDisclosure.close()} />
+        </div>
       )}
-      <div className="row row-cards " data-testid="apps-list">
-        {installed.map(renderApp)}
-        {customLinks.map(renderLink)}
-        {installed.length > 0 ? <AddCustomAppButton /> : null}
-        {installed.length > 0 ? <AddLinkButton /> : null}
-      </div>
     </>
   );
 };

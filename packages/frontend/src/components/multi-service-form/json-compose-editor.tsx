@@ -80,7 +80,7 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
 
   return (
     <div>
-      <div className="w-full space-y-2">
+      <div className="w-full space-y-2 overflow-hidden">
         <CodeMirror
           placeholder={t('MULTI_SERVICE_JSON_EDIT_PLACEHOLDER')}
           value={value}
@@ -89,7 +89,7 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
           onChange={(e) => validateInput(e)}
           theme={copilot}
         />
-        {error && <pre className="whitespace-pre-wrap mt-2">{error}</pre>}
+        {error && <pre className="whitespace-pre-wrap m-2">{error}</pre>}
       </div>
     </div>
   );

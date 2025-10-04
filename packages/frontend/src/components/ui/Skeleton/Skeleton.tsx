@@ -32,7 +32,7 @@ const Skeleton = ({ ...props }: SkeletonComponentProps) => {
       className={clsx('rt-Skeleton', className)}
       data-inline-skeleton={React.isValidElement(children) ? undefined : true}
       tabIndex={-1}
-      // @ts-ignore
+      // @ts-expect-error
       inert={inert}
       {...skeletonProps}
     >

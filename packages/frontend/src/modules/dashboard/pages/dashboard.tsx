@@ -3,6 +3,7 @@ import { IconCircuitResistor, IconCpu, IconDatabase } from '@tabler/icons-react'
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { SystemStat } from '../components/system-stat';
+import './dashboard.css';
 
 export default () => {
   const { t } = useTranslation();
@@ -13,7 +14,7 @@ export default () => {
   const isLoading = !data;
 
   return (
-    <div className="row row-deck row-cards">
+    <div className="row">
       <SystemStat
         isLoading={isLoading}
         title={t('DASHBOARD_DISK_SPACE_TITLE')}

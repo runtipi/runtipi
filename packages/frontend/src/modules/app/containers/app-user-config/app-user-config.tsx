@@ -109,7 +109,14 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
             <TabsTrigger value="app-env">app.env</TabsTrigger>
           </TabsList>
           <TabsContent value="docker-compose">
-            <CodeMirror readOnly={!isEnabled} value={dockerCompose} height="400px" extensions={[yaml()]} onChange={(value) => setDockerCompose(value)} theme={copilot} />
+            <CodeMirror
+              readOnly={!isEnabled}
+              value={dockerCompose}
+              height="400px"
+              extensions={[yaml()]}
+              onChange={(value) => setDockerCompose(value)}
+              theme={copilot}
+            />
             <Trans
               t={t}
               i18nKey="USER_CONFIG_DOCKER_MERGE_DESCRIPTION"
@@ -117,7 +124,7 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
                 a: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/" />,
                 code: <code />,
               }}
-              className='mt-2'
+              className="mt-2"
             />
           </TabsContent>
           <TabsContent value="app-env">

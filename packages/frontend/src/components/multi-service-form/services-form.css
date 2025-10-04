@@ -47,3 +47,11 @@
 .bg-card {
   background-color: var(--tblr-bg-surface);
 }
+
+.cm-editor {
+  border-radius: 0 0.5rem 0 0;
+}
+
+.cm-scroller {
+  border-radius: 0.5rem 0 0 0;
+}

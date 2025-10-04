@@ -1,8 +1,18 @@
-.my-apps-link {
+.app-link {
   text-decoration: none;
   color: inherit;
+  transition: color;
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
-.my-apps-link:hover {
+.app-link:hover {
   text-decoration: none;
+}
+
+.row > * {
+  margin-top: 0.75rem;
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
 }
