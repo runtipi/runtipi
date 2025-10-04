@@ -45,9 +45,7 @@ export const CustomAppLogo: React.FC<{
           >
             <div className="custom-app-logo-overlay-content">
               <IconUpload size={size / 3} className="custom-app-logo-icon" />
-              <span className="custom-app-logo-text">
-                {isUploading ? t('CUSTOM_APP_UPLOADING') : t('CUSTOM_APP_UPLOAD_IMAGE')}
-              </span>
+              <span className="custom-app-logo-text">{isUploading ? t('CUSTOM_APP_UPLOADING') : t('CUSTOM_APP_UPLOAD_IMAGE')}</span>
             </div>
           </button>
           <input
