@@ -129,7 +129,6 @@ export const serviceSchemaV1 = z.object({
 });
 
 export const dynamicComposeSchemaV1 = z.object({
-  schemaVersion: z.literal(undefined),
   services: serviceSchemaV1.array(),
   overrides: z
     .array(

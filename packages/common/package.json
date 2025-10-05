@@ -33,7 +33,8 @@
   "scripts": {
     "prepublishOnly": "npm run ci",
     "dev": "tsc --noEmit --watch --preserveWatchOutput",
-    "build": "rm -rf dist && tsc && cp package.json dist/",
+    "build": "rm -rf dist && tsc && cp package.json dist/ && npm run build:schemas",
+    "build:schemas": "bun run ./script/gen-json-schema.ts",
     "ci": "npm run build && npm run check-exports",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "local-release": "changeset version && changeset publish",

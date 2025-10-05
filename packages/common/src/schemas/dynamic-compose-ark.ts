@@ -4,11 +4,11 @@ export const serviceSchemaArk = type({
   // Required fields
   image: type('string').configure({ message: 'CUSTOM_APP_ERROR_IMAGE_REQUIRED' }),
   name: type('string').configure({ message: 'CUSTOM_APP_ERROR_NAME_REQUIRED' }),
-  internalPort: type('0 < number < 65536').configure({ message: 'CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID' }).optional(),
+  internalPort: type('0 < number.integer < 65536').configure({ message: 'CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID' }).optional(),
 
   // Optional fields
   isMain: type('boolean').optional(),
-  networkMode: type('string | undefined').optional(),
+  networkMode: type('string').optional(),
   extraHosts: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_EXTRA_HOST_INVALID' }).optional(),
   ulimits: type({
     nproc: type
@@ -50,11 +50,11 @@ export const serviceSchemaArk = type({
   }).optional(),
   addToMainNetwork: type('boolean').optional(),
   addPorts: type({
-    containerPort: type('0 < number < 65536').configure({ message: 'CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID' }),
-    hostPort: type('0 < number < 65536').configure({ message: 'CUSTOM_APP_ERROR_HOST_PORT_INVALID' }),
+    containerPort: type('0 < number.integer < 65536').configure({ message: 'CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID' }),
+    hostPort: type('0 < number.integer < 65536').configure({ message: 'CUSTOM_APP_ERROR_HOST_PORT_INVALID' }),
     udp: type('boolean').optional(),
     tcp: type('boolean').optional(),
-    interface: type('string | undefined').optional(),
+    interface: type('string').optional(),
   })
     .array()
     .optional(),
@@ -117,15 +117,15 @@ export const serviceSchemaArk = type({
       }).optional(),
     },
   }).optional(),
-  hostname: type('string | undefined').optional(),
+  hostname: type('string').optional(),
   devices: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_DEVICE_INVALID' }).optional(),
   entrypoint: type('string | string[]').configure({ message: 'CUSTOM_APP_ERROR_ENTRYPOINT_INVALID' }).optional(),
-  pid: type('string | undefined').optional(),
+  pid: type('string').optional(),
   privileged: type('boolean').optional(),
   tty: type('boolean').optional(),
-  user: type('string | undefined').optional(),
-  workingDir: type('string | undefined').optional(),
-  shmSize: type('string | undefined').optional(),
+  user: type('string').optional(),
+  workingDir: type('string').optional(),
+  shmSize: type('string').optional(),
   capDrop: type('string[]').configure({ message: 'CUSTOM_APP_ERROR_CAP_DROP_INVALID' }).optional(),
   logging: type({
     driver: type('string').configure({ message: 'CUSTOM_APP_ERROR_LOGGING_DRIVER_REQUIRED' }),
