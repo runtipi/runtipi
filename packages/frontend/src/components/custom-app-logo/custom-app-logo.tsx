@@ -43,6 +43,12 @@ export const CustomAppLogo: React.FC<{
       return;
     }
 
+    if (file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
+      toast.error(t('INVALID_FILE_TYPE'));
+      e.target.value = '';
+      return;
+    }
+
     if (file && onImageUpload) {
       onImageUpload(file);
       e.target.value = '';
@@ -69,7 +75,7 @@ export const CustomAppLogo: React.FC<{
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept=".jpg,.jpeg,image/jpeg"
             onChange={handleFileChange}
             style={{ display: 'none' }}
             aria-label={t('CUSTOM_APP_UPLOAD_IMAGE')}

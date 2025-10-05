@@ -57,6 +57,10 @@ export class CustomAppController {
       throw new BadRequestException('File must be an image');
     }
 
+    if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/jpg') {
+      throw new BadRequestException('Only JPG files are allowed');
+    }
+
     await this.customAppService.uploadAppImage(castAppUrn(appUrn), file.buffer);
     return { success: true };
   }
