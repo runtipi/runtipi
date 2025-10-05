@@ -6,20 +6,14 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 const alias = {
   '@': path.resolve(__dirname, './src'),
-  '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
 };
+const plugins = [reactRouter(), tsconfigPaths()];
 
 const { NODE_ENV } = process.env;
 if (NODE_ENV === 'production') {
   // @ts-expect-error
   alias['react-dom/server'] = 'react-dom/server.node';
-}
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    reactRouter(),
-    tsconfigPaths(),
+  plugins.push(
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       release: {
@@ -28,7 +22,12 @@ export default defineConfig({
       org: 'runtipi',
       project: 'runtipi-frontend',
     }),
-  ],
+  );
+}
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins,
   resolve: {
     alias,
   },

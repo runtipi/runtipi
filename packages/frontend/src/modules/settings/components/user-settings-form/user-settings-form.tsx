@@ -1,5 +1,4 @@
 import { LanguageSelector } from '@/components/language-selector/language-selector';
-import { TimeZoneSuspense } from '@/components/timezone-selector/timezone-selector';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch';
@@ -20,6 +19,7 @@ import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { ColorSelector, THEME_COLOR_ENUM, type ThemeColor } from '../color-selector/color-selector';
 import { THEME_BASE_ENUM, type ThemeBase, ThemeBaseSelector } from '../theme-base-selector/theme-base-selector';
+import { TimeZoneSuspense } from '@/components/timezone-selector/timezone.suspense';
 
 const TimeZoneSelector = lazy(() =>
   import('@/components/timezone-selector/timezone-selector').then((module) => ({
