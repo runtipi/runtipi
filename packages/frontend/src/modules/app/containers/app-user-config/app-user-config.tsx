@@ -121,6 +121,7 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
               t={t}
               i18nKey="USER_CONFIG_DOCKER_MERGE_DESCRIPTION"
               components={{
+                // biome-ignore lint/a11y/useAnchorContent: not applicable
                 a: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/" />,
                 code: <code />,
               }}
