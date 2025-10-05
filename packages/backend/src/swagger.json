@@ -4482,12 +4482,6 @@
                       "type": "string",
                       "message": "CUSTOM_APP_ERROR_IMAGE_REQUIRED"
                     },
-                    "internalPort": {
-                      "type": "number",
-                      "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
-                      "exclusiveMaximum": 65536,
-                      "exclusiveMinimum": 0
-                    },
                     "name": {
                       "type": "string",
                       "message": "CUSTOM_APP_ERROR_NAME_REQUIRED"
@@ -4498,23 +4492,19 @@
                         "type": "object",
                         "properties": {
                           "containerPort": {
-                            "type": "number",
+                            "type": "integer",
                             "message": "CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
                           "hostPort": {
-                            "type": "number",
+                            "type": "integer",
                             "message": "CUSTOM_APP_ERROR_HOST_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
                           "interface": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "tcp": {
                             "type": "boolean"
@@ -4809,11 +4799,13 @@
                       ]
                     },
                     "hostname": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
+                    },
+                    "internalPort": {
+                      "type": "integer",
+                      "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
+                      "exclusiveMaximum": 65536,
+                      "exclusiveMinimum": 0
                     },
                     "isMain": {
                       "type": "boolean"
@@ -4839,18 +4831,10 @@
                       ]
                     },
                     "networkMode": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "pid": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "privileged": {
                       "type": "boolean"
@@ -4866,11 +4850,7 @@
                       }
                     },
                     "shmSize": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "stdinOpen": {
                       "type": "boolean"
@@ -4998,11 +4978,7 @@
                       }
                     },
                     "user": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "volumes": {
                       "type": "array",
@@ -5034,16 +5010,11 @@
                       }
                     },
                     "workingDir": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     }
                   },
                   "required": [
                     "image",
-                    "internalPort",
                     "name"
                   ]
                 }
@@ -5064,23 +5035,19 @@
                               "type": "object",
                               "properties": {
                                 "containerPort": {
-                                  "type": "number",
+                                  "type": "integer",
                                   "message": "CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID",
                                   "exclusiveMaximum": 65536,
                                   "exclusiveMinimum": 0
                                 },
                                 "hostPort": {
-                                  "type": "number",
+                                  "type": "integer",
                                   "message": "CUSTOM_APP_ERROR_HOST_PORT_INVALID",
                                   "exclusiveMaximum": 65536,
                                   "exclusiveMinimum": 0
                                 },
                                 "interface": {
-                                  "anyOf": [
-                                    {
-                                      "type": "string"
-                                    }
-                                  ]
+                                  "type": "string"
                                 },
                                 "tcp": {
                                   "type": "boolean"
@@ -5375,18 +5342,14 @@
                             ]
                           },
                           "hostname": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "image": {
                             "type": "string",
                             "message": "CUSTOM_APP_ERROR_IMAGE_REQUIRED"
                           },
                           "internalPort": {
-                            "type": "number",
+                            "type": "integer",
                             "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
@@ -5419,18 +5382,10 @@
                             "message": "CUSTOM_APP_ERROR_NAME_REQUIRED"
                           },
                           "networkMode": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "pid": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "privileged": {
                             "type": "boolean"
@@ -5446,11 +5401,7 @@
                             }
                           },
                           "shmSize": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "stdinOpen": {
                             "type": "boolean"
@@ -5578,11 +5529,7 @@
                             }
                           },
                           "user": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "volumes": {
                             "type": "array",
@@ -5614,11 +5561,7 @@
                             }
                           },
                           "workingDir": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -5699,12 +5642,6 @@
                       "type": "string",
                       "message": "CUSTOM_APP_ERROR_IMAGE_REQUIRED"
                     },
-                    "internalPort": {
-                      "type": "number",
-                      "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
-                      "exclusiveMaximum": 65536,
-                      "exclusiveMinimum": 0
-                    },
                     "name": {
                       "type": "string",
                       "message": "CUSTOM_APP_ERROR_NAME_REQUIRED"
@@ -5715,23 +5652,19 @@
                         "type": "object",
                         "properties": {
                           "containerPort": {
-                            "type": "number",
+                            "type": "integer",
                             "message": "CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
                           "hostPort": {
-                            "type": "number",
+                            "type": "integer",
                             "message": "CUSTOM_APP_ERROR_HOST_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
                           },
                           "interface": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "tcp": {
                             "type": "boolean"
@@ -6026,11 +5959,13 @@
                       ]
                     },
                     "hostname": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
+                    },
+                    "internalPort": {
+                      "type": "integer",
+                      "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
+                      "exclusiveMaximum": 65536,
+                      "exclusiveMinimum": 0
                     },
                     "isMain": {
                       "type": "boolean"
@@ -6056,18 +5991,10 @@
                       ]
                     },
                     "networkMode": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "pid": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "privileged": {
                       "type": "boolean"
@@ -6083,11 +6010,7 @@
                       }
                     },
                     "shmSize": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "stdinOpen": {
                       "type": "boolean"
@@ -6215,11 +6138,7 @@
                       }
                     },
                     "user": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "volumes": {
                       "type": "array",
@@ -6251,16 +6170,11 @@
                       }
                     },
                     "workingDir": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        }
-                      ]
+                      "type": "string"
                     }
                   },
                   "required": [
                     "image",
-                    "internalPort",
                     "name"
                   ]
                 }
@@ -6281,23 +6195,19 @@
                               "type": "object",
                               "properties": {
                                 "containerPort": {
-                                  "type": "number",
+                                  "type": "integer",
                                   "message": "CUSTOM_APP_ERROR_CONTAINER_PORT_INVALID",
                                   "exclusiveMaximum": 65536,
                                   "exclusiveMinimum": 0
                                 },
                                 "hostPort": {
-                                  "type": "number",
+                                  "type": "integer",
                                   "message": "CUSTOM_APP_ERROR_HOST_PORT_INVALID",
                                   "exclusiveMaximum": 65536,
                                   "exclusiveMinimum": 0
                                 },
                                 "interface": {
-                                  "anyOf": [
-                                    {
-                                      "type": "string"
-                                    }
-                                  ]
+                                  "type": "string"
                                 },
                                 "tcp": {
                                   "type": "boolean"
@@ -6592,18 +6502,14 @@
                             ]
                           },
                           "hostname": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "image": {
                             "type": "string",
                             "message": "CUSTOM_APP_ERROR_IMAGE_REQUIRED"
                           },
                           "internalPort": {
-                            "type": "number",
+                            "type": "integer",
                             "message": "CUSTOM_APP_ERROR_INTERNAL_PORT_INVALID",
                             "exclusiveMaximum": 65536,
                             "exclusiveMinimum": 0
@@ -6636,18 +6542,10 @@
                             "message": "CUSTOM_APP_ERROR_NAME_REQUIRED"
                           },
                           "networkMode": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "pid": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "privileged": {
                             "type": "boolean"
@@ -6663,11 +6561,7 @@
                             }
                           },
                           "shmSize": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "stdinOpen": {
                             "type": "boolean"
@@ -6795,11 +6689,7 @@
                             }
                           },
                           "user": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "volumes": {
                             "type": "array",
@@ -6831,11 +6721,7 @@
                             }
                           },
                           "workingDir": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              }
-                            ]
+                            "type": "string"
                           }
                         }
                       }

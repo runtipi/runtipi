@@ -579,7 +579,6 @@ export type CreateCustomAppDto = {
         schemaVersion: 2;
         services: Array<{
             image: string;
-            internalPort: number;
             name: string;
             addPorts?: Array<{
                 containerPort: number;
@@ -636,6 +635,7 @@ export type CreateCustomAppDto = {
                 timeout?: string;
             };
             hostname?: string;
+            internalPort?: number;
             isMain?: boolean;
             logging?: {
                 driver: string;
@@ -809,7 +809,6 @@ export type UpdateCustomAppDto = {
         schemaVersion: 2;
         services: Array<{
             image: string;
-            internalPort: number;
             name: string;
             addPorts?: Array<{
                 containerPort: number;
@@ -866,6 +865,7 @@ export type UpdateCustomAppDto = {
                 timeout?: string;
             };
             hostname?: string;
+            internalPort?: number;
             isMain?: boolean;
             logging?: {
                 driver: string;

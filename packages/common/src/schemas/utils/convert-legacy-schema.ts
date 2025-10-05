@@ -10,14 +10,14 @@ export const parseComposeJson = (data: unknown): z.infer<typeof dynamicComposeSc
   }
 
   // @ts-expect-error schemaVersion 1 is equivalent to undefined
-  if (!parsed.data.schemaVersion || parsed.data.schemaVersion === 1) {
+  if (parsed.data.schemaVersion === undefined || parsed.data.schemaVersion === 1) {
     const mainServiceName = Object.values(parsed.data.services).find((s) => s.isMain)?.name;
     console.warn(
       `${mainServiceName} is using deprecated schema version 1 or missing schemaVersion. Please update the compose schema to the latest version. https://runtipi.io/docs/reference/dynamic-compose`,
     );
 
-    return composeV1ToLatest(parsed.data as typeof parsed.data & { schemaVersion?: 1 });
+    return composeV1ToLatest(parsed.data);
   }
 
-  return parsed.data as z.infer<typeof dynamicComposeSchema>;
+  return parsed.data;
 };

@@ -15,6 +15,8 @@ import { EnvironmentConfig } from './elements/environment';
 import { EssentialConfig } from './elements/essential';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { deepClean } from '@/utils/objects';
+import { type } from 'arktype';
 
 type Props = {
   onSubmit?: (data: typeof dynamicComposeSchemaArk.infer) => void;
@@ -48,7 +50,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   ];
 
   const form = useForm<typeof dynamicComposeSchemaArk.infer>({
-    resolver: arktypeResolver(dynamicComposeSchemaArk.omit('schemaVersion')),
+    resolver: arktypeResolver(type('object').pipe((d) => dynamicComposeSchemaArk.omit('schemaVersion')(deepClean(d)))),
     defaultValues: {
       services,
     },
