@@ -35,7 +35,7 @@ export const CustomAppDetailsPage = () => {
       toast.success(t('CUSTOM_APP_UPLOAD_SUCCESS'));
     },
     onError: (error: TranslatableError) => {
-      toast.error(error.message || t('CUSTOM_APP_ERROR_UPLOAD_FAILED'));
+      toast.error(t(error.message, error.intlParams));
     },
   });
 

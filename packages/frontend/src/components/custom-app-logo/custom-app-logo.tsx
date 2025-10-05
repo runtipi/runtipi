@@ -5,6 +5,7 @@ import type React from 'react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import './custom-app-logo.css';
+import toast from 'react-hot-toast';
 
 export const CustomAppLogo: React.FC<{
   urn?: string;
@@ -26,8 +27,25 @@ export const CustomAppLogo: React.FC<{
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error(t('FILE_TOO_LARGE'));
+      e.target.value = '';
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error(t('INVALID_FILE_TYPE'));
+      e.target.value = '';
+      return;
+    }
+
     if (file && onImageUpload) {
       onImageUpload(file);
+      e.target.value = '';
     }
   };
 
