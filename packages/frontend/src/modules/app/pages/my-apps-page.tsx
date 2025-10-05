@@ -65,7 +65,7 @@ export default () => {
               title={t('CUSTOM_APP_ADD_TITLE')}
               subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
               action={() => navigate('/apps/create')}
-              icon={<IconLayoutGridAdd size={50} stroke={1.5} color="currentColor" />}
+              icon={<IconLayoutGridAdd size={50} stroke={1.5} color="#A4A4A4" />}
             />
           ) : null}
           {installed.length > 0 ? (
@@ -73,7 +73,7 @@ export default () => {
               title={t('LINKS_ADD_TITLE')}
               subtitle={t('LINKS_ADD_SUBTITLE')}
               action={() => addLinkDisclosure.open()}
-              icon={<IconLinkPlus size={50} stroke={1.5} color="currentColor" />}
+              icon={<IconLinkPlus size={50} stroke={1.5} color="#A4A4A4" />}
             />
           ) : null}
           <AddLinkDialog isOpen={addLinkDisclosure.isOpen} onClose={() => addLinkDisclosure.close()} />
