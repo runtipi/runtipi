@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "链接标题",
   "LINKS_FORM_LINK_URL": "链接 URL",
   "LINKS_FROM_LINK_DESCRIPTION": "链接描述",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "此应用程序已被弃用",
   "MY_APPS_EMPTY_ACTION": "打开App Store",
   "MY_APPS_EMPTY_SUBTITLE": "从应用商店安装一个应用程序以开始",
