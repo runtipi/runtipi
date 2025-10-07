@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "Liên kết tiêu đề",
   "LINKS_FORM_LINK_URL": "Địa chỉ liên kết:",
   "LINKS_FROM_LINK_DESCRIPTION": "Mô tả Liên kết",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "Ứng dụng này đã bị loại bỏ",
   "MY_APPS_EMPTY_ACTION": "Đi đến Cửa hàng Ứng dụng",
   "MY_APPS_EMPTY_SUBTITLE": "Cài đặt một ứng dụng từ Cửa hàng Ứng dụng để bắt đầu",
