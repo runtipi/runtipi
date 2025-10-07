@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "Τίτλος Συνδέσμου",
   "LINKS_FORM_LINK_URL": "Διεύθυνση Συνδέσμου URL",
   "LINKS_FROM_LINK_DESCRIPTION": "Περιγραφή συνδέσμου",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "Αυτή η εφαρμογή έχει αποσυρθεί",
   "MY_APPS_EMPTY_ACTION": "Μετάβαση στο κατάστημα εφαρμογών",
   "MY_APPS_EMPTY_SUBTITLE": "Εγκαταστήστε μια εφαρμογή από το κατάστημα εφαρμογών για να ξεκινήσετε",
