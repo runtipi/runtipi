@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "Bağlantı başlığı",
   "LINKS_FORM_LINK_URL": "Bağlantı URL'si",
   "LINKS_FROM_LINK_DESCRIPTION": "Bağlantı Açıklaması",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "Bu uygulama artık desteklenmiyor",
   "MY_APPS_EMPTY_ACTION": "Uygulama mağazasına git",
   "MY_APPS_EMPTY_SUBTITLE": "Başlamak için uygulama mağazasından bir uygulama yükleyin",
