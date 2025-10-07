@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "Linktitel",
   "LINKS_FORM_LINK_URL": "Link-URL",
   "LINKS_FROM_LINK_DESCRIPTION": "Linkbeschreibung",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "Diese App ist veraltet",
   "MY_APPS_EMPTY_ACTION": "Zum App Store",
   "MY_APPS_EMPTY_SUBTITLE": "Installiere eine App aus dem App Store, um loszulegen",
