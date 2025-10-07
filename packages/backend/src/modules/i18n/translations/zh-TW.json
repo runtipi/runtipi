@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "連結標題",
   "LINKS_FORM_LINK_URL": "連結網址",
   "LINKS_FROM_LINK_DESCRIPTION": "連結描述",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "這個應用程式已被棄用",
   "MY_APPS_EMPTY_ACTION": "前往應用程式商店",
   "MY_APPS_EMPTY_SUBTITLE": "開始安裝你的第一個應用程式吧",
