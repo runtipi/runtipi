@@ -13,10 +13,8 @@ interface ServiceVolume {
   hostPath: string;
   containerPath: string;
   readOnly?: boolean;
-  // Legacy boolean flags for backward compatibility
   shared?: boolean;
   private?: boolean;
-  // New bind mount propagation support
   bind?: {
     propagation?: 'rprivate' | 'private' | 'rshared' | 'shared' | 'rslave' | 'slave';
   };
@@ -265,17 +263,16 @@ export class ServiceBuilder {
 
     // Validation: ensure only one propagation method is used
     const legacyFlags = [volume.shared, volume.private].filter(Boolean).length;
-    const newBindFlag = volume.bind?.propagation ? 1 : 0;
+    const newBindFlag = Boolean(volume.bind?.propagation);
 
     if (legacyFlags > 1) {
       throw new Error('Only one of shared or private can be set');
     }
 
-    if (legacyFlags > 0 && newBindFlag > 0) {
+    if (legacyFlags > 0 && newBindFlag) {
       throw new Error('Cannot use both legacy flags (shared/private) and new bind.propagation simultaneously');
     }
 
-    // Handle new bind mount propagation mode with proper Docker Compose long-form syntax
     if (volume.bind?.propagation) {
       const longFormVolume: VolumeLongForm = {
         type: 'bind',
@@ -288,10 +285,8 @@ export class ServiceBuilder {
       };
       this.service.volumes.push(longFormVolume);
     } else {
-      // Use short-form syntax for backward compatibility and legacy flags
       const readOnly = volume.readOnly ? ':ro' : '';
-      
-      // Handle legacy boolean flags for SELinux labeling
+
       let propagationFlag = '';
       const shared = volume.shared ? ':z' : '';
       const privateVolume = volume.private ? ':Z' : '';
