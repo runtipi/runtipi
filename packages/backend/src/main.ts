@@ -1,40 +1,33 @@
-import "./instrument";
+import './instrument';
 
-import fs from "node:fs";
-import path from "node:path";
-import {
-  type INestApplication,
-  type LogLevel,
-  ValidationPipe,
-} from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import cookieParser from "cookie-parser";
-import { AppModule } from "./app.module";
-import { AppService } from "./app.service";
-import { APP_DIR } from "./common/constants";
-import { generateSystemEnvFile } from "./common/helpers/env-helpers";
+import fs from 'node:fs';
+import path from 'node:path';
+import { type INestApplication, type LogLevel, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
+import { AppService } from './app.service';
+import { APP_DIR } from './common/constants';
+import { generateSystemEnvFile } from './common/helpers/env-helpers';
 
 async function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
-    .setTitle("Runtipi API")
-    .setDescription("API specs for Runtipi")
-    .setVersion("1.0")
-    .setOpenAPIVersion("3.1.0")
+    .setTitle('Runtipi API')
+    .setDescription('API specs for Runtipi')
+    .setVersion('1.0')
+    .setOpenAPIVersion('3.1.0')
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
     operationIdFactory: (_: string, methodKey: string) => methodKey,
   });
-  SwaggerModule.setup("api/docs", app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   const { NODE_ENV } = process.env;
   // write the swagger.json file to the assets folder
-  if (NODE_ENV !== "production") {
-    await fs.promises.writeFile(
-      path.join(APP_DIR, "packages", "backend", "src", "swagger.json"),
-      JSON.stringify(document, null, 2)
-    );
+  if (NODE_ENV !== 'production') {
+    await fs.promises.writeFile(path.join(APP_DIR, 'packages', 'backend', 'src', 'swagger.json'), JSON.stringify(document, null, 2));
   }
 }
 
@@ -43,13 +36,13 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     abortOnError: true,
-    logger: [process.env.LOG_LEVEL as LogLevel, "error", "warn", "fatal"],
+    logger: [process.env.LOG_LEVEL as LogLevel, 'error', 'warn', 'fatal'],
   });
 
   const appService = app.get(AppService);
   await appService.bootstrap();
 
-  app.setGlobalPrefix("/api");
+  app.setGlobalPrefix('/api');
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
   app.use(cookieParser());
