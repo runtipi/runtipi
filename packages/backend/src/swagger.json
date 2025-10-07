@@ -1887,6 +1887,39 @@
         ]
       }
     },
+    "/api/custom-apps/{urn}/metadata": {
+      "patch": {
+        "operationId": "updateAppMetadata",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppMetadataDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "CustomApp"
+        ]
+      }
+    },
     "/api/debug/seed": {
       "post": {
         "operationId": "seedDatabase",
@@ -6793,6 +6826,17 @@
         },
         "required": [
           "config"
+        ]
+      },
+      "UpdateAppMetadataDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "data"
         ]
       }
     }

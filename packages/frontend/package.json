@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-markdown": "^6.4.0",
     "@codemirror/lang-yaml": "^6.1.2",
     "@codemirror/merge": "^6.10.2",
     "@hey-api/client-fetch": "^0.13.1",

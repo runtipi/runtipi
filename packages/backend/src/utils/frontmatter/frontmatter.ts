@@ -2,7 +2,7 @@ import YAML from "yaml";
 
 export function getFrontmatter(content: string) {
   try {
-    const frontmatterRegex = /^---\n.*\n---$/m;
+    const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*(?=\n|$)/m;
 
     const match = content.match(frontmatterRegex);
 

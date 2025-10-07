@@ -167,17 +167,23 @@ export const appInfoSchemaArk = type({
   force_pull: "boolean = false",
 });
 
-export const frontmatterSchema = appInfoSchema.pick({
-  short_desc: true,
-  description: true,
-  source: true,
-  website: true,
-  author: true,
-  categories: true,
-  version: true,
-  port: true,
-  supported_architectures: true,
-});
+export const frontmatterSchema = z
+  .object({
+    short_desc: appInfoSchema.shape.short_desc.optional(),
+    description: appInfoSchema.shape.description.optional(),
+    source: appInfoSchema.shape.source.optional(),
+    website: appInfoSchema.shape.website.optional(),
+    author: appInfoSchema.shape.author.optional(),
+    categories: appInfoSchema.shape.categories
+      .optional()
+      .default(["development"]),
+    version: appInfoSchema.shape.version.optional(),
+    port: appInfoSchema.shape.port.optional(),
+    supported_architectures: appInfoSchema.shape.supported_architectures
+      .optional()
+      .default(["amd64", "arm64"]),
+  })
+  .optional();
 
 // Derived types
 export type AppInfoInput = typeof appInfoSchemaArk.inferIn;

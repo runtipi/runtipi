@@ -244,61 +244,67 @@ type ResInterceptor<Res, Req, Options> = (
 ) => Res | Promise<Res>;
 
 class Interceptors<Interceptor> {
-  fns: Array<Interceptor | null> = [];
+  _fns: (Interceptor | null)[];
 
-  clear(): void {
-    this.fns = [];
+  constructor() {
+    this._fns = [];
   }
 
-  eject(id: number | Interceptor): void {
-    const index = this.getInterceptorIndex(id);
-    if (this.fns[index]) {
-      this.fns[index] = null;
-    }
-  }
-
-  exists(id: number | Interceptor): boolean {
-    const index = this.getInterceptorIndex(id);
-    return Boolean(this.fns[index]);
+  clear() {
+    this._fns = [];
   }
 
   getInterceptorIndex(id: number | Interceptor): number {
     if (typeof id === 'number') {
-      return this.fns[id] ? id : -1;
+      return this._fns[id] ? id : -1;
+    } else {
+      return this._fns.indexOf(id);
     }
-    return this.fns.indexOf(id);
   }
-
-  update(
-    id: number | Interceptor,
-    fn: Interceptor,
-  ): number | Interceptor | false {
+  exists(id: number | Interceptor) {
     const index = this.getInterceptorIndex(id);
-    if (this.fns[index]) {
-      this.fns[index] = fn;
-      return id;
+    return !!this._fns[index];
+  }
+
+  eject(id: number | Interceptor) {
+    const index = this.getInterceptorIndex(id);
+    if (this._fns[index]) {
+      this._fns[index] = null;
     }
-    return false;
   }
 
-  use(fn: Interceptor): number {
-    this.fns.push(fn);
-    return this.fns.length - 1;
+  update(id: number | Interceptor, fn: Interceptor) {
+    const index = this.getInterceptorIndex(id);
+    if (this._fns[index]) {
+      this._fns[index] = fn;
+      return id;
+    } else {
+      return false;
+    }
+  }
+
+  use(fn: Interceptor) {
+    this._fns = [...this._fns, fn];
+    return this._fns.length - 1;
   }
 }
 
+// `createInterceptors()` response, meant for external use as it does not
+// expose internals
 export interface Middleware<Req, Res, Err, Options> {
-  error: Interceptors<ErrInterceptor<Err, Res, Req, Options>>;
-  request: Interceptors<ReqInterceptor<Req, Options>>;
-  response: Interceptors<ResInterceptor<Res, Req, Options>>;
+  error: Pick<
+    Interceptors<ErrInterceptor<Err, Res, Req, Options>>,
+    'eject' | 'use'
+  >;
+  request: Pick<Interceptors<ReqInterceptor<Req, Options>>, 'eject' | 'use'>;
+  response: Pick<
+    Interceptors<ResInterceptor<Res, Req, Options>>,
+    'eject' | 'use'
+  >;
 }
 
-export const createInterceptors = <Req, Res, Err, Options>(): Middleware<
-  Req,
-  Res,
-  Err,
-  Options
-> => ({
+// do not add `Middleware` as return type so we can use _fns internally
+export const createInterceptors = <Req, Res, Err, Options>() => ({
   error: new Interceptors<ErrInterceptor<Err, Res, Req, Options>>(),
   request: new Interceptors<ReqInterceptor<Req, Options>>(),
   response: new Interceptors<ResInterceptor<Res, Req, Options>>(),
