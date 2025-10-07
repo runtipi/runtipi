@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "Länktitel",
   "LINKS_FORM_LINK_URL": "Länk url",
   "LINKS_FROM_LINK_DESCRIPTION": "Länkbeskrivning",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "Appen är förlegad",
   "MY_APPS_EMPTY_ACTION": "Gå till app store",
   "MY_APPS_EMPTY_SUBTITLE": "Installera en app från appbutiken för att komma igång",
