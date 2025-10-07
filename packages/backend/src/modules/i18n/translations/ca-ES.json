@@ -381,6 +381,7 @@
   "LINKS_FORM_LINK_TITLE": "Link title",
   "LINKS_FORM_LINK_URL": "Link URL",
   "LINKS_FROM_LINK_DESCRIPTION": "Link Description",
+  "LINKS_FORM_VISIBLE_ON_GUEST_DASHBOARD": "Visible on guest dashboard",
   "MY_APPS_DEPRECATED": "Aquesta aplicació és obsoleta",
   "MY_APPS_EMPTY_ACTION": "Anar a la botiga d'aplicacions",
   "MY_APPS_EMPTY_SUBTITLE": "Instal·la una aplicació des de la botiga d'aplicacions per començar",
