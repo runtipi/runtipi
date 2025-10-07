@@ -1,12 +1,17 @@
 .button-tile {
   background: none;
+  padding-block: 0;
+  color: inherit;
   border: none;
-  outline: none;
-  transition-property: color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  border-width: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  text-decoration: none;
+  padding: 0;
 }
 
 .button-tile:hover {
-  color: color-mix(in srgb, transparent, var(--tblr-link-color) var(--tblr-link-opacity, 100%));
+  text-decoration: none;
+  color: inherit;
 }

@@ -13,7 +13,7 @@ interface IProps {
 }
 
 export const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, subtitle, metric, isLoading }) => (
-  <div className="col-sm-6 col-lg-4">
+  <div className="p-0 col-sm-6 col-lg-4">
     <div className="card">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-start">
@@ -30,14 +30,7 @@ export const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, ti
         </div>
         <Skeleton loading={isLoading}>
           <div className="progress progress-sm">
-            <div
-              className="progress-bar bg-primary"
-              style={{ width: `${progress.toFixed(0)}%` }}
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${progress.toFixed(0)}%`}
-            >
+            <div className="progress-bar bg-primary" style={{ width: `${progress.toFixed(0)}%` }}>
               <span className="visually-hidden">{`${progress.toFixed(0)}%`}</span>
             </div>
           </div>

@@ -55,30 +55,47 @@ export default () => {
   return (
     <>
       {installed.length === 0 && customLinks.length === 0 ? (
-        <EmptyPage title="MY_APPS_EMPTY_TITLE" subtitle="MY_APPS_EMPTY_SUBTITLE" redirectPath="/app-store" actionLabel="MY_APPS_EMPTY_ACTION" />
+        <EmptyPage
+          title="MY_APPS_EMPTY_TITLE"
+          subtitle="MY_APPS_EMPTY_SUBTITLE"
+          redirectPath="/app-store"
+          actionLabel="MY_APPS_EMPTY_ACTION"
+          extraContent={
+            <div className="d-flex gap-2 justify-content-center">
+              <ButtonTile
+                title={t('CUSTOM_APP_ADD_TITLE')}
+                subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
+                action={() => navigate('/apps/create')}
+                icon={<IconLayoutGridAdd size={50} stroke={1.5} color="#A4A4A4" />}
+              />
+              <ButtonTile
+                title={t('LINKS_ADD_TITLE')}
+                subtitle={t('LINKS_ADD_SUBTITLE')}
+                action={() => addLinkDisclosure.open()}
+                icon={<IconLinkPlus size={50} stroke={1.5} color="#A4A4A4" />}
+              />
+            </div>
+          }
+        />
       ) : (
         <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3" data-testid="apps-list">
           {installed.map(renderApp)}
           {customLinks.map(renderLink)}
-          {installed.length > 0 ? (
-            <ButtonTile
-              title={t('CUSTOM_APP_ADD_TITLE')}
-              subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
-              action={() => navigate('/apps/create')}
-              icon={<IconLayoutGridAdd size={50} stroke={1.5} color="#A4A4A4" />}
-            />
-          ) : null}
-          {installed.length > 0 ? (
-            <ButtonTile
-              title={t('LINKS_ADD_TITLE')}
-              subtitle={t('LINKS_ADD_SUBTITLE')}
-              action={() => addLinkDisclosure.open()}
-              icon={<IconLinkPlus size={50} stroke={1.5} color="#A4A4A4" />}
-            />
-          ) : null}
-          <AddLinkDialog isOpen={addLinkDisclosure.isOpen} onClose={() => addLinkDisclosure.close()} />
+          <ButtonTile
+            title={t('CUSTOM_APP_ADD_TITLE')}
+            subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
+            action={() => navigate('/apps/create')}
+            icon={<IconLayoutGridAdd size={50} stroke={1.5} color="#A4A4A4" />}
+          />
+          <ButtonTile
+            title={t('LINKS_ADD_TITLE')}
+            subtitle={t('LINKS_ADD_SUBTITLE')}
+            action={() => addLinkDisclosure.open()}
+            icon={<IconLinkPlus size={50} stroke={1.5} color="#A4A4A4" />}
+          />
         </div>
       )}
+      <AddLinkDialog isOpen={addLinkDisclosure.isOpen} onClose={() => addLinkDisclosure.close()} />
     </>
   );
 };

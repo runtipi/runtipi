@@ -9,9 +9,10 @@ interface IProps {
   subtitle?: string;
   actionLabel?: string;
   redirectPath?: string;
+  extraContent?: React.ReactNode;
 }
 
-export const EmptyPage: React.FC<IProps> = ({ title, subtitle, redirectPath, actionLabel }) => {
+export const EmptyPage: React.FC<IProps> = ({ title, subtitle, redirectPath, actionLabel, extraContent }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -30,6 +31,7 @@ export const EmptyPage: React.FC<IProps> = ({ title, subtitle, redirectPath, act
       />
       <p className="empty-title">{t(title)}</p>
       {subtitle && <p className="empty-subtitle text-muted">{t(subtitle)}</p>}
+      {extraContent && <div className="mt-3">{extraContent}</div>}
       <div className="empty-action">
         {redirectPath && actionLabel && (
           <Button data-testid="empty-page-action" onClick={() => navigate(redirectPath)} intent="primary">
