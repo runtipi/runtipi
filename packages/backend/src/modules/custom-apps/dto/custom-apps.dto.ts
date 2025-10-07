@@ -1,6 +1,6 @@
-import { createArkDto } from 'nestjs-arktype';
-import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
-import { type } from 'arktype';
+import { createArkDto } from "nestjs-arktype";
+import { dynamicComposeSchemaArk } from "@runtipi/common/schemas";
+import { type } from "arktype";
 
 export const createCustomAppSchema = type({
   name: type(/^[a-z0-9-]+$/)
@@ -9,18 +9,33 @@ export const createCustomAppSchema = type({
   config: dynamicComposeSchemaArk,
 });
 
-export class CreateCustomAppDto extends createArkDto(createCustomAppSchema, { name: 'CreateCustomAppDto' }) {}
+export class CreateCustomAppDto extends createArkDto(createCustomAppSchema, {
+  name: "CreateCustomAppDto",
+}) {}
 
 export const createCustomAppResponseSchema = type({
-  appUrn: 'string',
-  appName: 'string',
-  storeId: 'string',
+  appUrn: "string",
+  appName: "string",
+  storeId: "string",
 });
 
-export class CreateCustomAppResponseDto extends createArkDto(createCustomAppResponseSchema, { name: 'CreateCustomAppResponseDto' }) {}
+export class CreateCustomAppResponseDto extends createArkDto(
+  createCustomAppResponseSchema,
+  { name: "CreateCustomAppResponseDto" }
+) {}
 
 export const updateCustomAppSchema = type({
   config: dynamicComposeSchemaArk,
 });
 
-export class UpdateCustomAppDto extends createArkDto(updateCustomAppSchema, { name: 'UpdateCustomAppDto' }) {}
+export class UpdateCustomAppDto extends createArkDto(updateCustomAppSchema, {
+  name: "UpdateCustomAppDto",
+}) {}
+
+export const updateAppMetadataDto = type({
+  data: "string",
+});
+
+export class UpdateAppMetadataDto extends createArkDto(updateAppMetadataDto, {
+  name: "UpdateAppMetadataDto",
+}) {}
