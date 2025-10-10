@@ -9,7 +9,7 @@ import path from 'node:path';
 import { AppsRepository } from '../apps/apps.repository';
 import type { CreateCustomAppDto, UpdateCustomAppDto } from './dto/custom-apps.dto';
 import { getFrontmatter } from '@/utils/frontmatter/frontmatter';
-import { frontmatterSchema } from '../../../../common/dist/schemas/app-info';
+import { frontmatterSchema } from '@runtipi/common/schemas';
 
 const APPS_FOLDER = '_user';
 
@@ -132,9 +132,20 @@ export class CustomAppService {
       dynamic_config: true,
     };
 
+    const descriptionPath = path.join(dataDir, 'apps', appStoreId, appName, 'metadata', 'description.md');
+    const descriptionContent = `---\nname: ${name}\nshort_desc: User-created custom app\nversion: 1.0.0\n---\n\n# ${name}\n\nThis is a user-created custom application.\n`;
+
     const ok = await this.filesystem.writeJsonFile(infoPath, appInfo);
     if (!ok) {
       throw new Error(`Failed to write app info at ${infoPath}`);
+    }
+
+    const metadataDir = path.join(dataDir, 'apps', appStoreId, appName, 'metadata');
+    await this.filesystem.createDirectory(metadataDir);
+
+    const okDesc = await this.filesystem.writeTextFile(descriptionPath, descriptionContent);
+    if (!okDesc) {
+      throw new Error(`Failed to write description at ${descriptionPath}`);
     }
   }
 
@@ -213,7 +224,6 @@ export class CustomAppService {
     }
 
     const ok = await this.filesystem.writeTextFile(descriptionPath, description);
-
     if (!ok) {
       throw new Error(`Failed to write description at ${descriptionPath}`);
     }

@@ -149,6 +149,7 @@ export const appInfoSchemaArk = type({
 
 export const frontmatterSchema = z
   .object({
+    name: appInfoSchema.shape.name.optional(),
     short_desc: appInfoSchema.shape.short_desc.optional(),
     description: appInfoSchema.shape.description.optional(),
     source: appInfoSchema.shape.source.optional(),

@@ -12,6 +12,7 @@ import {
   formFieldSchema,
   appInfoSchemaArk,
   formFieldSchemaArk,
+  frontmatterSchema,
 } from './app-info.js';
 import type { AppCategory, AppInfo, AppInfoInput, FieldType, FormField, RandomEncoding } from './app-info.js';
 
@@ -35,6 +36,7 @@ export {
   appInfoSchema,
   appInfoSchemaArk,
   sseSchema,
+  frontmatterSchema,
   type ServiceInput,
   type DependsOn,
   type Service,

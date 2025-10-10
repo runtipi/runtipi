@@ -1,5 +1,4 @@
 import { updateAppMetadataMutation } from '@/api-client/@tanstack/react-query.gen';
-import { Markdown } from '@/components/markdown/markdown';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import { Button } from '@/components/ui/Button';
 import { DataGrid, DataGridItem } from '@/components/ui/DataGrid';
@@ -10,15 +9,15 @@ import { extractAppUrn } from '@/utils/app-helpers';
 import type { AppUrn } from '@runtipi/common/types';
 import { IconAlertCircle, IconExternalLink } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
-import { copilot } from '@uiw/codemirror-theme-copilot';
-import ReactCodeMirror from '@uiw/react-codemirror';
 import { Suspense, lazy } from 'react';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
-import { AnimatePresence, motion } from 'framer-motion';
-import { markdown } from '@codemirror/lang-markdown';
+
+const AppDescriptionEditor = React.lazy(() =>
+  import('../../components/app-description-editor/app-description-editor').then((module) => ({ default: module.AppDescriptionEditor })),
+);
 
 const AppBackups = lazy(() =>
   import('../app-backups/app-backups').then((module) => ({
@@ -145,20 +144,9 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
             </div>
           )}
           <div className="card-body">
-            <motion.div key={isEditing ? 1 : 0} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {isEditing ? (
-                <ReactCodeMirror
-                  placeholder="My app notes in markdown..."
-                  value={meta}
-                  height="400px"
-                  onChange={(e) => setMeta(e)}
-                  theme={copilot}
-                  extensions={[markdown()]}
-                />
-              ) : (
-                <Markdown content={meta.replace(/^---\s*\n([\s\S]*?)\n---\s*(?=\n|$)/m, '').trim()} className="markdown" />
-              )}
-            </motion.div>
+            <Suspense>
+              <AppDescriptionEditor isEditing={isEditing} meta={meta} setMeta={setMeta} />
+            </Suspense>
           </div>
         </div>
       </TabsContent>
