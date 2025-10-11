@@ -150,7 +150,7 @@
   "CUSTOM_APP_ERROR_SERVICES_MIN_LENGTH": "Au moins un service est requis",
   "CUSTOM_APP_ERROR_ARCHITECTURE_INVALID": "L'architecture doit être 'arm64' ou 'amd64'",
   "CUSTOM_APP_ERROR_LABEL_VALUE_INVALID": "La valeur de l'étiquette doit être une chaîne de caractères valide",
-  "CUSTOM_APP_ERROR_UPDATE_FAILED": "Impossible de mettre à jour l'application , voir les logs pour plus de détails",
+  "CUSTOM_APP_ERROR_UPDATE_FAILED": "Impossible de mettre à jour l'application, voir les logs pour plus de détails",
   "APP_INSTALL_FORM_CHOOSE_OPTION": "Choisissez une option...",
   "APP_INSTALL_FORM_DISPLAY_ON_GUEST_DASHBOARD": "Afficher sur le tableau de bord invité",
   "APP_INSTALL_FORM_DOMAIN_NAME": "Nom de domaine",
