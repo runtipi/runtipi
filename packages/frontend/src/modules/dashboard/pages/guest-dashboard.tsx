@@ -42,7 +42,7 @@ const Tile = ({ data, localDomain, sslPort }: { data: GuestAppsDto['installed'][
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         {/* biome-ignore lint/a11y/noNoninteractiveTabindex: works fine */}
-        <div tabIndex={0} className="col-sm-6 col-lg-4 app-link">
+        <div tabIndex={0} className="app-link">
           <AppTile key={info.urn} info={info} status={app.status} updateAvailable={false} />
         </div>
       </DropdownMenuTrigger>
@@ -103,7 +103,7 @@ export const GuestDashboard = () => {
         <div className="page-body">
           <div className="container-xl">
             {!hasContent && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
-            <div className="row row-cards">
+            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3">
               {appsData.installed.map((appData) => {
                 return <Tile key={appData.app.id} data={appData} localDomain={localDomain} sslPort={sslPort} />;
               })}

@@ -11,8 +11,9 @@
   text-decoration: none;
 }
 
+/* Thank you bootstrap, we will take it from here */
 .row > * {
-  margin-bottom: 0.75rem;
-  padding-left: 0.375rem;
-  padding-right: 0.375rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
