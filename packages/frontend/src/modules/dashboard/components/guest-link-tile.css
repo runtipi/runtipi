@@ -1,0 +1,8 @@
+.guest-link-tile-button {
+  display: block;
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}

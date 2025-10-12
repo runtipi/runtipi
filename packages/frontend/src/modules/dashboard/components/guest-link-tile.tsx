@@ -1,6 +1,7 @@
 import { AppLogo } from '@/components/app-logo/app-logo';
 import type { CustomLink } from '@/types/app.types';
 import type React from 'react';
+import './guest-link-tile.css';
 
 type GuestLinkTileProps = {
   link: CustomLink;
@@ -11,21 +12,11 @@ export const GuestLinkTile: React.FC<GuestLinkTileProps> = ({ link }) => {
     window.open(link.url, '_blank', 'noreferrer');
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick();
-    }
-  };
-
   return (
-    <div
+    <button
       onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      role="button"
-      tabIndex={0}
-      className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0"
-      style={{ cursor: 'pointer' }}
+      type="button"
+      className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0 guest-link-tile-button"
       data-testid={`guest-link-tile-${link.title}`}
     >
       <div className="card card-sm card-link">
@@ -43,6 +34,6 @@ export const GuestLinkTile: React.FC<GuestLinkTileProps> = ({ link }) => {
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
