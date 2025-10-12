@@ -280,5 +280,162 @@ describe('AppHelpers', () => {
       // Assert
       expect(appFilesManager.writeAppEnv).toHaveBeenCalledWith(testAppUrn, transformedEnv);
     });
+
+    it('should use default value when form field is not provided', async () => {
+      // Arrange
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValue(envMap);
+
+      const appInfoWithDefaults = {
+        ...mockAppInfo,
+        form_fields: [
+          {
+            env_variable: 'TEXT_WITH_DEFAULT',
+            label: 'Text Field',
+            type: 'text' as const,
+            default: 'default-text-value',
+            required: false,
+          },
+          {
+            env_variable: 'NUMBER_WITH_DEFAULT',
+            label: 'Number Field',
+            type: 'number' as const,
+            default: 42,
+            required: false,
+          },
+          {
+            env_variable: 'BOOLEAN_WITH_DEFAULT',
+            label: 'Boolean Field',
+            type: 'boolean' as const,
+            default: true,
+            required: false,
+          },
+        ],
+      };
+      appFilesManager.getInstalledAppInfo.mockResolvedValue(appInfoWithDefaults);
+
+      // Act
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      // Assert
+      expect(envMap.get('TEXT_WITH_DEFAULT')).toBe('default-text-value');
+      expect(envMap.get('NUMBER_WITH_DEFAULT')).toBe('42');
+      expect(envMap.get('BOOLEAN_WITH_DEFAULT')).toBe('true');
+    });
+
+    it('should use default value when form field is empty string', async () => {
+      // Arrange
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValue(envMap);
+
+      const appInfoWithDefaults = {
+        ...mockAppInfo,
+        form_fields: [
+          {
+            env_variable: 'TEXT_WITH_DEFAULT',
+            label: 'Text Field',
+            type: 'text' as const,
+            default: 'default-value',
+            required: false,
+          },
+        ],
+      };
+      appFilesManager.getInstalledAppInfo.mockResolvedValue(appInfoWithDefaults);
+
+      // Act - passing empty string from form
+      await appHelpers.generateEnvFile(testAppUrn, { TEXT_WITH_DEFAULT: '' });
+
+      // Assert - should use default value, not empty string
+      expect(envMap.get('TEXT_WITH_DEFAULT')).toBe('default-value');
+    });
+
+    it('should override default value when form provides a value', async () => {
+      // Arrange
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValue(envMap);
+
+      const appInfoWithDefaults = {
+        ...mockAppInfo,
+        form_fields: [
+          {
+            env_variable: 'TEXT_WITH_DEFAULT',
+            label: 'Text Field',
+            type: 'text' as const,
+            default: 'default-value',
+            required: false,
+          },
+          {
+            env_variable: 'BOOLEAN_WITH_DEFAULT',
+            label: 'Boolean Field',
+            type: 'boolean' as const,
+            default: true,
+            required: false,
+          },
+        ],
+      };
+      appFilesManager.getInstalledAppInfo.mockResolvedValue(appInfoWithDefaults);
+
+      // Act - passing custom values from form
+      await appHelpers.generateEnvFile(testAppUrn, {
+        TEXT_WITH_DEFAULT: 'custom-value',
+        BOOLEAN_WITH_DEFAULT: false,
+      });
+
+      // Assert - should use form values, not defaults
+      expect(envMap.get('TEXT_WITH_DEFAULT')).toBe('custom-value');
+      expect(envMap.get('BOOLEAN_WITH_DEFAULT')).toBe('false');
+    });
+
+    it('should handle number zero as valid form value and not use default', async () => {
+      // Arrange
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValue(envMap);
+
+      const appInfoWithDefaults = {
+        ...mockAppInfo,
+        form_fields: [
+          {
+            env_variable: 'NUMBER_WITH_DEFAULT',
+            label: 'Number Field',
+            type: 'number' as const,
+            default: 100,
+            required: false,
+          },
+        ],
+      };
+      appFilesManager.getInstalledAppInfo.mockResolvedValue(appInfoWithDefaults);
+
+      // Act - passing 0 as the value (which is falsy)
+      await appHelpers.generateEnvFile(testAppUrn, { NUMBER_WITH_DEFAULT: 0 });
+
+      // Assert - should use 0, not the default
+      expect(envMap.get('NUMBER_WITH_DEFAULT')).toBe('0');
+    });
+
+    it('should handle false as valid form value and not use default', async () => {
+      // Arrange
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValue(envMap);
+
+      const appInfoWithDefaults = {
+        ...mockAppInfo,
+        form_fields: [
+          {
+            env_variable: 'BOOLEAN_WITH_DEFAULT',
+            label: 'Boolean Field',
+            type: 'boolean' as const,
+            default: true,
+            required: false,
+          },
+        ],
+      };
+      appFilesManager.getInstalledAppInfo.mockResolvedValue(appInfoWithDefaults);
+
+      // Act - passing false as the value
+      await appHelpers.generateEnvFile(testAppUrn, { BOOLEAN_WITH_DEFAULT: false });
+
+      // Assert - should use false, not the default
+      expect(envMap.get('BOOLEAN_WITH_DEFAULT')).toBe('false');
+    });
   });
 });

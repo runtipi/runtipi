@@ -68,20 +68,9 @@ export class AppHelpers {
       }
     }
 
-    // Process form fields
     for (const field of config.form_fields) {
       const formValue = form[field.env_variable];
       const envVar = field.env_variable;
-
-      if (formValue === undefined && field.default) {
-        envMap.set(envVar, String(field.default));
-        continue;
-      }
-
-      if (formValue || typeof formValue === 'boolean') {
-        envMap.set(envVar, String(formValue));
-        continue;
-      }
 
       if (field.type === 'random') {
         if (existingAppEnvMap.has(envVar)) {
@@ -95,7 +84,19 @@ export class AppHelpers {
         continue;
       }
 
-      if (formValue === undefined && field.required) {
+      const hasValidFormValue = formValue !== undefined && formValue !== '' && formValue !== null;
+
+      if (hasValidFormValue) {
+        envMap.set(envVar, String(formValue));
+        continue;
+      }
+
+      if (field.default !== undefined) {
+        envMap.set(envVar, String(field.default));
+        continue;
+      }
+
+      if (field.required) {
         throw new Error(`Variable ${field.label || field.env_variable} is required`);
       }
     }
