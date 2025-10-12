@@ -10,3 +10,63 @@
 .app-link:hover {
   text-decoration: none;
 }
+
+/* Set base 4px horizontal padding for all items */
+.app-link.p-2,
+.button-tile.p-2 {
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+}
+
+/* Remove top margin for items after the first row */
+/* Large screens (3 items per row) - remove margin from 4th item onwards */
+@media (min-width: 992px) {
+  .app-link.p-2:nth-child(n + 4),
+  .button-tile.p-2:nth-child(n + 4) {
+    margin-top: 0.5rem !important;
+  }
+}
+
+/* First item in each row - add left padding of 8px */
+/* Small screens (2 items per row) */
+@media (min-width: 576px) {
+  .app-link.p-2:nth-child(2n + 1),
+  .button-tile.p-2:nth-child(2n + 1) {
+    padding-left: 0.5rem !important;
+  }
+}
+
+/* Large screens (3 items per row) */
+@media (min-width: 992px) {
+  .app-link.p-2:nth-child(2n + 1),
+  .button-tile.p-2:nth-child(2n + 1) {
+    padding-left: 0.25rem !important;
+  }
+
+  .app-link.p-2:nth-child(3n + 1),
+  .button-tile.p-2:nth-child(3n + 1) {
+    padding-left: 0.5rem !important;
+  }
+}
+
+/* Last item in each row - add right padding of 8px */
+/* Small screens (2 items per row) */
+@media (min-width: 576px) {
+  .app-link.p-2:nth-child(2n),
+  .button-tile.p-2:nth-child(2n) {
+    padding-right: 0.5rem !important;
+  }
+}
+
+/* Large screens (3 items per row) */
+@media (min-width: 992px) {
+  .app-link.p-2:nth-child(2n),
+  .button-tile.p-2:nth-child(2n) {
+    padding-right: 0.25rem !important;
+  }
+
+  .app-link.p-2:nth-child(3n),
+  .button-tile.p-2:nth-child(3n) {
+    padding-right: 0.5rem !important;
+  }
+}
