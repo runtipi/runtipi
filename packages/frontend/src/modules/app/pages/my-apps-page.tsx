@@ -10,7 +10,7 @@ import { IconLayoutGridAdd, IconLinkPlus } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { AddLinkDialog } from '../components/dialogs/add-link/add-link-dialog';
-import './my-apps-page.css';
+import '@/styles/app-grid.css';
 
 export default () => {
   const { data: apps } = useSuspenseQuery({

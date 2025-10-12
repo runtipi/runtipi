@@ -11,8 +11,23 @@ export const GuestLinkTile: React.FC<GuestLinkTileProps> = ({ link }) => {
     window.open(link.url, '_blank', 'noreferrer');
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
-    <div onClick={handleClick} className="col-sm-6 col-lg-4 app-link" style={{ cursor: 'pointer' }} data-testid={`guest-link-tile-${link.title}`}>
+    <div
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0"
+      style={{ cursor: 'pointer' }}
+      data-testid={`guest-link-tile-${link.title}`}
+    >
       <div className="card card-sm card-link">
         <div className="card-body">
           <div className="d-flex align-items-center overflow-hidden">

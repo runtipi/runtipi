@@ -1,12 +1,13 @@
 import type { GuestAppsDto } from '@/api-client';
 import { getGuestAppsOptions, getGuestLinksOptions } from '@/api-client/@tanstack/react-query.gen';
 import { GuestHeader } from '@/components/header/guest-header';
+import { BaseDashboardLayout } from '@/components/layouts/dashboard/base-dashboard-layout';
 import { PageTitle } from '@/components/page-title/page-title';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { AppTile } from '@/modules/app/components/app-tile/app-tile';
 import { IconLock, IconLockOff } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import './guest-dashboard.css';
+import '@/styles/app-grid.css';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import { useUserContext } from '@/context/user-context';
 import { GuestLinkTile } from '../components/guest-link-tile';
@@ -42,7 +43,7 @@ const Tile = ({ data, localDomain, sslPort }: { data: GuestAppsDto['installed'][
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         {/* biome-ignore lint/a11y/noNoninteractiveTabindex: works fine */}
-        <div tabIndex={0} className="app-link">
+        <div tabIndex={0} className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0">
           <AppTile key={info.urn} info={info} status={app.status} updateAvailable={false} />
         </div>
       </DropdownMenuTrigger>
@@ -88,32 +89,16 @@ export const GuestDashboard = () => {
   const hasContent = appsData.installed.length > 0 || linksData.links.length > 0;
 
   return (
-    <div className="page">
-      <GuestHeader />
-      <div className="page-wrapper">
-        <div className="page-header d-print-none">
-          <div className="container-xl">
-            <div className={'row g-2 align-items-center'}>
-              <div className="col text-white">
-                <PageTitle apps={[]} />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="page-body">
-          <div className="container-xl">
-            {!hasContent && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-              {appsData.installed.map((appData) => {
-                return <Tile key={appData.app.id} data={appData} localDomain={localDomain} sslPort={sslPort} />;
-              })}
-              {linksData.links.map((link) => (
-                <GuestLinkTile key={link.id} link={link} />
-              ))}
-            </div>
-          </div>
-        </div>
+    <BaseDashboardLayout header={<GuestHeader />} pageTitle={<PageTitle apps={[]} />}>
+      {!hasContent && <EmptyPage title="GUEST_DASHBOARD_NO_APPS" subtitle="GUEST_DASHBOARD_NO_APPS_SUBTITLE" />}
+      <div className="row row-cards">
+        {appsData.installed.map((appData) => {
+          return <Tile key={appData.app.id} data={appData} localDomain={localDomain} sslPort={sslPort} />;
+        })}
+        {linksData.links.map((link) => (
+          <GuestLinkTile key={link.id} link={link} />
+        ))}
       </div>
-    </div>
+    </BaseDashboardLayout>
   );
 };
