@@ -35,7 +35,7 @@ export default () => {
 
     if (info.available) {
       return (
-        <Link key={app.id} to={`/apps/${storeId}/${appName}`} className="app-link">
+        <Link key={app.id} to={`/apps/${storeId}/${appName}`} className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0">
           <AppTile key={info.urn} status={app.status} info={info} updateAvailable={updateAvailable} pendingRestart={app.pendingRestart} />
         </Link>
       );
@@ -46,7 +46,7 @@ export default () => {
 
   const renderLink = (link: CustomLink) => {
     return (
-      <Link key={link.id} to={link.url} target="_blank" className="app-link">
+      <Link key={link.id} to={link.url} target="_blank" className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0">
         <LinkTile key={link.id} link={link} />
       </Link>
     );
@@ -78,7 +78,7 @@ export default () => {
           }
         />
       ) : (
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3" data-testid="apps-list">
+        <div className="row row-cards" data-testid="apps-list">
           {installed.map(renderApp)}
           {customLinks.map(renderLink)}
           <ButtonTile

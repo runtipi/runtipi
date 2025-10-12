@@ -13,7 +13,7 @@ interface IProps {
 }
 
 export const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, subtitle, metric, isLoading }) => (
-  <div className="p-0 w-100">
+  <div className="col-sm-6 col-lg-4 p-2 pt-0 pb-0">
     <div className="card">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-start">

@@ -9,7 +9,7 @@ interface ButtonTileProps {
 
 export const ButtonTile: React.FC<ButtonTileProps> = ({ title, subtitle, icon, action }: ButtonTileProps) => {
   return (
-    <button onClick={action} className="button-tile" type="button">
+    <button onClick={action} className="col-sm-6 col-lg-4 button-tile p-2 pt-0 pb-0 mb-0" type="button">
       <div className="card card-sm card-link ml-0">
         <div className="card-body d-flex align-items-center gap-3">
           <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', height: '60px' }}>

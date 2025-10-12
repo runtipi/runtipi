@@ -13,7 +13,7 @@ export default () => {
   const isLoading = !data;
 
   return (
-    <div className="p-0 gap-2 d-flex flex-column flex-md-row">
+    <div className="row row-deck row-cards">
       <SystemStat
         isLoading={isLoading}
         title={t('DASHBOARD_DISK_SPACE_TITLE')}
