@@ -30,6 +30,7 @@ export const createMockAppInfo = (data: Partial<AppInfo> = {}): AppInfo => {
     tipi_version: faker.number.int(),
     version: faker.system.semver(),
     force_pull: false,
+    supported_architectures: ['amd64', 'arm64'],
     ...data,
   };
 };
