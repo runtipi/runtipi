@@ -124,7 +124,7 @@ export const appInfoSchemaArk = type({
   categories: type
     .enumerated(...APP_CATEGORIES)
     .array()
-    .default(() => []),
+    .default(() => ['utilities']),
   url_suffix: 'string?',
   form_fields: formFieldSchemaArk.array().default(() => []),
   https: 'boolean = false',
