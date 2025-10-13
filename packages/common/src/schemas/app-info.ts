@@ -133,7 +133,7 @@ export const appInfoSchemaArk = type({
   supported_architectures: type
     .enumerated(...ARCHITECTURES)
     .array()
-    .optional(),
+    .default(() => ['amd64', 'arm64']),
   uid: 'number?',
   gid: 'number?',
   dynamic_config: 'boolean = false',

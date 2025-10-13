@@ -88,50 +88,52 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
   };
 
   return (
-    <div>
-      <Alert variant="warning">
-        <AlertIcon>
-          <IconAlertCircle stroke={2} />
-        </AlertIcon>
-        <div>
-          <AlertHeading>{t('USER_CONFIG_WARNING_TITLE')}</AlertHeading>
-          <AlertDescription>{t('USER_CONFIG_WARNING_DESCRIPTION')}</AlertDescription>
+    <div className="card">
+      <div className="card-body">
+        <Alert variant="warning">
+          <AlertIcon>
+            <IconAlertCircle stroke={2} />
+          </AlertIcon>
+          <div>
+            <AlertHeading>{t('USER_CONFIG_WARNING_TITLE')}</AlertHeading>
+            <AlertDescription>{t('USER_CONFIG_WARNING_DESCRIPTION')}</AlertDescription>
+          </div>
+        </Alert>
+        <div className="d-flex mb-3 align-items-center justify-content-between">
+          <Switch className="mt-2" label={t('USER_CONFIG_ENABLE')} checked={isEnabled} onCheckedChange={handleToggleEnabled} />
+          <Button onClick={handleSave}>{t('SAVE')}</Button>
         </div>
-      </Alert>
-      <div className="d-flex mb-3 align-items-center justify-content-between">
-        <Switch className="mt-2" label={t('USER_CONFIG_ENABLE')} checked={isEnabled} onCheckedChange={handleToggleEnabled} />
-        <Button onClick={handleSave}>{t('SAVE')}</Button>
-      </div>
-      <div>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="docker-compose">docker-compose.yml</TabsTrigger>
-            <TabsTrigger value="app-env">app.env</TabsTrigger>
-          </TabsList>
-          <TabsContent value="docker-compose">
-            <CodeMirror
-              readOnly={!isEnabled}
-              value={dockerCompose}
-              height="400px"
-              extensions={[yaml()]}
-              onChange={(value) => setDockerCompose(value)}
-              theme={copilot}
-            />
-            <Trans
-              t={t}
-              i18nKey="USER_CONFIG_DOCKER_MERGE_DESCRIPTION"
-              components={{
-                // biome-ignore lint/a11y/useAnchorContent: not applicable
-                a: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/" />,
-                code: <code />,
-              }}
-              className="mt-2"
-            />
-          </TabsContent>
-          <TabsContent value="app-env">
-            <CodeMirror readOnly={!isEnabled} value={appEnv} height="400px" onChange={(value) => setAppEnv(value)} theme={copilot} />
-          </TabsContent>
-        </Tabs>
+        <div>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="docker-compose">docker-compose.yml</TabsTrigger>
+              <TabsTrigger value="app-env">app.env</TabsTrigger>
+            </TabsList>
+            <TabsContent value="docker-compose">
+              <CodeMirror
+                readOnly={!isEnabled}
+                value={dockerCompose}
+                height="400px"
+                extensions={[yaml()]}
+                onChange={(value) => setDockerCompose(value)}
+                theme={copilot}
+              />
+              <Trans
+                t={t}
+                i18nKey="USER_CONFIG_DOCKER_MERGE_DESCRIPTION"
+                components={{
+                  // biome-ignore lint/a11y/useAnchorContent: not applicable
+                  a: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/" />,
+                  code: <code />,
+                }}
+                className="mt-2"
+              />
+            </TabsContent>
+            <TabsContent value="app-env">
+              <CodeMirror readOnly={!isEnabled} value={appEnv} height="400px" onChange={(value) => setAppEnv(value)} theme={copilot} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

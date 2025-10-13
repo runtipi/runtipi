@@ -33,7 +33,11 @@ export const AppLogs = ({ appUrn }: { appUrn: string }) => {
 
   return (
     <Suspense>
-      <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
+      <div className="card">
+        <div className="card-body">
+          <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
+        </div>
+      </div>
     </Suspense>
   );
 };
