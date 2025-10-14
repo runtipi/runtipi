@@ -1,6 +1,22 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { Body, Controller, Delete, Get, Injectable, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Injectable,
+  Param,
+  Post,
+  Query,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import type { Response } from 'express';
 import { AuthGuard } from '../auth/auth.guard';
 import { BackupsService } from './backups.service';
 import { BackupRequestDto, DeleteAppBackupBodyDto, GetAppBackupsDto, GetAppBackupsQueryDto, RestoreAppBackupDto } from './dto/backups.dto';
@@ -36,5 +52,52 @@ export class BackupsController {
   @Delete(':urn')
   async deleteAppBackup(@Param('urn') urn: string, @Body() body: DeleteAppBackupBodyDto) {
     return this.backupsService.deleteAppBackup({ appUrn: castAppUrn(urn), filename: body.filename });
+  }
+
+  @Get(':urn/:filename/download')
+  @ApiResponse({ status: 200, description: 'Backup file download' })
+  async downloadBackup(@Param('urn') urn: string, @Param('filename') filename: string, @Res() res: Response) {
+    const filePath = await this.backupsService.getBackupFilePath({ appUrn: castAppUrn(urn), filename });
+
+    res.set({
+      'Content-Type': 'application/gzip',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    });
+
+    return res.sendFile(filePath);
+  }
+
+  @Post(':urn/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Backup uploaded successfully' })
+  async uploadBackup(@Param('urn') urn: string, @UploadedFile() file?: { buffer: Buffer; originalname: string; mimetype: string }) {
+    if (!file) {
+      throw new BadRequestException('No backup file provided');
+    }
+
+    // Validate file is a tar.gz
+    if (!file.originalname.endsWith('.tar.gz') && file.mimetype !== 'application/gzip' && file.mimetype !== 'application/x-gzip') {
+      throw new BadRequestException('File must be a .tar.gz backup file');
+    }
+
+    await this.backupsService.uploadBackup({
+      appUrn: castAppUrn(urn),
+      filename: file.originalname,
+      fileBuffer: file.buffer,
+    });
+
+    return { success: true };
   }
 }

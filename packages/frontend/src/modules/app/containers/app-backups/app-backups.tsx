@@ -1,4 +1,10 @@
-import { backupAppMutation, deleteAppBackupMutation, getAppBackupsOptions, restoreAppBackupMutation } from '@/api-client/@tanstack/react-query.gen';
+import {
+  backupAppMutation,
+  deleteAppBackupMutation,
+  getAppBackupsOptions,
+  restoreAppBackupMutation,
+  uploadBackupMutation,
+} from '@/api-client/@tanstack/react-query.gen';
 import { DateFormat } from '@/components/date-format/date-format';
 import { FileSize } from '@/components/file-size/file-size';
 import { Button } from '@/components/ui/Button';
@@ -14,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { BackupAppDialog } from '../../components/dialogs/backup-app-dialog/backup-app-dialog';
 import { DeleteAppBackupDialog } from '../../components/dialogs/delete-backup-dialog/delete-backup-dialog';
 import { RestoreAppDialog } from '../../components/dialogs/restore-app-dialog/restore-app-dialog';
+import { UploadBackupDialog } from '../../components/dialogs/upload-backup-dialog/upload-backup-dialog';
 
 type Props = {
   info: AppInfo;
@@ -28,6 +35,7 @@ export const AppBackups = ({ info, status }: Props) => {
   const backupModalDisclosure = useDisclosure();
   const restoreModalDisclosure = useDisclosure();
   const deleteBackupModalDisclosure = useDisclosure();
+  const uploadModalDisclosure = useDisclosure();
 
   const { data } = useSuspenseQuery({
     ...getAppBackupsOptions({ path: { urn: info.urn }, query: { page, pageSize: 5 } }),
@@ -63,6 +71,23 @@ export const AppBackups = ({ info, status }: Props) => {
     },
   });
 
+  const uploadBackup = useMutation({
+    ...uploadBackupMutation(),
+    onMutate: () => {
+      uploadModalDisclosure.close();
+    },
+    onSuccess: () => {
+      toast.success(t('APP_BACKUP_UPLOAD_SUCCESS'));
+    },
+    onError: () => {
+      toast.error(t('APP_BACKUP_UPLOAD_ERROR'));
+    },
+  });
+
+  const handleUploadConfirm = (file: File) => {
+    uploadBackup.mutate({ body: { file }, path: { urn: info.urn } });
+  };
+
   const handleRestoreClick = (backup: AppBackup) => {
     setSelectedBackup(backup);
     restoreModalDisclosure.open();
@@ -73,13 +98,18 @@ export const AppBackups = ({ info, status }: Props) => {
     deleteBackupModalDisclosure.open();
   };
 
+  const handleDownloadClick = (backup: AppBackup) => {
+    window.open(`/api/backups/${info.urn}/${backup.id}/download`);
+  };
+
   const disableActions =
     status === 'missing' ||
     status === 'backing_up' ||
     status === 'restoring' ||
     backupApp.isPending ||
     restoreAppBackup.isPending ||
-    deleteAppBackup.isPending;
+    deleteAppBackup.isPending ||
+    uploadBackup.isPending;
 
   return (
     <div className="card">
@@ -87,9 +117,14 @@ export const AppBackups = ({ info, status }: Props) => {
         <div className="">
           <h3 className="h3 mb-0">{t('BACKUPS_LIST')}</h3>
         </div>
-        <Button onClick={backupModalDisclosure.open} variant={disableActions ? 'default' : 'outline'} intent="primary" disabled={disableActions}>
-          {t('BACKUPS_LIST_BACKUP_NOW')}
-        </Button>
+        <div className="d-flex gap-2">
+          <Button onClick={uploadModalDisclosure.open} disabled={disableActions}>
+            {t('APP_BACKUP_UPLOAD')}
+          </Button>
+          <Button onClick={backupModalDisclosure.open} disabled={disableActions}>
+            {t('BACKUPS_LIST_BACKUP_NOW')}
+          </Button>
+        </div>
       </div>
       <Table>
         <TableHeader>
@@ -97,7 +132,7 @@ export const AppBackups = ({ info, status }: Props) => {
             <TableHead>{t('BACKUPS_LIST_ROW_TITLE_ID')}</TableHead>
             <TableHead>{t('BACKUPS_LIST_ROW_TITLE_SIZE')}</TableHead>
             <TableHead>{t('BACKUPS_LIST_ROW_TITLE_DATE')}</TableHead>
-            <TableHead>{t('BACKUPS_LIST_ROW_TITLE_ACTIONS')}</TableHead>
+            <TableHead align="right">{t('BACKUPS_LIST_ROW_TITLE_ACTIONS')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -110,15 +145,11 @@ export const AppBackups = ({ info, status }: Props) => {
               <TableCell>
                 <DateFormat date={new Date(backup.date)} />
               </TableCell>
-              <TableCell>
-                <Button
-                  size="sm"
-                  intent="primary"
-                  variant="ghost"
-                  onClick={() => handleRestoreClick(backup)}
-                  disabled={disableActions}
-                  className="me-1"
-                >
+              <TableCell align="right">
+                <Button size="sm" variant="ghost" onClick={() => handleDownloadClick(backup)} disabled={disableActions} className="me-1">
+                  {t('APP_BACKUP_DOWNLOAD')}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => handleRestoreClick(backup)} disabled={disableActions} className="me-1">
                   {t('APP_RESTORE_SUBMIT')}
                 </Button>
                 <Button size="sm" intent="danger" variant="ghost" onClick={() => handleDeleteClick(backup)} disabled={disableActions}>
@@ -157,6 +188,7 @@ export const AppBackups = ({ info, status }: Props) => {
         onClose={deleteBackupModalDisclosure.close}
         onConfirm={() => selectedBackup && deleteAppBackup.mutate({ path: { urn: info.urn }, body: { filename: selectedBackup.id } })}
       />
+      <UploadBackupDialog isOpen={uploadModalDisclosure.isOpen} onClose={uploadModalDisclosure.close} onConfirm={handleUploadConfirm} />
     </div>
   );
 };

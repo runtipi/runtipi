@@ -312,6 +312,16 @@ Response: 201 Created
 DELETE /api/backups/{urn}
 Body: { filename: string }
 Response: 200 OK
+
+// Download backup
+GET /api/backups/{urn}/{filename}/download
+Response: Binary file (application/gzip)
+
+// Upload backup
+POST /api/backups/{urn}/upload
+Content-Type: multipart/form-data
+Body: FormData with 'file' field
+Response: 201 Created
 ```
 
 ### Data Transfer Objects
@@ -331,6 +341,134 @@ export class DeleteAppBackupBodyDto {
   filename: string; // Backup filename to delete
 }
 ```
+
+## Backup Download and Upload
+
+### Download Backups
+
+The system provides the ability to download backup files directly through the web interface for safekeeping or migration to another Runtipi instance.
+
+#### Download Endpoint
+
+```typescript
+// Download backup file
+GET /api/backups/{urn}/{filename}/download
+Response: Binary file (application/gzip)
+Headers:
+  Content-Type: application/gzip
+  Content-Disposition: attachment; filename="{filename}"
+```
+
+#### Frontend Implementation
+
+The download functionality is implemented in the backups list:
+
+```typescript
+const handleDownloadClick = (backup: AppBackup) => {
+  const downloadUrl = `/api/backups/${info.urn}/${backup.id}/download`;
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = backup.id;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+```
+
+Each backup in the list has a "Download" button that triggers a direct file download through the browser.
+
+### Upload Backups
+
+Users can upload previously downloaded backup files or backups from another Runtipi instance through the web interface.
+
+#### Upload Endpoint
+
+```typescript
+// Upload backup file
+POST /api/backups/{urn}/upload
+Content-Type: multipart/form-data
+Body: FormData with 'file' field containing the .tar.gz backup file
+Response: { success: true }
+```
+
+#### File Validation
+
+The upload endpoint performs several validations:
+
+1. **File presence**: Ensures a file was uploaded
+2. **File extension**: Verifies the file ends with `.tar.gz`
+3. **MIME type**: Checks for `application/gzip` or `application/x-gzip`
+4. **Duplicate check**: Prevents overwriting existing backups with the same filename
+
+#### Frontend Implementation
+
+The upload functionality is implemented with a dedicated dialog component:
+
+```typescript
+const uploadBackup = useMutation({
+  mutationFn: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`/api/backups/${info.urn}/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to upload backup");
+    }
+
+    return response.json();
+  },
+  onSuccess: () => {
+    toast.success(t("APP_BACKUP_UPLOAD_SUCCESS"));
+    queryClient.invalidateQueries({ queryKey: ["getAppBackups"] });
+  },
+});
+```
+
+The upload dialog (`UploadBackupDialog`) provides:
+
+- File selection input with `.tar.gz` filter
+- Validation of file extension
+- Visual feedback of selected file
+- Upload confirmation
+
+### Use Cases
+
+#### Migration Between Instances
+
+1. **Source Instance**:
+
+   - Navigate to app backups
+   - Click "Download" on the desired backup
+   - Save the backup file locally
+
+2. **Target Instance**:
+   - Install the same app
+   - Navigate to app backups
+   - Click "Upload Backup"
+   - Select the downloaded backup file
+   - After upload, restore from the uploaded backup
+
+#### Manual Backup Storage
+
+Users can download backups for:
+
+- Long-term archival storage
+- Offline backup copies
+- Cloud storage upload
+- Migration to different hardware
+
+#### Disaster Recovery
+
+In case of system issues:
+
+- Backups can be downloaded before system maintenance
+- Previously uploaded backups are available for restoration
+- Backups can be transferred between instances without SFTP access
 
 ## Frontend Integration
 
@@ -365,6 +503,8 @@ export const AppBackups = ({ info, status }: Props) => {
 
 - **Backup List**: Paginated table showing backup ID, size, date, and actions
 - **Create Backup**: Button to initiate new backup with confirmation modal
+- **Download**: Action button for each backup to download the backup file
+- **Upload Backup**: Button to upload a backup file with file selection dialog
 - **Restore**: Action button for each backup with confirmation dialog
 - **Delete**: Action button for backup deletion with confirmation
 - **Status Indicators**: Real-time status updates during backup/restore operations

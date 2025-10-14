@@ -20,7 +20,7 @@ export class BackupManager {
 
   public backupApp = async (appUrn: AppUrn) => {
     const { dataDir } = this.config.get('directories');
-    const backupName = `${appUrn}-${new Date().getTime()}`;
+    const backupName = `${appUrn}-${Date.now()}`;
     const { appStoreId, appName } = extractAppUrn(appUrn);
 
     const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
@@ -178,5 +178,49 @@ export class BackupManager {
       this.logger.error(`Error listing backups for app ${appUrn}:`, error);
       return [];
     }
+  }
+
+  /**
+   * Get the file path for a backup
+   * @param appUrn - The app id
+   * @param filename - The filename of the backup
+   * @returns The backup file path
+   */
+  public async getBackupPath(appUrn: AppUrn, filename: string): Promise<string> {
+    const { dataDir } = this.config.get('directories');
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+    const backupPath = path.join(dataDir, 'backups', appStoreId, appName, filename);
+
+    if (!(await this.filesystem.pathExists(backupPath))) {
+      throw new Error('The backup file does not exist');
+    }
+
+    return backupPath;
+  }
+
+  /**
+   * Upload a backup file
+   * @param appUrn - The app id
+   * @param filename - The filename of the backup
+   * @param fileBuffer - The file buffer
+   */
+  public async uploadBackup(appUrn: AppUrn, filename: string, fileBuffer: Buffer): Promise<void> {
+    const { dataDir } = this.config.get('directories');
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+    const backupPath = path.join(backupDir, filename);
+
+    // Create backup directory if it doesn't exist
+    await this.filesystem.createDirectory(backupDir);
+
+    // Check if file already exists
+    if (await this.filesystem.pathExists(backupPath)) {
+      throw new Error('A backup with this filename already exists');
+    }
+
+    // Write the file
+    await this.filesystem.writeBinaryFile(backupPath, fileBuffer);
+
+    this.logger.info(`Backup uploaded successfully: ${filename}`);
   }
 }

@@ -1345,6 +1345,76 @@
         ]
       }
     },
+    "/api/backups/{urn}/{filename}/download": {
+      "get": {
+        "operationId": "downloadBackup",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filename",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Backup file download"
+          }
+        },
+        "tags": [
+          "Backups"
+        ]
+      }
+    },
+    "/api/backups/{urn}/upload": {
+      "post": {
+        "operationId": "uploadBackup",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Backup uploaded successfully"
+          }
+        },
+        "tags": [
+          "Backups"
+        ]
+      }
+    },
     "/api/sse/app": {
       "get": {
         "operationId": "appEvents",

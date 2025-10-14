@@ -139,4 +139,30 @@ export class BackupsService {
       }
     })();
   }
+
+  public async getBackupFilePath(params: { appUrn: AppUrn; filename: string }): Promise<string> {
+    const { appUrn, filename } = params;
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
+    }
+
+    return this.backupManager.getBackupPath(appUrn, filename);
+  }
+
+  public async uploadBackup(params: { appUrn: AppUrn; filename: string; fileBuffer: Buffer }): Promise<void> {
+    if (this.config.get('demoMode')) {
+      throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
+    }
+
+    const { appUrn, filename, fileBuffer } = params;
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
+    }
+
+    await this.backupManager.uploadBackup(appUrn, filename, fileBuffer);
+  }
 }
