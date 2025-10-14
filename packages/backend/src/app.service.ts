@@ -46,7 +46,6 @@ export class AppService {
       await this.logger.flush();
 
       this.logger.info(`Running version: ${process.env.TIPI_VERSION}`);
-      this.logger.info('Generating system env file...');
 
       const buster = this.cache.get('buster');
       if (buster !== version) {

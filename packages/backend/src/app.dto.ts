@@ -22,6 +22,7 @@ export const settingsSchema = type({
   listenIp: 'string.ip.v4',
   localDomain: 'string.trim',
   logLevel: type.enumerated(...Object.values(LOG_LEVEL_ENUM)),
+  maxBackups: type('number.integer | string.integer.parse').to('0 <= number <= 100'),
   persistTraefikConfig: 'boolean',
   port: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
   postgresPort: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),

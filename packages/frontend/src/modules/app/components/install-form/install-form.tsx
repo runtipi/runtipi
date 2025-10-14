@@ -37,6 +37,7 @@ export type FormValues = {
   localSubdomain?: string;
   isVisibleOnGuestDashboard?: boolean;
   enableAuth: boolean;
+  maxBackups?: number;
   [key: string]: unknown;
 };
 
@@ -45,7 +46,7 @@ const typeFilter = (field: FormField) => !hiddenTypes.includes(field.type);
 export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit, initialValues, loading, formId }) => {
   const { t } = useTranslation();
   const { userSettings } = useAppContext();
-  const { guestDashboard, localDomain, internalIp, domain } = userSettings;
+  const { guestDashboard, localDomain, internalIp, domain, maxBackups: globalMaxBackups } = userSettings;
 
   const {
     register,
@@ -302,6 +303,23 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           {renderExposeForm()}
         </>
       )}
+      <div className="mb-3">
+        <Input
+          type="number"
+          min={0}
+          max={100}
+          {...register('maxBackups', {
+            valueAsNumber: true,
+            setValueAs: (value) => (value === '' || value === null ? undefined : Number(value)),
+            min: { value: 0, message: t('APP_INSTALL_FORM_MAX_BACKUPS_ERROR_MIN') },
+            max: { value: 100, message: t('APP_INSTALL_FORM_MAX_BACKUPS_ERROR_MAX') },
+          })}
+          label={t('APP_INSTALL_FORM_MAX_BACKUPS')}
+          error={errors.maxBackups?.message}
+          placeholder={globalMaxBackups === 0 ? undefined : globalMaxBackups.toString()}
+        />
+        <span className="text-muted">{t('APP_INSTALL_FORM_MAX_BACKUPS_HINT', { value: globalMaxBackups })}</span>
+      </div>
     </form>
   );
 };

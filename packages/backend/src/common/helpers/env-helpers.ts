@@ -138,6 +138,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     'QUEUE_TIMEOUT_IN_MINUTES',
     typeof settings.eventsTimeout === 'number' ? String(settings.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );
+  envMap.set('MAX_BACKUPS', typeof settings.maxBackups === 'number' ? String(settings.maxBackups) : envMap.get('MAX_BACKUPS') || '0');
   envMap.set(
     'ADVANCED_SETTINGS',
     typeof settings.advancedSettings === 'boolean' ? String(settings.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',

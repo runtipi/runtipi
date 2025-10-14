@@ -41,6 +41,8 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
       ...values,
       port: values.port ? Number(values.port) : undefined,
       localSubdomain: values.localSubdomain || undefined,
+      maxBackups:
+        values.maxBackups !== undefined && Number.isNaN(values.maxBackups) ? undefined : values.maxBackups,
     };
   };
 

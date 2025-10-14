@@ -2357,6 +2357,11 @@
                   "warn"
                 ]
               },
+              "maxBackups": {
+                "type": "number",
+                "maximum": 100,
+                "minimum": 0
+              },
               "persistTraefikConfig": {
                 "type": "boolean"
               },
@@ -2405,6 +2410,7 @@
               "listenIp",
               "localDomain",
               "logLevel",
+              "maxBackups",
               "persistTraefikConfig",
               "port",
               "postgresPort",
@@ -2530,6 +2536,17 @@
               "error",
               "info",
               "warn"
+            ]
+          },
+          "maxBackups": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?:(?!^-0$)-?(?:(?:0|[1-9]\\d*)))$"
+              }
             ]
           },
           "persistTraefikConfig": {
@@ -4261,6 +4278,11 @@
           "localSubdomain": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9-]{1,63}$"
+          },
+          "maxBackups": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0
           },
           "port": {
             "type": "number",

@@ -60,6 +60,7 @@ export const app = pgTable('app', {
   localSubdomain: varchar('local_subdomain'),
   pendingRestart: boolean('pending_restart').default(false).notNull(),
   userConfigEnabled: boolean('user_config_enabled').default(true).notNull(),
+  maxBackups: integer('max_backups'),
 });
 
 export const appRelations = relations(app, ({ one }) => ({

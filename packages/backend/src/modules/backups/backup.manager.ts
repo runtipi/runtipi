@@ -139,6 +139,31 @@ export class BackupManager {
   }
 
   /**
+   * Clean up old backups based on retention policy
+   * @param appUrn - The app id
+   * @param maxBackups - Maximum number of backups to keep (0 means no limit)
+   */
+  public async cleanupOldBackups(appUrn: AppUrn, maxBackups: number) {
+    if (maxBackups === 0) {
+      return;
+    }
+
+    const backups = await this.listBackupsByAppId(appUrn);
+
+    if (backups.length <= maxBackups) {
+      return;
+    }
+
+    backups.sort((a, b) => b.date - a.date);
+
+    const backupsToDelete = backups.slice(maxBackups);
+    this.logger.info(`Cleaning up ${backupsToDelete.length} old backup(s) for ${appUrn}...`);
+
+    await Promise.all(backupsToDelete.map((backup) => this.deleteBackup(appUrn, backup.id)));
+    this.logger.info(`Cleanup completed for ${appUrn}`);
+  }
+
+  /**
    * Delete all backups for an app
    * @param appUrn - The app id
    */

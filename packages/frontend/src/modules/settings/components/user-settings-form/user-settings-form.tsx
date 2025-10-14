@@ -48,6 +48,7 @@ const settingsSchema = z.object({
   port: z.number().min(1).max(65535).optional(),
   sslPort: z.number().min(1).max(65535).optional(),
   eventsTimeout: z.coerce.number().int().min(1).optional(),
+  maxBackups: z.coerce.number().int().min(0).max(100).optional(),
   persistTraefikConfig: z.boolean().optional(),
   domain: z.string().optional(),
   appDataPath: z.string().optional(),
@@ -70,6 +71,7 @@ export type SettingsFormValues = {
   port?: number;
   sslPort?: number;
   eventsTimeout?: number;
+  maxBackups?: number;
   persistTraefikConfig?: boolean;
   domain?: string;
   appDataPath?: string;
@@ -478,6 +480,27 @@ export const UserSettingsForm = (props: IProps) => {
                 error={errors.eventsTimeout?.message}
                 placeholder="5"
                 type="number"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('maxBackups', {
+                  valueAsNumber: true,
+                })}
+                label={
+                  <>
+                    {t('SETTINGS_GENERAL_MAX_BACKUPS')}
+                    <Tooltip className="tooltip" anchorSelect=".max-backups-hint">
+                      {t('SETTINGS_GENERAL_MAX_BACKUPS_HINT')}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help max-backups-hint')}>?</span>
+                  </>
+                }
+                error={errors.maxBackups?.message}
+                placeholder="5"
+                type="number"
+                min={0}
+                max={100}
               />
             </div>
             <div className="mb-3">

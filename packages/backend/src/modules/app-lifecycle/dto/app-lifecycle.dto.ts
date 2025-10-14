@@ -10,6 +10,7 @@ export const appFormSchema = type({
   isVisibleOnGuestDashboard: 'boolean?',
   enableAuth: 'boolean?',
   localSubdomain: '/^[a-zA-Z0-9-]{1,63}$/?',
+  maxBackups: 'number >= 0 & number <= 100?',
   skipEnv: 'boolean = false',
   skipPull: 'boolean = false',
   skipRun: 'boolean = false',

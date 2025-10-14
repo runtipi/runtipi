@@ -62,6 +62,7 @@ export type AppContextDto = {
         listenIp: string;
         localDomain: string;
         logLevel: 'debug' | 'error' | 'info' | 'warn';
+        maxBackups: number;
         persistTraefikConfig: boolean;
         port: number;
         postgresPort: number;
@@ -99,6 +100,7 @@ export type UserSettingsBody = {
     listenIp?: string;
     localDomain?: string;
     logLevel?: 'debug' | 'error' | 'info' | 'warn';
+    maxBackups?: number | string;
     persistTraefikConfig?: boolean;
     port?: number | string;
     postgresPort?: number | string;
@@ -495,6 +497,7 @@ export type AppFormBody = {
     exposedLocal?: boolean;
     isVisibleOnGuestDashboard?: boolean;
     localSubdomain?: string;
+    maxBackups?: number;
     port?: number;
 };
 

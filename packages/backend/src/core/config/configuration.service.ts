@@ -45,6 +45,7 @@ const envSchema = z.object({
   ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
   THEME_BASE: z.string(),
   THEME_COLOR: z.string(),
+  MAX_BACKUPS: z.coerce.number().default(0),
   // Experimental flags
   EXPERIMENTAL_INSECURE_COOKIE: z.string().transform((val) => val.toLowerCase() === 'true'),
 });
@@ -130,6 +131,7 @@ export class ConfigurationService {
         eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
         advancedSettings: env.data.ADVANCED_SETTINGS,
         logLevel: env.data.LOG_LEVEL,
+        maxBackups: env.data.MAX_BACKUPS,
         themeBase: env.data.THEME_BASE,
         themeColor: env.data.THEME_COLOR,
         experimental: {

@@ -441,6 +441,7 @@ export class AppLifecycleService {
       config: parsedForm,
       isVisibleOnGuestDashboard: parsedForm.isVisibleOnGuestDashboard ?? false,
       enableAuth: parsedForm.enableAuth ?? false,
+      maxBackups: parsedForm.maxBackups ?? null,
     });
 
     if (!changed?.pendingRestart) {
