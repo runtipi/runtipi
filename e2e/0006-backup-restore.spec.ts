@@ -42,6 +42,9 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   await page.locator('button[name="more"]').press('ArrowDown');
   await page.getByRole('menuitem', { name: 'Update' }).click();
 
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Update' }).click();
 
   await expect(page.getByText('Updating')).toBeVisible();

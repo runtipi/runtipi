@@ -467,6 +467,7 @@ export const UserSettingsForm = (props: IProps) => {
               <Input
                 {...register('eventsTimeout', {
                   valueAsNumber: true,
+                  required: true,
                 })}
                 label={
                   <>
@@ -486,6 +487,7 @@ export const UserSettingsForm = (props: IProps) => {
               <Input
                 {...register('maxBackups', {
                   valueAsNumber: true,
+                  required: true,
                 })}
                 label={
                   <>

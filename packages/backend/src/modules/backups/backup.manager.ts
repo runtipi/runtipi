@@ -79,7 +79,13 @@ export class BackupManager {
     }
 
     const { appStoreId, appName } = extractAppUrn(appUrn);
-    const archive = path.join(dataDir, 'backups', appStoreId, appName, filename);
+    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+
+    const archive = this.filesystem.getSafeFilePath(path.join(backupDir, filename));
+
+    if (!archive.startsWith(backupDir)) {
+      throw new Error('Invalid backup file path');
+    }
 
     this.logger.info('Restoring app from backup...');
 
@@ -130,8 +136,8 @@ export class BackupManager {
     const { dataDir } = this.config.get('directories');
 
     const { appName, appStoreId } = extractAppUrn(appUrn);
-
-    const backupPath = path.join(dataDir, 'backups', appStoreId, appName, filename);
+    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, filename));
 
     if (await this.filesystem.pathExists(backupPath)) {
       await this.filesystem.removeFile(backupPath);
@@ -214,7 +220,9 @@ export class BackupManager {
   public async getBackupPath(appUrn: AppUrn, filename: string): Promise<string> {
     const { dataDir } = this.config.get('directories');
     const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupPath = path.join(dataDir, 'backups', appStoreId, appName, filename);
+    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+
+    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, filename));
 
     if (!(await this.filesystem.pathExists(backupPath))) {
       throw new Error('The backup file does not exist');
@@ -233,7 +241,8 @@ export class BackupManager {
     const { dataDir } = this.config.get('directories');
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-    const backupPath = path.join(backupDir, filename);
+
+    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, filename));
 
     // Create backup directory if it doesn't exist
     await this.filesystem.createDirectory(backupDir);

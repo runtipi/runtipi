@@ -10,7 +10,7 @@ import type { z } from 'zod';
 export class FilesystemService {
   constructor(private readonly logger: LoggerService) {}
 
-  private getSafeFilePath(filePath: string): string {
+  public getSafeFilePath(filePath: string): string {
     // Define allowed directories as absolute paths
     const allowedDirs = [
       path.resolve(APP_DIR),

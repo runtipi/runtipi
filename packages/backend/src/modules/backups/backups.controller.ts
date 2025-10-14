@@ -87,7 +87,6 @@ export class BackupsController {
       throw new BadRequestException('No backup file provided');
     }
 
-    // Validate file is a tar.gz
     if (!file.originalname.endsWith('.tar.gz') && file.mimetype !== 'application/gzip' && file.mimetype !== 'application/x-gzip') {
       throw new BadRequestException('File must be a .tar.gz backup file');
     }
