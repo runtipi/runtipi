@@ -37,8 +37,8 @@ export class FilesystemService {
 
   async readJsonFile<T extends object>(filePath: string, schema?: z.ZodType<T>): Promise<T | null> {
     try {
-      const file = Bun.file(this.getSafeFilePath(filePath));
-      const parsedContent = await file.json();
+      const fileContent = await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
+      const parsedContent = JSON.parse(fileContent);
 
       if (schema) {
         const validatedContent = schema.safeParse(parsedContent);
@@ -58,8 +58,7 @@ export class FilesystemService {
 
   async readTextFile(filePath: string): Promise<string | null> {
     try {
-      const file = Bun.file(this.getSafeFilePath(filePath));
-      return await file.text();
+      return await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
     } catch (error) {
       this.logger.debug(`Error reading file ${filePath}:`, error);
       return null;
@@ -68,9 +67,7 @@ export class FilesystemService {
 
   async readBinaryFile(filePath: string): Promise<Buffer | null> {
     try {
-      const file = Bun.file(this.getSafeFilePath(filePath));
-      const arrayBuffer = await file.arrayBuffer();
-      return Buffer.from(arrayBuffer);
+      return await fs.promises.readFile(this.getSafeFilePath(filePath));
     } catch (error) {
       this.logger.debug(`Error reading file ${filePath}:`, error);
       return null;
@@ -79,7 +76,7 @@ export class FilesystemService {
 
   async writeJsonFile<T>(filePath: string, data: T): Promise<boolean> {
     try {
-      await Bun.write(this.getSafeFilePath(filePath), `${JSON.stringify(data, null, 2)}${EOL}`);
+      await fs.promises.writeFile(this.getSafeFilePath(filePath), `${JSON.stringify(data, null, 2)}${EOL}`, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}:`, error);
@@ -89,9 +86,8 @@ export class FilesystemService {
 
   async writeTextFile(filePath: string, content: string): Promise<boolean> {
     try {
-      const dirPath = this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/'));
-      await fs.promises.mkdir(dirPath, { recursive: true });
-      await Bun.write(this.getSafeFilePath(filePath), `${content}${EOL}`);
+      await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
+      await fs.promises.writeFile(this.getSafeFilePath(filePath), `${content}${EOL}`, 'utf8');
       return true;
     } catch (error) {
       this.logger.error(`Error writing file ${filePath}:`, error);
@@ -101,9 +97,8 @@ export class FilesystemService {
 
   async writeBinaryFile(filePath: string, data: Buffer): Promise<boolean> {
     try {
-      const dirPath = this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/'));
-      await fs.promises.mkdir(dirPath, { recursive: true });
-      await Bun.write(this.getSafeFilePath(filePath), data);
+      await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
+      await fs.promises.writeFile(this.getSafeFilePath(filePath), data);
       return true;
     } catch (error) {
       this.logger.error(`Error writing binary file ${filePath}:`, error);
@@ -120,8 +115,7 @@ export class FilesystemService {
 
   async copyFile(src: string, dest: string): Promise<boolean> {
     try {
-      const srcFile = Bun.file(this.getSafeFilePath(src));
-      await Bun.write(this.getSafeFilePath(dest), srcFile);
+      await fs.promises.copyFile(this.getSafeFilePath(src), this.getSafeFilePath(dest));
       return true;
     } catch (error) {
       this.logger.error(`Error copying file from ${src} to ${dest}:`, error);
@@ -170,8 +164,7 @@ export class FilesystemService {
 
   async removeFile(filePath: string): Promise<boolean> {
     try {
-      const file = Bun.file(this.getSafeFilePath(filePath));
-      await file.delete();
+      await fs.promises.unlink(this.getSafeFilePath(filePath));
       return true;
     } catch (error) {
       this.logger.error(`Error removing file ${filePath}:`, error);
