@@ -286,7 +286,7 @@
   "APP_UPDATE_COMPOSE_ALERT_SUBTITLE": "Jeśli zmiany nie są wyświetlane, oznacza to, że plik kompozycji nie uległ zmianie.",
   "APP_UPDATE_BACKUP_TITLE": "Kopia zapasowa",
   "APP_UPDATE_BACKUP_SUBTITLE": "Zaleca się wykonać kopię zapasową aplikacji przed aktualizacją. Przez utworzenie kopii, masz możliwość łatwego przywrócenia poprzedniej konfiguracji, jeżeli coś pójdzie nie tak.",
-  "APP_UPDATE_FORM_TITLE": "Zaktualizować {{name}}?",
+  "APP_UPDATE_FORM_TITLE": "Zaktualizuj {{name}}",
   "APP_UPDATE_FORM_SUBMIT": "Aktualizuj",
   "APP_UPDATE_FORM_NEXT": "Dalej",
   "APP_UPDATE_FORM_BACK": "Powrót",
