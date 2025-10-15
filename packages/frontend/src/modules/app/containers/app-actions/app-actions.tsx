@@ -34,7 +34,7 @@ import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-d
 import { useAppStatus } from '../../helpers/use-app-status';
 import { Tooltip } from 'react-tooltip';
 import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 interface IProps {
   app?: AppDetails | null;
@@ -73,6 +73,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
 
   const { t } = useTranslation();
   const { setOptimisticStatus } = useAppStatus();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
@@ -128,7 +129,11 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
   const UpdateListItem = (
-    <DropdownMenuItem onClick={() => navigate('/update')} key="update" className="updateAvailable">
+    <DropdownMenuItem
+      onClick={() => navigate(`${location.pathname}/update`, { state: { from: location.pathname } })}
+      key="update"
+      className="updateAvailable"
+    >
       <IconDownload className="me-2" size={16} />
       <Tooltip className="tooltip" anchorSelect=".updateAvailable">
         {t('MY_APPS_UPDATE_AVAILABLE')}

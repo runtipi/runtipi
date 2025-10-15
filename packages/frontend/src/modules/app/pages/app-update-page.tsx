@@ -9,17 +9,17 @@ import { copilot } from '@uiw/codemirror-theme-copilot';
 import CodeMirror from '@uiw/react-codemirror';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
 import { IconChevronLeft, IconChevronRight, IconInfoCircle } from '@tabler/icons-react';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
 import type { TranslatableError } from '@/types/error.types';
-import { redirect, useNavigate, useParams } from 'react-router';
+import { redirect, useLocation, useNavigate, useParams } from 'react-router';
 import type { Route } from './+types/app-update-page';
 import { getApp } from '@/api-client';
 
-export async function clientLoader({ params }: Route.ActionArgs) {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   if (!params.appId || !params.storeId) {
     return redirect('/apps');
   }
@@ -46,6 +46,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
   const params = useParams<{ storeId: string; appId: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const storeId = params.storeId;
   const appId = params.appId;
@@ -59,11 +60,6 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
 
   const [backupApp, setBackupApp] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
-
-  useEffect(() => {
-    setCurrentStep(0);
-    setBackupApp(true);
-  }, []);
 
   const configDiffQuery = useQuery({
     ...getAppConfigDiffOptions({ path: { urn: info.urn } }),
@@ -79,7 +75,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
       toast.error(t(e.message, e.intlParams));
     },
     onMutate: () => {
-      navigate(-1);
+      navigate(location.state?.from || '/apps');
     },
   });
 
@@ -91,25 +87,25 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="card" data-testid="app-update">
       <div className="card-header border-0 pb-0">
-        <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center">
+        <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center border-bottom pb-4 w-100">
           <AppLogo urn={info.urn} size={96} alt={info.name} />
           <div className="mt-3 mt-lg-0 ms-lg-3">
             <h2 className="mb-1">{t('APP_UPDATE_FORM_TITLE', { name: info.name })}</h2>
             <div className="d-flex flex-wrap align-items-center gap-2 text-muted">
               <span className="badge bg-muted text-white">
-                {t('APP_DETAILS_VERSION')}: {info.version}
+                {t('APP_DETAILS_VERSION')} {info.version}
               </span>
-              {newVersionLabel && (
+              {metadata.latestDockerVersion && (
                 <span className="badge bg-success text-white">
-                  {t('APP_ACTION_UPDATE')} {newVersionLabel}
+                  {t('APP_ACTION_UPDATE')} {metadata.latestDockerVersion}
                 </span>
               )}
             </div>
           </div>
         </div>
       </div>
-      <div className="card-body pt-3">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} key={currentStep}>
+      <div className="card-body pt-2">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Stepper currentStep={currentStep}>
             <StepTriggerList>
               <StepTrigger step={0} title={t('APP_UPDATE_INFORMATION_TITLE')} onStepChange={setCurrentStep} />
@@ -117,7 +113,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
               <StepTrigger step={2} title={t('APP_UPDATE_COMPOSE_TITLE')} onStepChange={setCurrentStep} />
               <StepTrigger step={3} title={t('APP_UPDATE_BACKUP_TITLE')} onStepChange={setCurrentStep} />
             </StepTriggerList>
-            <div className="mt-3">
+            <div className="mt-1">
               <StepContent step={0}>
                 <div className="text-muted">
                   <Trans
@@ -189,7 +185,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
         </motion.div>
       </div>
       <div className="card-footer border-0 d-flex align-items-center justify-content-between gap-3">
-        <Button variant="ghost" onClick={() => navigate(-1)}>
+        <Button variant="ghost" onClick={() => navigate(location.state?.from || '/apps')}>
           <IconChevronLeft className="me-1" size={16} />
           {t('APP_ACTION_CANCEL')}
         </Button>
