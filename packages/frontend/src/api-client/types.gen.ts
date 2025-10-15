@@ -34,8 +34,8 @@ export type AppContextDto = {
         id: string;
         name: string;
         short_desc: string;
+        supported_architectures: Array<'amd64' | 'arm64'>;
         urn: string;
-        supported_architectures?: Array<'amd64' | 'arm64'>;
     }>;
     updatesAvailable: number;
     user: {
@@ -244,6 +244,7 @@ export type MyAppsDto = {
             no_gui: boolean;
             short_desc: string;
             source: string;
+            supported_architectures: Array<'amd64' | 'arm64'>;
             tipi_version: number;
             updated_at: number;
             urn: string;
@@ -251,7 +252,6 @@ export type MyAppsDto = {
             gid?: number;
             min_tipi_version?: string;
             port?: number;
-            supported_architectures?: Array<'amd64' | 'arm64'>;
             uid?: number;
             url_suffix?: string;
             website?: string;
@@ -323,6 +323,7 @@ export type GuestAppsDto = {
             no_gui: boolean;
             short_desc: string;
             source: string;
+            supported_architectures: Array<'amd64' | 'arm64'>;
             tipi_version: number;
             updated_at: number;
             urn: string;
@@ -330,7 +331,6 @@ export type GuestAppsDto = {
             gid?: number;
             min_tipi_version?: string;
             port?: number;
-            supported_architectures?: Array<'amd64' | 'arm64'>;
             uid?: number;
             url_suffix?: string;
             website?: string;
@@ -386,6 +386,7 @@ export type GetAppDto = {
         no_gui: boolean;
         short_desc: string;
         source: string;
+        supported_architectures: Array<'amd64' | 'arm64'>;
         tipi_version: number;
         updated_at: number;
         urn: string;
@@ -393,7 +394,6 @@ export type GetAppDto = {
         gid?: number;
         min_tipi_version?: string;
         port?: number;
-        supported_architectures?: Array<'amd64' | 'arm64'>;
         uid?: number;
         url_suffix?: string;
         website?: string;
@@ -445,8 +445,8 @@ export type SearchAppsDto = {
         id: string;
         name: string;
         short_desc: string;
+        supported_architectures: Array<'amd64' | 'arm64'>;
         urn: string;
-        supported_architectures?: Array<'amd64' | 'arm64'>;
     }>;
     total: number;
     nextCursor?: string | null;
