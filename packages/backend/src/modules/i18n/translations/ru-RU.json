@@ -286,7 +286,7 @@
   "APP_UPDATE_COMPOSE_ALERT_SUBTITLE": "Если изменения не показаны, то это означает, что Compose файл не изменился.",
   "APP_UPDATE_BACKUP_TITLE": "Резервное копирование",
   "APP_UPDATE_BACKUP_SUBTITLE": "Настоятельно рекомендуется сделать резервную копию приложения перед обновлением. Если что-то пойдёт не так, вы легко можете восстановить предыдущую конфигурацию.",
-  "APP_UPDATE_FORM_TITLE": "Обновить {{name}}?",
+  "APP_UPDATE_FORM_TITLE": "Update {{name}}",
   "APP_UPDATE_FORM_SUBMIT": "Обновить",
   "APP_UPDATE_FORM_NEXT": "Далее",
   "APP_UPDATE_FORM_BACK": "Назад",
