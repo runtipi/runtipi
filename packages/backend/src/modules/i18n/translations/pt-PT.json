@@ -286,7 +286,7 @@
   "APP_UPDATE_COMPOSE_ALERT_SUBTITLE": "If no changes are shown, it means that the compose file has not changed.",
   "APP_UPDATE_BACKUP_TITLE": "Backup",
   "APP_UPDATE_BACKUP_SUBTITLE": "It is highly recommended to backup the app before updating. By backing up, you can easily restore the previous configuration if something goes wrong.",
-  "APP_UPDATE_FORM_TITLE": "Update {{name}}?",
+  "APP_UPDATE_FORM_TITLE": "Update {{name}}",
   "APP_UPDATE_FORM_SUBMIT": "Atualizar",
   "APP_UPDATE_FORM_NEXT": "Next",
   "APP_UPDATE_FORM_BACK": "Back",
