@@ -17,6 +17,7 @@ export default [
       index('./modules/app/pages/app-store-page.tsx', { id: 'app-store' }),
       route(':storeId', './modules/app/pages/app-store-page.tsx', { id: 'app-store-id' }),
       route(':storeId/:appId', './modules/app/pages/app-details-page.tsx', { id: 'app-details-store' }),
+      route(':storeId/:appId/update', './modules/app/pages/app-update-page.tsx', { id: 'app-store-app-update' }),
     ]),
 
     // My apps routes
@@ -26,6 +27,7 @@ export default [
       route(':appId/edit', './modules/app/pages/custom-app-edit-page.tsx', { id: 'custom-app-edit' }),
       route(':appId', './modules/app/pages/custom-app-details-page.tsx', { id: 'custom-app' }),
       route(':storeId/:appId', './modules/app/pages/app-details-page.tsx', { id: 'app-details' }),
+      route(':storeId/:appId/update', './modules/app/pages/app-update-page.tsx', { id: 'app-update' }),
     ]),
 
     // Settings route

@@ -30,7 +30,6 @@ import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog'
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
 import { StopDialog } from '../../components/dialogs/stop-dialog/stop-dialog';
 import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/uninstall-dialog';
-import { UpdateDialog } from '../../components/dialogs/update-dialog/update-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
 import { Tooltip } from 'react-tooltip';
@@ -68,7 +67,6 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
-  const updateDisclosure = useDisclosure();
   const updateSettingsDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const resetAppDisclosure = useDisclosure();
@@ -130,7 +128,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
   const UpdateListItem = (
-    <DropdownMenuItem onClick={updateDisclosure.open} key="update" className="updateAvailable">
+    <DropdownMenuItem onClick={() => navigate('/update')} key="update" className="updateAvailable">
       <IconDownload className="me-2" size={16} />
       <Tooltip className="tooltip" anchorSelect=".updateAvailable">
         {t('MY_APPS_UPDATE_AVAILABLE')}
@@ -281,15 +279,12 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     window.open(url, '_blank', 'noreferrer');
   };
 
-  const newVersion = [metadata?.latestDockerVersion ? `${metadata?.latestDockerVersion}` : '', `(${String(metadata?.latestVersion)})`].join(' ');
-
   return (
     <>
       <InstallDialog isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={info} />
       <StopDialog isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={info} />
       <RestartDialog isOpen={restartDisclosure.isOpen} onClose={restartDisclosure.close} info={info} />
       <UninstallDialog isOpen={uninstallDisclosure.isOpen} onClose={uninstallDisclosure.close} info={info} />
-      <UpdateDialog isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.close} info={info} newVersion={newVersion} />
       <ResetDialog isOpen={resetAppDisclosure.isOpen} onClose={resetAppDisclosure.close} info={info} />
       <UpdateSettingsDialog
         isOpen={updateSettingsDisclosure.isOpen}

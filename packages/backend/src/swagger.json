@@ -2230,9 +2230,6 @@
                 "short_desc": {
                   "type": "string"
                 },
-                "urn": {
-                  "type": "string"
-                },
                 "supported_architectures": {
                   "type": "array",
                   "items": {
@@ -2241,6 +2238,9 @@
                       "arm64"
                     ]
                   }
+                },
+                "urn": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -2251,6 +2251,7 @@
                 "id",
                 "name",
                 "short_desc",
+                "supported_architectures",
                 "urn"
               ]
             }
@@ -3094,6 +3095,15 @@
                     "source": {
                       "type": "string"
                     },
+                    "supported_architectures": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "amd64",
+                          "arm64"
+                        ]
+                      }
+                    },
                     "tipi_version": {
                       "type": "number"
                     },
@@ -3117,15 +3127,6 @@
                       "type": "number",
                       "maximum": 65535,
                       "minimum": 1
-                    },
-                    "supported_architectures": {
-                      "type": "array",
-                      "items": {
-                        "enum": [
-                          "amd64",
-                          "arm64"
-                        ]
-                      }
                     },
                     "uid": {
                       "type": "number"
@@ -3156,6 +3157,7 @@
                     "no_gui",
                     "short_desc",
                     "source",
+                    "supported_architectures",
                     "tipi_version",
                     "updated_at",
                     "urn",
@@ -3477,6 +3479,15 @@
                     "source": {
                       "type": "string"
                     },
+                    "supported_architectures": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "amd64",
+                          "arm64"
+                        ]
+                      }
+                    },
                     "tipi_version": {
                       "type": "number"
                     },
@@ -3500,15 +3511,6 @@
                       "type": "number",
                       "maximum": 65535,
                       "minimum": 1
-                    },
-                    "supported_architectures": {
-                      "type": "array",
-                      "items": {
-                        "enum": [
-                          "amd64",
-                          "arm64"
-                        ]
-                      }
                     },
                     "uid": {
                       "type": "number"
@@ -3539,6 +3541,7 @@
                     "no_gui",
                     "short_desc",
                     "source",
+                    "supported_architectures",
                     "tipi_version",
                     "updated_at",
                     "urn",
@@ -3769,6 +3772,15 @@
               "source": {
                 "type": "string"
               },
+              "supported_architectures": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "amd64",
+                    "arm64"
+                  ]
+                }
+              },
               "tipi_version": {
                 "type": "number"
               },
@@ -3792,15 +3804,6 @@
                 "type": "number",
                 "maximum": 65535,
                 "minimum": 1
-              },
-              "supported_architectures": {
-                "type": "array",
-                "items": {
-                  "enum": [
-                    "amd64",
-                    "arm64"
-                  ]
-                }
               },
               "uid": {
                 "type": "number"
@@ -3831,6 +3834,7 @@
               "no_gui",
               "short_desc",
               "source",
+              "supported_architectures",
               "tipi_version",
               "updated_at",
               "urn",
@@ -4085,9 +4089,6 @@
                 "short_desc": {
                   "type": "string"
                 },
-                "urn": {
-                  "type": "string"
-                },
                 "supported_architectures": {
                   "type": "array",
                   "items": {
@@ -4096,6 +4097,9 @@
                       "arm64"
                     ]
                   }
+                },
+                "urn": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -4106,6 +4110,7 @@
                 "id",
                 "name",
                 "short_desc",
+                "supported_architectures",
                 "urn"
               ]
             }
