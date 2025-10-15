@@ -286,7 +286,7 @@
   "APP_UPDATE_COMPOSE_ALERT_SUBTITLE": "Se nenhuma alteração for mostrada, significa que o arquivo de composição não foi alterado.",
   "APP_UPDATE_BACKUP_TITLE": "Fazer backup",
   "APP_UPDATE_BACKUP_SUBTITLE": "It is highly recommended to backup the app before updating. By backing up, you can easily restore the previous configuration if something goes wrong.",
-  "APP_UPDATE_FORM_TITLE": "Atualizar {{name}}?",
+  "APP_UPDATE_FORM_TITLE": "Update {{name}}",
   "APP_UPDATE_FORM_SUBMIT": "Atualizar",
   "APP_UPDATE_FORM_NEXT": "Próximo",
   "APP_UPDATE_FORM_BACK": "Voltar",
