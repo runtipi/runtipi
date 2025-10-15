@@ -286,7 +286,7 @@
   "APP_UPDATE_COMPOSE_ALERT_SUBTITLE": "Se non vengono mostrate modifiche, significa che il file compose non è cambiato.",
   "APP_UPDATE_BACKUP_TITLE": "Backup",
   "APP_UPDATE_BACKUP_SUBTITLE": "Si consiglia vivamente di eseguire il backup dell'app prima dell'aggiornamento. Con il backup, è possibile ripristinare facilmente la configurazione precedente se qualcosa non funziona correttamente.",
-  "APP_UPDATE_FORM_TITLE": "Aggiornare {{name}}?",
+  "APP_UPDATE_FORM_TITLE": "Update {{name}}",
   "APP_UPDATE_FORM_SUBMIT": "Aggiorna",
   "APP_UPDATE_FORM_NEXT": "Avanti",
   "APP_UPDATE_FORM_BACK": "Indietro",
