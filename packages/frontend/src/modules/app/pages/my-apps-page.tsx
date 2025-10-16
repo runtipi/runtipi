@@ -28,8 +28,6 @@ export default () => {
   const { installed } = apps;
   const { links: customLinks = [] } = links;
 
-  const tblrBodyColor = window.getComputedStyle(document.body).getPropertyValue('--tblr-body-color');
-
   const renderApp = ({ info, app, metadata }: (typeof installed)[number]) => {
     const updateAvailable = Number(app.version) < Number(metadata.latestVersion);
 
@@ -87,13 +85,13 @@ export default () => {
             title={t('CUSTOM_APP_ADD_TITLE')}
             subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
             action={() => navigate('/apps/create')}
-            icon={<IconLayoutGridAdd size={50} stroke={1.5} color={tblrBodyColor} />}
+            icon={<IconLayoutGridAdd size={50} stroke={1.5} />}
           />
           <ButtonTile
             title={t('LINKS_ADD_TITLE')}
             subtitle={t('LINKS_ADD_SUBTITLE')}
             action={() => addLinkDisclosure.open()}
-            icon={<IconLinkPlus size={50} stroke={1.5} color={tblrBodyColor} />}
+            icon={<IconLinkPlus size={50} stroke={1.5} />}
           />
         </div>
       )}
