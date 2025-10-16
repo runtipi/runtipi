@@ -17,9 +17,7 @@
 }
 
 .link-primary-subtle {
+  /* biome-ignore lint/complexity/noImportantStyles: can't find a better way */
   color: inherit !important;
-  transition: color;
-  transition-property: color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }

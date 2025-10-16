@@ -16,7 +16,7 @@ export const ButtonTile: React.FC<ButtonTileProps> = ({ title, subtitle, icon, a
             {icon}
           </div>
           <div>
-            <div className="fw-bolder text-start ">{title}</div>
+            <div className="fw-bolder text-start">{title}</div>
             <div className="text-muted text-start">{subtitle}</div>
           </div>
         </div>
