@@ -34,6 +34,7 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   await page.goto('/settings');
 
   await page.getByRole('button', { name: 'Update' }).click();
+  await expect(page.getByText('This will reset your appstores')).toBeVisible();
   await page.getByRole('button', { name: 'Update' }).click();
   await expect(page.getByText('Appstores updated successfully')).toBeVisible({ timeout: 10000 });
 
@@ -43,8 +44,11 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   await page.getByRole('menuitem', { name: 'Update' }).click();
 
   await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page.getByText('Review the new configuration of the app')).toBeVisible();
   await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page.getByText('Review the changes in the docker-compose file')).toBeVisible();
   await page.getByRole('button', { name: 'Next' }).click();
+  await expect(page.getByText('It is highly recommended to backup')).toBeVisible();
   await page.getByRole('button', { name: 'Update' }).click();
 
   await expect(page.getByText('Updating')).toBeVisible();
@@ -61,6 +65,7 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   }
 
   await page.getByRole('button', { name: 'Restore' }).click();
+  await expect(page.getByText('Do you really want to restore backup')).toBeVisible();
   await page.getByRole('button', { name: 'Restore' }).click();
 
   await expect(page.getByText('Restoring')).toBeVisible();
