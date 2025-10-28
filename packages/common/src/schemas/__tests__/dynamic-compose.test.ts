@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, it, expect } from 'vitest';
 
 import { serviceSchema as serviceSchemaZod, dynamicComposeSchema as dynamicComposeSchemaZod } from '../dynamic-compose.js';
 import { dynamicComposeSchemaArk, serviceSchemaArk } from '../dynamic-compose-ark.js';

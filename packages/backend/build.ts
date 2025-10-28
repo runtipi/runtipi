@@ -1,7 +1,7 @@
 await Bun.build({
   entrypoints: ['./src/main.ts'],
   outdir: './dist',
-  target: 'bun',
+  target: 'node',
   env: 'disable',
   sourcemap: 'linked',
   minify: {
@@ -11,6 +11,7 @@ await Bun.build({
     syntax: true,
   },
   external: [
+    'argon2',
     'class-transformer',
     '@nestjs/typeorm',
     '@nestjs/mongoose',

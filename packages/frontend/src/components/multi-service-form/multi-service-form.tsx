@@ -22,6 +22,8 @@ type Props = {
   onSubmit?: (data: typeof dynamicComposeSchemaArk.infer) => void;
 };
 
+const cleanSchema = type.pipe((d) => dynamicComposeSchemaArk.omit('schemaVersion')(deepClean(d)));
+
 export const MultiServiceForm = ({ onSubmit }: Props) => {
   const { t } = useTranslation();
   const {
@@ -69,7 +71,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   ];
 
   const form = useForm<typeof dynamicComposeSchemaArk.infer>({
-    resolver: arktypeResolver(type('object').pipe((d) => dynamicComposeSchemaArk.omit('schemaVersion')(deepClean(d)))),
+    resolver: arktypeResolver(cleanSchema as unknown as typeof dynamicComposeSchemaArk),
     defaultValues: {
       services,
     },

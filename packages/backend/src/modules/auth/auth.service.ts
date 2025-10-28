@@ -9,7 +9,7 @@ import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import psl from 'psl';
-import validator, { isFQDN } from 'validator';
+import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
@@ -27,7 +27,7 @@ export class AuthService {
   ) {}
 
   public getCookieDomain(domain?: string) {
-    if (!domain || !isFQDN(domain)) {
+    if (!domain || !validator.isFQDN(domain)) {
       return undefined;
     }
 

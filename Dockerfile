@@ -1,9 +1,11 @@
 ARG BUN_VERSION="1.3.0"
+ARG NODE_VERSION="22-alpine"
 
-FROM oven/bun:${BUN_VERSION}-alpine AS node_base
+FROM oven/bun:${BUN_VERSION}-alpine AS bun_base
+FROM node:${NODE_VERSION} AS node_base
 
 # ---- BUILDER BASE ----
-FROM node_base AS builder_base
+FROM bun_base AS builder_base
 
 WORKDIR /deps
 
@@ -70,6 +72,8 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
+RUN npm install --no-save --omit=dev argon2 class-transformer
+
 COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/packages/backend/dist ./
@@ -82,4 +86,4 @@ COPY --from=builder /app/packages/frontend/dist/client ./assets/frontend
 
 EXPOSE 3000
 
-CMD ["bun", "./main.js"]
+CMD ["node", "./main.js"]

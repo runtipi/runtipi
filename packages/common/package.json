@@ -46,7 +46,8 @@
   "license": "MIT",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
-    "@changesets/cli": "^2.29.3"
+    "@changesets/cli": "^2.29.3",
+    "vitest": "^4.0.4"
   },
   "peerDependencies": {
     "arktype": ">=2",
