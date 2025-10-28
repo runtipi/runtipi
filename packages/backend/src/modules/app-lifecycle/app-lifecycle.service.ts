@@ -7,7 +7,7 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { lt, valid } from 'semver';
 import semver from 'semver';
-import validator, { isFQDN } from 'validator';
+import validator from 'validator';
 import { type } from 'arktype';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
@@ -121,7 +121,7 @@ export class AppLifecycleService {
       throw new TranslatableError('APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP');
     }
 
-    if (domain && !isFQDN(domain)) {
+    if (domain && !validator.isFQDN(domain)) {
       throw new TranslatableError('APP_ERROR_DOMAIN_NOT_VALID', { domain });
     }
 

@@ -11,7 +11,7 @@ vi.mock('fs', async () => {
   };
 });
 
-vi.mock('bun:sqlite', () => {
+vi.mock('node:sqlite', () => {
   const sqlite = require('node:sqlite');
   return sqlite;
 });

@@ -1,14 +1,14 @@
-import { Database } from 'bun:sqlite';
+import { DatabaseSync } from 'node:sqlite';
 import { Injectable } from '@nestjs/common';
 
 export const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
 @Injectable()
 export class CacheService {
-  private db: Database;
+  private db: DatabaseSync;
 
   constructor() {
-    this.db = new Database('/cache/cache.sqlite');
+    this.db = new DatabaseSync('/cache/cache.sqlite');
 
     const tableCheck = this.db.prepare("SELECT name FROM sqlite_master WHERE type='table'").get();
 
