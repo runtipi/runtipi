@@ -284,4 +284,121 @@ describe('DockerComposeBuilder', () => {
 
     expect(yaml).toMatchSnapshot();
   });
+
+  it('should add homepage labels to main service when exposedLocal is true and app has GUI', () => {
+    const service: ServiceInput = {
+      name: 'grafana',
+      image: 'grafana/grafana:latest',
+      internalPort: 3000,
+      isMain: true,
+    };
+
+    const appInfo = {
+      id: 'grafana',
+      urn: createAppUrn('grafana', 'store-id'),
+      name: 'Grafana',
+      short_desc: 'Data visualization platform',
+      categories: ['data' as const],
+      no_gui: false,
+      available: true,
+      tipi_version: 1,
+      author: 'grafana',
+      source: 'https://github.com/grafana/grafana',
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposedLocal: true }, urn, subnet, appInfo);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.grafana.labels['homepage.group']).toBe('Data');
+    expect(yamlObject.services.grafana.labels['homepage.name']).toBe('Grafana');
+    expect(yamlObject.services.grafana.labels['homepage.icon']).toBe('http://runtipi:3000/api/marketplace/apps/nginx:store-id/image');
+    expect(yamlObject.services.grafana.labels['homepage.href']).toBe('https://nginx-store-id.${LOCAL_DOMAIN}');
+    expect(yamlObject.services.grafana.labels['homepage.description']).toBe('Data visualization platform');
+  });
+
+  it('should not add homepage labels when no_gui is true', () => {
+    const service: ServiceInput = {
+      name: 'test',
+      image: 'test:latest',
+      internalPort: 3000,
+      isMain: true,
+    };
+
+    const appInfo = {
+      id: 'test',
+      urn: createAppUrn('test', 'store-id'),
+      name: 'Test App',
+      short_desc: 'Test application',
+      categories: ['utilities' as const],
+      no_gui: true,
+      available: true,
+      tipi_version: 1,
+      author: 'test',
+      source: 'https://github.com/test/test',
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposedLocal: true }, urn, subnet, appInfo);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.test.labels['homepage.group']).toBeUndefined();
+    expect(yamlObject.services.test.labels['homepage.name']).toBeUndefined();
+  });
+
+  it('should add homepage labels with Docker network URL when exposedLocal is false', () => {
+    const service: ServiceInput = {
+      name: 'grafana',
+      image: 'grafana/grafana:latest',
+      internalPort: 3000,
+      isMain: true,
+    };
+
+    const appInfo = {
+      id: 'grafana',
+      urn: createAppUrn('grafana', 'store-id'),
+      name: 'Grafana',
+      short_desc: 'Data visualization platform',
+      categories: ['data' as const],
+      no_gui: false,
+      available: true,
+      tipi_version: 1,
+      author: 'grafana',
+      source: 'https://github.com/grafana/grafana',
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposedLocal: false }, urn, subnet, appInfo);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.grafana.labels['homepage.group']).toBe('Data');
+    expect(yamlObject.services.grafana.labels['homepage.name']).toBe('Grafana');
+    expect(yamlObject.services.grafana.labels['homepage.icon']).toBe('http://runtipi:3000/api/marketplace/apps/nginx:store-id/image');
+    expect(yamlObject.services.grafana.labels['homepage.href']).toBe('http://nginx-store-id:3000');
+    expect(yamlObject.services.grafana.labels['homepage.description']).toBe('Data visualization platform');
+  });
+
+  it('should use custom subdomain in homepage href when provided', () => {
+    const service: ServiceInput = {
+      name: 'grafana',
+      image: 'grafana/grafana:latest',
+      internalPort: 3000,
+      isMain: true,
+    };
+
+    const appInfo = {
+      id: 'grafana',
+      urn: createAppUrn('grafana', 'store-id'),
+      name: 'Grafana',
+      short_desc: 'Data visualization platform',
+      categories: ['data' as const],
+      no_gui: false,
+      available: true,
+      tipi_version: 1,
+      author: 'grafana',
+      source: 'https://github.com/grafana/grafana',
+    };
+
+    const compose = composeBuilder.getDockerCompose([service], { exposedLocal: true, localSubdomain: 'custom-grafana' }, urn, subnet, appInfo);
+    const yamlObject = yaml.parse(compose);
+
+    expect(yamlObject.services.grafana.labels['homepage.href']).toBe('https://custom-grafana.${LOCAL_DOMAIN}');
+  });
 });
