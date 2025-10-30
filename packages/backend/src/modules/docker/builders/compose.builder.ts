@@ -1,10 +1,11 @@
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import { type Service, type ServiceInput, serviceSchema } from '@runtipi/common/schemas';
+import { type AppInfo, type Service, type ServiceInput, serviceSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
+import { HomepageLabelsBuilder } from './homepage-labels.builder';
 import { z } from 'zod';
 
 interface Network {
@@ -61,7 +62,7 @@ export class DockerComposeBuilder {
     });
   }
 
-  private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn) => {
+  private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn, appInfo?: AppInfo) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const result = serviceSchema.safeParse(params);
 
@@ -135,6 +136,24 @@ export class DockerComposeBuilder {
 
         service.setLabels(traefikLabels.build());
       }
+
+      // Add Homepage labels for apps with GUI
+      if (appInfo && !appInfo.no_gui) {
+        const homepageLabels = new HomepageLabelsBuilder({
+          appId: appName,
+          storeId: appStoreId,
+          appName: appInfo.name,
+          appDescription: appInfo.short_desc,
+          category: appInfo.categories[0] || 'utilities',
+          internalPort: params.internalPort,
+          localSubdomain: form.localSubdomain,
+          exposedLocal: form.exposedLocal,
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
+          localDomain: '${LOCAL_DOMAIN}',
+        }).build();
+
+        service.setLabels(homepageLabels);
+      }
     }
 
     service.setLabels({ 'runtipi.managed': true, 'runtipi.appurn': appUrn, ...params.extraLabels }).interpolateVariables(`${appName}-${appStoreId}`);
@@ -142,10 +161,10 @@ export class DockerComposeBuilder {
     return service.build();
   };
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn, subnet: string) => {
+  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn, subnet: string, appInfo?: AppInfo) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
-    const myServices = services.map((service) => this.buildService(service, form, appUrn));
+    const myServices = services.map((service) => this.buildService(service, form, appUrn, appInfo));
 
     const dockerCompose = this.addServices(myServices)
       .addNetwork({
