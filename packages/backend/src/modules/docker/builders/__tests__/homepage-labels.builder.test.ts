@@ -1,6 +1,30 @@
 import { HomepageLabelsBuilder } from '../homepage-labels.builder';
 
 describe('HomepageLabelsBuilder', () => {
+  it('should generate correct labels for internet-exposed app with custom domain', () => {
+    const builder = new HomepageLabelsBuilder({
+      appId: 'grafana',
+      storeId: 'store-id',
+      appName: 'Grafana',
+      appDescription: 'Data visualization platform',
+      category: 'data',
+      internalPort: 3000,
+      exposed: true,
+      domain: 'grafana.example.com',
+      localDomain: '${LOCAL_DOMAIN}',
+    });
+
+    const labels = builder.build();
+
+    expect(labels).toEqual({
+      'homepage.group': 'Data',
+      'homepage.name': 'Grafana',
+      'homepage.icon': 'http://runtipi:3000/api/marketplace/apps/grafana:store-id/image',
+      'homepage.href': 'https://grafana.example.com',
+      'homepage.description': 'Data visualization platform',
+    });
+  });
+
   it('should generate correct labels for exposed local app', () => {
     const builder = new HomepageLabelsBuilder({
       appId: 'grafana',
@@ -42,7 +66,7 @@ describe('HomepageLabelsBuilder', () => {
     expect(labels['homepage.href']).toBe('https://custom-grafana.${LOCAL_DOMAIN}');
   });
 
-  it('should generate labels with Docker network URL for non-exposed apps', () => {
+  it('should generate href for openPort app when RUNTIPI_HOST is set', () => {
     const builder = new HomepageLabelsBuilder({
       appId: 'grafana',
       storeId: 'store-id',
@@ -50,7 +74,8 @@ describe('HomepageLabelsBuilder', () => {
       appDescription: 'Data visualization platform',
       category: 'data',
       internalPort: 3000,
-      exposedLocal: false,
+      openPort: true,
+      runtipiHost: 'halos.local',
       localDomain: '${LOCAL_DOMAIN}',
     });
 
@@ -60,9 +85,73 @@ describe('HomepageLabelsBuilder', () => {
       'homepage.group': 'Data',
       'homepage.name': 'Grafana',
       'homepage.icon': 'http://runtipi:3000/api/marketplace/apps/grafana:store-id/image',
-      'homepage.href': 'http://grafana-store-id:3000',
+      'homepage.href': 'http://halos.local:3000',
       'homepage.description': 'Data visualization platform',
     });
+  });
+
+  it('should omit href for non-exposed apps without RUNTIPI_HOST', () => {
+    const builder = new HomepageLabelsBuilder({
+      appId: 'grafana',
+      storeId: 'store-id',
+      appName: 'Grafana',
+      appDescription: 'Data visualization platform',
+      category: 'data',
+      internalPort: 3000,
+      openPort: true,
+      localDomain: '${LOCAL_DOMAIN}',
+    });
+
+    const labels = builder.build();
+
+    expect(labels).toEqual({
+      'homepage.group': 'Data',
+      'homepage.name': 'Grafana',
+      'homepage.icon': 'http://runtipi:3000/api/marketplace/apps/grafana:store-id/image',
+      'homepage.description': 'Data visualization platform',
+    });
+    expect(labels['homepage.href']).toBeUndefined();
+  });
+
+  it('should omit href for apps with no exposure configuration', () => {
+    const builder = new HomepageLabelsBuilder({
+      appId: 'grafana',
+      storeId: 'store-id',
+      appName: 'Grafana',
+      appDescription: 'Data visualization platform',
+      category: 'data',
+      internalPort: 3000,
+      localDomain: '${LOCAL_DOMAIN}',
+    });
+
+    const labels = builder.build();
+
+    expect(labels).toEqual({
+      'homepage.group': 'Data',
+      'homepage.name': 'Grafana',
+      'homepage.icon': 'http://runtipi:3000/api/marketplace/apps/grafana:store-id/image',
+      'homepage.description': 'Data visualization platform',
+    });
+    expect(labels['homepage.href']).toBeUndefined();
+  });
+
+  it('should prioritize internet exposure over local exposure', () => {
+    const builder = new HomepageLabelsBuilder({
+      appId: 'grafana',
+      storeId: 'store-id',
+      appName: 'Grafana',
+      appDescription: 'Data visualization platform',
+      category: 'data',
+      internalPort: 3000,
+      exposed: true,
+      domain: 'grafana.example.com',
+      exposedLocal: true,
+      localDomain: '${LOCAL_DOMAIN}',
+    });
+
+    const labels = builder.build();
+
+    expect(labels['homepage.href']).toBe('https://grafana.example.com');
   });
 
   it('should map categories correctly', () => {

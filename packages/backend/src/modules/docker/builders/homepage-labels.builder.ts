@@ -7,6 +7,10 @@ interface HomepageLabelsArgs {
   internalPort?: number | string;
   localSubdomain?: string;
   exposedLocal?: boolean;
+  exposed?: boolean;
+  domain?: string;
+  openPort?: boolean;
+  runtipiHost?: string;
   localDomain: string;
 }
 
@@ -18,28 +22,37 @@ export class HomepageLabelsBuilder {
   build(): Record<string, string> {
     const group = this.mapCategoryToGroup(this.params.category);
 
-    // Determine href based on whether app is exposed locally
-    let href: string;
-    if (this.params.exposedLocal) {
-      // Use Traefik URL for exposed apps
+    // Determine href based on app exposure configuration (priority order)
+    let href: string | undefined;
+    if (this.params.exposed && this.params.domain) {
+      // Internet-exposed with custom domain
+      href = `https://${this.params.domain}`;
+    } else if (this.params.exposedLocal) {
+      // LAN-exposed via Traefik
       const subdomain = this.params.localSubdomain ? this.params.localSubdomain : `${this.params.appId}-${this.params.storeId}`;
       href = `https://${subdomain}.${this.params.localDomain}`;
-    } else {
-      // Use direct Docker network access for non-exposed apps
-      const port = this.params.internalPort || 80;
-      href = `http://${this.params.appId}-${this.params.storeId}:${port}`;
+    } else if (this.params.runtipiHost && this.params.openPort && this.params.internalPort) {
+      // Host port accessible (requires RUNTIPI_HOST to be configured)
+      href = `http://${this.params.runtipiHost}:${this.params.internalPort}`;
     }
+    // If no href condition matches, omit the href label (no browser-accessible URL)
 
     // Use Runtipi's app logo API as the icon URL
     const iconUrl = `http://runtipi:3000/api/marketplace/apps/${this.params.appId}:${this.params.storeId}/image`;
 
-    return {
+    const labels: Record<string, string> = {
       'homepage.group': group,
       'homepage.name': this.params.appName,
       'homepage.icon': iconUrl,
-      'homepage.href': href,
       'homepage.description': this.params.appDescription,
     };
+
+    // Only add href if we have a browser-accessible URL
+    if (href) {
+      labels['homepage.href'] = href;
+    }
+
+    return labels;
   }
 
   private mapCategoryToGroup(category: string): string {

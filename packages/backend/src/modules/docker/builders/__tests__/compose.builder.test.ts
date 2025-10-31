@@ -344,7 +344,7 @@ describe('DockerComposeBuilder', () => {
     expect(yamlObject.services.test.labels['homepage.name']).toBeUndefined();
   });
 
-  it('should add homepage labels with Docker network URL when exposedLocal is false', () => {
+  it('should add homepage labels without href when not exposed and RUNTIPI_HOST not set', () => {
     const service: ServiceInput = {
       name: 'grafana',
       image: 'grafana/grafana:latest',
@@ -371,7 +371,7 @@ describe('DockerComposeBuilder', () => {
     expect(yamlObject.services.grafana.labels['homepage.group']).toBe('Data');
     expect(yamlObject.services.grafana.labels['homepage.name']).toBe('Grafana');
     expect(yamlObject.services.grafana.labels['homepage.icon']).toBe('http://runtipi:3000/api/marketplace/apps/nginx:store-id/image');
-    expect(yamlObject.services.grafana.labels['homepage.href']).toBe('http://nginx-store-id:3000');
+    expect(yamlObject.services.grafana.labels['homepage.href']).toBeUndefined();
     expect(yamlObject.services.grafana.labels['homepage.description']).toBe('Data visualization platform');
   });
 

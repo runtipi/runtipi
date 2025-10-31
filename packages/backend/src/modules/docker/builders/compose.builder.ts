@@ -148,6 +148,11 @@ export class DockerComposeBuilder {
           internalPort: params.internalPort,
           localSubdomain: form.localSubdomain,
           exposedLocal: form.exposedLocal,
+          exposed: form.exposed,
+          domain: form.domain,
+          openPort: form.openPort,
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
+          runtipiHost: '${RUNTIPI_HOST}',
           // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
           localDomain: '${LOCAL_DOMAIN}',
         }).build();
