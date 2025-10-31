@@ -75,7 +75,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.7.0",
-    "@hey-api/openapi-ts": "^0.85.0",
+    "@hey-api/openapi-ts": "^0.86.11",
     "@react-router/dev": "^7.6.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -91,6 +91,6 @@
     "typescript": "^5.8.3",
     "vite": "^7.1.9",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.6"
   }
 }
