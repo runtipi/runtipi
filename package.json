@@ -29,7 +29,7 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@biomejs/biome": "^2.0.4",
-    "@hey-api/openapi-ts": "^0.85.0",
+    "@hey-api/openapi-ts": "^0.86.11",
     "@playwright/test": "^1.52.0",
     "@types/bun": "^1.2.22",
     "@types/pg": "^8.15.1",
