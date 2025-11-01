@@ -5,6 +5,7 @@ interface AppLabelsArgs {
   appDescription: string;
   categories: string[];
   internalPort?: number | string;
+  hostPort?: number | string;
   localSubdomain?: string;
   exposedLocal?: boolean;
   exposed?: boolean;
@@ -15,8 +16,6 @@ interface AppLabelsArgs {
 }
 
 export class AppLabelsBuilder {
-  private labels: Record<string, string> = {};
-
   constructor(private params: AppLabelsArgs) {}
 
   build(): Record<string, string> {
@@ -29,9 +28,9 @@ export class AppLabelsBuilder {
       // LAN-exposed via Traefik
       const subdomain = this.params.localSubdomain ? this.params.localSubdomain : `${this.params.appId}-${this.params.storeId}`;
       href = `https://${subdomain}.${this.params.localDomain}`;
-    } else if (this.params.runtipiHost && this.params.openPort && this.params.internalPort) {
+    } else if (this.params.runtipiHost && this.params.openPort && this.params.hostPort) {
       // Host port accessible (requires RUNTIPI_HOST to be configured)
-      href = `http://${this.params.runtipiHost}:${this.params.internalPort}`;
+      href = `http://${this.params.runtipiHost}:${this.params.hostPort}`;
     }
     // If no href condition matches, omit the href label (no browser-accessible URL)
 

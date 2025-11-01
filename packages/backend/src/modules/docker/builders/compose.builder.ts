@@ -146,6 +146,8 @@ export class DockerComposeBuilder {
           appDescription: appInfo.short_desc,
           categories: appInfo.categories,
           internalPort: params.internalPort,
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
+          hostPort: form.openPort ? '${APP_PORT}' : undefined,
           localSubdomain: form.localSubdomain,
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,

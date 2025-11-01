@@ -74,6 +74,7 @@ describe('AppLabelsBuilder', () => {
       appDescription: 'Data visualization platform',
       categories: ['data'],
       internalPort: 3000,
+      hostPort: '${APP_PORT}',
       openPort: true,
       runtipiHost: 'halos.local',
       localDomain: '${LOCAL_DOMAIN}',
@@ -85,7 +86,7 @@ describe('AppLabelsBuilder', () => {
       'runtipi.categories': 'data',
       'runtipi.name': 'Grafana',
       'runtipi.icon': 'http://runtipi:3000/api/marketplace/apps/grafana:store-id/image',
-      'runtipi.href': 'http://halos.local:3000',
+      'runtipi.href': 'http://halos.local:${APP_PORT}',
       'runtipi.short_desc': 'Data visualization platform',
     });
   });
