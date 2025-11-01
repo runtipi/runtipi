@@ -56,5 +56,6 @@ export const createMockApp = (data: Partial<App>): App => ({
   pendingRestart: false,
   userConfigEnabled: true,
   maxBackups: null,
+  ignoredVersion: null,
   ...data,
 });

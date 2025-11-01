@@ -1,5 +1,6 @@
 import {
   IconBan,
+  IconCircleCheck,
   IconDots,
   IconDownload,
   IconEdit,
@@ -182,7 +183,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       key="unignore-version"
       disabled={unignoreVersionMutation.isPending}
     >
-      <IconDownload className="me-2" size={16} />
+      <IconCircleCheck className="me-2" size={16} />
       {t('APP_ACTION_UNIGNORE_VERSION')}
     </DropdownMenuItem>
   );
