@@ -1,9 +1,9 @@
-interface HomepageLabelsArgs {
+interface AppLabelsArgs {
   appId: string;
   storeId: string;
   appName: string;
   appDescription: string;
-  category: string;
+  categories: string[];
   internalPort?: number | string;
   localSubdomain?: string;
   exposedLocal?: boolean;
@@ -14,14 +14,12 @@ interface HomepageLabelsArgs {
   localDomain: string;
 }
 
-export class HomepageLabelsBuilder {
+export class AppLabelsBuilder {
   private labels: Record<string, string> = {};
 
-  constructor(private params: HomepageLabelsArgs) {}
+  constructor(private params: AppLabelsArgs) {}
 
   build(): Record<string, string> {
-    const group = this.mapCategoryToGroup(this.params.category);
-
     // Determine href based on app exposure configuration (priority order)
     let href: string | undefined;
     if (this.params.exposed && this.params.domain) {
@@ -41,39 +39,21 @@ export class HomepageLabelsBuilder {
     const iconUrl = `http://runtipi:3000/api/marketplace/apps/${this.params.appId}:${this.params.storeId}/image`;
 
     const labels: Record<string, string> = {
-      'homepage.group': group,
-      'homepage.name': this.params.appName,
-      'homepage.icon': iconUrl,
-      'homepage.description': this.params.appDescription,
+      'runtipi.name': this.params.appName,
+      'runtipi.icon': iconUrl,
+      'runtipi.short_desc': this.params.appDescription,
     };
+
+    // Only add categories if not empty
+    if (this.params.categories.length > 0) {
+      labels['runtipi.categories'] = this.params.categories.join(',');
+    }
 
     // Only add href if we have a browser-accessible URL
     if (href) {
-      labels['homepage.href'] = href;
+      labels['runtipi.href'] = href;
     }
 
     return labels;
-  }
-
-  private mapCategoryToGroup(category: string): string {
-    const mapping: Record<string, string> = {
-      network: 'Network',
-      media: 'Media',
-      development: 'Development',
-      automation: 'Automation',
-      social: 'Social',
-      utilities: 'Utilities',
-      photography: 'Photography',
-      security: 'Security',
-      featured: 'Featured',
-      books: 'Books',
-      data: 'Data',
-      music: 'Music',
-      finance: 'Finance',
-      gaming: 'Gaming',
-      ai: 'AI',
-    };
-
-    return mapping[category] || 'Applications';
   }
 }

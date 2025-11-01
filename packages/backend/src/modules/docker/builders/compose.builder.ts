@@ -5,7 +5,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
-import { HomepageLabelsBuilder } from './homepage-labels.builder';
+import { AppLabelsBuilder } from './app-labels.builder';
 import { z } from 'zod';
 
 interface Network {
@@ -137,14 +137,14 @@ export class DockerComposeBuilder {
         service.setLabels(traefikLabels.build());
       }
 
-      // Add Homepage labels for apps with GUI
+      // Add metadata labels for apps with GUI
       if (appInfo && !appInfo.no_gui) {
-        const homepageLabels = new HomepageLabelsBuilder({
+        const appLabels = new AppLabelsBuilder({
           appId: appName,
           storeId: appStoreId,
           appName: appInfo.name,
           appDescription: appInfo.short_desc,
-          category: appInfo.categories[0] || 'utilities',
+          categories: appInfo.categories,
           internalPort: params.internalPort,
           localSubdomain: form.localSubdomain,
           exposedLocal: form.exposedLocal,
@@ -157,7 +157,7 @@ export class DockerComposeBuilder {
           localDomain: '${LOCAL_DOMAIN}',
         }).build();
 
-        service.setLabels(homepageLabels);
+        service.setLabels(appLabels);
       }
     }
 
