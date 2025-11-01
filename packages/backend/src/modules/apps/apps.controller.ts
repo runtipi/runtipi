@@ -1,5 +1,5 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppsService } from './apps.service';
 import { GetAppDto, GetComposeDiffDto, GetConfigDiffDto, GetRandomPortDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
@@ -54,5 +54,17 @@ export class AppsController {
   async getAppConfigDiff(@Param('urn') urn: string) {
     const res = await this.appsService.getAppConfigDiff(castAppUrn(urn));
     return GetConfigDiffDto.parse(res, { reportOnly: true });
+  }
+
+  @Patch(':urn/ignore-version')
+  @UseGuards(AuthGuard)
+  async ignoreAppVersion(@Param('urn') urn: string) {
+    return this.appsService.ignoreAppVersion(castAppUrn(urn));
+  }
+
+  @Patch(':urn/unignore-version')
+  @UseGuards(AuthGuard)
+  async unignoreAppVersion(@Param('urn') urn: string) {
+    return this.appsService.unignoreAppVersion(castAppUrn(urn));
   }
 }

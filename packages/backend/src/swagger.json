@@ -620,6 +620,52 @@
         ]
       }
     },
+    "/api/apps/{urn}/ignore-version": {
+      "patch": {
+        "operationId": "ignoreAppVersion",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
+    "/api/apps/{urn}/unignore-version": {
+      "patch": {
+        "operationId": "unignoreAppVersion",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Apps"
+        ]
+      }
+    },
     "/api/marketplace/apps/search": {
       "get": {
         "operationId": "searchApps",
@@ -1170,52 +1216,6 @@
       "patch": {
         "operationId": "updateAllApps",
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "AppLifecycle"
-        ]
-      }
-    },
-    "/api/app-lifecycle/{urn}/ignore-version": {
-      "patch": {
-        "operationId": "ignoreAppVersion",
-        "parameters": [
-          {
-            "name": "urn",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "AppLifecycle"
-        ]
-      }
-    },
-    "/api/app-lifecycle/{urn}/unignore-version": {
-      "patch": {
-        "operationId": "unignoreAppVersion",
-        "parameters": [
-          {
-            "name": "urn",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": ""

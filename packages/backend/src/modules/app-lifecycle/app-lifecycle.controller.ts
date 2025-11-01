@@ -70,14 +70,4 @@ export class AppLifecycleController {
   async updateAllApps() {
     return this.appLifecycleService.updateAllApps();
   }
-
-  @Patch(':urn/ignore-version')
-  async ignoreAppVersion(@Param('urn') urn: string) {
-    return this.appLifecycleService.ignoreAppVersion({ appUrn: castAppUrn(urn) });
-  }
-
-  @Patch(':urn/unignore-version')
-  async unignoreAppVersion(@Param('urn') urn: string) {
-    return this.appLifecycleService.unignoreAppVersion({ appUrn: castAppUrn(urn) });
-  }
 }

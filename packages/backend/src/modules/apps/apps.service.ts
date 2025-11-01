@@ -170,4 +170,30 @@ export class AppsService {
       new: storeConfig.content ? JSON.stringify(storeConfig.content, null, 2) : null,
     };
   }
+
+  public async ignoreAppVersion(appUrn: AppUrn) {
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
+    }
+
+    const { latestVersion } = await this.marketplaceService.getAppUpdateInfo(appUrn);
+
+    await this.appsRepository.updateAppById(app.id, { ignoredVersion: latestVersion });
+
+    this.logger.info(`Ignored version ${latestVersion} for app ${appUrn}`);
+  }
+
+  public async unignoreAppVersion(appUrn: AppUrn) {
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
+    }
+
+    await this.appsRepository.updateAppById(app.id, { ignoredVersion: null });
+
+    this.logger.info(`Unignored version for app ${appUrn}`);
+  }
 }

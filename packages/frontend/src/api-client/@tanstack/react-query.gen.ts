@@ -441,6 +441,34 @@ export const getAppConfigDiffOptions = (options: Options<GetAppConfigDiffData>) 
     });
 };
 
+export const ignoreAppVersionMutation = (options?: Partial<Options<IgnoreAppVersionData>>): UseMutationOptions<unknown, DefaultError, Options<IgnoreAppVersionData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<IgnoreAppVersionData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await ignoreAppVersion({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const unignoreAppVersionMutation = (options?: Partial<Options<UnignoreAppVersionData>>): UseMutationOptions<unknown, DefaultError, Options<UnignoreAppVersionData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UnignoreAppVersionData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await unignoreAppVersion({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const searchAppsQueryKey = (options?: Options<SearchAppsData>) => createQueryKey('searchApps', options);
 
 export const searchAppsOptions = (options?: Options<SearchAppsData>) => {
@@ -738,34 +766,6 @@ export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsDat
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UpdateAllAppsData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await updateAllApps({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        }
-    };
-    return mutationOptions;
-};
-
-export const ignoreAppVersionMutation = (options?: Partial<Options<IgnoreAppVersionData>>): UseMutationOptions<unknown, DefaultError, Options<IgnoreAppVersionData>> => {
-    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<IgnoreAppVersionData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await ignoreAppVersion({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        }
-    };
-    return mutationOptions;
-};
-
-export const unignoreAppVersionMutation = (options?: Partial<Options<UnignoreAppVersionData>>): UseMutationOptions<unknown, DefaultError, Options<UnignoreAppVersionData>> => {
-    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UnignoreAppVersionData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await unignoreAppVersion({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

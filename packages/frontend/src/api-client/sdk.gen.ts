@@ -244,6 +244,20 @@ export const getAppConfigDiff = <ThrowOnError extends boolean = false>(options: 
     });
 };
 
+export const ignoreAppVersion = <ThrowOnError extends boolean = false>(options: Options<IgnoreAppVersionData, ThrowOnError>) => {
+    return (options.client ?? client).patch<IgnoreAppVersionResponses, unknown, ThrowOnError>({
+        url: '/api/apps/{urn}/ignore-version',
+        ...options
+    });
+};
+
+export const unignoreAppVersion = <ThrowOnError extends boolean = false>(options: Options<UnignoreAppVersionData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UnignoreAppVersionResponses, unknown, ThrowOnError>({
+        url: '/api/apps/{urn}/unignore-version',
+        ...options
+    });
+};
+
 export const searchApps = <ThrowOnError extends boolean = false>(options?: Options<SearchAppsData, ThrowOnError>) => {
     return (options?.client ?? client).get<SearchAppsResponses, unknown, ThrowOnError>({
         url: '/api/marketplace/apps/search',
@@ -383,20 +397,6 @@ export const updateAppConfig = <ThrowOnError extends boolean = false>(options: O
 export const updateAllApps = <ThrowOnError extends boolean = false>(options?: Options<UpdateAllAppsData, ThrowOnError>) => {
     return (options?.client ?? client).patch<UpdateAllAppsResponses, unknown, ThrowOnError>({
         url: '/api/app-lifecycle/update-all',
-        ...options
-    });
-};
-
-export const ignoreAppVersion = <ThrowOnError extends boolean = false>(options: Options<IgnoreAppVersionData, ThrowOnError>) => {
-    return (options.client ?? client).patch<IgnoreAppVersionResponses, unknown, ThrowOnError>({
-        url: '/api/app-lifecycle/{urn}/ignore-version',
-        ...options
-    });
-};
-
-export const unignoreAppVersion = <ThrowOnError extends boolean = false>(options: Options<UnignoreAppVersionData, ThrowOnError>) => {
-    return (options.client ?? client).patch<UnignoreAppVersionResponses, unknown, ThrowOnError>({
-        url: '/api/app-lifecycle/{urn}/unignore-version',
         ...options
     });
 };

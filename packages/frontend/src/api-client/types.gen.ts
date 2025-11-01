@@ -1381,6 +1381,32 @@ export type GetAppConfigDiffResponses = {
 
 export type GetAppConfigDiffResponse = GetAppConfigDiffResponses[keyof GetAppConfigDiffResponses];
 
+export type IgnoreAppVersionData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/ignore-version';
+};
+
+export type IgnoreAppVersionResponses = {
+    200: unknown;
+};
+
+export type UnignoreAppVersionData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/unignore-version';
+};
+
+export type UnignoreAppVersionResponses = {
+    200: unknown;
+};
+
 export type SearchAppsData = {
     body?: never;
     path?: never;
@@ -1621,32 +1647,6 @@ export type UpdateAllAppsData = {
 };
 
 export type UpdateAllAppsResponses = {
-    200: unknown;
-};
-
-export type IgnoreAppVersionData = {
-    body?: never;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/app-lifecycle/{urn}/ignore-version';
-};
-
-export type IgnoreAppVersionResponses = {
-    200: unknown;
-};
-
-export type UnignoreAppVersionData = {
-    body?: never;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/app-lifecycle/{urn}/unignore-version';
-};
-
-export type UnignoreAppVersionResponses = {
     200: unknown;
 };
 
