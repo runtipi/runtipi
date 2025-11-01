@@ -498,7 +498,10 @@ export class AppLifecycleService {
 
   async updateAllApps() {
     const installedApps = await this.appsService.getInstalledApps();
-    const availableUpdates = installedApps.filter(({ app, metadata }) => Number(app.version) < Number(metadata.latestVersion));
+    const availableUpdates = installedApps.filter(
+      ({ app, metadata }) =>
+        Number(app.version) < Number(metadata.latestVersion) && app.ignoredVersion !== metadata.latestVersion,
+    );
 
     for (const { app } of availableUpdates) {
       try {
@@ -508,6 +511,34 @@ export class AppLifecycleService {
         this.logger.error(`Failed to update app ${app.id}`, e);
       }
     }
+  }
+
+  async ignoreAppVersion(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_NOT_FOUND', { appUrn });
+    }
+
+    const { latestVersion } = await this.marketplaceService.getAppUpdateInfo(appUrn);
+
+    await this.appRepository.updateAppById(app.id, { ignoredVersion: latestVersion });
+
+    this.logger.info(`Ignored version ${latestVersion} for app ${appUrn}`);
+  }
+
+  async unignoreAppVersion(params: { appUrn: AppUrn }) {
+    const { appUrn } = params;
+    const app = await this.appRepository.getAppByUrn(appUrn);
+
+    if (!app) {
+      throw new TranslatableError('APP_NOT_FOUND', { appUrn });
+    }
+
+    await this.appRepository.updateAppById(app.id, { ignoredVersion: null });
+
+    this.logger.info(`Unignored version for app ${appUrn}`);
   }
 
   async startAllApps() {

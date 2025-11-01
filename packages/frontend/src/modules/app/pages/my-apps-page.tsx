@@ -29,7 +29,8 @@ export default () => {
   const { links: customLinks = [] } = links;
 
   const renderApp = ({ info, app, metadata }: (typeof installed)[number]) => {
-    const updateAvailable = Number(app.version) < Number(metadata.latestVersion);
+    const versionIsIgnored = app.ignoredVersion === metadata.latestVersion;
+    const updateAvailable = Number(app.version) < Number(metadata.latestVersion) && !versionIsIgnored;
 
     const [appName, storeId] = info.urn.split(':');
 

@@ -1,4 +1,5 @@
 import {
+  IconBan,
   IconDots,
   IconDownload,
   IconEdit,
@@ -20,7 +21,7 @@ import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import './app-actions.css';
-import { startAppMutation } from '@/api-client/@tanstack/react-query.gen';
+import { ignoreAppVersionMutation, startAppMutation, unignoreAppVersionMutation } from '@/api-client/@tanstack/react-query.gen';
 import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
@@ -77,6 +78,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const navigate = useNavigate();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const versionIsIgnored = app?.ignoredVersion === metadata.latestVersion;
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
   const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}`;
@@ -88,6 +90,26 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     },
     onMutate: () => {
       setOptimisticStatus('starting', info.urn);
+    },
+  });
+
+  const ignoreVersionMutation = useMutation({
+    ...ignoreAppVersionMutation(),
+    onSuccess: () => {
+      toast.success(t('APP_ACTION_IGNORE_VERSION_SUCCESS'));
+    },
+    onError: (e: Error) => {
+      toast.error(e.message);
+    },
+  });
+
+  const unignoreVersionMutation = useMutation({
+    ...unignoreAppVersionMutation(),
+    onSuccess: () => {
+      toast.success(t('APP_ACTION_UNIGNORE_VERSION_SUCCESS'));
+    },
+    onError: (e: Error) => {
+      toast.error(e.message);
     },
   });
 
@@ -142,6 +164,26 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         {t('APP_ACTION_UPDATE')}
         <span className="ms-2 badge bg-red" />
       </div>
+    </DropdownMenuItem>
+  );
+  const IgnoreVersionListItem = (
+    <DropdownMenuItem
+      onClick={() => ignoreVersionMutation.mutate({ path: { urn: info.urn } })}
+      key="ignore-version"
+      disabled={ignoreVersionMutation.isPending}
+    >
+      <IconBan className="me-2" size={16} />
+      {t('APP_ACTION_IGNORE_VERSION')}
+    </DropdownMenuItem>
+  );
+  const UnignoreVersionListItem = (
+    <DropdownMenuItem
+      onClick={() => unignoreVersionMutation.mutate({ path: { urn: info.urn } })}
+      key="unignore-version"
+      disabled={unignoreVersionMutation.isPending}
+    >
+      <IconDownload className="me-2" size={16} />
+      {t('APP_ACTION_UNIGNORE_VERSION')}
     </DropdownMenuItem>
   );
   const CancelListItem = (
@@ -221,8 +263,11 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       listItems.push(SettingsListItem);
       listItemsDestructive.push(ResetListItem);
       listItemsDestructive.push(RemoveListItem);
-      if (updateAvailable) {
+      if (updateAvailable && !versionIsIgnored) {
         listItems.push(UpdateListItem);
+        listItems.push(IgnoreVersionListItem);
+      } else if (versionIsIgnored) {
+        listItems.push(UnignoreVersionListItem);
       }
       break;
     case 'running':
@@ -236,8 +281,11 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         buttons.push(OpenButton);
       }
 
-      if (updateAvailable) {
+      if (updateAvailable && !versionIsIgnored) {
         listItems.push(UpdateListItem);
+        listItems.push(IgnoreVersionListItem);
+      } else if (versionIsIgnored) {
+        listItems.push(UnignoreVersionListItem);
       }
       break;
     case 'installing':
@@ -309,7 +357,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
             <DropdownMenuTrigger asChild>
               <Button name="more" className="more-button">
                 <IconDots size={14} />
-                {(updateAvailable || app?.pendingRestart) && <span className="badge badge-dot bg-red badge-notification" />}
+                {((updateAvailable && !versionIsIgnored) || app?.pendingRestart) && <span className="badge badge-dot bg-red badge-notification" />}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

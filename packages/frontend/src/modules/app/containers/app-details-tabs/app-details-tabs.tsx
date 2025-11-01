@@ -69,8 +69,6 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
     navigate(`?tab=${newTab}`, { replace: true });
   };
 
-  console.log(schemaVersion);
-
   return (
     <Tabs value={currentTab} orientation="vertical" style={{ marginTop: -1 }}>
       <TabsList>

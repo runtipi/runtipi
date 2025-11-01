@@ -47,6 +47,7 @@ export const app = pgTable('app', {
   createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
   version: integer().default(1).notNull(),
+  ignoredVersion: integer('ignored_version'),
   exposed: boolean().default(false).notNull(),
   domain: varchar(),
   isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),

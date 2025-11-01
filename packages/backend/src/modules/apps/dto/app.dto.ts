@@ -19,6 +19,7 @@ const appSchema = type({
   enableAuth: 'boolean?',
   localSubdomain: type('string').or('null').optional(),
   pendingRestart: 'boolean',
+  ignoredVersion: 'number | null',
 });
 
 const myAppsSchema = type({
