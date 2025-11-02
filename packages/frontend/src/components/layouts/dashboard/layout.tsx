@@ -52,9 +52,7 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
           </div>
         </div>
         <div className="page-body">
-          <div className="container-xl">
-            {children}
-          </div>
+          <div className="container-xl">{children}</div>
         </div>
       </div>
     </div>

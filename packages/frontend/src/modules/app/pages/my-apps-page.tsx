@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { AddLinkDialog } from '../components/dialogs/add-link/add-link-dialog';
 import '@/styles/app-grid.css';
-import { BatchActionsButton, StartAllButton, StopAllButton, RestartAllButton } from '../components/batch-actions-button/batch-actions-button';
+import { StartAllButton, StopAllButton, RestartAllButton } from '../components/batch-actions-button/batch-actions-button';
 import { useAppContext } from '@/context/app-context';
 import { ActionBar } from '@/components/action-bar';
 import clsx from 'clsx';
@@ -70,7 +70,6 @@ export default () => {
         </ActionBar.Center>
         <ActionBar.Right>
           <RestartAllButton availableUpdates={updatesAvailable} />
-          <BatchActionsButton availableUpdates={updatesAvailable} />
         </ActionBar.Right>
       </ActionBar>
       {installed.length === 0 && customLinks.length === 0 ? (

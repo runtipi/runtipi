@@ -5,7 +5,7 @@ import { useAppStoreState } from '@/stores/app-store';
 import { keepPreviousData, useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Navigate, useParams, useSearchParams } from 'react-router';
 import { StoreTile } from '../components/store-tile/store-tile';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
 import { StoreSelector } from '@/components/store-selector/store-selector';
@@ -25,6 +25,12 @@ export default () => {
   const { setCategory, category, storeId, setStoreId, search: initialSearch, setSearch } = useAppStoreState();
   const [search, setLocalSearch] = useState(initialSearch);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (selectedStore !== storeId) {
+      setStoreId(selectedStore);
+    }
+  }, [selectedStore, setStoreId, storeId]);
 
   const { data: appStores } = useSuspenseQuery({
     ...getEnabledAppStoresOptions(),
@@ -81,7 +87,9 @@ export default () => {
             <Input value={search} onChange={onSearch} placeholder={t('APP_STORE_SEARCH_PLACEHOLDER')} />
           </ActionBar.Left>
           <ActionBar.Center>
-            {appStores.appStores.length > 1 ? <StoreSelector initialValue={selectedStore} stores={appStores.appStores} onSelect={onSelectStore} /> : null}
+            {appStores.appStores.length > 1 ? (
+              <StoreSelector initialValue={selectedStore} stores={appStores.appStores} onSelect={onSelectStore} />
+            ) : null}
           </ActionBar.Center>
           <ActionBar.Right>
             <CategorySelector initialValue={category} onSelect={setCategory} />
@@ -99,7 +107,9 @@ export default () => {
           <Input value={search} onChange={onSearch} placeholder={t('APP_STORE_SEARCH_PLACEHOLDER')} />
         </ActionBar.Left>
         <ActionBar.Center>
-          {appStores.appStores.length > 1 ? <StoreSelector initialValue={selectedStore} stores={appStores.appStores} onSelect={onSelectStore} /> : null}
+          {appStores.appStores.length > 1 ? (
+            <StoreSelector initialValue={selectedStore} stores={appStores.appStores} onSelect={onSelectStore} />
+          ) : null}
         </ActionBar.Center>
         <ActionBar.Right>
           <CategorySelector initialValue={category} onSelect={setCategory} />
