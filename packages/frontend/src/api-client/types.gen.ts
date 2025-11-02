@@ -493,10 +493,6 @@ export type UpdateAppStoreDto = {
 };
 
 export type AppFormBody = {
-    skipEnv?: boolean;
-    skipPull?: boolean;
-    skipRun?: boolean;
-    openPort?: boolean;
     domain?: string;
     enableAuth?: boolean;
     exposed?: boolean;
@@ -504,7 +500,11 @@ export type AppFormBody = {
     isVisibleOnGuestDashboard?: boolean;
     localSubdomain?: string;
     maxBackups?: number;
+    openPort?: boolean;
     port?: number;
+    skipEnv?: boolean;
+    skipPull?: boolean;
+    skipRun?: boolean;
 };
 
 export type LifecycleRequestDto = {
@@ -563,9 +563,9 @@ export type LinksDto = {
 export type LinkBodyDto = {
     title: string;
     url: string;
-    isVisibleOnGuestDashboard?: boolean;
     description?: string;
     iconUrl?: string | '';
+    isVisibleOnGuestDashboard?: boolean;
 };
 
 export type EditLinkBodyDto = {
