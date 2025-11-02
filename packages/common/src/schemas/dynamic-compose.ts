@@ -194,8 +194,12 @@ export const serviceSchemaV2 = z.object({
               mode: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_MODE_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_MODE_INVALID')]).optional(),
               uid: z.number('CUSTOM_APP_ERROR_TMPFS_UID_INVALID').optional(),
               gid: z.number('CUSTOM_APP_ERROR_TMPFS_GID_INVALID').optional(),
-              nr_inodes: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID')]).optional(),
-              nr_blocks: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID')]).optional(),
+              nr_inodes: z
+                .union([z.number('CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID')])
+                .optional(),
+              nr_blocks: z
+                .union([z.number('CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID')])
+                .optional(),
               ro: z.boolean().optional(),
               rw: z.boolean().optional(),
               nosuid: z.boolean().optional(),
