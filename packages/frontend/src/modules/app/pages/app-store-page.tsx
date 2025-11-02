@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/Input';
 import { useTranslation } from 'react-i18next';
 import { StoreSelector } from '@/components/store-selector/store-selector';
 import { CategorySelector } from '@/components/category-selector/category-selector';
-import { ActionBar } from '@/components/action-bar';
+import { ActionBar } from '@/components/action-bar/action-bar';
 
 export const AppStorePageSuspense = () => {
   return <div className="card px-3 pb-3" style={{ height: 4000 }} />;

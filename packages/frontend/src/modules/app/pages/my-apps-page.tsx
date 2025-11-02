@@ -11,10 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { AddLinkDialog } from '../components/dialogs/add-link/add-link-dialog';
 import '@/styles/app-grid.css';
-import { StartAllButton, StopAllButton, RestartAllButton } from '../components/batch-actions-button/batch-actions-button';
 import { useAppContext } from '@/context/app-context';
-import { ActionBar } from '@/components/action-bar';
+import { ActionBar } from '@/components/action-bar/action-bar';
 import clsx from 'clsx';
+import { RestartAllButton, StartAllButton, StopAllButton } from '../components/batch-actions-dialog/batch-actions-dialog';
 
 export default () => {
   const { data: apps } = useSuspenseQuery({
