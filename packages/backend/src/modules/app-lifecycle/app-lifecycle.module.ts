@@ -9,11 +9,12 @@ import { QueueModule } from '../queue/queue.module';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { AppLifecycleController } from './app-lifecycle.controller';
 import { AppLifecycleService } from './app-lifecycle.service';
+import { AppStatusSyncService } from './app-status-sync.service';
 
 @Module({
   imports: [QueueModule, AppsModule, EnvModule, DockerModule, MarketplaceModule, forwardRef(() => BackupsModule), SSEModule],
-  providers: [AppLifecycleService, AppLifecycleCommandFactory],
+  providers: [AppLifecycleService, AppLifecycleCommandFactory, AppStatusSyncService],
   controllers: [AppLifecycleController],
-  exports: [AppLifecycleService],
+  exports: [AppLifecycleService, AppStatusSyncService],
 })
 export class AppLifecycleModule {}

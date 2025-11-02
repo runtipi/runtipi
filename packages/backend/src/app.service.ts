@@ -11,6 +11,7 @@ import { AppLifecycleService } from './modules/app-lifecycle/app-lifecycle.servi
 import { AppStoreService } from './modules/app-stores/app-store.service';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
+import { SystemEventsQueue } from './modules/queue/entities/system-events';
 import { DOCKERODE } from './modules/docker/docker.module';
 import Dockerode from 'dockerode';
 import { GithubService } from './utils/github/github.service';
@@ -22,6 +23,7 @@ export class AppService {
     private readonly configuration: ConfigurationService,
     private readonly logger: LoggerService,
     private readonly repoQueue: RepoEventsQueue,
+    private readonly systemEventsQueue: SystemEventsQueue,
     private readonly filesystem: FilesystemService,
     private readonly appStoreService: AppStoreService,
     private readonly marketplaceService: MarketplaceService,
@@ -64,6 +66,7 @@ export class AppService {
       if (__prod__) {
         this.repoQueue.publishRepeatable({ command: 'update_all' }, '*/15 * * * *');
       }
+      this.systemEventsQueue.publishRepeatable({ command: 'sync_app_statuses' }, '*/5 * * * *');
 
       await this.copyAssets();
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
