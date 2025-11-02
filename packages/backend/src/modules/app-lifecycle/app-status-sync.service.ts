@@ -32,7 +32,7 @@ export class AppStatusSyncService {
     private readonly configuration: ConfigurationService,
     @Inject(DOCKERODE) private readonly docker: Dockerode,
   ) {
-    if (this.configuration.get('userSettings').eventsTimeout >= 5) {
+    if (this.configuration.get('userSettings').eventsTimeout > 5) {
       this.logger.warn(
         `You have set a high events timeout of ${this.configuration.get('userSettings').eventsTimeout} minutes. Consider lowering if app status syncs are not occurring as expected.`,
       );
