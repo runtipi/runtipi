@@ -181,6 +181,42 @@ export const serviceSchemaV2 = z.object({
     .string()
     .optional()
     .or(z.array(z.string('CUSTOM_APP_ERROR_DNS_INVALID')).optional()),
+  tmpfs: z
+    .union([
+      z.array(z.string('CUSTOM_APP_ERROR_TMPFS_PATH_INVALID')),
+      z.array(
+        z.object({
+          type: z.literal('tmpfs').optional(),
+          target: z.string('CUSTOM_APP_ERROR_TMPFS_TARGET_REQUIRED'),
+          tmpfs: z
+            .object({
+              size: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_SIZE_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_SIZE_INVALID')]).optional(),
+              mode: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_MODE_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_MODE_INVALID')]).optional(),
+              uid: z.number('CUSTOM_APP_ERROR_TMPFS_UID_INVALID').optional(),
+              gid: z.number('CUSTOM_APP_ERROR_TMPFS_GID_INVALID').optional(),
+              nr_inodes: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID')]).optional(),
+              nr_blocks: z.union([z.number('CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID'), z.string('CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID')]).optional(),
+              ro: z.boolean().optional(),
+              rw: z.boolean().optional(),
+              nosuid: z.boolean().optional(),
+              suid: z.boolean().optional(),
+              nodev: z.boolean().optional(),
+              dev: z.boolean().optional(),
+              exec: z.boolean().optional(),
+              noexec: z.boolean().optional(),
+              sync: z.boolean().optional(),
+              async: z.boolean().optional(),
+              dirsync: z.boolean().optional(),
+              atime: z.boolean().optional(),
+              noatime: z.boolean().optional(),
+              diratime: z.boolean().optional(),
+              nodiratime: z.boolean().optional(),
+            })
+            .optional(),
+        }),
+      ),
+    ])
+    .optional(),
 });
 
 export const dynamicComposeSchemaV2 = z.object({

@@ -145,6 +145,38 @@ export const serviceSchemaArk = type({
     .configure({ message: 'CUSTOM_APP_ERROR_LABEL_KEY_INVALID' })
     .optional(),
   dns: type('string | string[]').configure({ message: 'CUSTOM_APP_ERROR_DNS_INVALID' }).optional(),
+  tmpfs: type
+    .or(
+      type('string[]').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_PATH_INVALID' }),
+      type({
+        type: type.unit('tmpfs').optional(),
+        target: type('string').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_TARGET_REQUIRED' }),
+        tmpfs: type({
+          size: type('number | string').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_SIZE_INVALID' }).optional(),
+          mode: type('number | string').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_MODE_INVALID' }).optional(),
+          uid: type('number').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_UID_INVALID' }).optional(),
+          gid: type('number').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_GID_INVALID' }).optional(),
+          nr_inodes: type('number | string').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_NR_INODES_INVALID' }).optional(),
+          nr_blocks: type('number | string').configure({ message: 'CUSTOM_APP_ERROR_TMPFS_NR_BLOCKS_INVALID' }).optional(),
+          ro: type('boolean').optional(),
+          rw: type('boolean').optional(),
+          nosuid: type('boolean').optional(),
+          suid: type('boolean').optional(),
+          nodev: type('boolean').optional(),
+          dev: type('boolean').optional(),
+          exec: type('boolean').optional(),
+          noexec: type('boolean').optional(),
+          sync: type('boolean').optional(),
+          async: type('boolean').optional(),
+          dirsync: type('boolean').optional(),
+          atime: type('boolean').optional(),
+          noatime: type('boolean').optional(),
+          diratime: type('boolean').optional(),
+          nodiratime: type('boolean').optional(),
+        }).optional(),
+      }).array(),
+    )
+    .optional(),
 });
 
 // dynamicComposeSchemaV2

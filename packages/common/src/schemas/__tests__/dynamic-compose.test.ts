@@ -298,6 +298,218 @@ schemas.forEach(({ name, serviceSchema, dynamicComposeSchema, safeParse }) => {
           expect(result.success).toBe(false);
         });
       });
+
+      describe('Tmpfs Configuration', () => {
+        it('should validate tmpfs with short syntax (string array)', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: ['/run', '/tmp'],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with long syntax', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/run',
+                tmpfs: {
+                  size: 64000000,
+                  mode: 1777,
+                },
+              },
+              {
+                target: '/tmp',
+                tmpfs: {
+                  size: '128m',
+                  mode: '1777',
+                  uid: 1000,
+                  gid: 1000,
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with minimal long syntax', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/run',
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with type field', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                type: 'tmpfs',
+                target: '/run',
+                tmpfs: {
+                  size: 1000000000,
+                  mode: 1777,
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should reject tmpfs long syntax without target', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                tmpfs: {
+                  size: 64000000,
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(false);
+        });
+
+        it('should accept both number and string for size and mode', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/run',
+                tmpfs: {
+                  size: '64m',
+                  mode: '0755',
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with all mount options', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/run',
+                tmpfs: {
+                  size: '64m',
+                  mode: 1777,
+                  uid: 1000,
+                  gid: 1000,
+                  nr_inodes: '400k',
+                  nr_blocks: 1024,
+                  ro: false,
+                  rw: true,
+                  nosuid: true,
+                  nodev: true,
+                  exec: true,
+                  sync: false,
+                  async: true,
+                  noatime: true,
+                  nodiratime: true,
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with read-only option', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/cache',
+                tmpfs: {
+                  ro: true,
+                  size: '100m',
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with execution restrictions', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/data',
+                tmpfs: {
+                  noexec: true,
+                  nosuid: true,
+                  nodev: true,
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+
+        it('should validate tmpfs with inode and block limits', () => {
+          const service = {
+            image: 'nginx:latest',
+            name: 'web-server',
+            internalPort: 80,
+            tmpfs: [
+              {
+                target: '/tmp',
+                tmpfs: {
+                  nr_inodes: 100000,
+                  nr_blocks: '2048',
+                },
+              },
+            ],
+          };
+
+          const result = safeParse(serviceSchema, service);
+          expect(result.success).toBe(true);
+        });
+      });
     });
 
     describe('DynamicCompose Schema V2', () => {

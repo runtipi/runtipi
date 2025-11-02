@@ -71,6 +71,36 @@ interface VolumeLongForm {
   bind?: VolumeBindConfig;
 }
 
+interface TmpfsOptions {
+  size?: number | string;
+  mode?: number | string;
+  uid?: number;
+  gid?: number;
+  nr_inodes?: number | string;
+  nr_blocks?: number | string;
+  ro?: boolean;
+  rw?: boolean;
+  nosuid?: boolean;
+  suid?: boolean;
+  nodev?: boolean;
+  dev?: boolean;
+  exec?: boolean;
+  noexec?: boolean;
+  sync?: boolean;
+  async?: boolean;
+  dirsync?: boolean;
+  atime?: boolean;
+  noatime?: boolean;
+  diratime?: boolean;
+  nodiratime?: boolean;
+}
+
+interface TmpfsLongForm {
+  type?: 'tmpfs';
+  target: string;
+  tmpfs?: TmpfsOptions;
+}
+
 export interface BuilderService {
   name: string;
   image: string;
@@ -106,6 +136,7 @@ export interface BuilderService {
   stdinOpen?: boolean;
   sysctls?: Record<string, number>;
   dns?: string | string[];
+  tmpfs?: (string | TmpfsLongForm)[];
 }
 
 export type BuiltService = ReturnType<typeof ServiceBuilder.prototype.build>;
@@ -553,6 +584,37 @@ export class ServiceBuilder {
     return this;
   }
 
+  /**
+   * Sets the tmpfs mounts for the service.
+   * @param {Array<string | TmpfsLongForm>} tmpfs The tmpfs mounts to set for the service.
+   * @example
+   * ```typescript
+   * const service = new ServiceBuilder();
+   * // Short syntax
+   * service.setTmpfs(['/run', '/tmp']);
+   * // Long syntax
+   * service.setTmpfs([
+   *   {
+   *     target: '/run',
+   *     tmpfs: {
+   *       size: '64m',
+   *       mode: 1777,
+   *       uid: 1000,
+   *       gid: 1000,
+   *     }
+   *   }
+   * ]);
+   * ```
+   */
+  setTmpfs(tmpfs?: Array<string | TmpfsLongForm>) {
+    if (!tmpfs || tmpfs.length === 0) {
+      return this;
+    }
+
+    this.service.tmpfs = tmpfs;
+    return this;
+  }
+
   /*
    * Search through the labels and replace any {{ RUNTIPI_APP_ID }} or {{RUNTIPI_APP_ID}} with the appId.
    * @param {string} appId The appId to replace the variables with.
@@ -634,6 +696,7 @@ export class ServiceBuilder {
       stdin_open: this.service.stdinOpen,
       sysctls: this.service.sysctls,
       dns: this.service.dns,
+      tmpfs: this.service.tmpfs,
     };
 
     // Delete any undefined properties
