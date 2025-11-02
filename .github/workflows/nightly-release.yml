@@ -95,7 +95,7 @@ jobs:
           done
 
       - name: Upload CLI
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cli
           path: bin
