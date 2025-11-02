@@ -170,7 +170,7 @@ jobs:
     if: always()
     steps:
       - name: Download report artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: playwright-report
           path: playwright-report/
