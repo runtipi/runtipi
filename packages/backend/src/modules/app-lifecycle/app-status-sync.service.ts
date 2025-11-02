@@ -130,7 +130,6 @@ export class AppStatusSyncService {
         message: `Error during sync: ${String(error)}`,
         syncedCount: 0,
         skippedCount: 0,
-        errorCount: 0,
         totalApps: 0,
       };
     }
