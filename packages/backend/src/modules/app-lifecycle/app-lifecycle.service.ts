@@ -512,7 +512,7 @@ export class AppLifecycleService {
     }
   }
 
-  async startAllApps() {
+  async restartRunningApps() {
     const apps = await this.appRepository.getApps();
     const runningApps = apps.filter((app) => app.status === 'running');
 
@@ -523,6 +523,54 @@ export class AppLifecycleService {
           await this.startApp({ appUrn, skipPull: true });
         } catch (e) {
           this.logger.error(`Failed to start app ${app.id}`, e);
+        }
+      }
+    })();
+  }
+
+  async startAllApps() {
+    const apps = await this.appRepository.getApps();
+    const stoppedApps = apps.filter((app) => app.status === 'stopped');
+
+    (async () => {
+      for (const app of stoppedApps) {
+        try {
+          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+          await this.startApp({ appUrn, skipPull: true });
+        } catch (e) {
+          this.logger.error(`Failed to start app ${app.id}`, e);
+        }
+      }
+    })();
+  }
+
+  async stopAllApps() {
+    const apps = await this.appRepository.getApps();
+    const runningApps = apps.filter((app) => app.status === 'running');
+
+    (async () => {
+      for (const app of runningApps) {
+        try {
+          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+          await this.stopApp({ appUrn });
+        } catch (e) {
+          this.logger.error(`Failed to stop app ${app.id}`, e);
+        }
+      }
+    })();
+  }
+
+  async restartAllApps() {
+    const apps = await this.appRepository.getApps();
+    const runningApps = apps.filter((app) => app.status === 'running');
+
+    (async () => {
+      for (const app of runningApps) {
+        try {
+          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+          await this.restartApp({ appUrn });
+        } catch (e) {
+          this.logger.error(`Failed to restart app ${app.id}`, e);
         }
       }
     })();

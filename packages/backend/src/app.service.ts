@@ -72,7 +72,7 @@ export class AppService {
       await this.generateTlsCertificates({ localDomain: userSettings.localDomain });
 
       if (__prod__ && (buster !== version || version === 'nightly')) {
-        this.appLifecycleService.startAllApps();
+        this.appLifecycleService.restartRunningApps();
       }
     } catch (e) {
       this.logger.error(e);

@@ -70,4 +70,19 @@ export class AppLifecycleController {
   async updateAllApps() {
     return this.appLifecycleService.updateAllApps();
   }
+
+  @Post('start-all')
+  async startAllApps() {
+    return this.appLifecycleService.startAllApps();
+  }
+
+  @Post('stop-all')
+  async stopAllApps() {
+    return this.appLifecycleService.stopAllApps();
+  }
+
+  @Post('restart-all')
+  async restartAllApps() {
+    return this.appLifecycleService.restartAllApps();
+  }
 }

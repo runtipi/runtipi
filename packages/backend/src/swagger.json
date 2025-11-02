@@ -1226,6 +1226,48 @@
         ]
       }
     },
+    "/api/app-lifecycle/start-all": {
+      "post": {
+        "operationId": "startAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/stop-all": {
+      "post": {
+        "operationId": "stopAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/restart-all": {
+      "post": {
+        "operationId": "restartAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
     "/api/backups/{urn}/backup": {
       "post": {
         "operationId": "backupApp",

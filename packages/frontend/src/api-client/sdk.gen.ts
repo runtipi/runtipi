@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcknowledgeWelcomeData, AcknowledgeWelcomeResponses, AppContextData, AppContextResponses, AppEventsData, AppEventsResponses, AppLogsEventsData, AppLogsEventsResponses, BackupAllAppsData, BackupAllAppsResponses, BackupAppData, BackupAppResponses, CancelResetPasswordData, CancelResetPasswordResponses, ChangePasswordData, ChangePasswordResponses, ChangeUsernameData, ChangeUsernameResponses, CheckData, CheckErrors, CheckResetPasswordRequestData, CheckResetPasswordRequestResponses, CheckResponses, CreateAppStoreData, CreateAppStoreResponses, CreateCustomAppData, CreateCustomAppResponses, CreateLinkData, CreateLinkResponses, DeleteAppBackupData, DeleteAppBackupResponses, DeleteAppStoreData, DeleteAppStoreResponses, DeleteLinkData, DeleteLinkResponses, DisableTotpData, DisableTotpResponses, DisableUserConfigData, DisableUserConfigResponses, DownloadBackupData, DownloadBackupResponses, DownloadLocalCertificateData, DownloadLocalCertificateResponses, EditLinkData, EditLinkResponses, EnableUserConfigData, EnableUserConfigResponses, GetAllAppStoresData, GetAllAppStoresResponses, GetAppBackupsData, GetAppBackupsResponses, GetAppComposeDiffData, GetAppComposeDiffResponses, GetAppConfigDiffData, GetAppConfigDiffResponses, GetAppData, GetAppResponses, GetEnabledAppStoresData, GetEnabledAppStoresResponses, GetGuestAppsData, GetGuestAppsResponses, GetGuestLinksData, GetGuestLinksResponses, GetImageData, GetImageResponses, GetInstalledAppsData, GetInstalledAppsResponses, GetLinksData, GetLinksResponses, GetRandomPortData, GetRandomPortResponses, GetTotpUriData, GetTotpUriResponses, GetTranslationData, GetTranslationResponses, GetUserConfigData, GetUserConfigResponses, IgnoreAppVersionData, IgnoreAppVersionResponses, IncrementAllAppVersionsData, IncrementAllAppVersionsResponses, InstallAppData, InstallAppResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, PullAppStoresData, PullAppStoresResponses, RegisterData, RegisterResponses, ResetAppData, ResetAppResponses, ResetPasswordData, ResetPasswordResponses, RestartAppData, RestartAppResponses, RestoreAppBackupData, RestoreAppBackupResponses, RuntipiLogsEventsData, RuntipiLogsEventsResponses, SearchAppsData, SearchAppsResponses, SeedDatabaseData, SeedDatabaseResponses, SetAllAppSubnetToNullData, SetAllAppSubnetToNullResponses, SetAllAppUpdateAvailableData, SetAllAppUpdateAvailableResponses, SetupTotpData, SetupTotpResponses, StartAllAppsData, StartAllAppsResponses, StartAppData, StartAppResponses, StopAppData, StopAppResponses, SystemLoadData, SystemLoadResponses, TraefikData, TraefikResponses, UnignoreAppVersionData, UnignoreAppVersionResponses, UninstallAllAppsData, UninstallAllAppsResponses, UninstallAppData, UninstallAppResponses, UpdateAllAppsData, UpdateAllAppsResponses, UpdateAppConfigData, UpdateAppConfigResponses, UpdateAppData, UpdateAppMetadataData, UpdateAppMetadataResponses, UpdateAppResponses, UpdateAppStoreData, UpdateAppStoreResponses, UpdateCustomAppData, UpdateCustomAppResponses, UpdateUserConfigData, UpdateUserConfigResponses, UpdateUserSettingsData, UpdateUserSettingsResponses, UploadAppImageData, UploadAppImageResponses, UploadBackupData, UploadBackupResponses, UserContextData, UserContextResponses, VerifyTotpData, VerifyTotpResponses } from './types.gen';
+import type { AcknowledgeWelcomeData, AcknowledgeWelcomeResponses, AppContextData, AppContextResponses, AppEventsData, AppEventsResponses, AppLogsEventsData, AppLogsEventsResponses, BackupAllAppsData, BackupAllAppsResponses, BackupAppData, BackupAppResponses, CancelResetPasswordData, CancelResetPasswordResponses, ChangePasswordData, ChangePasswordResponses, ChangeUsernameData, ChangeUsernameResponses, CheckData, CheckErrors, CheckResetPasswordRequestData, CheckResetPasswordRequestResponses, CheckResponses, CreateAppStoreData, CreateAppStoreResponses, CreateCustomAppData, CreateCustomAppResponses, CreateLinkData, CreateLinkResponses, DeleteAppBackupData, DeleteAppBackupResponses, DeleteAppStoreData, DeleteAppStoreResponses, DeleteLinkData, DeleteLinkResponses, DisableTotpData, DisableTotpResponses, DisableUserConfigData, DisableUserConfigResponses, DownloadBackupData, DownloadBackupResponses, DownloadLocalCertificateData, DownloadLocalCertificateResponses, EditLinkData, EditLinkResponses, EnableUserConfigData, EnableUserConfigResponses, GetAllAppStoresData, GetAllAppStoresResponses, GetAppBackupsData, GetAppBackupsResponses, GetAppComposeDiffData, GetAppComposeDiffResponses, GetAppConfigDiffData, GetAppConfigDiffResponses, GetAppData, GetAppResponses, GetEnabledAppStoresData, GetEnabledAppStoresResponses, GetGuestAppsData, GetGuestAppsResponses, GetGuestLinksData, GetGuestLinksResponses, GetImageData, GetImageResponses, GetInstalledAppsData, GetInstalledAppsResponses, GetLinksData, GetLinksResponses, GetRandomPortData, GetRandomPortResponses, GetTotpUriData, GetTotpUriResponses, GetTranslationData, GetTranslationResponses, GetUserConfigData, GetUserConfigResponses, IgnoreAppVersionData, IgnoreAppVersionResponses, IncrementAllAppVersionsData, IncrementAllAppVersionsResponses, InstallAppData, InstallAppResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, PullAppStoresData, PullAppStoresResponses, RegisterData, RegisterResponses, ResetAppData, ResetAppResponses, ResetPasswordData, ResetPasswordResponses, RestartAllAppsData, RestartAllAppsResponses, RestartAppData, RestartAppResponses, RestoreAppBackupData, RestoreAppBackupResponses, RuntipiLogsEventsData, RuntipiLogsEventsResponses, SearchAppsData, SearchAppsResponses, SeedDatabaseData, SeedDatabaseResponses, SetAllAppSubnetToNullData, SetAllAppSubnetToNullResponses, SetAllAppUpdateAvailableData, SetAllAppUpdateAvailableResponses, SetupTotpData, SetupTotpResponses, StartAllApps2Data, StartAllApps2Responses, StartAllAppsData, StartAllAppsResponses, StartAppData, StartAppResponses, StopAllAppsData, StopAllAppsResponses, StopAppData, StopAppResponses, SystemLoadData, SystemLoadResponses, TraefikData, TraefikResponses, UnignoreAppVersionData, UnignoreAppVersionResponses, UninstallAllAppsData, UninstallAllAppsResponses, UninstallAppData, UninstallAppResponses, UpdateAllAppsData, UpdateAllAppsResponses, UpdateAppConfigData, UpdateAppConfigResponses, UpdateAppData, UpdateAppMetadataData, UpdateAppMetadataResponses, UpdateAppResponses, UpdateAppStoreData, UpdateAppStoreResponses, UpdateCustomAppData, UpdateCustomAppResponses, UpdateUserConfigData, UpdateUserConfigResponses, UpdateUserSettingsData, UpdateUserSettingsResponses, UploadAppImageData, UploadAppImageResponses, UploadBackupData, UploadBackupResponses, UserContextData, UserContextResponses, VerifyTotpData, VerifyTotpResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -401,6 +401,27 @@ export const updateAllApps = <ThrowOnError extends boolean = false>(options?: Op
     });
 };
 
+export const startAllApps = <ThrowOnError extends boolean = false>(options?: Options<StartAllAppsData, ThrowOnError>) => {
+    return (options?.client ?? client).post<StartAllAppsResponses, unknown, ThrowOnError>({
+        url: '/api/app-lifecycle/start-all',
+        ...options
+    });
+};
+
+export const stopAllApps = <ThrowOnError extends boolean = false>(options?: Options<StopAllAppsData, ThrowOnError>) => {
+    return (options?.client ?? client).post<StopAllAppsResponses, unknown, ThrowOnError>({
+        url: '/api/app-lifecycle/stop-all',
+        ...options
+    });
+};
+
+export const restartAllApps = <ThrowOnError extends boolean = false>(options?: Options<RestartAllAppsData, ThrowOnError>) => {
+    return (options?.client ?? client).post<RestartAllAppsResponses, unknown, ThrowOnError>({
+        url: '/api/app-lifecycle/restart-all',
+        ...options
+    });
+};
+
 export const backupApp = <ThrowOnError extends boolean = false>(options: Options<BackupAppData, ThrowOnError>) => {
     return (options.client ?? client).post<BackupAppResponses, unknown, ThrowOnError>({
         url: '/api/backups/{urn}/backup',
@@ -637,8 +658,8 @@ export const setAllAppSubnetToNull = <ThrowOnError extends boolean = false>(opti
     });
 };
 
-export const startAllApps = <ThrowOnError extends boolean = false>(options?: Options<StartAllAppsData, ThrowOnError>) => {
-    return (options?.client ?? client).post<StartAllAppsResponses, unknown, ThrowOnError>({
+export const startAllApps2 = <ThrowOnError extends boolean = false>(options?: Options<StartAllApps2Data, ThrowOnError>) => {
+    return (options?.client ?? client).post<StartAllApps2Responses, unknown, ThrowOnError>({
         url: '/api/debug/start-all-apps',
         ...options
     });

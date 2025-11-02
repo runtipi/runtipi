@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { acknowledgeWelcome, appContext, appEvents, appLogsEvents, backupAllApps, backupApp, cancelResetPassword, changePassword, changeUsername, check, checkResetPasswordRequest, createAppStore, createCustomApp, createLink, deleteAppBackup, deleteAppStore, deleteLink, disableTotp, disableUserConfig, downloadBackup, downloadLocalCertificate, editLink, enableUserConfig, getAllAppStores, getApp, getAppBackups, getAppComposeDiff, getAppConfigDiff, getEnabledAppStores, getGuestApps, getGuestLinks, getImage, getInstalledApps, getLinks, getRandomPort, getTotpUri, getTranslation, getUserConfig, ignoreAppVersion, incrementAllAppVersions, installApp, login, logout, type Options, pullAppStores, register, resetApp, resetPassword, restartApp, restoreAppBackup, runtipiLogsEvents, searchApps, seedDatabase, setAllAppSubnetToNull, setAllAppUpdateAvailable, setupTotp, startAllApps, startApp, stopApp, systemLoad, traefik, unignoreAppVersion, uninstallAllApps, uninstallApp, updateAllApps, updateApp, updateAppConfig, updateAppMetadata, updateAppStore, updateCustomApp, updateUserConfig, updateUserSettings, uploadAppImage, uploadBackup, userContext, verifyTotp } from '../sdk.gen';
-import type { AcknowledgeWelcomeData, AppContextData, AppEventsData, AppLogsEventsData, BackupAllAppsData, BackupAppData, BackupAppResponse, CancelResetPasswordData, ChangePasswordData, ChangeUsernameData, CheckData, CheckResetPasswordRequestData, CreateAppStoreData, CreateAppStoreResponse, CreateCustomAppData, CreateCustomAppResponse, CreateLinkData, DeleteAppBackupData, DeleteAppStoreData, DeleteLinkData, DisableTotpData, DisableUserConfigData, DownloadBackupData, DownloadLocalCertificateData, EditLinkData, EnableUserConfigData, GetAllAppStoresData, GetAppBackupsData, GetAppBackupsResponse, GetAppComposeDiffData, GetAppConfigDiffData, GetAppData, GetEnabledAppStoresData, GetGuestAppsData, GetGuestLinksData, GetImageData, GetInstalledAppsData, GetLinksData, GetRandomPortData, GetRandomPortResponse, GetTotpUriData, GetTotpUriResponse, GetTranslationData, GetUserConfigData, IgnoreAppVersionData, IncrementAllAppVersionsData, InstallAppData, InstallAppResponse, LoginData, LoginResponse, LogoutData, PullAppStoresData, PullAppStoresResponse, RegisterData, RegisterResponse, ResetAppData, ResetAppResponse, ResetPasswordData, ResetPasswordResponse, RestartAppData, RestartAppResponse, RestoreAppBackupData, RestoreAppBackupResponse, RuntipiLogsEventsData, SearchAppsData, SearchAppsResponse, SeedDatabaseData, SetAllAppSubnetToNullData, SetAllAppUpdateAvailableData, SetupTotpData, StartAllAppsData, StartAppData, StartAppResponse, StopAppData, StopAppResponse, SystemLoadData, TraefikData, UnignoreAppVersionData, UninstallAllAppsData, UninstallAppData, UninstallAppResponse, UpdateAllAppsData, UpdateAppConfigData, UpdateAppConfigResponse, UpdateAppData, UpdateAppMetadataData, UpdateAppResponse, UpdateAppStoreData, UpdateAppStoreResponse, UpdateCustomAppData, UpdateUserConfigData, UpdateUserSettingsData, UploadAppImageData, UploadBackupData, UserContextData, VerifyTotpData, VerifyTotpResponse } from '../types.gen';
+import { acknowledgeWelcome, appContext, appEvents, appLogsEvents, backupAllApps, backupApp, cancelResetPassword, changePassword, changeUsername, check, checkResetPasswordRequest, createAppStore, createCustomApp, createLink, deleteAppBackup, deleteAppStore, deleteLink, disableTotp, disableUserConfig, downloadBackup, downloadLocalCertificate, editLink, enableUserConfig, getAllAppStores, getApp, getAppBackups, getAppComposeDiff, getAppConfigDiff, getEnabledAppStores, getGuestApps, getGuestLinks, getImage, getInstalledApps, getLinks, getRandomPort, getTotpUri, getTranslation, getUserConfig, ignoreAppVersion, incrementAllAppVersions, installApp, login, logout, type Options, pullAppStores, register, resetApp, resetPassword, restartAllApps, restartApp, restoreAppBackup, runtipiLogsEvents, searchApps, seedDatabase, setAllAppSubnetToNull, setAllAppUpdateAvailable, setupTotp, startAllApps, startAllApps2, startApp, stopAllApps, stopApp, systemLoad, traefik, unignoreAppVersion, uninstallAllApps, uninstallApp, updateAllApps, updateApp, updateAppConfig, updateAppMetadata, updateAppStore, updateCustomApp, updateUserConfig, updateUserSettings, uploadAppImage, uploadBackup, userContext, verifyTotp } from '../sdk.gen';
+import type { AcknowledgeWelcomeData, AppContextData, AppEventsData, AppLogsEventsData, BackupAllAppsData, BackupAppData, BackupAppResponse, CancelResetPasswordData, ChangePasswordData, ChangeUsernameData, CheckData, CheckResetPasswordRequestData, CreateAppStoreData, CreateAppStoreResponse, CreateCustomAppData, CreateCustomAppResponse, CreateLinkData, DeleteAppBackupData, DeleteAppStoreData, DeleteLinkData, DisableTotpData, DisableUserConfigData, DownloadBackupData, DownloadLocalCertificateData, EditLinkData, EnableUserConfigData, GetAllAppStoresData, GetAppBackupsData, GetAppBackupsResponse, GetAppComposeDiffData, GetAppConfigDiffData, GetAppData, GetEnabledAppStoresData, GetGuestAppsData, GetGuestLinksData, GetImageData, GetInstalledAppsData, GetLinksData, GetRandomPortData, GetRandomPortResponse, GetTotpUriData, GetTotpUriResponse, GetTranslationData, GetUserConfigData, IgnoreAppVersionData, IncrementAllAppVersionsData, InstallAppData, InstallAppResponse, LoginData, LoginResponse, LogoutData, PullAppStoresData, PullAppStoresResponse, RegisterData, RegisterResponse, ResetAppData, ResetAppResponse, ResetPasswordData, ResetPasswordResponse, RestartAllAppsData, RestartAppData, RestartAppResponse, RestoreAppBackupData, RestoreAppBackupResponse, RuntipiLogsEventsData, SearchAppsData, SearchAppsResponse, SeedDatabaseData, SetAllAppSubnetToNullData, SetAllAppUpdateAvailableData, SetupTotpData, StartAllApps2Data, StartAllAppsData, StartAppData, StartAppResponse, StopAllAppsData, StopAppData, StopAppResponse, SystemLoadData, TraefikData, UnignoreAppVersionData, UninstallAllAppsData, UninstallAppData, UninstallAppResponse, UpdateAllAppsData, UpdateAppConfigData, UpdateAppConfigResponse, UpdateAppData, UpdateAppMetadataData, UpdateAppResponse, UpdateAppStoreData, UpdateAppStoreResponse, UpdateCustomAppData, UpdateUserConfigData, UpdateUserSettingsData, UploadAppImageData, UploadBackupData, UserContextData, VerifyTotpData, VerifyTotpResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -776,6 +776,48 @@ export const updateAllAppsMutation = (options?: Partial<Options<UpdateAllAppsDat
     return mutationOptions;
 };
 
+export const startAllAppsMutation = (options?: Partial<Options<StartAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await startAllApps({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const stopAllAppsMutation = (options?: Partial<Options<StopAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<StopAllAppsData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StopAllAppsData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await stopAllApps({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const restartAllAppsMutation = (options?: Partial<Options<RestartAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<RestartAllAppsData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<RestartAllAppsData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await restartAllApps({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const backupAppMutation = (options?: Partial<Options<BackupAppData>>): UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> => {
     const mutationOptions: UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> = {
         mutationFn: async (fnOptions) => {
@@ -1205,10 +1247,10 @@ export const setAllAppSubnetToNullMutation = (options?: Partial<Options<SetAllAp
     return mutationOptions;
 };
 
-export const startAllAppsMutation = (options?: Partial<Options<StartAllAppsData>>): UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> => {
-    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAllAppsData>> = {
+export const startAllApps2Mutation = (options?: Partial<Options<StartAllApps2Data>>): UseMutationOptions<unknown, DefaultError, Options<StartAllApps2Data>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<StartAllApps2Data>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await startAllApps({
+            const { data } = await startAllApps2({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

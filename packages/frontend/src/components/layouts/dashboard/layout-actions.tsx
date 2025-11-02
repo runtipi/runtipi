@@ -1,5 +1,5 @@
 import { AppStoreLayoutActions } from '@/components/app-store-layout-actions/app-store-layout-actions';
-import { UpdateAllButton } from '@/modules/app/components/update-all-button/update-all-button';
+import { BatchActionsButton } from '@/modules/app/components/batch-actions-button';
 import { useUIStore } from '@/stores/ui-store';
 
 type Props = {
@@ -14,8 +14,8 @@ export const LayoutActions = (props: Props) => {
     return <AppStoreLayoutActions />;
   }
 
-  if (activeRoute === 'apps' && availableUpdates >= 2) {
-    return <UpdateAllButton />;
+  if (activeRoute === 'apps') {
+    return <BatchActionsButton availableUpdates={availableUpdates} />;
   }
 
   return null;
