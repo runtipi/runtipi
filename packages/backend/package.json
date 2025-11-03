@@ -65,7 +65,7 @@
     "winston": "^3.17.0",
     "yaml": "^2.7.1",
     "zod": "^4.1.5",
-    "zod-validation-error": "^4.0.2"
+    "zod-validation-error": "^5.0.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
