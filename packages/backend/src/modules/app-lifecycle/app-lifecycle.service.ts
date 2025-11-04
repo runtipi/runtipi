@@ -43,7 +43,7 @@ export class AppLifecycleService {
   async invokeCommand(
     data: z.infer<typeof appEventSchema>,
     reply: (response: z.output<typeof appEventResultSchema>) => Promise<void>,
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: false positive
     registerReject: (reject: (reason?: any) => void) => void,
   ) {
     const release = await this.mutex.acquire(data.appUrn);

@@ -31,7 +31,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
     callback: (
       data: z.output<T> & { eventId: string },
       reply: (response: z.input<R>) => Promise<void>,
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: false positive
       registerReject: (reject: (reason?: any) => void) => void,
     ) => Promise<void>,
   ) {
@@ -39,10 +39,10 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
       this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
         let rpcSuccess = false;
         let rpcResultMessage = '';
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: false positive
         let reject: ((reason?: any) => void) | null = null;
 
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: false positive
         function registerReject(rejectFn: (reason?: any) => void) {
           reject = rejectFn;
         }
