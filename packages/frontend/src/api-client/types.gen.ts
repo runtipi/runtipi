@@ -502,10 +502,6 @@ export type UpdateAppStoreDto = {
 };
 
 export type AppFormBody = {
-    skipEnv?: boolean;
-    skipPull?: boolean;
-    skipRun?: boolean;
-    openPort?: boolean;
     domain?: string;
     enableAuth?: boolean;
     exposed?: boolean;
@@ -513,7 +509,11 @@ export type AppFormBody = {
     isVisibleOnGuestDashboard?: boolean;
     localSubdomain?: string;
     maxBackups?: number;
+    openPort?: boolean;
     port?: number;
+    skipEnv?: boolean;
+    skipPull?: boolean;
+    skipRun?: boolean;
 };
 
 export type LifecycleRequestDto = {
@@ -572,9 +572,9 @@ export type LinksDto = {
 export type LinkBodyDto = {
     title: string;
     url: string;
-    isVisibleOnGuestDashboard?: boolean;
     description?: string;
     iconUrl?: string | '';
+    isVisibleOnGuestDashboard?: boolean;
 };
 
 export type EditLinkBodyDto = {
@@ -1711,6 +1711,39 @@ export type UpdateAllAppsResponses = {
     200: unknown;
 };
 
+export type StartAllAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/app-lifecycle/start-all';
+};
+
+export type StartAllAppsResponses = {
+    201: unknown;
+};
+
+export type StopAllAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/app-lifecycle/stop-all';
+};
+
+export type StopAllAppsResponses = {
+    201: unknown;
+};
+
+export type RestartAllAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/app-lifecycle/restart-all';
+};
+
+export type RestartAllAppsResponses = {
+    201: unknown;
+};
+
 export type BackupAppData = {
     body?: never;
     path: {
@@ -2112,14 +2145,14 @@ export type SetAllAppSubnetToNullResponses = {
     201: unknown;
 };
 
-export type StartAllAppsData = {
+export type StartAllApps2Data = {
     body?: never;
     path?: never;
     query?: never;
     url: '/api/debug/start-all-apps';
 };
 
-export type StartAllAppsResponses = {
+export type StartAllApps2Responses = {
     201: unknown;
 };
 

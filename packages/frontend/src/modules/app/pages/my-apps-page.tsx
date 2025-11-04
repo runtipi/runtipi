@@ -11,6 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { AddLinkDialog } from '../components/dialogs/add-link/add-link-dialog';
 import '@/styles/app-grid.css';
+import { useAppContext } from '@/context/app-context';
+import { ActionBar } from '@/components/action-bar/action-bar';
+import clsx from 'clsx';
+import { RestartAllButton, StartAllButton, StopAllButton } from '../components/batch-actions-dialog/batch-actions-dialog';
 
 export default () => {
   const { data: apps } = useSuspenseQuery({
@@ -20,6 +24,8 @@ export default () => {
   const { data: links } = useSuspenseQuery({
     ...getLinksOptions(),
   });
+
+  const { updatesAvailable } = useAppContext();
 
   const addLinkDisclosure = useDisclosure();
   const navigate = useNavigate();
@@ -55,6 +61,17 @@ export default () => {
 
   return (
     <>
+      <ActionBar className={clsx({ 'd-none': installed.length <= 1 })}>
+        <ActionBar.Left>
+          <StartAllButton availableUpdates={updatesAvailable} />
+        </ActionBar.Left>
+        <ActionBar.Center>
+          <StopAllButton availableUpdates={updatesAvailable} />
+        </ActionBar.Center>
+        <ActionBar.Right>
+          <RestartAllButton availableUpdates={updatesAvailable} />
+        </ActionBar.Right>
+      </ActionBar>
       {installed.length === 0 && customLinks.length === 0 ? (
         <EmptyPage
           title="MY_APPS_EMPTY_TITLE"

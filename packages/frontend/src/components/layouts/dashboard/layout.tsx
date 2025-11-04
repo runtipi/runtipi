@@ -6,9 +6,6 @@ import { PageTitle } from '@/components/page-title/page-title';
 import { Welcome } from '@/components/welcome/welcome';
 import { useAppContext } from '@/context/app-context';
 import { useUserContext } from '@/context/user-context';
-import { LayoutActions } from './layout-actions';
-import { useLocation } from 'react-router';
-import clsx from 'clsx';
 
 export const DashboardLayoutSuspense = ({ children }: PropsWithChildren) => {
   return (
@@ -29,11 +26,9 @@ export const DashboardLayoutSuspense = ({ children }: PropsWithChildren) => {
 };
 
 export const DashboardLayout = ({ children }: PropsWithChildren) => {
-  const { userSettings, user, apps, version, updatesAvailable } = useAppContext();
+  const { userSettings, user, apps, version } = useAppContext();
 
   const { isLoggedIn } = useUserContext();
-
-  const location = useLocation();
 
   let isLatest = semver.valid(version.current) && semver.valid(version.latest) && semver.gte(version.current, version.latest);
 
@@ -51,22 +46,8 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
       <div className="page-wrapper">
         <div className="page-header d-print-none">
           <div className="container-xl">
-            <div
-              className={clsx('d-flex', {
-                'flex-row align-items-center justify-content-between': location.pathname === '/apps',
-                'flex-column flex-lg-row': location.pathname !== '/apps',
-              })}
-            >
-              <div className="text-white title">
-                <PageTitle apps={apps} />
-              </div>
-              <div
-                className={clsx({
-                  'flex-fill justify-content-end align-items-center mt-2': location.pathname !== '/apps',
-                })}
-              >
-                <LayoutActions availableUpdates={updatesAvailable} />
-              </div>
+            <div className="text-white title">
+              <PageTitle apps={apps} />
             </div>
           </div>
         </div>

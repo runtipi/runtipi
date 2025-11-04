@@ -63,9 +63,6 @@ RUN --mount=type=secret,id=sentry_token,env=SENTRY_AUTH_TOKEN if [ "${LOCAL}" !=
   bun run sentry:sourcemaps; \
   fi
 
-RUN find ./packages/backend/dist -name "*.js.map" -type f -delete
-RUN find ./packages/frontend/dist -name "*.js.map" -type f -delete
-
 # ---- RUNNER ----
 FROM runner_base AS runner
 
@@ -87,4 +84,6 @@ COPY --from=builder /app/packages/frontend/dist/client ./assets/frontend
 
 EXPOSE 3000
 
-CMD ["node", "./main.js"]
+RUN mv main.js main.mjs
+
+CMD ["node", "./main.mjs"]

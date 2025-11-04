@@ -54,7 +54,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        TIPI_VERSION: 0.0.0
+        TIPI_VERSION: 4.5.0
         LOCAL: true
     depends_on:
       runtipi-db:
@@ -99,7 +99,7 @@ services:
       RABBITMQ_PASSWORD: tipi
       RABBITMQ_HOST: runtipi-queue
       INTERNAL_IP: 127.0.0.1
-      TIPI_VERSION: 0.0.0
+      TIPI_VERSION: 4.5.0
       LOG_LEVEL: debug
     env_file:
       - .env

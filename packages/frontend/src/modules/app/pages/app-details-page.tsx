@@ -7,7 +7,7 @@ import { redirect, useParams } from 'react-router';
 import { AppStatus } from '../components/app-status/app-status';
 import { AppActions } from '../containers/app-actions/app-actions';
 import { AppDetailsTabs } from '../containers/app-details-tabs/app-details-tabs';
-import type { Route } from '.react-router/types/src/modules/app/pages/+types/app-details-page';
+import type { Route } from './+types/app-details-page';
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const { storeId } = params;

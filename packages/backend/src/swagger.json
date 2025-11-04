@@ -1314,6 +1314,48 @@
         ]
       }
     },
+    "/api/app-lifecycle/start-all": {
+      "post": {
+        "operationId": "startAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/stop-all": {
+      "post": {
+        "operationId": "stopAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/restart-all": {
+      "post": {
+        "operationId": "restartAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
     "/api/backups/{urn}/backup": {
       "post": {
         "operationId": "backupApp",
@@ -4459,22 +4501,6 @@
       "AppFormBody": {
         "type": "object",
         "properties": {
-          "skipEnv": {
-            "type": "boolean",
-            "default": false
-          },
-          "skipPull": {
-            "type": "boolean",
-            "default": false
-          },
-          "skipRun": {
-            "type": "boolean",
-            "default": false
-          },
-          "openPort": {
-            "type": "boolean",
-            "default": true
-          },
           "domain": {
             "type": "string"
           },
@@ -4499,10 +4525,22 @@
             "maximum": 100,
             "minimum": 0
           },
+          "openPort": {
+            "type": "boolean"
+          },
           "port": {
             "type": "number",
             "maximum": 65535,
             "minimum": 1024
+          },
+          "skipEnv": {
+            "type": "boolean"
+          },
+          "skipPull": {
+            "type": "boolean"
+          },
+          "skipRun": {
+            "type": "boolean"
           }
         }
       },
@@ -4732,10 +4770,6 @@
             "type": "string",
             "format": "uri"
           },
-          "isVisibleOnGuestDashboard": {
-            "type": "boolean",
-            "default": false
-          },
           "description": {
             "type": "string",
             "maxLength": 50
@@ -4750,6 +4784,9 @@
                 "const": ""
               }
             ]
+          },
+          "isVisibleOnGuestDashboard": {
+            "type": "boolean"
           }
         },
         "required": [

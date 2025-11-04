@@ -38,7 +38,7 @@
     "ci": "npm run build && npm run check-exports",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "local-release": "changeset version && changeset publish",
-    "tsc": "tsc --noEmit",
+    "tsc": "tsc",
     "test": "bun test --coverage"
   },
   "keywords": [],

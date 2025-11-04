@@ -51,8 +51,11 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
       setIsDirty(true);
     }
 
+    let currentError: string | undefined;
+
     if (!newValue) {
       setError(undefined);
+      onChange(newValue, undefined);
       return;
     }
 
@@ -65,17 +68,18 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
       const valid = validate(parsedValue);
 
       if (valid) {
-        setError(undefined);
+        currentError = undefined;
       } else {
         const formattedErrors = betterAjvErrors(schema, parsedValue, validate.errors, { format: 'cli', indent: 2 });
-        setError(formattedErrors);
+        currentError = formattedErrors;
       }
     } catch (err) {
       console.error(err);
-      setError(t('MULTI_SERVICE_JSON_INVALID_FORMAT'));
+      currentError = t('MULTI_SERVICE_JSON_INVALID_FORMAT');
     }
 
-    onChange(newValue, error);
+    setError(currentError);
+    onChange(newValue, currentError);
   };
 
   return (

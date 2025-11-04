@@ -8,7 +8,7 @@
     "dev": "react-router dev",
     "bundle": "react-router build",
     "preview": "vite preview",
-    "tsc": "react-router typegen && tsc --noEmit"
+    "tsc": "react-router typegen && npx tsgo --noEmit"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
@@ -60,7 +60,7 @@
     "react-error-boundary": "^6.0.0",
     "react-hook-form": "^7.56.3",
     "react-hot-toast": "^2.5.2",
-    "react-i18next": "^15.5.1",
+    "react-i18next": "^16.0.0",
     "react-markdown": "^10.1.0",
     "react-router": "^7.6.0",
     "react-timezone-select": "^3.2.8",
@@ -74,8 +74,8 @@
     "zustand": "5.0.8"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.7.0",
-    "@hey-api/openapi-ts": "^0.85.0",
+    "@faker-js/faker": "^10.1.0",
+    "@hey-api/openapi-ts": "^0.86.11",
     "@react-router/dev": "^7.6.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -87,10 +87,11 @@
     "@types/react-dom": "^19.1.3",
     "@types/semver": "^7.7.0",
     "@types/validator": "^13.15.0",
+    "@typescript/native-preview": "^7.0.0-dev.20251102.1",
     "globals": "^16.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.1.9",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.6"
   }
 }

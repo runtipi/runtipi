@@ -21,7 +21,7 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
 
   // Update the version of the app
   let file = await readFile(path.join('repos', store.slug, 'apps', 'whoami', 'config.json'));
-  const config = JSON.parse(file);
+  let config = JSON.parse(file);
   config.tipi_version = 0;
   await writeFile(path.join('repos', store.slug, 'apps', 'whoami', 'config.json'), JSON.stringify(config));
 
@@ -38,10 +38,16 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   await page.getByRole('button', { name: 'Update' }).click();
   await expect(page.getByText('Appstores updated successfully')).toBeVisible({ timeout: 10000 });
 
+  // Set the config to version 1 for the update
+  file = await readFile(path.join('repos', store.slug, 'apps', 'whoami', 'config.json'));
+  config = JSON.parse(file);
+  config.tipi_version = 1;
+  await writeFile(path.join('repos', store.slug, 'apps', 'whoami', 'config.json'), JSON.stringify(config));
+
   await page.goto(`/app-store/${store.slug}/whoami`);
 
   await page.locator('button[name="more"]').press('ArrowDown');
-  await page.getByRole('menuitem', { name: 'Update' }).click();
+  await page.getByRole('menuitem', { name: 'Update', exact: true }).click();
 
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.getByText('Review the new configuration of the app')).toBeVisible();

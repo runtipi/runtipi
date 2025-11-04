@@ -8,7 +8,7 @@ export default defineConfig({
     setupFiles: ['./src/tests/vite.setup.ts'],
     include: ['src/**/*.test.ts'],
     exclude: ['**/integration/**', '**/.internal/**'],
-    coverage: { all: true, reporter: ['lcov', 'text-summary'] },
+    coverage: { reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
     env: {
       NODE_OPTIONS: '--experimental-sqlite',

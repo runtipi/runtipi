@@ -149,7 +149,7 @@ jobs:
           sudo mkdir -p playwright-report
           sudo cp ./runtipi/logs/* playwright-report/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: playwright-report
@@ -170,7 +170,7 @@ jobs:
     if: always()
     steps:
       - name: Download report artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: playwright-report
           path: playwright-report/

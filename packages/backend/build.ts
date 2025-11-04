@@ -4,7 +4,7 @@ await Bun.build({
   format: 'esm',
   target: 'node',
   env: 'disable',
-  sourcemap: 'external',
+  sourcemap: true,
   minify: {
     keepNames: true,
     whitespace: true,

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { AppEventsQueue, appEventSchema } from './entities/app-events';
 import { RepoEventsQueue, repoCommandSchema } from './entities/repo-events';
+import { SystemEventsQueue, systemCommandSchema } from './entities/system-events';
 import { QueueFactory } from './queue.factory';
 import { QueueHealthIndicator } from './queue.health';
 import { QueueController } from './queue.controller';
@@ -40,8 +41,21 @@ import { QueueController } from './queue.controller';
       },
       inject: [QueueFactory, ConfigurationService],
     },
+    {
+      provide: SystemEventsQueue,
+      useFactory: async (queueFactory: QueueFactory, config: ConfigurationService) => {
+        const timeout = config.get('userSettings').eventsTimeout * 60 * 1000;
+
+        return await queueFactory.createQueue({
+          queueName: 'system-events-queue',
+          workers: 1,
+          eventSchema: systemCommandSchema,
+          timeout: timeout,
+        });
+      },
+      inject: [QueueFactory, ConfigurationService],
+    },
   ],
-  exports: [AppEventsQueue, RepoEventsQueue, QueueHealthIndicator],
-  controllers: [QueueController],
+  exports: [AppEventsQueue, RepoEventsQueue, SystemEventsQueue, QueueHealthIndicator],
 })
 export class QueueModule {}
