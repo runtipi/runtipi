@@ -10,7 +10,7 @@ import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 export class BackupAppCommand extends AppLifecycleCommand {
   public async execute(
     appUrn: AppUrn,
-    form: AppEventFormInput,
+    _form: AppEventFormInput,
     resolve: ({ success, message }: { success: boolean; message: string }) => void,
   ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });

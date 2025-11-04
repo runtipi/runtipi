@@ -19,7 +19,7 @@ import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
-import { set, type z } from 'zod';
+import type { z } from 'zod';
 
 @Injectable()
 export class AppLifecycleService {
