@@ -671,8 +671,15 @@
         "operationId": "getAppEvents",
         "parameters": [],
         "responses": {
-          "200": {
-            "description": ""
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -685,8 +692,15 @@
         "operationId": "getRepoEvents",
         "parameters": [],
         "responses": {
-          "200": {
-            "description": ""
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -4200,6 +4214,40 @@
         "required": [
           "current",
           "new"
+        ]
+      },
+      "EventsDto": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "expiration": {
+                  "type": "number"
+                },
+                "queueName": {
+                  "type": "string"
+                },
+                "requestId": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "expiration",
+                "queueName",
+                "requestId",
+                "timestamp"
+              ]
+            }
+          }
+        },
+        "required": [
+          "events"
         ]
       },
       "SearchAppsDto": {

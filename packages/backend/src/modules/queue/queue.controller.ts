@@ -1,6 +1,8 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
 import { AppEventsQueue } from './entities/app-events';
 import { RepoEventsQueue } from './entities/repo-events';
+import { ApiResponse } from '@nestjs/swagger';
+import { EventsDto } from './dto/queue.dto';
 
 @Controller('queue')
 export class QueueController {
@@ -10,13 +12,17 @@ export class QueueController {
   ) {}
 
   @Get('/events/app-events')
+  @ApiResponse({ type: EventsDto })
   async getAppEvents() {
-    return this.appEventsQueue.getEvents();
+    const events = this.appEventsQueue.getEvents();
+    return EventsDto.parse(events, { reportOnly: true });
   }
 
   @Get('/events/repo-events')
+  @ApiResponse({ type: EventsDto })
   async getRepoEvents() {
-    return this.repoEventsQueue.getEvents();
+    const events = this.repoEventsQueue.getEvents();
+    return EventsDto.parse(events, { reportOnly: true });
   }
 
   @Post('/events/app-events/cancel/:requestId')

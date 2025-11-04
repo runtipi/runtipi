@@ -4,6 +4,7 @@ import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
 import { z } from 'zod';
 import type { EventPublisher } from './event.publisher';
+import type { EventsType } from './dto/queue.dto';
 
 interface EventDetails {
   queueName: string;
@@ -47,7 +48,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
           this.events.set(req.body.requestId, {
             queueName: req.routingKey,
             expiration: parseInt(req.expiration ?? '0') ?? undefined,
-            timestamp: req.timestamp,
+            timestamp: req.timestamp ?? undefined,
             cancel: async () => {
               reject?.(new Error('RPC cancelled'));
               await reply({ success: false, message: 'RPC cancelled' });
@@ -141,15 +142,17 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
     });
   }
 
-  public getEvents(): Array<Partial<EventDetails> & { requestId: string }> {
-    return Array.from(this.events.entries()).map(([requestId, details]) => {
-      return {
-        requestId: requestId,
-        queueName: details.queueName,
-        expiration: details.expiration,
-        timestamp: details.timestamp,
-      };
-    });
+  public getEvents(): EventsType {
+    return {
+      events: Array.from(this.events.entries()).map(([requestId, details]) => {
+        return {
+          requestId: requestId,
+          queueName: details.queueName,
+          expiration: details.expiration ?? 0,
+          timestamp: details.timestamp === undefined ? 0 : details.timestamp * 1000,
+        };
+      }),
+    };
   }
 
   public async cancelEvent(requestId: string) {
