@@ -57,5 +57,6 @@ import { QueueController } from './queue.controller';
     },
   ],
   exports: [AppEventsQueue, RepoEventsQueue, SystemEventsQueue, QueueHealthIndicator],
+  controllers: [QueueController],
 })
 export class QueueModule {}
