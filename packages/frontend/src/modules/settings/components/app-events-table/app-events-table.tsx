@@ -2,18 +2,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DateFormat } from '@/components/date-format/date-format';
 import type { GetAppEventsResponse } from '@/api-client';
 import { CancelAppEventDialog } from '../cancel-app-event-dialog/cancel-app-event-dialog';
+import { useTranslation } from 'react-i18next';
 
 export const AppEventsTable = ({ events }: GetAppEventsResponse) => {
+  const { t } = useTranslation();
+
   return (
     <div className="d-flex flex-column">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Queue</TableHead>
-            <TableHead>Started</TableHead>
-            <TableHead>Expires</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>{t('ID')}</TableHead>
+            <TableHead>{t('SETTINGS_EVENTS_QUEUE_NAME')}</TableHead>
+            <TableHead>{t('SETTINGS_EVENTS_STARTED_AT')}</TableHead>
+            <TableHead>{t('SETTINGS_EVENTS_EXPIRES_AT')}</TableHead>
+            <TableHead>{t('SETTINGS_EVENTS_ACTIONS')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
