@@ -666,6 +666,80 @@
         ]
       }
     },
+    "/api/queue/events/app-events": {
+      "get": {
+        "operationId": "getAppEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Queue"
+        ]
+      }
+    },
+    "/api/queue/events/repo-events": {
+      "get": {
+        "operationId": "getRepoEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Queue"
+        ]
+      }
+    },
+    "/api/queue/events/app-events/cancel/{requestId}": {
+      "post": {
+        "operationId": "cancelAppEvent",
+        "parameters": [
+          {
+            "name": "requestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Queue"
+        ]
+      }
+    },
+    "/api/queue/events/repo-events/cancel/{requestId}": {
+      "post": {
+        "operationId": "cancelRepoEvent",
+        "parameters": [
+          {
+            "name": "requestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Queue"
+        ]
+      }
+    },
     "/api/marketplace/apps/search": {
       "get": {
         "operationId": "searchApps",

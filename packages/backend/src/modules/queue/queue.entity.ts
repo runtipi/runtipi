@@ -5,7 +5,16 @@ import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 
 import { z } from 'zod';
 import type { EventPublisher } from './event.publisher';
 
+interface EventDetails {
+  queueName: string;
+  expiration?: number;
+  timestamp?: number;
+  cancel: () => Promise<void>;
+}
+
 export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; message: string }>> {
+  private events: Map<string, EventDetails> = new Map();
+
   constructor(
     private rabbit: Connection,
     private rpcClient: RPCClient,
@@ -17,14 +26,37 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
     private logger: LoggerService,
   ) {}
 
-  public onEvent(callback: (data: z.output<T> & { eventId: string }, reply: (response: z.input<R>) => Promise<void>) => Promise<void>) {
+  public onEvent(
+    callback: (
+      data: z.output<T> & { eventId: string },
+      reply: (response: z.input<R>) => Promise<void>,
+      registerReject: (reject: (reason?: any) => void) => void,
+    ) => Promise<void>,
+  ) {
     try {
       this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
         let rpcSuccess = false;
         let rpcResultMessage = '';
+        let reject: ((reason?: any) => void) | null = null;
+
+        function registerReject(rejectFn: (reason?: any) => void) {
+          reject = rejectFn;
+        }
+
+        if (req.body.requestId !== undefined) {
+          this.events.set(req.body.requestId, {
+            queueName: req.routingKey,
+            expiration: parseInt(req.expiration ?? '0') ?? undefined,
+            timestamp: req.timestamp,
+            cancel: async () => {
+              reject?.(new Error('RPC cancelled'));
+              await reply({ success: false, message: 'RPC cancelled' });
+            },
+          });
+        }
 
         try {
-          await callback(req.body, reply);
+          await callback(req.body, reply, registerReject);
           rpcSuccess = true;
           rpcResultMessage = 'RPC processed successfully.';
         } catch (error) {
@@ -44,6 +76,8 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
 
           const routingKey = `rpc.${rpcSuccess ? 'processed' : 'error'}.${this.queueName}`;
           await this.publisher.publish(routingKey, eventToPublish);
+
+          this.events.delete(req.body.requestId);
         }
       });
     } catch (error) {
@@ -105,5 +139,24 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
         this.logger.error('Error in cron job:', e);
       }
     });
+  }
+
+  public getEvents(): Array<Partial<EventDetails> & { requestId: string }> {
+    return Array.from(this.events.entries()).map(([requestId, details]) => {
+      return {
+        requestId: requestId,
+        queueName: details.queueName,
+        expiration: details.expiration,
+        timestamp: details.timestamp,
+      };
+    });
+  }
+
+  public async cancelEvent(requestId: string) {
+    const event = this.events.get(requestId);
+    if (event) {
+      await event.cancel();
+      this.events.delete(requestId);
+    }
   }
 }

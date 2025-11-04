@@ -9,7 +9,11 @@ import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class ResetAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
@@ -50,9 +54,9 @@ export class ResetAppCommand extends AppLifecycleCommand {
       await marketplaceService.copyDataDir(appUrn, envMap);
       await this.ensureAppDir(appUrn, form);
 
-      return { success: true, message: `App ${appUrn} reset successfully` };
+      resolve({ success: true, message: `App ${appUrn} reset successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'reset');
+      resolve(await this.handleAppError(err, appUrn, 'reset'));
     }
   }
 }

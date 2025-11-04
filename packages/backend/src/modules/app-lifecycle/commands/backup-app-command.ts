@@ -5,9 +5,14 @@ import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 
 export class BackupAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
     const backupManager = this.moduleRef.get(BackupManager, { strict: false });
@@ -29,9 +34,9 @@ export class BackupAppCommand extends AppLifecycleCommand {
 
       await backupManager.cleanupOldBackups(appUrn, maxBackups);
 
-      return { success: true, message: `App ${appUrn} backed up successfully` };
+      resolve({ success: true, message: `App ${appUrn} backed up successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'backup');
+      resolve(await this.handleAppError(err, appUrn, 'backup'));
     }
   }
 }

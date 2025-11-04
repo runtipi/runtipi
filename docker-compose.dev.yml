@@ -32,7 +32,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
+      test: ['CMD-SHELL', 'pg_isready -d tipi -U tipi']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -43,6 +43,9 @@ services:
     container_name: runtipi-queue
     image: rabbitmq:4-alpine
     restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
     environment:
       RABBITMQ_DEFAULT_USER: tipi
       RABBITMQ_DEFAULT_PASS: tipi
@@ -62,7 +65,7 @@ services:
     restart: unless-stopped
     healthcheck:
       start_period: 10s
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 5s
       timeout: 3s
       retries: 20
@@ -102,7 +105,7 @@ services:
       RABBITMQ_PASSWORD: tipi
       RABBITMQ_HOST: runtipi-queue
       INTERNAL_IP: 127.0.0.1
-      TIPI_VERSION: 3.10.0
+      TIPI_VERSION: 5.0.0
       LOG_LEVEL: debug
     env_file:
       - path: .env

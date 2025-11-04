@@ -19,7 +19,7 @@ import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { appFormSchema } from './dto/app-lifecycle.dto';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
-import type { z } from 'zod';
+import { set, type z } from 'zod';
 
 @Injectable()
 export class AppLifecycleService {
@@ -37,15 +37,25 @@ export class AppLifecycleService {
     @Inject(APP_ASYNC_MUTEX) private mutex: AsyncMutex,
   ) {
     this.logger.debug('Subscribing to app events...');
-    this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
+    this.appEventsQueue.onEvent((data, reply, registerReject) => this.invokeCommand(data, reply, registerReject));
   }
 
-  async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => Promise<void>) {
+  async invokeCommand(
+    data: z.infer<typeof appEventSchema>,
+    reply: (response: z.output<typeof appEventResultSchema>) => Promise<void>,
+    registerReject: (reject: (reason?: any) => void) => void,
+  ) {
     const release = await this.mutex.acquire(data.appUrn);
 
     try {
       const command = this.commandFactory.createCommand(data);
-      const { success, message } = await command.execute(data.appUrn, data.form);
+      const { success, message } = (await new Promise((resolve, reject) => {
+        registerReject(reject);
+        command.execute(data.appUrn, data.form, resolve);
+      })) as {
+        success: boolean;
+        message: string;
+      };
       await reply({ success, message });
     } catch (err) {
       this.logger.error('Error invoking command:', err);
