@@ -75,7 +75,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
-    "@hey-api/openapi-ts": "^0.86.11",
+    "@hey-api/openapi-ts": "^0.87.1",
     "@react-router/dev": "^7.6.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
