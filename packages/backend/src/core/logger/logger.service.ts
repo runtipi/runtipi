@@ -49,7 +49,7 @@ export const newLogger = (_: string, logsFolder: string, logLevel: LogLevel = LO
     );
 
     tr.push(new transports.Console({ level: logLevel, format: consoleFormat }));
-  } catch (error) {
+  } catch {
     // no-op
   }
 
