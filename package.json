@@ -32,7 +32,7 @@
     "@playwright/test": "^1.52.0",
     "@types/bun": "^1.2.22",
     "@types/pg": "^8.15.1",
-    "dotenv-cli": "^10.0.0",
+    "dotenv-cli": "^11.0.0",
     "lefthook": "^2.0.3",
     "turbo": "^2.5.6"
   },
