@@ -1,5 +1,5 @@
-import { relations } from 'drizzle-orm';
-import { boolean, customType, integer, pgEnum, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { boolean, customType, integer, pgEnum, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
 
 export const appStatusEnum = pgEnum('app_status_enum', [
   'running',
@@ -22,8 +22,8 @@ export const link = pgTable('link', {
   title: varchar({ length: 20 }).notNull(),
   url: varchar().notNull(),
   iconUrl: varchar('icon_url'),
-  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
   userId: integer('user_id')
     .notNull()
     .references(() => user.id),
@@ -44,8 +44,8 @@ export const app = pgTable('app', {
   id: serial().primaryKey().notNull(),
   status: appStatusEnum().default('stopped').notNull(),
   config: appConfig('config').notNull(),
-  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
   version: integer().default(1).notNull(),
   ignoredVersion: integer('ignored_version'),
   exposed: boolean().default(false).notNull(),
@@ -75,8 +75,8 @@ export const user = pgTable('user', {
   id: serial().primaryKey().notNull(),
   username: varchar().notNull(),
   password: varchar().notNull(),
-  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
   operator: boolean().default(false).notNull(),
   totpSecret: text('totp_secret'),
   totpEnabled: boolean('totp_enabled').default(false).notNull(),
@@ -92,6 +92,6 @@ export const appStore = pgTable('app_store', {
   enabled: boolean().default(true).notNull(),
   url: varchar().notNull(),
   branch: varchar().default('main').notNull(),
-  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
 });

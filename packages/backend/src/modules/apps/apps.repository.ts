@@ -34,7 +34,7 @@ export class AppsRepository {
   public async updateAppById(appId: number, data: Partial<NewApp>) {
     const updatedApps = await this.db
       .update(app)
-      .set({ ...data, updatedAt: new Date().toISOString() })
+      .set({ ...data, updatedAt: Math.floor(Date.now() / 1000) })
       .where(eq(app.id, appId))
       .returning()
       .execute();
@@ -146,7 +146,7 @@ export class AppsRepository {
   public async updateAppsByStatusNotIn(statuses: AppStatus[], data: Partial<NewApp>) {
     return this.db
       .update(app)
-      .set({ ...data, updatedAt: new Date().toISOString() })
+      .set({ ...data, updatedAt: Math.floor(Date.now() / 1000) })
       .where(notInArray(app.status, statuses))
       .returning()
       .execute();

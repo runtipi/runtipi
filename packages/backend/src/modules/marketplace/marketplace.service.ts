@@ -57,13 +57,13 @@ export class MarketplaceService {
       if (!this.stores.has(reservedSlug)) {
         const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, {
           branch: 'main',
-          createdAt: '',
+          createdAt: Math.floor(Date.now() / 1000),
           enabled: false,
           hash: reservedSlug,
           name: reservedSlug,
           slug: reservedSlug,
           url: 'https://example.com',
-          updatedAt: '',
+          updatedAt: Math.floor(Date.now() / 1000),
         });
         this.stores.set(reservedSlug, store);
       }

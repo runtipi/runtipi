@@ -33,7 +33,7 @@ export class LinksRepository {
 
     const updatedLinks = await this.db
       .update(linkTable)
-      .set({ title, description, url, iconUrl, isVisibleOnGuestDashboard, updatedAt: new Date().toISOString() })
+      .set({ title, description, url, iconUrl, isVisibleOnGuestDashboard, updatedAt: Math.floor(Date.now() / 1000) })
       .where(and(eq(linkTable.id, linkId), eq(linkTable.userId, userId)))
       .returning();
 
