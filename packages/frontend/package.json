@@ -49,7 +49,7 @@
     "i18next": "^25.1.2",
     "i18next-browser-languagedetector": "^8.1.0",
     "i18next-http-backend": "^3.0.2",
-    "immer": "^10.1.1",
+    "immer": "^11.0.0",
     "isbot": "^5.1.28",
     "js-cookie": "^3.0.5",
     "let-it-go": "^1.1.0",
