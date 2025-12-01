@@ -50,7 +50,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
         if (req.body.requestId !== undefined) {
           this.events.set(req.body.requestId, {
             queueName: req.routingKey,
-            expiration: Number.parseInt(req.expiration ?? '0', 10) ?? undefined,
+            expiration: Number.parseInt(req.expiration ?? '0', 10),
             timestamp: req.timestamp ?? undefined,
             cancel: async () => {
               reject?.(new Error('RPC cancelled'));
