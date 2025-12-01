@@ -4266,6 +4266,9 @@
             "items": {
               "type": "object",
               "properties": {
+                "caller": {
+                  "type": "string"
+                },
                 "expiration": {
                   "type": "number"
                 },
@@ -4280,6 +4283,7 @@
                 }
               },
               "required": [
+                "caller",
                 "expiration",
                 "queueName",
                 "requestId",

@@ -1,7 +1,7 @@
 import { getAppEventsOptions } from '@/api-client/@tanstack/react-query.gen';
 import { IconSubtask } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { AppEventsTable } from '../components/app-events-table/app-events-table';
+import { EventsTable } from '../components/events-table/events-table';
 import { useTranslation } from 'react-i18next';
 
 export const EventsContainer = () => {
@@ -18,7 +18,7 @@ export const EventsContainer = () => {
         <h2 className="mb-0">{t('SETTINGS_EVENTS_TITLE')}</h2>
       </div>
       <p className="text-muted">{t('SETTINGS_EVENTS_SUBTITLE')}</p>
-      <AppEventsTable events={data.events} />
+      <EventsTable events={data.events} />
     </div>
   );
 };

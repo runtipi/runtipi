@@ -6,6 +6,7 @@ const event = type({
   expiration: 'number',
   timestamp: 'number',
   queueName: 'string',
+  caller: 'string',
 });
 
 const events = type({

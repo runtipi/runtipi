@@ -11,6 +11,7 @@ interface EventDetails {
   expiration?: number;
   timestamp?: number;
   cancel: () => Promise<void>;
+  caller?: string;
 }
 
 export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; message: string }>> {
@@ -56,6 +57,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
               reject?.(new Error('RPC cancelled'));
               await reply({ success: false, message: 'RPC cancelled' });
             },
+            caller: req.body.appUrn ?? 'system',
           });
         }
 
@@ -153,6 +155,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
           queueName: details.queueName,
           expiration: details.expiration ?? 0,
           timestamp: details.timestamp === undefined ? 0 : details.timestamp * 1000,
+          caller: details.caller ?? 'system',
         };
       }),
     };

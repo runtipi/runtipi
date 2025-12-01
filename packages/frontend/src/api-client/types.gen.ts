@@ -444,6 +444,7 @@ export type GetConfigDiffDto = {
 
 export type EventsDto = {
     events: Array<{
+        caller: string;
         expiration: number;
         queueName: string;
         requestId: string;
