@@ -23,7 +23,7 @@ export class RestartAppHandler implements ILifecycleHandler<RestartAppParams> {
     const app = await this.appRepository.getAppByUrn(appUrn);
 
     if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', undefined, HttpStatus.NOT_FOUND);
+      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
     }
 
     await this.statusManager.transitionTo(app.id, appUrn, 'restarting');

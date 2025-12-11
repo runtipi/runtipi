@@ -81,7 +81,7 @@ export class InstallAppHandler implements ILifecycleHandler<InstallAppParams> {
           appId: createdApp.id,
           appUrn,
           event: 'install_success',
-          status: 'running',
+          status: skipRun ? 'stopped' : 'running',
         });
       } else {
         await this.statusManager.deleteApp(createdApp.id);
