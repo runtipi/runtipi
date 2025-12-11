@@ -33,6 +33,17 @@ import { createAppInStore } from '../utils/create-app-in-store';
 import { type TestDatabase, cleanTestData, createTestDatabase } from '../utils/create-test-database';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import { AsyncMutex } from '@/utils/mutex/async-mutex';
+import { UpdateAppHandler } from '@/modules/app-lifecycle/handlers/update-app.handler';
+import { UpdateConfigHandler } from '@/modules/app-lifecycle/handlers/update-config.handler';
+import { ResetAppHandler } from '@/modules/app-lifecycle/handlers/reset-app.handler';
+import { UninstallAppHandler } from '@/modules/app-lifecycle/handlers/uninstall-app.handler';
+import { InstallAppHandler } from '@/modules/app-lifecycle/handlers/install-app.handler';
+import { RestartAppHandler } from '@/modules/app-lifecycle/handlers/restart-app.handler';
+import { StopAppHandler } from '@/modules/app-lifecycle/handlers/stop-app.handler';
+import { StartAppHandler } from '@/modules/app-lifecycle/handlers/start-app.handler';
+import { AppStatusSyncService } from '@/modules/app-lifecycle/app-status-sync.service';
+import { StatusManagerService } from '@/modules/app-lifecycle/services/status-manager.service';
+import { AppValidationService } from '@/modules/app-lifecycle/services/app-validation.service';
 
 let db: TestDatabase;
 const DB_NAME = 'applifecycletest';
@@ -51,6 +62,13 @@ describe('App lifecycle', () => {
     password: 'guest',
     username: 'guest',
   });
+  configurationService.get.calledWith('directories').mockReturnValue({
+    dataDir: DATA_DIR,
+    appDir: APP_DIR,
+    appDataDir: APP_DATA_DIR,
+  });
+  configurationService.get.calledWith('userSettings').mockReturnValue(fromPartial({ eventsTimeout: 1 }));
+  configurationService.get.calledWith('demoMode').mockReturnValue(false);
   dockerService.composeApp.mockResolvedValue({ success: true, stdout: '', stderr: '' });
 
   const queueFactory = new QueueFactory(loggerService, configurationService);
@@ -82,6 +100,17 @@ describe('App lifecycle', () => {
         AppHelpers,
         AppsService,
         SubnetManagerService,
+        StartAppHandler,
+        StopAppHandler,
+        RestartAppHandler,
+        InstallAppHandler,
+        UninstallAppHandler,
+        ResetAppHandler,
+        UpdateConfigHandler,
+        UpdateAppHandler,
+        AppStatusSyncService,
+        StatusManagerService,
+        AppValidationService,
         {
           provide: APP_ASYNC_MUTEX,
           useValue: new AsyncMutex(),
@@ -347,6 +376,235 @@ describe('App lifecycle', () => {
       const composeFileContent = await fs.promises.readFile(`${DATA_DIR}/apps/test/arch-test/docker-compose.yml`, 'utf8');
       expect(composeFileContent).toContain('app:arm64-latest');
       expect(composeFileContent).not.toContain('app:latest');
+    });
+  });
+
+  describe('stop app', () => {
+    it('should successfully stop a running app', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'stop-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // act
+      await appLifecycleService.stopApp({ appUrn: appInfo.urn });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('stopped');
+      });
+    });
+  });
+
+  describe('start app', () => {
+    it('should successfully start a stopped app', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'start-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      await appLifecycleService.stopApp({ appUrn: appInfo.urn });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('stopped');
+      });
+
+      // act
+      await appLifecycleService.startApp({ appUrn: appInfo.urn });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+    });
+  });
+
+  describe('restart app', () => {
+    it('should successfully restart a running app', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'restart-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // act
+      await appLifecycleService.restartApp({ appUrn: appInfo.urn });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+    });
+  });
+
+  describe('uninstall app', () => {
+    it('should successfully uninstall an installed app', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'uninstall-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // act
+      await appLifecycleService.uninstallApp({ appUrn: appInfo.urn, removeBackups: false });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app).toBeUndefined();
+      });
+    });
+
+    it('should successfully uninstall an app and remove its backups when removeBackups is true', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'uninstall-backup-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // act
+      await appLifecycleService.uninstallApp({ appUrn: appInfo.urn, removeBackups: true });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app).toBeUndefined();
+      });
+    });
+  });
+
+  describe('reset app', () => {
+    it('should successfully reset an app and restart it if it was running', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'reset-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      await fs.promises.mkdir(`${APP_DATA_DIR}/test/reset-test/data`, { recursive: true });
+      await fs.promises.writeFile(`${APP_DATA_DIR}/test/reset-test/data/test.txt`, 'test data');
+
+      // act
+      await appLifecycleService.resetApp({ appUrn: appInfo.urn });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      const dataFileExists = await fs.promises
+        .access(`${APP_DATA_DIR}/test/reset-test/data/test.txt`)
+        .then(() => true)
+        .catch(() => false);
+      expect(dataFileExists).toBe(false);
+    });
+
+    it('should successfully reset an app and keep it stopped if it was stopped', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'reset-stopped-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      await appLifecycleService.stopApp({ appUrn: appInfo.urn });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('stopped');
+      });
+
+      await fs.promises.mkdir(`${APP_DATA_DIR}/test/reset-stopped-test/data`, { recursive: true });
+      await fs.promises.writeFile(`${APP_DATA_DIR}/test/reset-stopped-test/data/test.txt`, 'test data');
+
+      // act
+      await appLifecycleService.resetApp({ appUrn: appInfo.urn });
+
+      // assert
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('stopped');
+      });
+
+      const dataFileExists = await fs.promises
+        .access(`${APP_DATA_DIR}/test/reset-stopped-test/data/test.txt`)
+        .then(() => true)
+        .catch(() => false);
+      expect(dataFileExists).toBe(false);
+    });
+  });
+
+  describe('update app config', () => {
+    it('should successfully update app configuration', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'config-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // act
+      await appLifecycleService.updateAppConfig({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
+
+      // assert
+      const app = await appsRepository.getAppByUrn(appInfo.urn);
+      expect(app?.config).toHaveProperty('TEST_FIELD', 'new-value');
+    });
+
+    it('should mark app as pending restart when config changes', async () => {
+      // arrange
+      const appInfo = await createAppInStore('test', { id: 'config-restart-test' });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: { TEST_FIELD: 'old-value' } });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+      });
+
+      // act
+      await appLifecycleService.updateAppConfig({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
+
+      // assert
+      const app = await appsRepository.getAppByUrn(appInfo.urn);
+      expect(app?.pendingRestart).toBe(true);
     });
   });
 });
