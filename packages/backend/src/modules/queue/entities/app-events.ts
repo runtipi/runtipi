@@ -9,14 +9,14 @@ const queueAppFormSchema = type({
   port: type('1023 < number < 65536').optional(),
   exposed: 'boolean?',
   exposedLocal: 'boolean?',
-  openPort: type('boolean').default(true),
+  openPort: type('boolean | undefined').optional(),
   domain: 'string?',
   isVisibleOnGuestDashboard: 'boolean?',
   enableAuth: 'boolean?',
   localSubdomain: localSubdomainSchema.optional(),
-  skipEnv: type('boolean').default(false),
-  skipPull: type('boolean').default(false),
-  skipRun: type('boolean').default(false),
+  skipEnv: type('boolean | undefined').optional(),
+  skipPull: type('boolean | undefined').optional(),
+  skipRun: type('boolean | undefined').optional(),
   '[string]': 'unknown',
 });
 
@@ -51,38 +51,8 @@ export const appEventResultSchema = type({
   message: 'string',
 });
 
-// Match former Zod semantics:
-// - `.catchall(z.unknown())` => allow arbitrary extra keys
-// - `.default(...)` => output always has the value, input may omit
-export type AppEventFormInput = {
-  [key: string]: unknown;
-  port?: number;
-  exposed?: boolean;
-  exposedLocal?: boolean;
-  openPort?: boolean;
-  domain?: string;
-  isVisibleOnGuestDashboard?: boolean;
-  enableAuth?: boolean;
-  localSubdomain?: string;
-  skipEnv?: boolean;
-  skipPull?: boolean;
-  skipRun?: boolean;
-};
-
-export type AppEventForm = {
-  [key: string]: unknown;
-  port?: number;
-  exposed?: boolean;
-  exposedLocal?: boolean;
-  openPort: boolean;
-  domain?: string;
-  isVisibleOnGuestDashboard?: boolean;
-  enableAuth?: boolean;
-  localSubdomain?: string;
-  skipEnv: boolean;
-  skipPull: boolean;
-  skipRun: boolean;
-};
+export type AppEventFormInput = typeof queueAppFormSchema.inferIn;
+export type AppEventForm = typeof queueAppFormSchema.infer;
 
 @Injectable()
 export class AppEventsQueue extends Queue<typeof appEventSchema, typeof appEventResultSchema> {}
