@@ -141,6 +141,8 @@ const overrideV1ToLatest = (overrides: DynamicComposeV1['overrides']): DynamicCo
     const newServices = services.map(serviceV1ToLatest);
     newOverrides.push({ architecture, services: newServices });
   }
+
+  return newOverrides;
 };
 
 export const composeV1ToLatest = (result: DynamicComposeV1): DynamicCompose => {
