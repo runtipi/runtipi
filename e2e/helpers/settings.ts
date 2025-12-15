@@ -1,6 +1,5 @@
 import { promises } from 'node:fs';
 import path, { dirname } from 'node:path';
-import type { z } from 'zod';
 import type { settingsSchema } from '../../packages/backend/src/app.dto';
 import { user } from '../../packages/backend/src/core/database/drizzle/schema';
 import { BASE_PATH } from './constants';
@@ -15,7 +14,7 @@ const pathExists = async (path: string) => {
   }
 };
 
-export const setSettings = async (settings: Partial<z.infer<typeof settingsSchema>>) => {
+export const setSettings = async (settings: Partial<typeof settingsSchema.infer>) => {
   await promises.mkdir(path.join(BASE_PATH, 'state'), { recursive: true });
   await promises.writeFile(path.join(BASE_PATH, 'state', 'settings.json'), JSON.stringify(settings));
 };

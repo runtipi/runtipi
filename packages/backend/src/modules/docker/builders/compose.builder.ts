@@ -3,9 +3,9 @@ import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import { type Service, type ServiceInput, serviceSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as yaml from 'yaml';
+import { type } from 'arktype';
 import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
-import { z } from 'zod';
 
 interface Network {
   key: string;
@@ -63,12 +63,16 @@ export class DockerComposeBuilder {
 
   private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
-    const result = serviceSchema.safeParse(params);
+    const result = serviceSchema(params as unknown as ServiceInput);
 
-    if (!result.success) {
-      console.warn(
-        `! Service ${params.name} has invalid schema: \n${JSON.stringify(z.treeifyError(result.error), null, 2)}\nNotify the app maintainer`,
-      );
+    if (result instanceof type.errors) {
+      let errorPayload: unknown = { summary: result.summary };
+      try {
+        errorPayload = JSON.parse(JSON.stringify(result));
+      } catch {
+        // ignore
+      }
+      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(errorPayload, null, 2)}\nNotify the app maintainer`);
     }
 
     const service = new ServiceBuilder();

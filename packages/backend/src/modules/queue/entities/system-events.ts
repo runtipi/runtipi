@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { type } from 'arktype';
 import { Queue } from '../queue.entity';
 
-export const systemCommandSchema = z.object({
-  command: z.literal('sync_app_statuses'),
+export const systemCommandSchema = type({
+  command: type.unit('sync_app_statuses'),
 });
 
-export const systemCommandResultSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  syncedCount: z.number().optional(),
-  skippedCount: z.number().optional(),
-  errorCount: z.number().optional(),
-  totalApps: z.number().optional(),
+export const systemCommandResultSchema = type({
+  success: 'boolean',
+  message: 'string',
+  syncedCount: 'number?',
+  skippedCount: 'number?',
+  errorCount: 'number?',
+  totalApps: 'number?',
 });
 
 @Injectable()

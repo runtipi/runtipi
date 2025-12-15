@@ -40,7 +40,7 @@
     "@uiw/codemirror-theme-copilot": "^4.23.13",
     "@uiw/react-codemirror": "^4.23.13",
     "ajv": "^8.17.1",
-    "arktype": "^2.1.22",
+    "arktype": "catalog:",
     "better-ajv-errors": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -70,7 +70,6 @@
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.1",
     "validator": "^13.15.0",
-    "zod": "^4.1.5",
     "zustand": "5.0.8"
   },
   "devDependencies": {

@@ -6,21 +6,21 @@ import { Switch } from '@/components/ui/Switch';
 import { useAppContext } from '@/context/app-context';
 import type { CustomLink } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { useMutation } from '@tanstack/react-query';
+import { type } from 'arktype';
 import type React from 'react';
 import { useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 type FormValues = {
   title: string;
   url: string;
-  description?: string;
-  iconUrl?: string;
-  isVisibleOnGuestDashboard?: boolean;
+  description: string;
+  iconUrl: string;
+  isVisibleOnGuestDashboard: boolean;
 };
 
 type AddLinkDialogProps = {
@@ -34,12 +34,12 @@ export const AddLinkDialog: React.FC<AddLinkDialogProps> = ({ isOpen, onClose, l
   const { userSettings } = useAppContext();
   const { guestDashboard } = userSettings;
 
-  const schema = z.object({
-    title: z.string().min(1).max(20),
-    description: z.string().min(0).max(50).optional(),
-    url: z.string().url(),
-    iconUrl: z.string().url().or(z.string().max(0)),
-    isVisibleOnGuestDashboard: z.boolean().optional(),
+  const schema = type({
+    title: 'string > 0 & string <= 20',
+    description: 'string <= 50',
+    url: 'string.url',
+    iconUrl: type('string.url').or(type.unit('')),
+    isVisibleOnGuestDashboard: 'boolean',
   });
 
   const formId = useId();
@@ -49,8 +49,8 @@ export const AddLinkDialog: React.FC<AddLinkDialogProps> = ({ isOpen, onClose, l
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
     defaultValues: {
       ...link,
       description: link?.description || '',

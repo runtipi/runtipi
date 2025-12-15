@@ -75,19 +75,21 @@ export class InstallAppHandler implements ILifecycleHandler<InstallAppParams> {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ appUrn, command: 'install', requestId, form: { ...parsedForm, skipRun } }).then(async ({ success, message }) => {
-      if (success) {
-        await this.statusManager.emitSuccess({
-          appId: createdApp.id,
-          appUrn,
-          event: 'install_success',
-          status: skipRun ? 'stopped' : 'running',
-        });
-      } else {
-        await this.statusManager.deleteApp(createdApp.id);
-        this.statusManager.emitEvent({ appUrn, event: 'install_error', error: message });
-      }
-    });
+    this.appEventsQueue
+      .publish({ appUrn, command: 'install', requestId, form: { ...parsedForm, skipRun: skipRun ?? false } })
+      .then(async ({ success, message }) => {
+        if (success) {
+          await this.statusManager.emitSuccess({
+            appId: createdApp.id,
+            appUrn,
+            event: 'install_success',
+            status: skipRun ? 'stopped' : 'running',
+          });
+        } else {
+          await this.statusManager.deleteApp(createdApp.id);
+          this.statusManager.emitEvent({ appUrn, event: 'install_error', error: message });
+        }
+      });
 
     return { requestId };
   }

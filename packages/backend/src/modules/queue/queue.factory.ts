@@ -3,10 +3,10 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
+import { type } from 'arktype';
 import { Connection } from 'rabbitmq-client';
-import { z } from 'zod';
 import { EventPublisher } from './event.publisher';
-import { Queue } from './queue.entity';
+import { type ArkTypeSchema, Queue } from './queue.entity';
 
 @Injectable()
 export class QueueFactory {
@@ -101,7 +101,7 @@ export class QueueFactory {
     await this.initializeConnection();
   }
 
-  public async createQueue<T extends z.ZodType>(params: { queueName: string; workers?: number; eventSchema: T; timeout?: number }) {
+  public async createQueue<T extends ArkTypeSchema>(params: { queueName: string; workers?: number; eventSchema: T; timeout?: number }) {
     // Ensure connection is ready before creating queue
     if (!this.isReady()) {
       this.logger.warn('Queue connection not ready, waiting for initialization...');
@@ -109,7 +109,7 @@ export class QueueFactory {
     }
 
     const publisher = new EventPublisher(this.rabbit, this.logger, params.queueName);
-    const resultSchema = z.object({ success: z.boolean(), message: z.string() });
+    const resultSchema = type({ success: 'boolean', message: 'string' });
     publisher.initialize();
 
     const { queueName, workers = 3, eventSchema, timeout } = params;

@@ -2,13 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { z } from 'zod';
 import type { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import { MultiServiceForm } from '@/components/multi-service-form/multi-service-form';
 import { createCustomAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Input } from '@/components/ui/Input/Input';
 import type { TranslatableError } from '@/types/error.types';
 import { useState } from 'react';
+import { type } from 'arktype';
 
 const RESERVED_APP_NAMES = ['create'];
 
@@ -18,13 +18,17 @@ export default () => {
   const [appName, setAppName] = useState('');
   const [appNameError, setAppNameError] = useState<string>();
 
-  const appNameSchema = z
-    .string()
-    .min(1, t('CUSTOM_APP_NAME_REQUIRED'))
-    .max(50, t('CUSTOM_APP_NAME_MAX_LENGTH'))
-    .regex(/^[a-z0-9-]+$/, t('CUSTOM_APP_NAME_VALIDATION_HELP'))
-    .refine((name) => !name.startsWith('-') && !name.endsWith('-'), t('CUSTOM_APP_NAME_NO_HYPHEN_EDGES'))
-    .refine((name) => !RESERVED_APP_NAMES.includes(name.toLowerCase()), t('CUSTOM_APP_NAME_RESERVED'));
+  const appNameSchema = type('string')
+    .narrow((name) => name.length >= 1)
+    .configure({ message: t('CUSTOM_APP_NAME_REQUIRED') })
+    .narrow((name) => name.length <= 50)
+    .configure({ message: t('CUSTOM_APP_NAME_MAX_LENGTH') })
+    .narrow((name) => /^[a-z0-9-]+$/.test(name))
+    .configure({ message: t('CUSTOM_APP_NAME_VALIDATION_HELP') })
+    .narrow((name) => !name.startsWith('-') && !name.endsWith('-'))
+    .configure({ message: t('CUSTOM_APP_NAME_NO_HYPHEN_EDGES') })
+    .narrow((name) => !RESERVED_APP_NAMES.includes(name.toLowerCase()))
+    .configure({ message: t('CUSTOM_APP_NAME_RESERVED') });
 
   const createCustomApp = useMutation({
     ...createCustomAppMutation(),
@@ -38,10 +42,9 @@ export default () => {
   });
 
   const onSubmit = (data: typeof dynamicComposeSchemaArk.infer) => {
-    const validation = appNameSchema.safeParse(appName);
-    if (!validation.success) {
-      const pretty = z.prettifyError(validation.error);
-      setAppNameError(pretty);
+    const validation = appNameSchema(appName);
+    if (validation instanceof type.errors) {
+      setAppNameError(validation.summary);
       return;
     }
 

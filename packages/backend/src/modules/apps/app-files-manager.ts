@@ -5,7 +5,7 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import { appInfoSchemaArk } from '@runtipi/common/schemas';
+import { appInfoSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
 
@@ -46,7 +46,7 @@ export class AppFilesManager {
         const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
 
         const config = JSON.parse(configFile ?? '{}');
-        const parsedConfig = appInfoSchemaArk({ ...config, urn: appUrn });
+        const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
 
         if (parsedConfig instanceof type.errors) {
           this.logger.error(`App ${appUrn} config error:`);

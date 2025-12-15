@@ -5,7 +5,7 @@ import type { ConfigurationService } from '@/core/config/configuration.service';
 import type { AppStore } from '@/core/database/drizzle/types';
 import type { FilesystemService } from '@/core/filesystem/filesystem.service';
 import type { LoggerService } from '@/core/logger/logger.service';
-import { appInfoSchema, appInfoSchemaArk } from '@runtipi/common/schemas';
+import { appInfoSchema } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
 
@@ -52,7 +52,7 @@ export class AppStoreFilesManager {
         const configFile = await this.filesystem.readTextFile(path.join(appRepoDir, 'config.json'));
 
         const config = JSON.parse(configFile ?? '{}');
-        const parsedConfig = appInfoSchemaArk({ ...config, urn: appUrn });
+        const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
 
         if (parsedConfig instanceof type.errors) {
           this.logger.debug(`App ${appUrn} config error:`);
@@ -82,16 +82,17 @@ export class AppStoreFilesManager {
       const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
 
       const config = JSON.parse(configFile ?? '{}');
-      const parsedConfig = appInfoSchema.safeParse({ ...config, urn: appUrn });
+      const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
 
-      if (!parsedConfig.success) {
+      if (parsedConfig instanceof type.errors) {
         this.logger.debug(`App ${appUrn} installed config error:`);
-        this.logger.debug(parsedConfig.error);
+        this.logger.debug(parsedConfig.summary);
+        return null;
       }
 
-      if (parsedConfig.success && parsedConfig.data.available) {
+      if (parsedConfig.available) {
         const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
-        return { ...parsedConfig.data, description };
+        return { ...parsedConfig, description };
       }
     }
   }

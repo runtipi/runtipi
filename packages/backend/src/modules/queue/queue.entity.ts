@@ -2,10 +2,19 @@ import type { LoggerService } from '@/core/logger/logger.service';
 import * as Sentry from '@sentry/nestjs';
 import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
-import { z } from 'zod';
+import { type } from 'arktype';
 import type { EventPublisher } from './event.publisher';
 
-export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; message: string }>> {
+export type ArkTypeSchema<TOut = unknown, TIn = unknown> = {
+  (data: TIn): TOut | type.errors;
+  infer: TOut;
+  inferIn?: TIn;
+};
+
+type Infer<T extends { infer: unknown }> = T['infer'];
+type InferIn<T extends { infer: unknown; inferIn?: unknown }> = T extends { inferIn: infer I } ? I : T['infer'];
+
+export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: boolean; message: string }>> {
   constructor(
     private rabbit: Connection,
     private rpcClient: RPCClient,
@@ -17,7 +26,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
     private logger: LoggerService,
   ) {}
 
-  public onEvent(callback: (data: z.output<T> & { eventId: string }, reply: (response: z.input<R>) => Promise<void>) => Promise<void>) {
+  public onEvent(callback: (data: Infer<T> & { eventId: string }, reply: (response: InferIn<R>) => Promise<void>) => Promise<void>) {
     try {
       this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
         let rpcSuccess = false;
@@ -29,7 +38,7 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
           rpcResultMessage = 'RPC processed successfully.';
         } catch (error) {
           this.logger.error('Error in consumer callback:', error);
-          await reply({ success: false, message: (error as Error)?.message });
+          await reply({ success: false, message: (error as Error)?.message } as InferIn<R>);
           rpcSuccess = false;
           rpcResultMessage = error instanceof Error ? error.message : String(error);
         } finally {
@@ -53,22 +62,20 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
     }
   }
 
-  async publish(event: z.input<T>): Promise<{ success: boolean; message: string } | z.infer<R>> {
+  async publish(event: unknown): Promise<{ success: boolean; message: string } | Infer<R>> {
     try {
-      const eventData = this.eventSchema.safeParse(event);
-
-      if (!eventData.success) {
-        throw new Error('Invalid event data');
+      const eventData = this.eventSchema(event as never);
+      if (eventData instanceof type.errors) {
+        throw new Error(`Invalid event data: ${eventData.summary}`);
       }
 
-      const res = await this.rpcClient.send(this.queueName, eventData.data);
-      const response = this.resultSchema.safeParse(res.body);
-
-      if (response.success) {
-        return response.data;
+      const res = await this.rpcClient.send(this.queueName, eventData);
+      const response = this.resultSchema(res.body as never);
+      if (!(response instanceof type.errors)) {
+        return response;
       }
 
-      throw new Error('Invalid response schema');
+      throw new Error(`Invalid response schema: ${response.summary}`);
     } catch (err) {
       if (err instanceof AMQPConnectionError) {
         this.logger.error('Connection to the queue was lost. Try restarting your instance before retrying.');
@@ -86,20 +93,19 @@ export class Queue<T extends z.ZodType, R extends z.ZodType<{ success: boolean; 
     }
   }
 
-  public publishRepeatable(data: z.input<T>, cronPattern: string) {
+  public publishRepeatable(data: unknown, cronPattern: string) {
     if (!cron.validate(cronPattern)) {
       throw new Error('Invalid cron pattern');
     }
 
-    const eventData = this.eventSchema.safeParse(data);
-
-    if (!eventData.success) {
-      throw new Error('Invalid event data');
+    const eventData = this.eventSchema(data as never);
+    if (eventData instanceof type.errors) {
+      throw new Error(`Invalid event data: ${eventData.summary}`);
     }
 
     cron.schedule(cronPattern, async () => {
       try {
-        await this.rpcClient.send(this.queueName, eventData.data);
+        await this.rpcClient.send(this.queueName, eventData);
       } catch (e) {
         Sentry.captureException(e, { tags: { queueName: this.queueName } });
         this.logger.error('Error in cron job:', e);

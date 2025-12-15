@@ -12,8 +12,6 @@ import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { type } from 'arktype';
 import Dockerode from 'dockerode';
-import { ZodError } from 'zod';
-import { fromError } from 'zod-validation-error';
 
 export class AppLifecycleCommand {
   constructor(
@@ -57,17 +55,10 @@ export class AppLifecycleCommand {
       logger.error(`Error generating docker-compose.yml file for app ${appUrn}`);
 
       if (err instanceof type.errors) {
-        logger.error(err.summary);
+        const msg = err.summary;
+        logger.error(msg);
         logger.error('Report this issue to the appstore maintainer.');
-        throw new Error(`Error generating docker-compose.yml file for app ${appUrn}.\n${err.summary}\nReport this issue to the appstore maintainer.`);
-      }
-
-      if (err instanceof ZodError) {
-        logger.error(fromError(err).toString());
-        logger.error('Report this issue to the appstore maintainer.');
-        throw new Error(
-          `Error generating docker-compose.yml file for app ${appUrn}.\n${fromError(err).toString()}\nReport this issue to the appstore maintainer.`,
-        );
+        throw new Error(`Error generating docker-compose.yml file for app ${appUrn}.\n${msg}\nReport this issue to the appstore maintainer.`);
       }
 
       logger.error(err);

@@ -1,4 +1,4 @@
-import { APP_CATEGORIES, appInfoSchemaArk } from '@runtipi/common/schemas';
+import { APP_CATEGORIES, appInfoSchema } from '@runtipi/common/schemas';
 import { type } from 'arktype';
 import { createArkDto } from 'nestjs-arktype';
 
@@ -19,7 +19,7 @@ const searchAppQuerySchema = type({
   storeId: 'string?',
 });
 
-const simpleAppInfoSchema = appInfoSchemaArk.pick(
+const simpleAppInfoSchema = appInfoSchema.pick(
   'id',
   'urn',
   'name',
@@ -38,7 +38,7 @@ const searchAppsResponseSchema = type({
 });
 
 const appDetailsSchema = type({
-  info: appInfoSchemaArk,
+  info: appInfoSchema,
   metadata: metadataSchema,
 });
 
@@ -69,7 +69,7 @@ const createAppStoreBodySchema = type({
 
 // App info
 export class AppInfoSimpleDto extends createArkDto(simpleAppInfoSchema, { name: 'AppInfoSimpleDto' }) {}
-export class AppInfoDto extends createArkDto(appInfoSchemaArk, { name: 'AppInfoDto' }) {}
+export class AppInfoDto extends createArkDto(appInfoSchema, { name: 'AppInfoDto' }) {}
 export class MetadataDto extends createArkDto(metadataSchema, { name: 'MetadataDto' }) {}
 
 // Search apps

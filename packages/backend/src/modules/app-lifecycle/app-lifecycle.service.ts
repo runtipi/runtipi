@@ -1,22 +1,21 @@
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
+import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
+import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
-import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
-import type { AsyncMutex } from '@/utils/mutex/async-mutex';
-import type { z } from 'zod';
+import { InstallAppHandler } from './handlers/install-app.handler';
+import { ResetAppHandler } from './handlers/reset-app.handler';
+import { RestartAppHandler } from './handlers/restart-app.handler';
 import { StartAppHandler } from './handlers/start-app.handler';
 import { StopAppHandler } from './handlers/stop-app.handler';
-import { RestartAppHandler } from './handlers/restart-app.handler';
-import { InstallAppHandler } from './handlers/install-app.handler';
 import { UninstallAppHandler } from './handlers/uninstall-app.handler';
-import { ResetAppHandler } from './handlers/reset-app.handler';
-import { UpdateConfigHandler } from './handlers/update-config.handler';
 import { UpdateAppHandler } from './handlers/update-app.handler';
+import { UpdateConfigHandler } from './handlers/update-config.handler';
 
 @Injectable()
 export class AppLifecycleService {
@@ -40,7 +39,7 @@ export class AppLifecycleService {
     this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
   }
 
-  async invokeCommand(data: z.infer<typeof appEventSchema>, reply: (response: z.output<typeof appEventResultSchema>) => Promise<void>) {
+  async invokeCommand(data: typeof appEventSchema.infer, reply: (response: typeof appEventResultSchema.infer) => Promise<void>) {
     const release = await this.mutex.acquire(data.appUrn);
 
     try {

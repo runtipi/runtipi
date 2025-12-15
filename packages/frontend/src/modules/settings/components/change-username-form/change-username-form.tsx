@@ -4,13 +4,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/Input';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { TranslatableError } from '@/types/error.types';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { useMutation } from '@tanstack/react-query';
+import { type } from 'arktype';
 import { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 type Props = {
   username?: string;
@@ -19,12 +19,14 @@ type Props = {
 export const ChangeUsernameForm = ({ username }: Props) => {
   const changeUsernameDisclosure = useDisclosure();
   const { t } = useTranslation();
-  const schema = z.object({
-    newUsername: z.string().email(t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_INVALID_USERNAME')),
-    password: z.string().min(1),
+
+  const schema = type({
+    newUsername: type('string.email').configure({ message: t('SETTINGS_SECURITY_CHANGE_USERNAME_FORM_INVALID_USERNAME') }),
+    password: type('string').atLeastLength(1),
   });
+
   const formId = useId();
-  type FormValues = z.infer<typeof schema>;
+  type FormValues = typeof schema.infer;
 
   const changeUsername = useMutation({
     ...changeUsernameMutation(),
@@ -37,8 +39,8 @@ export const ChangeUsernameForm = ({ username }: Props) => {
     },
   });
 
-  const { register, handleSubmit, formState } = useForm({
-    resolver: zodResolver(schema),
+  const { register, handleSubmit, formState } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
   });
 
   const onSubmit = (body: FormValues) => {

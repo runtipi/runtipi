@@ -6,13 +6,13 @@ import { Switch } from '@/components/ui/Switch';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { AppStore } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { useMutation } from '@tanstack/react-query';
+import { type } from 'arktype';
 import { useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 type Props = {
   appStore: AppStore;
@@ -22,12 +22,12 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
   const editAppStoreDisclosure = useDisclosure();
   const { t } = useTranslation();
 
-  const schema = z.object({
-    name: z.string().max(16),
-    enabled: z.boolean(),
+  const schema = type({
+    name: 'string <= 16',
+    enabled: 'boolean',
   });
 
-  type FormValues = z.infer<typeof schema>;
+  type FormValues = typeof schema.infer;
 
   const editAppStore = useMutation({
     ...updateAppStoreMutation(),
@@ -40,8 +40,8 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
     },
   });
 
-  const { register, control, handleSubmit, formState } = useForm({
-    resolver: zodResolver(schema),
+  const { register, control, handleSubmit, formState } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
     values: appStore,
   });
 
