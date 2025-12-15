@@ -50,7 +50,10 @@ export class AppLifecycleCommand {
       const dockerComposeBuilder = new DockerComposeBuilder();
       const subnet = await subnetManager.allocateSubnet(appUrn);
 
-      const composeFile = dockerComposeBuilder.getDockerCompose(mergedServices, form, appUrn, subnet);
+      // Get app config for metadata (used for Homepage labels and other features)
+      const appConfig = await appFilesManager.getInstalledAppInfo(appUrn);
+
+      const composeFile = dockerComposeBuilder.getDockerCompose(mergedServices, form, appUrn, subnet, appConfig || undefined);
 
       await appFilesManager.writeDockerComposeYml(appUrn, composeFile);
     } catch (err) {
