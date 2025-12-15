@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/Input';
 import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { type } from 'arktype';
 import type React from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -16,18 +17,21 @@ type FormValues = { email: string; password: string; passwordConfirm: string };
 export const RegisterForm: React.FC<IProps> = ({ onSubmit, loading }) => {
   const { t } = useTranslation();
 
-  const schema = type({
-    email: 'string.email',
-    password: type('string')
-      .atLeastLength(8)
-      .configure({ message: t('AUTH_ERROR_INVALID_PASSWORD_LENGTH') }),
-    passwordConfirm: type('string')
-      .atLeastLength(8)
-      .configure({ message: t('AUTH_ERROR_INVALID_PASSWORD_LENGTH') })
-      // cross-field validation (match `password`)
-      .narrow((confirm, ctx) => confirm === (ctx.root as { password?: string }).password)
-      .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_MATCH') }),
-  });
+  const schema = useMemo(
+    () =>
+      type({
+        email: 'string.email',
+        password: type('string')
+          .atLeastLength(8)
+          .configure({ message: t('AUTH_ERROR_INVALID_PASSWORD_LENGTH') }),
+        passwordConfirm: type('string')
+          .atLeastLength(8)
+          .configure({ message: t('AUTH_ERROR_INVALID_PASSWORD_LENGTH') })
+          .narrow((confirm, ctx) => confirm === (ctx.root as { password?: string }).password)
+          .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_MATCH') }),
+      }),
+    [t],
+  );
 
   const {
     register,

@@ -43,12 +43,8 @@ const settingsSchema = type({
   allowErrorMonitoring: 'boolean?',
   timeZone: 'string?',
   advancedSettings: 'boolean?',
-  internalIp: type('string')
-    .narrow((ip) => validator.isIP(ip, 4))
-    .optional(),
-  listenIp: type('string')
-    .narrow((ip) => validator.isIP(ip, 4))
-    .optional(),
+  internalIp: 'string.ip.v4?',
+  listenIp: 'string.ip.v4?',
   port: '1 <= number <= 65535?',
   sslPort: '1 <= number <= 65535?',
   eventsTimeout: 'number.integer >= 1?',
@@ -142,7 +138,7 @@ export const UserSettingsForm = (props: IProps) => {
       const result = settingsSchema(values);
       if (result instanceof type.errors) {
         for (const [path, issue] of Object.entries(result.byPath ?? {})) {
-          setError(path as keyof SettingsFormValues, { message: (issue as { message?: string } | undefined)?.message ?? result.summary });
+          setError(path as keyof SettingsFormValues, { message: issue.message });
         }
         return;
       }

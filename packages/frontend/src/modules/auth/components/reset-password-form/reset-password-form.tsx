@@ -24,7 +24,6 @@ export const ResetPasswordForm: React.FC<IProps> = ({ onSubmit, loading, onCance
     passwordConfirm: type('string')
       .atLeastLength(8)
       .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_LENGTH') })
-      // cross-field validation (match `password`)
       .narrow((confirm, ctx) => confirm === (ctx.root as { password?: string }).password)
       .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_MATCH') }),
   });

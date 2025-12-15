@@ -8,7 +8,7 @@ export const parseComposeJson = (data: unknown): ParsedCompose => {
   const parsed = dynamicComposeUnion(data);
 
   if (parsed instanceof type.errors) {
-    throw new Error(`Invalid dynamic compose schema: ${parsed.summary}`);
+    throw parsed;
   }
 
   // Determine schema version (V1 has undefined/missing, V2 has 2)

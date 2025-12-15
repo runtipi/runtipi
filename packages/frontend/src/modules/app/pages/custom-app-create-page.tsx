@@ -18,17 +18,14 @@ export default () => {
   const [appName, setAppName] = useState('');
   const [appNameError, setAppNameError] = useState<string>();
 
-  const appNameSchema = type('string')
-    .narrow((name) => name.length >= 1)
-    .configure({ message: t('CUSTOM_APP_NAME_REQUIRED') })
-    .narrow((name) => name.length <= 50)
-    .configure({ message: t('CUSTOM_APP_NAME_MAX_LENGTH') })
-    .narrow((name) => /^[a-z0-9-]+$/.test(name))
-    .configure({ message: t('CUSTOM_APP_NAME_VALIDATION_HELP') })
-    .narrow((name) => !name.startsWith('-') && !name.endsWith('-'))
-    .configure({ message: t('CUSTOM_APP_NAME_NO_HYPHEN_EDGES') })
-    .narrow((name) => !RESERVED_APP_NAMES.includes(name.toLowerCase()))
-    .configure({ message: t('CUSTOM_APP_NAME_RESERVED') });
+  const appNameSchema = type('string').narrow((name, ctx) => {
+    if (name.length < 1) ctx.reject({ message: t('CUSTOM_APP_NAME_REQUIRED') });
+    if (name.length > 50) ctx.reject({ message: t('CUSTOM_APP_NAME_MAX_LENGTH') });
+    if (!/^[a-z0-9-]+$/.test(name)) ctx.reject({ message: t('CUSTOM_APP_NAME_VALIDATION_HELP') });
+    if (name.startsWith('-') || name.endsWith('-')) ctx.reject({ message: t('CUSTOM_APP_NAME_NO_HYPHEN_EDGES') });
+    if (RESERVED_APP_NAMES.includes(name.toLowerCase())) ctx.reject({ message: t('CUSTOM_APP_NAME_RESERVED') });
+    return true;
+  });
 
   const createCustomApp = useMutation({
     ...createCustomAppMutation(),
