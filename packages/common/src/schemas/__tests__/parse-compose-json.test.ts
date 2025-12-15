@@ -1,5 +1,5 @@
-import { parseComposeJson } from '../utils/convert-legacy-schema';
 import { describe, expect, it } from 'vitest';
+import { parseComposeJson } from '../utils/convert-legacy-schema.js';
 
 describe('parseComposeJson', () => {
   describe('V1 schema with overrides', () => {

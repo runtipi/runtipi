@@ -122,7 +122,7 @@
         "vitest": "^4.0.4",
       },
       "peerDependencies": {
-        "arktype": ">=2.0.0",
+        "arktype": ">=2",
         "typescript": ">=5",
       },
     },
