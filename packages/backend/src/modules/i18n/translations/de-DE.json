@@ -66,7 +66,7 @@
   "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
   "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_ERROR_COMPOSE_SCHEMA_TOO_OLD": "Diese App verwendet ein veraltetes Konfigurationsformat (Version {{version}}), das nicht mehr unterstützt wird. Bitte aktualisieren Sie Runtipi auf die neueste Version, um diese App zu installieren.",
-  "APP_COMPOSE_SCHEMA_OUTDATED_ALERT_TITLE": "Outdated App Configuration",
+  "APP_COMPOSE_SCHEMA_OUTDATED_ALERT_TITLE": "Veraltete App-Konfiguration",
   "APP_COMPOSE_SCHEMA_OUTDATED_ALERT_SUBTITLE": "This app uses an older configuration format (version {{version}}) and may become incompatible with future updates. Please check for app updates or contact the app maintainer.",
   "CUSTOM_APP_ERROR_DUPLICATE_NAME": "A custom app with the name {{name}} already exists",
   "CUSTOM_APP_ERROR_NAME_ALREADY_IN_USE": "App Name {{name}} wird bereits von einer anderen App verwendet",
