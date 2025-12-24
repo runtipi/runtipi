@@ -15,10 +15,10 @@ export type LogLevel = (typeof LOG_LEVEL_ENUM)[keyof typeof LOG_LEVEL_ENUM];
 const { printf, timestamp, combine, colorize, align } = format;
 
 const printFile = printf((info) => `${info.timestamp} - ${info.level} > ${info.message}`);
-const printConsole = printf((info) => `${info.level} > ${info.message}`);
+const printConsole = printf((info) => `${info.timestamp} - ${info.level} > ${info.message}`);
 
 const fileFormat = combine(format.uncolorize(), timestamp(), align(), printFile);
-const consoleFormat = combine(colorize(), printConsole);
+const consoleFormat = combine(colorize(), timestamp({ format: 'HH:mm:ss' }), align(), printConsole);
 
 type Transports = transports.ConsoleTransportInstance | transports.FileTransportInstance;
 
@@ -28,7 +28,7 @@ type Transports = transports.ConsoleTransportInstance | transports.FileTransport
  * @param {string} id - The id of the logger, used to identify the logger in the logs
  * @param {string} logsFolder - The folder where the logs will be stored
  */
-export const newLogger = (id: string, logsFolder: string, logLevel: LogLevel = LOG_LEVEL_ENUM.info) => {
+export const newLogger = (_: string, logsFolder: string, logLevel: LogLevel = LOG_LEVEL_ENUM.info) => {
   const tr: Transports[] = [];
   const exceptionHandlers: Transports[] = [new transports.Console()];
 
@@ -49,7 +49,7 @@ export const newLogger = (id: string, logsFolder: string, logLevel: LogLevel = L
     );
 
     tr.push(new transports.Console({ level: logLevel, format: consoleFormat }));
-  } catch (error) {
+  } catch {
     // no-op
   }
 

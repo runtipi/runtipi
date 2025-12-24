@@ -6,48 +6,47 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
-import dotenv from 'dotenv';
-import { z } from 'zod';
-import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service';
 import { type } from 'arktype';
+import dotenv from 'dotenv';
+import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service';
 
-const envSchema = z.object({
-  POSTGRES_HOST: z.string(),
-  POSTGRES_DBNAME: z.string(),
-  POSTGRES_USERNAME: z.string(),
-  POSTGRES_PASSWORD: z.string(),
-  POSTGRES_PORT: z.coerce.number().default(5432),
-  RABBITMQ_HOST: z.string(),
-  RABBITMQ_USERNAME: z.string(),
-  RABBITMQ_PASSWORD: z.string(),
-  ARCHITECTURE: z.enum(ARCHITECTURES).default('amd64'),
-  INTERNAL_IP: z.string(),
-  TIPI_VERSION: z.string(),
-  JWT_SECRET: z.string(),
-  APPS_REPO_ID: z.string(),
-  APPS_REPO_URL: z.string(),
-  DOMAIN: z.string(),
-  LOCAL_DOMAIN: z.string(),
-  DNS_IP: z.string().default('9.9.9.9'),
-  RUNTIPI_APP_DATA_PATH: z.string(),
-  RUNTIPI_FORWARD_AUTH_URL: z.string(),
-  DEMO_MODE: z.string().transform((val) => val.toLowerCase() === 'true'),
-  GUEST_DASHBOARD: z.string().transform((val) => val.toLowerCase() === 'true'),
-  ALLOW_ERROR_MONITORING: z.string().transform((val) => val.toLowerCase() === 'true'),
-  ALLOW_AUTO_THEMES: z.string().transform((val) => val.toLowerCase() === 'true'),
-  PERSIST_TRAEFIK_CONFIG: z.string().transform((val) => val.toLowerCase() === 'true'),
-  QUEUE_TIMEOUT_IN_MINUTES: z.coerce.number().default(5),
-  LOG_LEVEL: z.enum(LOG_LEVEL_ENUM).default('info').catch('info'),
-  TZ: z.string(),
-  ROOT_FOLDER_HOST: z.string(),
-  NGINX_PORT: z.coerce.number().default(80),
-  NGINX_PORT_SSL: z.coerce.number().default(443),
-  ADVANCED_SETTINGS: z.string().transform((val) => val.toLowerCase() === 'true'),
-  THEME_BASE: z.string(),
-  THEME_COLOR: z.string(),
-  MAX_BACKUPS: z.coerce.number().default(0),
+const envSchema = type({
+  POSTGRES_HOST: 'string',
+  POSTGRES_DBNAME: 'string',
+  POSTGRES_USERNAME: 'string',
+  POSTGRES_PASSWORD: 'string',
+  POSTGRES_PORT: type('number | string.numeric.parse').default(5432),
+  RABBITMQ_HOST: 'string',
+  RABBITMQ_USERNAME: 'string',
+  RABBITMQ_PASSWORD: 'string',
+  ARCHITECTURE: type.enumerated(...ARCHITECTURES).default('amd64'),
+  INTERNAL_IP: 'string',
+  TIPI_VERSION: 'string',
+  JWT_SECRET: 'string',
+  APPS_REPO_ID: 'string',
+  APPS_REPO_URL: 'string',
+  DOMAIN: 'string',
+  LOCAL_DOMAIN: 'string',
+  DNS_IP: 'string = "9.9.9.9"',
+  RUNTIPI_APP_DATA_PATH: 'string',
+  RUNTIPI_FORWARD_AUTH_URL: 'string',
+  DEMO_MODE: 'string',
+  GUEST_DASHBOARD: 'string',
+  ALLOW_ERROR_MONITORING: 'string',
+  ALLOW_AUTO_THEMES: 'string',
+  PERSIST_TRAEFIK_CONFIG: 'string',
+  QUEUE_TIMEOUT_IN_MINUTES: type('number | string.numeric.parse').default(5),
+  LOG_LEVEL: 'string = "info"',
+  TZ: 'string',
+  ROOT_FOLDER_HOST: 'string',
+  NGINX_PORT: type('number | string.numeric.parse').default(80),
+  NGINX_PORT_SSL: type('number | string.numeric.parse').default(443),
+  ADVANCED_SETTINGS: 'string',
+  THEME_BASE: 'string',
+  THEME_COLOR: 'string',
+  MAX_BACKUPS: type('number | string.numeric.parse').default(0),
   // Experimental flags
-  EXPERIMENTAL_INSECURE_COOKIE: z.string().transform((val) => val.toLowerCase() === 'true'),
+  EXPERIMENTAL_INSECURE_COOKIE: 'string',
 });
 
 @Injectable()
@@ -78,74 +77,74 @@ export class ConfigurationService {
     const envMap = this.getEnvMap();
     const conf = { ...Object.fromEntries(envMap), ...process.env } as Record<string, string>;
 
-    const env = envSchema.safeParse(conf);
-
-    if (!env.success) {
-      this.logger.error(env.error);
-      throw new Error(`❌ Invalid environment variables ${JSON.stringify(env.error, null, 2)}`);
+    const env = envSchema(conf);
+    if (env instanceof type.errors) {
+      this.logger.error(env);
+      throw new Error(`❌ Invalid environment variables ${JSON.stringify(env, null, 2)}`);
     }
 
-    this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), env.data.LOG_LEVEL);
+    const logLevel = (Object.values(LOG_LEVEL_ENUM) as string[]).includes(env.LOG_LEVEL) ? (env.LOG_LEVEL as LogLevel) : 'info';
+    this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), logLevel);
 
     const { NODE_ENV } = process.env;
 
     return {
       database: {
-        host: env.data.POSTGRES_HOST,
-        port: env.data.POSTGRES_PORT,
-        username: env.data.POSTGRES_USERNAME,
-        password: env.data.POSTGRES_PASSWORD,
-        database: env.data.POSTGRES_DBNAME,
+        host: env.POSTGRES_HOST,
+        port: env.POSTGRES_PORT,
+        username: env.POSTGRES_USERNAME,
+        password: env.POSTGRES_PASSWORD,
+        database: env.POSTGRES_DBNAME,
       },
       queue: {
-        host: env.data.RABBITMQ_HOST,
-        username: env.data.RABBITMQ_USERNAME,
-        password: env.data.RABBITMQ_PASSWORD,
+        host: env.RABBITMQ_HOST,
+        username: env.RABBITMQ_USERNAME,
+        password: env.RABBITMQ_PASSWORD,
       },
       directories: {
         dataDir: DATA_DIR,
         appDataDir: APP_DATA_DIR,
         appDir: APP_DIR,
       },
-      logLevel: env.data.LOG_LEVEL,
-      version: env.data.TIPI_VERSION,
+      logLevel,
+      version: env.TIPI_VERSION,
       isProduction: NODE_ENV === 'production',
       userSettings: {
-        allowAutoThemes: env.data.ALLOW_AUTO_THEMES,
-        allowErrorMonitoring: env.data.ALLOW_ERROR_MONITORING && NODE_ENV === 'production',
-        demoMode: env.data.DEMO_MODE,
-        guestDashboard: env.data.GUEST_DASHBOARD,
-        timeZone: env.data.TZ,
-        domain: env.data.DOMAIN,
-        localDomain: env.data.LOCAL_DOMAIN,
-        port: env.data.NGINX_PORT || 80,
-        sslPort: env.data.NGINX_PORT_SSL || 443,
-        listenIp: env.data.INTERNAL_IP, // TODO: Check if this is correct
-        internalIp: env.data.INTERNAL_IP,
-        appsRepoUrl: env.data.APPS_REPO_URL,
-        postgresPort: env.data.POSTGRES_PORT,
-        dnsIp: env.data.DNS_IP,
-        appDataPath: env.data.RUNTIPI_APP_DATA_PATH,
-        forwardAuthUrl: env.data.RUNTIPI_FORWARD_AUTH_URL,
-        persistTraefikConfig: env.data.PERSIST_TRAEFIK_CONFIG,
-        eventsTimeout: env.data.QUEUE_TIMEOUT_IN_MINUTES,
-        advancedSettings: env.data.ADVANCED_SETTINGS,
-        logLevel: env.data.LOG_LEVEL,
-        maxBackups: env.data.MAX_BACKUPS,
-        themeBase: env.data.THEME_BASE,
-        themeColor: env.data.THEME_COLOR,
+        allowAutoThemes: env.ALLOW_AUTO_THEMES.toLowerCase() === 'true',
+        allowErrorMonitoring: env.ALLOW_ERROR_MONITORING.toLowerCase() === 'true' && NODE_ENV === 'production',
+        demoMode: env.DEMO_MODE.toLowerCase() === 'true',
+        guestDashboard: env.GUEST_DASHBOARD.toLowerCase() === 'true',
+        timeZone: env.TZ,
+        domain: env.DOMAIN,
+        localDomain: env.LOCAL_DOMAIN,
+        port: env.NGINX_PORT || 80,
+        sslPort: env.NGINX_PORT_SSL || 443,
+        listenIp: env.INTERNAL_IP, // TODO: Check if this is correct
+        internalIp: env.INTERNAL_IP,
+        appsRepoUrl: env.APPS_REPO_URL,
+        postgresPort: env.POSTGRES_PORT,
+        dnsIp: env.DNS_IP,
+        appDataPath: env.RUNTIPI_APP_DATA_PATH,
+        forwardAuthUrl: env.RUNTIPI_FORWARD_AUTH_URL,
+        persistTraefikConfig: env.PERSIST_TRAEFIK_CONFIG.toLowerCase() === 'true',
+        eventsTimeout: env.QUEUE_TIMEOUT_IN_MINUTES,
+        advancedSettings: env.ADVANCED_SETTINGS.toLowerCase() === 'true',
+        logLevel,
+        maxBackups: env.MAX_BACKUPS,
+        themeBase: env.THEME_BASE,
+        themeColor: env.THEME_COLOR,
         experimental: {
-          insecureCookie: env.data.EXPERIMENTAL_INSECURE_COOKIE,
+          insecureCookie: env.EXPERIMENTAL_INSECURE_COOKIE.toLowerCase() === 'true',
         },
       },
-      deprecatedAppsRepoId: env.data.APPS_REPO_ID, // @deprecated
-      deprecatedAppsRepoUrl: env.data.APPS_REPO_URL, // @deprecated
-      architecture: env.data.ARCHITECTURE,
-      demoMode: env.data.DEMO_MODE,
-      rootFolderHost: env.data.ROOT_FOLDER_HOST,
+      deprecatedAppsRepoId: env.APPS_REPO_ID, // @deprecated
+      deprecatedAppsRepoUrl: env.APPS_REPO_URL, // @deprecated
+      architecture: env.ARCHITECTURE,
+      demoMode: env.DEMO_MODE.toLowerCase() === 'true',
+      rootFolderHost: env.ROOT_FOLDER_HOST,
       envFilePath: this.envPath,
-      internalIp: env.data.INTERNAL_IP,
-      jwtSecret: env.data.JWT_SECRET,
+      internalIp: env.INTERNAL_IP,
+      jwtSecret: env.JWT_SECRET,
       __prod__: NODE_ENV === 'production',
     };
   }

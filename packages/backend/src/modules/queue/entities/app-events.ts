@@ -1,69 +1,58 @@
 import { Injectable } from '@nestjs/common';
-import { zodAppUrn } from '@runtipi/common/types';
-import { z } from 'zod';
+import { arkAppUrn } from '@runtipi/common/types';
+import { type } from 'arktype';
 import { Queue } from '../queue.entity';
 
-const queueAppFormSchema = z
-  .object({
-    port: z.number().min(1024).max(65535).optional(),
-    exposed: z.boolean().optional(),
-    exposedLocal: z.boolean().optional(),
-    openPort: z.boolean().default(true),
-    domain: z.string().optional(),
-    isVisibleOnGuestDashboard: z.boolean().optional(),
-    enableAuth: z.boolean().optional(),
-    localSubdomain: z
-      .string()
-      .regex(/^[a-zA-Z0-9-]{1,63}$/)
-      .optional(),
-    skipEnv: z.boolean().default(false),
-    skipPull: z.boolean().default(false),
-    skipRun: z.boolean().default(false),
-  })
-  .catchall(z.unknown());
+const localSubdomainSchema = type('string').narrow((v, ctx) => (/^[a-zA-Z0-9-]{1,63}$/.test(v) ? true : ctx.mustBe('a valid subdomain')));
 
-const commonAppCommandSchema = z.object({
-  command: z.union([
-    z.literal('start'),
-    z.literal('stop'),
-    z.literal('install'),
-    z.literal('uninstall'),
-    z.literal('reset'),
-    z.literal('restart'),
-    z.literal('generate_env'),
-    z.literal('backup'),
-  ]),
-  appUrn: zodAppUrn,
+const queueAppFormSchema = type({
+  port: type('1023 < number < 65536').optional(),
+  exposed: 'boolean?',
+  exposedLocal: 'boolean?',
+  openPort: type('boolean | undefined').optional(),
+  domain: 'string?',
+  isVisibleOnGuestDashboard: 'boolean?',
+  enableAuth: 'boolean?',
+  localSubdomain: localSubdomainSchema.optional(),
+  skipEnv: type('boolean | undefined').optional(),
+  skipPull: type('boolean | undefined').optional(),
+  skipRun: type('boolean | undefined').optional(),
+  '[string]': 'unknown',
+});
+
+const commonAppCommandSchema = type({
+  command: type("'start' | 'stop' | 'install' | 'uninstall' | 'reset' | 'restart' | 'generate_env' | 'backup'"),
+  appUrn: arkAppUrn,
   form: queueAppFormSchema,
-  requestId: z.uuid(),
+  requestId: 'string.uuid',
 });
 
-const restoreAppCommandSchema = z.object({
-  command: z.literal('restore'),
-  appUrn: zodAppUrn,
-  filename: z.string(),
+const restoreAppCommandSchema = type({
+  command: type.unit('restore'),
+  appUrn: arkAppUrn,
+  filename: 'string',
   form: queueAppFormSchema,
-  requestId: z.uuid(),
+  requestId: 'string.uuid',
 });
 
-const updateAppCommandSchema = z.object({
-  command: z.literal('update'),
-  appUrn: zodAppUrn,
+const updateAppCommandSchema = type({
+  command: type.unit('update'),
+  appUrn: arkAppUrn,
   form: queueAppFormSchema,
-  performBackup: z.boolean().optional().default(true),
-  requestId: z.uuid(),
+  performBackup: type('boolean').default(true),
+  requestId: 'string.uuid',
 });
 
-export const appEventSchema = commonAppCommandSchema.or(restoreAppCommandSchema).or(updateAppCommandSchema);
-export type AppEvent = z.infer<typeof appEventSchema>;
+export const appEventSchema = type.or(commonAppCommandSchema, restoreAppCommandSchema, updateAppCommandSchema);
+export type AppEvent = typeof appEventSchema.infer;
 
-export const appEventResultSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
+export const appEventResultSchema = type({
+  success: 'boolean',
+  message: 'string',
 });
 
-export type AppEventFormInput = z.input<typeof commonAppCommandSchema>['form'];
-export type AppEventForm = z.output<typeof commonAppCommandSchema>['form'];
+export type AppEventFormInput = typeof queueAppFormSchema.inferIn;
+export type AppEventForm = typeof queueAppFormSchema.infer;
 
 @Injectable()
 export class AppEventsQueue extends Queue<typeof appEventSchema, typeof appEventResultSchema> {}

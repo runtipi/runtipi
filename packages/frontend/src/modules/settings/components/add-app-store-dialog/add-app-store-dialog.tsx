@@ -4,27 +4,27 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/Input';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { TranslatableError } from '@/types/error.types';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { useMutation } from '@tanstack/react-query';
+import { type } from 'arktype';
 import { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 export const AddAppStoreDialog = () => {
   const { t } = useTranslation();
   const addAppStoreDisclosure = useDisclosure();
 
-  const schema = z.object({
-    name: z.string().max(16),
-    url: z.string().url(),
+  const schema = type({
+    name: 'string <= 16',
+    url: 'string.url',
   });
 
-  type FormValues = z.infer<typeof schema>;
+  type FormValues = typeof schema.infer;
 
-  const { register, reset, handleSubmit, formState } = useForm({
-    resolver: zodResolver(schema),
+  const { register, reset, handleSubmit, formState } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
   });
 
   const createAppStore = useMutation({

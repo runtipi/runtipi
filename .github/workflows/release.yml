@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch an action and get the run ID
-        uses: codex-/return-dispatch@v2
+        uses: codex-/return-dispatch@v3
         id: return_dispatch
         with:
           token: ${{ secrets.PAT_CLI }}

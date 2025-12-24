@@ -81,13 +81,14 @@ export class AppStatusSyncService {
 
         const isTransitional = TRANSITIONAL_STATES.includes(app.status);
         if (isTransitional) {
-          const timeSinceUpdate = Date.now() - new Date(app.updatedAt).getTime();
-          if (timeSinceUpdate < this.configuration.get('userSettings').eventsTimeout * 60 * 1000) {
+          const timeSinceUpdate = Math.floor(Date.now() / 1000) - app.updatedAt;
+
+          if (timeSinceUpdate < this.configuration.get('userSettings').eventsTimeout * 60) {
             this.logger.debug(`Skipping ${appUrn} - in recent transitional state '${app.status}'`);
             skippedCount++;
             continue;
           }
-          this.logger.warn(`App ${appUrn} stuck in '${app.status}' for ${Math.round(timeSinceUpdate / 60000)} minutes`);
+          this.logger.warn(`App ${appUrn} stuck in '${app.status}' for ${Math.round(timeSinceUpdate / 60)} minutes, forcing status sync`);
         }
 
         const dockerStatus = dockerStatusMap.get(appUrn);

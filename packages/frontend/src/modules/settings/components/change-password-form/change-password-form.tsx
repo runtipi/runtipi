@@ -2,33 +2,30 @@ import { changePasswordMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import type { TranslatableError } from '@/types/error.types';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { useMutation } from '@tanstack/react-query';
+import { type } from 'arktype';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 export const ChangePasswordForm = () => {
   const { t } = useTranslation();
 
-  const schema = z
-    .object({
-      currentPassword: z.string().min(1),
-      newPassword: z.string().min(8, t('SETTINGS_SECURITY_FORM_PASSWORD_LENGTH')),
-      newPasswordConfirm: z.string().min(8, t('SETTINGS_SECURITY_FORM_PASSWORD_LENGTH')),
-    })
-    .superRefine((data, ctx) => {
-      if (data.newPassword !== data.newPasswordConfirm) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: t('SETTINGS_SECURITY_FORM_PASSWORD_MATCH'),
-          path: ['newPasswordConfirm'],
-        });
-      }
-    });
+  const schema = type({
+    currentPassword: type('string').atLeastLength(1),
+    newPassword: type('string')
+      .atLeastLength(8)
+      .configure({ message: t('SETTINGS_SECURITY_FORM_PASSWORD_LENGTH') }),
+    newPasswordConfirm: type('string')
+      .atLeastLength(8)
+      .configure({ message: t('SETTINGS_SECURITY_FORM_PASSWORD_LENGTH') })
+      // cross-field validation (match `newPassword`)
+      .narrow((confirm, ctx) => confirm === (ctx.root as { newPassword?: string }).newPassword)
+      .configure({ message: t('SETTINGS_SECURITY_FORM_PASSWORD_MATCH') }),
+  });
 
-  type FormValues = z.infer<typeof schema>;
+  type FormValues = typeof schema.infer;
 
   const changePassword = useMutation({
     ...changePasswordMutation(),
@@ -44,8 +41,8 @@ export const ChangePasswordForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
   });
 
   const onSubmit = (values: FormValues) => {

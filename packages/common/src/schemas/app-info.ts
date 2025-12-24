@@ -1,6 +1,5 @@
-import { z } from 'zod';
 import { type } from 'arktype';
-import { arkAppUrn, zodAppUrn } from '../types/app-urn.js';
+import { arkAppUrn } from '../types/app-urn.js';
 
 export const APP_CATEGORIES = [
   'network',
@@ -28,68 +27,7 @@ export type FieldType = (typeof FIELD_TYPES)[number];
 export const RANDOM_ENCODINGS = ['hex', 'base64'] as const;
 export type RandomEncoding = (typeof RANDOM_ENCODINGS)[number];
 
-export const formFieldSchema = z.object({
-  type: z.enum(FIELD_TYPES),
-  label: z.string(),
-  placeholder: z.string().optional(),
-  max: z.number().optional(),
-  min: z.number().optional(),
-  hint: z.string().optional(),
-  options: z.object({ label: z.string(), value: z.string() }).array().optional(),
-  required: z.boolean().optional().default(false),
-  default: z.union([z.boolean(), z.string(), z.number()]).optional(),
-  regex: z.string().optional(),
-  pattern_error: z.string().optional(),
-  env_variable: z.string(),
-  encoding: z.enum(RANDOM_ENCODINGS).optional(),
-});
-
-export const appInfoSchema = z.object({
-  id: z.string().refine((v) => v.split(':').length === 1),
-  urn: zodAppUrn,
-  available: z.boolean(),
-  deprecated: z.boolean().optional().default(false),
-  port: z.number().min(1).max(65535).optional(),
-  name: z.string(),
-  description: z.string().optional().default(''),
-  version: z.string().optional().default('latest'),
-  tipi_version: z.number(),
-  short_desc: z.string(),
-  author: z.string(),
-  source: z.string(),
-  website: z.string().optional(),
-  force_expose: z.boolean().optional().default(false),
-  generate_vapid_keys: z.boolean().optional().default(false),
-  categories: z.enum(APP_CATEGORIES).array().default(['utilities']),
-  url_suffix: z.string().optional(),
-  form_fields: z.array(formFieldSchema).optional().default([]),
-  https: z.boolean().optional().default(false),
-  exposable: z.boolean().optional().default(false),
-  no_gui: z.boolean().optional().default(false),
-  supported_architectures: z.enum(ARCHITECTURES).array().default(['amd64', 'arm64']),
-  uid: z.number().optional(),
-  gid: z.number().optional(),
-  dynamic_config: z.boolean().optional().default(false),
-  min_tipi_version: z.string().optional(),
-  created_at: z
-    .number()
-    .int()
-    .min(0)
-    .refine((v) => v < Date.now())
-    .optional()
-    .default(0),
-  updated_at: z
-    .number()
-    .int()
-    .min(0)
-    .refine((v) => v < Date.now())
-    .optional()
-    .default(0),
-  force_pull: z.boolean().optional().default(false),
-});
-
-// ArkType equivalent schemas
-export const formFieldSchemaArk = type({
+export const formFieldSchema = type({
   type: type.enumerated(...FIELD_TYPES),
   label: 'string',
   placeholder: 'string?',
@@ -105,14 +43,14 @@ export const formFieldSchemaArk = type({
   encoding: type.enumerated(...RANDOM_ENCODINGS).optional(),
 });
 
-export const appInfoSchemaArk = type({
+export const appInfoSchema = type({
   id: type('string').narrow((v, ctx) => (v.split(':').length === 1 ? true : ctx.mustBe('a string without colons'))),
   urn: arkAppUrn,
   available: 'boolean',
   deprecated: 'boolean = false',
   port: '1 <= number <= 65535?',
   name: 'string',
-  description: "string = ''",
+  description: 'string = ""',
   version: "string = 'latest'",
   tipi_version: 'number',
   short_desc: 'string',
@@ -126,7 +64,7 @@ export const appInfoSchemaArk = type({
     .array()
     .default(() => ['utilities']),
   url_suffix: 'string?',
-  form_fields: formFieldSchemaArk.array().default(() => []),
+  form_fields: formFieldSchema.array().default(() => []),
   https: 'boolean = false',
   exposable: 'boolean = false',
   no_gui: 'boolean = false',
@@ -147,22 +85,26 @@ export const appInfoSchemaArk = type({
   force_pull: 'boolean = false',
 });
 
-export const frontmatterSchema = z
-  .object({
-    name: appInfoSchema.shape.name.optional(),
-    short_desc: appInfoSchema.shape.short_desc.optional(),
-    description: appInfoSchema.shape.description.optional(),
-    source: appInfoSchema.shape.source.optional(),
-    website: appInfoSchema.shape.website.optional(),
-    author: appInfoSchema.shape.author.optional(),
-    categories: appInfoSchema.shape.categories.optional().default(['development']),
-    version: appInfoSchema.shape.version.optional(),
-    port: appInfoSchema.shape.port.optional(),
-    supported_architectures: appInfoSchema.shape.supported_architectures.optional().default(['amd64', 'arm64']),
-  })
-  .optional();
+export const frontmatterSchema = type({
+  name: 'string?',
+  short_desc: 'string?',
+  description: 'string?',
+  source: 'string?',
+  website: 'string?',
+  author: 'string?',
+  categories: type
+    .enumerated(...APP_CATEGORIES)
+    .array()
+    .default(() => ['development']),
+  version: 'string?',
+  port: '1 <= number <= 65535?',
+  supported_architectures: type
+    .enumerated(...ARCHITECTURES)
+    .array()
+    .default(() => ['amd64', 'arm64']),
+});
 
 // Derived types
-export type AppInfoInput = typeof appInfoSchemaArk.inferIn;
-export type AppInfo = typeof appInfoSchemaArk.infer;
-export type FormField = typeof formFieldSchemaArk.infer;
+export type AppInfoInput = typeof appInfoSchema.inferIn;
+export type AppInfo = typeof appInfoSchema.infer;
+export type FormField = typeof formFieldSchema.infer;

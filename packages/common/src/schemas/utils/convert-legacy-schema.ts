@@ -1,18 +1,18 @@
-import { type dynamicComposeSchema, dynamicComposeUnion, MIN_SCHEMA_VERSION } from '../dynamic-compose.js';
-import type { z } from 'zod';
-import { composeV1ToLatest } from './converters/v1.js';
+import { type } from 'arktype';
+import { type DynamicCompose, dynamicComposeUnion, MIN_SCHEMA_VERSION } from '../dynamic-compose.js';
+import { composeV1ToLatest, type dynamicComposeSchemaV1 } from './converters/v1.js';
 
-type ParsedCompose = z.infer<typeof dynamicComposeSchema> & { _schemaVersion: number };
+type ParsedCompose = DynamicCompose & { _schemaVersion: number };
 
 export const parseComposeJson = (data: unknown): ParsedCompose => {
-  const parsed = dynamicComposeUnion.safeParse(data);
+  const parsed = dynamicComposeUnion(data);
 
-  if (!parsed.success) {
-    throw new Error(`Invalid dynamic compose schema: ${parsed.error.message}`);
+  if (parsed instanceof type.errors) {
+    throw parsed;
   }
 
-  // Determine schema version (V1 has undefined, V2 has 2)
-  const schemaVersion = 'schemaVersion' in parsed.data && typeof parsed.data.schemaVersion === 'number' ? parsed.data.schemaVersion : 1;
+  // Determine schema version (V1 has undefined/missing, V2 has 2)
+  const schemaVersion = 'schemaVersion' in parsed && typeof parsed.schemaVersion === 'number' ? parsed.schemaVersion : 1;
 
   // Check if schema version is too old
   if (schemaVersion < MIN_SCHEMA_VERSION) {
@@ -20,15 +20,15 @@ export const parseComposeJson = (data: unknown): ParsedCompose => {
   }
 
   if (schemaVersion === 1) {
-    const mainServiceName = Object.values(parsed.data.services).find((s) => s.isMain)?.name;
+    const parsedV1 = parsed as typeof dynamicComposeSchemaV1.infer;
+    const mainServiceName = parsedV1.services.find((s) => s.isMain)?.name;
     console.warn(
       `${mainServiceName} is using deprecated schema version 1 or missing schemaVersion. Please update the compose schema to the latest version. https://runtipi.io/docs/reference/dynamic-compose`,
     );
 
-    // @ts-expect-error - Type narrowing for V1 schema conversion
-    const converted = composeV1ToLatest(parsed.data);
+    const converted = composeV1ToLatest(parsedV1);
     return { ...converted, _schemaVersion: 1 } as ParsedCompose;
   }
 
-  return { ...parsed.data, _schemaVersion: schemaVersion } as ParsedCompose;
+  return { ...parsed, _schemaVersion: schemaVersion } as ParsedCompose;
 };

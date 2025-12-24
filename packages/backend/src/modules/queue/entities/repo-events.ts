@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import { type } from 'arktype';
 import { Queue } from '../queue.entity';
 
-const singleRepoCommandSchema = z.object({
-  command: z.union([z.literal('clone'), z.literal('update')]),
-  id: z.string(),
-  url: z.string().url(),
+const singleRepoCommandSchema = type({
+  command: type("'clone' | 'update'"),
+  id: 'string',
+  url: 'string.url',
 });
 
-const allReposCommandSchema = z.object({
-  command: z.union([z.literal('update_all'), z.literal('clone_all')]),
+const allReposCommandSchema = type({
+  command: type("'update_all' | 'clone_all'"),
 });
 
-export const repoCommandSchema = singleRepoCommandSchema.or(allReposCommandSchema);
+export const repoCommandSchema = type.or(singleRepoCommandSchema, allReposCommandSchema);
 
-export const repoCommandResultSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
+export const repoCommandResultSchema = type({
+  success: 'boolean',
+  message: 'string',
 });
 
 @Injectable()

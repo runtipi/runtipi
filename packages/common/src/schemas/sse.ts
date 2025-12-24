@@ -1,69 +1,73 @@
-import { z } from 'zod';
+import { type } from 'arktype';
 
 export type Topic = 'app' | 'app-logs' | 'runtipi-logs';
 
-export const sseSchema = z.union([
-  z.object({
-    topic: z.literal('app'),
-    data: z.object({
-      event: z.union([
-        z.literal('status_change'),
-        z.literal('install_success'),
-        z.literal('install_error'),
-        z.literal('uninstall_success'),
-        z.literal('uninstall_error'),
-        z.literal('reset_success'),
-        z.literal('reset_error'),
-        z.literal('update_success'),
-        z.literal('update_error'),
-        z.literal('start_success'),
-        z.literal('start_error'),
-        z.literal('stop_success'),
-        z.literal('stop_error'),
-        z.literal('restart_success'),
-        z.literal('restart_error'),
-        z.literal('generate_env_success'),
-        z.literal('generate_env_error'),
-        z.literal('backup_success'),
-        z.literal('backup_error'),
-        z.literal('restore_success'),
-        z.literal('restore_error'),
-      ]),
-      appUrn: z.string().refine((v) => v.split(':').length === 2),
-      appStatus: z
-        .enum([
-          'running',
-          'stopped',
-          'starting',
-          'stopping',
-          'updating',
-          'missing',
-          'installing',
-          'uninstalling',
-          'resetting',
-          'restarting',
-          'backing_up',
-          'restoring',
-        ])
-        .optional(),
-      error: z.string().optional(),
-    }),
-  }),
-  z.object({
-    topic: z.literal('app-logs'),
-    data: z.object({
-      event: z.union([z.literal('newLogs'), z.literal('stopLogs')]),
-      appUrn: z.string().refine((v) => v.split(':').length === 2),
-      lines: z.array(z.string()).optional(),
-    }),
-  }),
-  z.object({
-    topic: z.literal('runtipi-logs'),
-    data: z.object({
-      event: z.union([z.literal('newLogs'), z.literal('stopLogs')]),
-      lines: z.array(z.string()).optional(),
-    }),
-  }),
-]);
+const appUrnSchema = type('string').narrow((v, ctx) => (v.split(':').length === 2 ? true : ctx.mustBe('a valid app URN')));
 
-export type SSE = z.infer<typeof sseSchema>;
+export const APP_EVENT_TYPES = {
+  STATUS_CHANGE: 'status_change',
+  INSTALL_SUCCESS: 'install_success',
+  INSTALL_ERROR: 'install_error',
+  UNINSTALL_SUCCESS: 'uninstall_success',
+  UNINSTALL_ERROR: 'uninstall_error',
+  RESET_SUCCESS: 'reset_success',
+  RESET_ERROR: 'reset_error',
+  UPDATE_SUCCESS: 'update_success',
+  UPDATE_ERROR: 'update_error',
+  START_SUCCESS: 'start_success',
+  START_ERROR: 'start_error',
+  STOP_SUCCESS: 'stop_success',
+  STOP_ERROR: 'stop_error',
+  RESTART_SUCCESS: 'restart_success',
+  RESTART_ERROR: 'restart_error',
+  GENERATE_ENV_SUCCESS: 'generate_env_success',
+  GENERATE_ENV_ERROR: 'generate_env_error',
+  BACKUP_SUCCESS: 'backup_success',
+  BACKUP_ERROR: 'backup_error',
+  RESTORE_SUCCESS: 'restore_success',
+  RESTORE_ERROR: 'restore_error',
+} as const;
+
+export const APP_STATUS_TYPES = {
+  RUNNING: 'running',
+  STOPPED: 'stopped',
+  STARTING: 'starting',
+  STOPPING: 'stopping',
+  UPDATING: 'updating',
+  MISSING: 'missing',
+  INSTALLING: 'installing',
+  UNINSTALLING: 'uninstalling',
+  RESETTING: 'resetting',
+  RESTARTING: 'restarting',
+  BACKING_UP: 'backing_up',
+  RESTORING: 'restoring',
+} as const;
+
+export const sseSchema = type.or(
+  type({
+    topic: type.unit('app'),
+    data: {
+      event: type.valueOf(APP_EVENT_TYPES),
+      appUrn: appUrnSchema,
+      appStatus: type.valueOf(APP_STATUS_TYPES).optional(),
+      error: 'string?',
+    },
+  }),
+  type({
+    topic: type.unit('app-logs'),
+    data: {
+      event: type("'newLogs' | 'stopLogs'"),
+      appUrn: appUrnSchema,
+      lines: 'string[]?',
+    },
+  }),
+  type({
+    topic: type.unit('runtipi-logs'),
+    data: {
+      event: type("'newLogs' | 'stopLogs'"),
+      lines: 'string[]?',
+    },
+  }),
+);
+
+export type SSE = typeof sseSchema.infer;

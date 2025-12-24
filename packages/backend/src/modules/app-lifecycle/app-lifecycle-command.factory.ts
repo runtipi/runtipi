@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import type Dockerode from 'dockerode';
-import type { z } from 'zod';
 import { DOCKERODE } from '../docker/docker.module';
 import type { appEventSchema } from '../queue/entities/app-events';
 import { BackupAppCommand } from './commands/backup-app-command';
@@ -22,7 +21,7 @@ export class AppLifecycleCommandFactory {
     @Inject(DOCKERODE) private readonly docker: Dockerode,
   ) {}
 
-  createCommand(eventData: z.infer<typeof appEventSchema>) {
+  createCommand(eventData: typeof appEventSchema.infer) {
     const command = eventData.command;
 
     switch (command) {

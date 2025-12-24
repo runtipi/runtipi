@@ -3,13 +3,14 @@ import { createAppUrn, extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
+import { getFrontmatter } from '@/utils/frontmatter/frontmatter';
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { frontmatterSchema, type AppInfo } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
+import { type } from 'arktype';
 import path from 'node:path';
 import { AppsRepository } from '../apps/apps.repository';
 import type { CreateCustomAppDto, UpdateCustomAppDto } from './dto/custom-apps.dto';
-import { getFrontmatter } from '@/utils/frontmatter/frontmatter';
-import { frontmatterSchema, type AppInfo } from '@runtipi/common/schemas';
 
 const APPS_FOLDER = '_user';
 
@@ -225,10 +226,10 @@ export class CustomAppService {
     const frontmatterYml = getFrontmatter(description) || {};
 
     if (frontmatterYml) {
-      const frontmatter = await frontmatterSchema.safeParseAsync(frontmatterYml);
+      const frontmatter = frontmatterSchema(frontmatterYml);
 
-      if (!frontmatter.success) {
-        throw new Error(`Invalid frontmatter: ${frontmatter.error.message}`);
+      if (frontmatter instanceof type.errors) {
+        throw new Error(`Invalid frontmatter: ${frontmatter.summary}`);
       }
 
       const appInfo = await this.filesystem.readJsonFile(configPath);
@@ -239,7 +240,7 @@ export class CustomAppService {
 
       const ok = await this.filesystem.writeJsonFile(configPath, {
         ...appInfo,
-        ...frontmatter.data,
+        ...frontmatter,
       });
 
       if (!ok) {

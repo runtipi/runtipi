@@ -51,7 +51,6 @@
   },
   "peerDependencies": {
     "arktype": ">=2",
-    "zod": ">=4",
     "typescript": ">=5"
   }
 }

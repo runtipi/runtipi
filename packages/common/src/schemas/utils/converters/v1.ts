@@ -1,150 +1,120 @@
-import z from 'zod';
-import type { dynamicComposeSchema, serviceSchema } from '../../dynamic-compose.js';
+import { type } from 'arktype';
+import type { DynamicCompose, Service } from '../../dynamic-compose.js';
 
-export const serviceSchemaV1 = z.object({
-  image: z.string(),
-  name: z.string(),
-  internalPort: z.string().or(z.number()).optional(),
-  isMain: z.boolean().optional(),
-  networkMode: z.string().optional(),
-  extraHosts: z.array(z.string()).optional(),
-  ulimits: z
-    .object({
-      nproc: z
-        .number()
-        .or(z.object({ soft: z.number(), hard: z.number() }))
-        .optional(),
-      nofile: z
-        .number()
-        .or(z.object({ soft: z.number(), hard: z.number() }))
-        .optional(),
-      core: z
-        .number()
-        .or(z.object({ soft: z.number(), hard: z.number() }))
-        .optional(),
-      memlock: z
-        .number()
-        .or(z.object({ soft: z.number(), hard: z.number() }))
-        .optional(),
-    })
+export const serviceSchemaV1 = type({
+  image: 'string',
+  name: 'string',
+  internalPort: type.or('string', 'number').optional(),
+  isMain: 'boolean?',
+  networkMode: 'string?',
+  extraHosts: 'string[]?',
+  ulimits: type({
+    nproc: type.or('number', type({ soft: 'number', hard: 'number' })).optional(),
+    nofile: type.or('number', type({ soft: 'number', hard: 'number' })).optional(),
+    core: type.or('number', type({ soft: 'number', hard: 'number' })).optional(),
+    memlock: type.or('number', type({ soft: 'number', hard: 'number' })).optional(),
+  }).optional(),
+  addToMainNetwork: 'boolean?',
+  addPorts: type({
+    containerPort: type.or('string', 'number'),
+    hostPort: type.or('string', 'number'),
+    udp: 'boolean?',
+    tcp: 'boolean?',
+    interface: 'string?',
+  })
+    .array()
     .optional(),
-  addToMainNetwork: z.boolean().optional(),
-  addPorts: z
-    .array(
-      z.object({
-        containerPort: z.string().or(z.number()),
-        hostPort: z.string().or(z.number()),
-        udp: z.boolean().optional(),
-        tcp: z.boolean().optional(),
-        interface: z.string().optional(),
-      }),
-    )
+  command: type.or('string', 'string[]').optional(),
+  volumes: type({
+    hostPath: 'string',
+    containerPath: 'string',
+    readOnly: 'boolean?',
+    shared: 'boolean?',
+    private: 'boolean?',
+  })
+    .array()
     .optional(),
-  command: z.string().optional().or(z.array(z.string()).optional()),
-  volumes: z
-    .array(
-      z.object({
-        hostPath: z.string(),
-        containerPath: z.string(),
-        readOnly: z.boolean().optional(),
-        shared: z.boolean().optional(),
-        private: z.boolean().optional(),
-      }),
-    )
-    .optional(),
-  environment: z.record(z.string().min(1), z.union([z.string().min(1), z.number()])).optional(),
-  sysctls: z.record(z.string(), z.number()).optional(),
-  healthCheck: z
-    .object({
-      test: z.string(),
-      interval: z.string().optional(),
-      timeout: z.string().optional(),
-      retries: z.number().optional(),
-      startInterval: z.string().optional(),
-      startPeriod: z.string().optional(),
-    })
-    .optional(),
-  dependsOn: z
-    .union([
-      z.array(z.string()),
-      z.record(
-        z.string(),
-        z.object({
-          condition: z.enum(['service_healthy', 'service_started', 'service_completed_successfully']),
+  environment: type({ '[string]': type.or('string', 'number') }).optional(),
+  sysctls: type({ '[string]': 'number' }).optional(),
+  healthCheck: type({
+    test: 'string',
+    interval: 'string?',
+    timeout: 'string?',
+    retries: 'number?',
+    startInterval: 'string?',
+    startPeriod: 'string?',
+  }).optional(),
+  dependsOn: type
+    .or(
+      'string[]',
+      type({
+        '[string]': type({
+          condition: type("'service_healthy' | 'service_started' | 'service_completed_successfully'"),
         }),
-      ),
-    ])
-    .optional(),
-  capAdd: z.array(z.string()).optional(),
-  deploy: z
-    .object({
-      resources: z.object({
-        limits: z
-          .object({
-            cpus: z.string().optional(),
-            memory: z.string().optional(),
-            pids: z.number().optional(),
-          })
-          .optional(),
-        reservations: z
-          .object({
-            cpus: z.string().optional(),
-            memory: z.string().optional(),
-            devices: z
-              .object({
-                capabilities: z.array(z.string()),
-                driver: z.string().optional(),
-                count: z.enum(['all']).or(z.number()).optional(),
-                deviceIds: z.array(z.string()).optional(),
-              })
-              .array(),
-          })
-          .optional(),
-      }),
-    })
-    .optional(),
-  hostname: z.string().optional(),
-  devices: z.array(z.string()).optional(),
-  entrypoint: z.string().or(z.array(z.string())).optional(),
-  pid: z.string().optional(),
-  privileged: z.boolean().optional(),
-  tty: z.boolean().optional(),
-  user: z.string().optional(),
-  workingDir: z.string().optional(),
-  shmSize: z.string().optional(),
-  capDrop: z.array(z.string()).optional(),
-  logging: z
-    .object({
-      driver: z.string(),
-      options: z.record(z.string(), z.string()).optional(),
-    })
-    .optional(),
-  readOnly: z.boolean().optional(),
-  securityOpt: z.array(z.string()).optional(),
-  stopSignal: z.string().optional(),
-  stopGracePeriod: z.string().optional(),
-  stdinOpen: z.boolean().optional(),
-  extraLabels: z.record(z.string(), z.string().or(z.boolean())).optional(),
-  dns: z.string().optional().or(z.array(z.string()).optional()),
-});
-
-export const dynamicComposeSchemaV1 = z.object({
-  schemaVersion: z.literal(undefined),
-  services: serviceSchemaV1.array(),
-  overrides: z
-    .array(
-      z.object({
-        architecture: z.enum(['arm64', 'amd64']).optional(),
-        services: serviceSchemaV1.partial().array(),
       }),
     )
     .optional(),
+  capAdd: 'string[]?',
+  deploy: type({
+    resources: {
+      limits: type({
+        cpus: 'string?',
+        memory: 'string?',
+        pids: 'number?',
+      }).optional(),
+      reservations: type({
+        cpus: 'string?',
+        memory: 'string?',
+        devices: type({
+          capabilities: 'string[]',
+          driver: 'string?',
+          count: type.or(type("'all'"), 'number').optional(),
+          deviceIds: 'string[]?',
+        }).array(),
+      }).optional(),
+    },
+  }).optional(),
+  hostname: 'string?',
+  devices: 'string[]?',
+  entrypoint: type.or('string', 'string[]').optional(),
+  pid: 'string?',
+  privileged: 'boolean?',
+  tty: 'boolean?',
+  user: 'string?',
+  workingDir: 'string?',
+  shmSize: 'string?',
+  capDrop: 'string[]?',
+  logging: type({
+    driver: 'string',
+    options: type({ '[string]': 'string' }).optional(),
+  }).optional(),
+  readOnly: 'boolean?',
+  securityOpt: 'string[]?',
+  stopSignal: 'string?',
+  stopGracePeriod: 'string?',
+  stdinOpen: 'boolean?',
+  extraLabels: type({ '[string]': type.or('string', 'boolean') }).optional(),
+  dns: type.or('string', 'string[]').optional(),
 });
 
-const serviceV1ToLatest = (service: Partial<z.infer<typeof serviceSchemaV1>>): z.infer<typeof serviceSchema> => {
+export const dynamicComposeSchemaV1 = type({
+  schemaVersion: 'undefined?',
+  services: serviceSchemaV1.array(),
+  overrides: type({
+    architecture: type("'arm64' | 'amd64'").optional(),
+    services: type(serviceSchemaV1).partial().array(),
+  })
+    .array()
+    .optional(),
+});
+
+type ServiceV1 = typeof serviceSchemaV1.infer;
+type DynamicComposeV1 = typeof dynamicComposeSchemaV1.infer;
+
+const serviceV1ToLatest = (service: Partial<ServiceV1>): Service => {
   const { environment, addPorts, ...rest } = service;
 
-  const newService: Partial<z.infer<typeof serviceSchema>> = { ...rest };
+  const newService: Partial<Service> = { ...rest };
 
   if (environment) {
     newService.environment = Object.entries(environment || {}).map(([key, value]) => ({ key, value }));
@@ -158,13 +128,13 @@ const serviceV1ToLatest = (service: Partial<z.infer<typeof serviceSchemaV1>>): z
     }));
   }
 
-  return { ...newService } as z.infer<typeof serviceSchema>;
+  return { ...newService } as Service;
 };
 
-const overrideV1ToLatest = (overrides: z.infer<typeof dynamicComposeSchemaV1>['overrides']): z.infer<typeof dynamicComposeSchema>['overrides'] => {
+const overrideV1ToLatest = (overrides: DynamicComposeV1['overrides']): DynamicCompose['overrides'] => {
   if (!overrides) return undefined;
 
-  const newOverrides: z.infer<typeof dynamicComposeSchema>['overrides'] = [];
+  const newOverrides: NonNullable<DynamicCompose['overrides']> = [];
 
   for (const legacyOverride of overrides) {
     const { architecture, services } = legacyOverride;
@@ -175,9 +145,9 @@ const overrideV1ToLatest = (overrides: z.infer<typeof dynamicComposeSchemaV1>['o
   return newOverrides;
 };
 
-export const composeV1ToLatest = (result: z.infer<typeof dynamicComposeSchemaV1>): z.infer<typeof dynamicComposeSchema> => {
-  const convertedServices = [];
-  let convertedOverrides: z.infer<typeof dynamicComposeSchema>['overrides'];
+export const composeV1ToLatest = (result: DynamicComposeV1): DynamicCompose => {
+  const convertedServices: Service[] = [];
+  let convertedOverrides: DynamicCompose['overrides'];
 
   for (const service of result.services) {
     convertedServices.push(serviceV1ToLatest(service));

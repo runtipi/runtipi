@@ -1,17 +1,17 @@
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
+import { type } from 'arktype';
 import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import z from 'zod';
 
 type FormValues = { email: string; password: string };
 
-const schema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+const schema = type({
+  email: 'string.email',
+  password: 'string',
 });
 
 interface IProps {
@@ -27,8 +27,8 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
   });
 
   const watchEmail = watch('email');

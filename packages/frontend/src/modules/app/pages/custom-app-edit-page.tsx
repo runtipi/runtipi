@@ -53,7 +53,9 @@ export default function EditPageContent({ loaderData }: Route.ComponentProps) {
         return;
       }
 
-      const servicesWithId = parsed.services.map((service) => ({
+      const config = parsed as typeof dynamicComposeSchemaArk.infer;
+
+      const servicesWithId = config.services.map((service) => ({
         _id: id + Math.random().toString(36).substring(2, 9),
         ...service,
       }));

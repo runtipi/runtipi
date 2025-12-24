@@ -37,15 +37,19 @@ export const createAppInStore = async (storeId: string, app: Partial<AppInfo> = 
   };
 
   const composeJson = {
+    schemaVersion: 2,
     services: [
       {
         name: appInfo.id,
         image: 'nginx:latest',
         isMain: true,
         internalPort: 80,
-        environment: {
-          TEST: 'test',
-        },
+        environment: [
+          {
+            key: 'TEST',
+            value: 'value',
+          },
+        ],
       },
     ],
   };

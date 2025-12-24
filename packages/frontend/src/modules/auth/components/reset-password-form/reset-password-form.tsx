@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { arktypeResolver } from '@hookform/resolvers/arktype';
+import { type } from 'arktype';
 import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
 
 interface IProps {
   onSubmit: (values: FormValues) => void;
@@ -16,27 +16,24 @@ type FormValues = { password: string; passwordConfirm: string };
 
 export const ResetPasswordForm: React.FC<IProps> = ({ onSubmit, loading, onCancel }) => {
   const { t } = useTranslation();
-  const schema = z
-    .object({
-      password: z.string().min(8, t('AUTH_FORM_ERROR_PASSWORD_LENGTH')),
-      passwordConfirm: z.string().min(8, t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_LENGTH')),
-    })
-    .superRefine((data, ctx) => {
-      if (data.password !== data.passwordConfirm) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_MATCH'),
-          path: ['passwordConfirm'],
-        });
-      }
-    });
+
+  const schema = type({
+    password: type('string')
+      .atLeastLength(8)
+      .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_LENGTH') }),
+    passwordConfirm: type('string')
+      .atLeastLength(8)
+      .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_LENGTH') })
+      .narrow((confirm, ctx) => confirm === (ctx.root as { password?: string }).password)
+      .configure({ message: t('AUTH_FORM_ERROR_PASSWORD_CONFIRMATION_MATCH') }),
+  });
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<FormValues>({
+    resolver: arktypeResolver(schema),
   });
 
   return (

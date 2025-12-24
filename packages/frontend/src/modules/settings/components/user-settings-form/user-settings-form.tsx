@@ -12,7 +12,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
-import { z } from 'zod';
+import { type } from 'arktype';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
 import './user-settings-form.css';
 import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
@@ -35,27 +35,27 @@ const LOG_LEVEL_ENUM = {
 } as const;
 type LogLevel = (typeof LOG_LEVEL_ENUM)[keyof typeof LOG_LEVEL_ENUM];
 
-const settingsSchema = z.object({
-  appsRepoUrl: z.string().optional(),
-  localDomain: z.string().optional(),
-  guestDashboard: z.boolean().optional(),
-  allowAutoThemes: z.boolean().optional(),
-  allowErrorMonitoring: z.boolean().optional(),
-  timeZone: z.string().optional(),
-  advancedSettings: z.boolean().optional(),
-  internalIp: z.ipv4().optional(),
-  listenIp: z.ipv4().optional(),
-  port: z.number().min(1).max(65535).optional(),
-  sslPort: z.number().min(1).max(65535).optional(),
-  eventsTimeout: z.coerce.number().int().min(1).optional(),
-  maxBackups: z.coerce.number().int().min(0).max(100).optional(),
-  persistTraefikConfig: z.boolean().optional(),
-  domain: z.string().optional(),
-  appDataPath: z.string().optional(),
-  forwardAuthUrl: z.url().optional(),
-  logLevel: z.enum(LOG_LEVEL_ENUM).optional(),
-  themeColor: z.enum(THEME_COLOR_ENUM).optional(),
-  themeBase: z.enum(THEME_BASE_ENUM).optional(),
+const settingsSchema = type({
+  appsRepoUrl: 'string?',
+  localDomain: 'string?',
+  guestDashboard: 'boolean?',
+  allowAutoThemes: 'boolean?',
+  allowErrorMonitoring: 'boolean?',
+  timeZone: 'string?',
+  advancedSettings: 'boolean?',
+  internalIp: 'string.ip.v4?',
+  listenIp: 'string.ip.v4?',
+  port: '1 <= number <= 65535?',
+  sslPort: '1 <= number <= 65535?',
+  eventsTimeout: 'number.integer >= 1?',
+  maxBackups: '0 <= number.integer <= 100?',
+  persistTraefikConfig: 'boolean?',
+  domain: 'string?',
+  appDataPath: 'string?',
+  forwardAuthUrl: 'string.url?',
+  logLevel: type.enumerated(...Object.values(LOG_LEVEL_ENUM)).optional(),
+  themeColor: type.enumerated(...Object.values(THEME_COLOR_ENUM)).optional(),
+  themeBase: type.enumerated(...Object.values(THEME_BASE_ENUM)).optional(),
 });
 
 export type SettingsFormValues = {
@@ -135,7 +135,15 @@ export const UserSettingsForm = (props: IProps) => {
     }
 
     if (Object.keys(validationErrors).length === 0) {
-      onSubmit(settingsSchema.parse(values));
+      const result = settingsSchema(values);
+      if (result instanceof type.errors) {
+        for (const [path, issue] of Object.entries(result.byPath ?? {})) {
+          setError(path as keyof SettingsFormValues, { message: issue.message });
+        }
+        return;
+      }
+
+      onSubmit(result as SettingsFormValues);
     }
   };
 

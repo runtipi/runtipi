@@ -1,8 +1,8 @@
 import type { LoggerService } from '@/core/logger/logger.service';
 import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
+import { type } from 'arktype';
 import type { Request, Response } from 'express';
-import { ZodError } from 'zod';
 import { TranslatableError } from './translatable-error';
 
 @Catch()
@@ -24,7 +24,7 @@ export class MainExceptionFilter implements ExceptionFilter {
 
     // @ts-expect-error
     const error = exception?.error;
-    if (error instanceof ZodError) {
+    if (error instanceof type.errors) {
       this.logger.error('Schema validation failed: ', request.path, JSON.stringify(error, null, 2));
     }
 

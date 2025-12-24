@@ -190,6 +190,7 @@ export type CheckResetPasswordRequestDto = {
 export type MyAppsDto = {
     installed: Array<{
         app: {
+            createdAt: number;
             domain: string | null;
             exposed: boolean;
             exposedLocal: boolean;
@@ -200,14 +201,13 @@ export type MyAppsDto = {
             pendingRestart: boolean;
             port: number | null;
             status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+            updatedAt: number;
             version: number;
             config?: {
                 [key: string]: unknown;
             };
-            createdAt?: string;
             enableAuth?: boolean;
             localSubdomain?: string | null;
-            updatedAt?: string;
         };
         info: {
             author: string;
@@ -271,6 +271,7 @@ export type MyAppsDto = {
 export type GuestAppsDto = {
     installed: Array<{
         app: {
+            createdAt: number;
             domain: string | null;
             exposed: boolean;
             exposedLocal: boolean;
@@ -281,14 +282,13 @@ export type GuestAppsDto = {
             pendingRestart: boolean;
             port: number | null;
             status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+            updatedAt: number;
             version: number;
             config?: {
                 [key: string]: unknown;
             };
-            createdAt?: string;
             enableAuth?: boolean;
             localSubdomain?: string | null;
-            updatedAt?: string;
         };
         info: {
             author: string;
@@ -411,6 +411,7 @@ export type GetAppDto = {
         minTipiVersion?: string | null;
     };
     app?: {
+        createdAt: number;
         domain: string | null;
         exposed: boolean;
         exposedLocal: boolean;
@@ -421,14 +422,13 @@ export type GetAppDto = {
         pendingRestart: boolean;
         port: number | null;
         status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+        updatedAt: number;
         version: number;
         config?: {
             [key: string]: unknown;
         };
-        createdAt?: string;
         enableAuth?: boolean;
         localSubdomain?: string | null;
-        updatedAt?: string;
     } | null;
 };
 

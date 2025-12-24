@@ -1,5 +1,4 @@
-import type { DependsOn, serviceSchema } from '@runtipi/common/schemas';
-import type { z } from 'zod';
+import type { DependsOn, Service } from '@runtipi/common/schemas';
 
 interface ServicePort {
   containerPort: number | string;
@@ -372,7 +371,7 @@ export class ServiceBuilder {
    * });
    *  ```
    */
-  setHealthCheck(healthCheck?: z.infer<typeof serviceSchema>['healthCheck']) {
+  setHealthCheck(healthCheck?: Service['healthCheck']) {
     if (healthCheck) {
       this.service.healthCheck = {
         test: healthCheck.test,

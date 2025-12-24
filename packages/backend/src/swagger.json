@@ -3011,6 +3011,9 @@
                 "app": {
                   "type": "object",
                   "properties": {
+                    "createdAt": {
+                      "type": "number"
+                    },
                     "domain": {
                       "anyOf": [
                         {
@@ -3075,15 +3078,15 @@
                         "updating"
                       ]
                     },
+                    "updatedAt": {
+                      "type": "number"
+                    },
                     "version": {
                       "type": "number"
                     },
                     "config": {
                       "type": "object",
                       "additionalProperties": {}
-                    },
-                    "createdAt": {
-                      "type": "string"
                     },
                     "enableAuth": {
                       "type": "boolean"
@@ -3097,12 +3100,10 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "updatedAt": {
-                      "type": "string"
                     }
                   },
                   "required": [
+                    "createdAt",
                     "domain",
                     "exposed",
                     "exposedLocal",
@@ -3113,6 +3114,7 @@
                     "pendingRestart",
                     "port",
                     "status",
+                    "updatedAt",
                     "version"
                   ]
                 },
@@ -3409,6 +3411,9 @@
                 "app": {
                   "type": "object",
                   "properties": {
+                    "createdAt": {
+                      "type": "number"
+                    },
                     "domain": {
                       "anyOf": [
                         {
@@ -3473,15 +3478,15 @@
                         "updating"
                       ]
                     },
+                    "updatedAt": {
+                      "type": "number"
+                    },
                     "version": {
                       "type": "number"
                     },
                     "config": {
                       "type": "object",
                       "additionalProperties": {}
-                    },
-                    "createdAt": {
-                      "type": "string"
                     },
                     "enableAuth": {
                       "type": "boolean"
@@ -3495,12 +3500,10 @@
                           "type": "null"
                         }
                       ]
-                    },
-                    "updatedAt": {
-                      "type": "string"
                     }
                   },
                   "required": [
+                    "createdAt",
                     "domain",
                     "exposed",
                     "exposedLocal",
@@ -3511,6 +3514,7 @@
                     "pendingRestart",
                     "port",
                     "status",
+                    "updatedAt",
                     "version"
                   ]
                 },
@@ -4084,6 +4088,9 @@
               {
                 "type": "object",
                 "properties": {
+                  "createdAt": {
+                    "type": "number"
+                  },
                   "domain": {
                     "anyOf": [
                       {
@@ -4148,15 +4155,15 @@
                       "updating"
                     ]
                   },
+                  "updatedAt": {
+                    "type": "number"
+                  },
                   "version": {
                     "type": "number"
                   },
                   "config": {
                     "type": "object",
                     "additionalProperties": {}
-                  },
-                  "createdAt": {
-                    "type": "string"
                   },
                   "enableAuth": {
                     "type": "boolean"
@@ -4170,12 +4177,10 @@
                         "type": "null"
                       }
                     ]
-                  },
-                  "updatedAt": {
-                    "type": "string"
                   }
                 },
                 "required": [
+                  "createdAt",
                   "domain",
                   "exposed",
                   "exposedLocal",
@@ -4186,6 +4191,7 @@
                   "pendingRestart",
                   "port",
                   "status",
+                  "updatedAt",
                   "version"
                 ]
               },
