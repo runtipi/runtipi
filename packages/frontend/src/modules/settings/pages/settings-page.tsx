@@ -46,14 +46,14 @@ export default () => {
             {t('SETTINGS_LOGS_TAB_TITLE')}
           </TabsTrigger>
           <TabsTrigger onClick={() => handleTabChange('events')} value="events" className="d-none d-md-block">
-            Events
+            {t('SETTINGS_EVENTS_TITLE')}
           </TabsTrigger>
           <DropdownMenu>
             <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => handleTabChange('appstores')}>{t('SETTINGS_APPSTORES_TAB_TITLE')}</DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('SETTINGS_LOGS_TAB_TITLE')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleTabChange('events')}>Events</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTabChange('events')}>{t('SETTINGS_EVENTS_TITLE')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TabsList>
