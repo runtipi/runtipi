@@ -1,6 +1,6 @@
 pre-commit:
   commands:
     biome-format:
-      glob: "*.{js,jsx,ts,tsx,json,jsonc}"
-      run: biome check --write --unsafe {staged_files}
+      glob: '*.{js,jsx,ts,tsx,json,jsonc}'
+      run: bunx biome check --write --unsafe {staged_files}
       stage_fixed: true
