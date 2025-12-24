@@ -151,6 +151,8 @@ export const OtpInput = ({ value, valueLength, onChange, className }: Props) => 
           maxLength={valueLength}
           className={clsx('form-control otp-input', className)}
           value={digit}
+          // biome-ignore lint/a11y/noAutofocus: Required for better UX
+          autoFocus
         />
       ))}
     </div>
