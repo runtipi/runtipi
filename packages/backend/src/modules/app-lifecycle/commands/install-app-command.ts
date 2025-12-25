@@ -7,7 +7,8 @@ import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
-import { parseComposeJson } from '@runtipi/common/schemas';
+import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
+import { type } from 'arktype';
 
 export class InstallAppCommand extends AppLifecycleCommand {
   public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
@@ -18,12 +19,12 @@ export class InstallAppCommand extends AppLifecycleCommand {
     const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
     const envUtils = this.moduleRef.get(EnvUtils, { strict: false });
 
-    try {
-      const composeToInstall = await marketplaceService.getDockerComposeJson(appUrn);
-      parseComposeJson(composeToInstall.content);
-    } catch (err) {
-      logger.error(`Error parsing docker-compose.yml for app ${appUrn} from marketplace repository. Are you running the latest version of runtipi?`);
-      return this.handleAppError(err, appUrn, 'update_error');
+    const composeToInstall = await marketplaceService.getDockerComposeJson(appUrn);
+    const compose = dynamicComposeSchemaYaml(composeToInstall.content);
+
+    if (compose instanceof type.errors) {
+      logger.error('Compose JSON validation errors:', compose.summary);
+      return this.handleAppError(compose.summary, appUrn, 'install_error');
     }
 
     try {

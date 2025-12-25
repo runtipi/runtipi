@@ -4,7 +4,6 @@ import { pLimit } from '@/common/helpers/file-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
-import { CURRENT_SCHEMA_VERSION, parseComposeJson } from '@runtipi/common/schemas';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppsRepository } from './apps.repository';
@@ -38,22 +37,11 @@ export class AppsService {
             return null;
           }
 
-          let composeSchemaVersion: number | undefined;
-          try {
-            const compose = await this.appFilesManager.getDockerComposeJson(appUrn);
-            if (compose.content) {
-              const parsed = parseComposeJson(compose.content) as unknown as { _schemaVersion: number };
-              composeSchemaVersion = parsed._schemaVersion;
-            }
-          } catch (error) {
-            this.logger.debug(`Could not parse compose schema version for ${appUrn}:`, error);
-          }
-
           const localSubdomain = app.localSubdomain || appUrn.split(':').join('-');
           return {
             app,
             info: appInfo,
-            metadata: { ...updateInfo, localSubdomain, composeSchemaVersion: composeSchemaVersion ?? CURRENT_SCHEMA_VERSION },
+            metadata: { ...updateInfo, localSubdomain },
           };
         });
       }),
@@ -101,21 +89,9 @@ export class AppsService {
 
     const localSubdomain = app?.localSubdomain || appUrn.split(':').join('-');
 
-    let composeSchemaVersion: number | undefined;
-    try {
-      const compose = await this.appFilesManager.getDockerComposeJson(appUrn);
-      if (compose.content) {
-        const parsed = parseComposeJson(compose.content) as unknown as { _schemaVersion: number };
-        composeSchemaVersion = parsed._schemaVersion;
-      }
-    } catch (error) {
-      this.logger.debug(`Could not parse compose schema version for ${appUrn}:`, error);
-    }
-
     const metadata = {
       hasCustomConfig,
       localSubdomain,
-      composeSchemaVersion: composeSchemaVersion ?? CURRENT_SCHEMA_VERSION,
       ...updateInfo,
     };
 
