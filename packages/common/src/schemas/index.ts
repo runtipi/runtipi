@@ -1,5 +1,5 @@
 import { dynamicComposeSchema, serviceSchema, MIN_SCHEMA_VERSION, CURRENT_SCHEMA_VERSION } from './dynamic-compose.js';
-import { parseComposeJson, convertLegacyToYaml } from './utils/convert-legacy-schema.js';
+import { parseComposeJson, convertLegacyToYaml, convertYamlToLegacy } from './utils/convert-legacy-schema.js';
 import type { DependsOn, DynamicCompose, Service, ServiceInput } from './dynamic-compose.js';
 import { dynamicComposeSchemaArk, serviceSchemaArk } from './dynamic-compose-ark.js';
 import {
@@ -18,6 +18,7 @@ import { type SSE, type Topic, sseSchema } from './sse.js';
 export {
   parseComposeJson,
   convertLegacyToYaml,
+  convertYamlToLegacy,
   dynamicComposeSchema,
   dynamicComposeSchemaArk,
   dynamicComposeSchemaYaml,

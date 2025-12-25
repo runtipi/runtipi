@@ -2,14 +2,13 @@ import { useTranslation } from 'react-i18next';
 import { redirect, useNavigate, useParams } from 'react-router';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
+import { convertLegacyToYaml, convertYamlToLegacy, type dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { MultiServiceForm } from '@/components/multi-service-form/multi-service-form';
 import { Input } from '@/components/ui/Input/Input';
 import type { TranslatableError } from '@/types/error.types';
 import { useEffect, useId, useState } from 'react';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import { getAppComposeDiffOptions, updateCustomAppMutation } from '@/api-client/@tanstack/react-query.gen';
-import { type } from 'arktype';
 import type { Route } from './+types/custom-app-edit-page';
 import { getAppComposeDiff } from '@/api-client';
 
@@ -45,17 +44,9 @@ export default function EditPageContent({ loaderData }: Route.ComponentProps) {
 
   useEffect(() => {
     if (currentConfig?.current) {
-      const parsed = dynamicComposeSchemaArk.omit('schemaVersion')(JSON.parse(currentConfig.current));
+      const parsed = convertYamlToLegacy(JSON.parse(currentConfig.current));
 
-      if (parsed instanceof type.errors) {
-        console.error('Failed to parse current config:', parsed.summary);
-        toast.error(t('CUSTOM_APP_INVALID_CONFIG'));
-        return;
-      }
-
-      const config = parsed as typeof dynamicComposeSchemaArk.infer;
-
-      const servicesWithId = config.services.map((service) => ({
+      const servicesWithId = parsed.services.map((service) => ({
         _id: id + Math.random().toString(36).substring(2, 9),
         ...service,
       }));
@@ -63,7 +54,7 @@ export default function EditPageContent({ loaderData }: Route.ComponentProps) {
       setServices(servicesWithId);
       setReady(true);
     }
-  }, [currentConfig, setServices, t, id]);
+  }, [currentConfig, setServices, id]);
 
   const updateCustomApp = useMutation({
     ...updateCustomAppMutation(),
@@ -76,8 +67,8 @@ export default function EditPageContent({ loaderData }: Route.ComponentProps) {
     },
   });
 
-  const onSubmit = (data: typeof dynamicComposeSchemaArk.infer) => {
-    updateCustomApp.mutate({ body: { config: { ...data, schemaVersion: 2 } }, path: { urn: `${params.appId}:_user` } });
+  const onSubmit = (data: typeof dynamicComposeSchemaYaml.infer) => {
+    updateCustomApp.mutate({ body: { config: data }, path: { urn: `${params.appId}:_user` } });
   };
 
   if (!ready) {
@@ -106,7 +97,7 @@ export default function EditPageContent({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
-      <MultiServiceForm onSubmit={onSubmit} />
+      <MultiServiceForm onSubmit={(d) => onSubmit(convertLegacyToYaml({ ...d, schemaVersion: 2 }))} />
     </>
   );
 }
