@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { type } from 'arktype';
-import { dynamicComposeSchemaArk, type serviceSchemaArk } from '@runtipi/common/schemas';
+import { dynamicComposeSchemaArk, type serviceSchemaArk, convertYamlToLegacy } from '@runtipi/common/schemas';
 import toast from 'react-hot-toast';
+import { deepClean } from '@/utils/objects';
 
 type MultiServiceFormData = typeof dynamicComposeSchemaArk.infer;
 type ServiceFormData = typeof serviceSchemaArk.infer;
@@ -24,6 +25,7 @@ interface MultiServiceState {
   removeService: (index: number) => void;
   updateService: (index: number, serviceData: ServiceFormData) => void;
   updateFromJson: (services: MultiServiceFormData['services']) => void;
+  updateFromYaml: (yamlData: unknown) => void;
   resetToDefaults: () => void;
   setIsDirty: (dirty: boolean) => void;
   setServices: (services: ServiceWithId[]) => void;
@@ -58,11 +60,12 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   activeService: 0,
   isDirty: false,
   error: '',
-  setServices: (services: ServiceWithId[]) => set({ services }),
+  setServices: (services: ServiceWithId[]) => set({ services: deepClean(services) as ServiceWithId[] }),
   validate: (values: typeof dynamicComposeSchemaArk.infer) => {
     const res = dynamicComposeSchemaArk.omit('schemaVersion')(values);
 
     if (res instanceof type.errors) {
+      console.error('Validating values:', values, res.summary);
       set({ error: 'Invalid configuration.' });
       return false;
     }
@@ -154,17 +157,19 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
 
     if (existingService) {
       const newServices = [...services];
-      newServices[index] = { ...serviceData, _id: existingService._id };
+      newServices[index] = deepClean({ ...serviceData, _id: existingService._id }) as ServiceWithId;
       set({ services: newServices });
       get().validate({ schemaVersion: 2, services: newServices });
     }
   },
 
   updateFromJson: (newServices: MultiServiceFormData['services']) => {
-    const servicesWithIds = newServices.map((service, index) => ({
-      ...service,
-      _id: get().services[index]?._id || generateId(),
-    }));
+    const servicesWithIds = deepClean(
+      newServices.map((service, index) => ({
+        ...service,
+        _id: get().services[index]?._id || generateId(),
+      })),
+    ) as ServiceWithId[];
 
     get().validate({ schemaVersion: 2, services: servicesWithIds });
 
@@ -177,6 +182,33 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
     set({ services: servicesWithIds, isDirty: false });
     toast.success('Services updated from JSON');
   },
+
+  updateFromYaml: (yamlData: unknown) => {
+    try {
+      const legacy = convertYamlToLegacy(yamlData);
+      const servicesWithIds = deepClean(
+        legacy.services.map((service, index) => ({
+          ...service,
+          _id: get().services[index]?._id || generateId(),
+        })),
+      ) as ServiceWithId[];
+
+      get().validate({ schemaVersion: 2, services: servicesWithIds });
+
+      const error = get().error;
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      set({ services: servicesWithIds, isDirty: false });
+      toast.success('Services updated from YAML');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update services from YAML');
+    }
+  },
+
   resetToDefaults: () =>
     set({
       services: defaultServices.map((service) => ({ ...service, _id: generateId() })),

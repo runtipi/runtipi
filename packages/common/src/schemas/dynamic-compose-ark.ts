@@ -66,7 +66,7 @@ export const serviceSchemaArk = type({
     shared: type('boolean').optional(),
     private: type('boolean').optional(),
     bind: type({
-      propagation: type("'rprivate' | 'private' | 'rshared' | 'shared' | 'rslave' | 'slave'"),
+      propagation: "'rprivate' | 'private' | 'rshared' | 'shared' | 'rslave' | 'slave'",
     }).optional(),
   })
     .array()

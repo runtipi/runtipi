@@ -1,33 +1,40 @@
-import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
-import betterAjvErrors from 'better-ajv-errors';
-import Ajv from 'ajv/dist/2020';
-import { useEffect, useState } from 'react';
+import { dynamicComposeSchemaYaml, convertLegacyToYaml } from '@runtipi/common/schemas';
+import { useEffect, useMemo, useState } from 'react';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import CodeMirror from '@uiw/react-codemirror';
-import { json } from '@codemirror/lang-json';
+import { yaml as yamlLang } from '@codemirror/lang-yaml';
 import { copilot } from '@uiw/codemirror-theme-copilot';
 import { useTranslation } from 'react-i18next';
-
-const schema = dynamicComposeSchemaArk.omit('schemaVersion').toJsonSchema({ fallback: { default: (ctx) => ctx.base } });
+import { stringify, parse } from 'yaml';
+import { type } from 'arktype';
+import { deepClean } from '@/utils/objects';
 
 type Props = {
-  onChange: (json: string, error?: string) => void;
+  onChange: (yaml: string, error?: string) => void;
 };
 
-export const JsonComposeEditor = ({ onChange }: Props) => {
+export const YamlComposeEditor = ({ onChange }: Props) => {
   const { t } = useTranslation();
   const { services, isDirty, setIsDirty } = useMultiServiceStore();
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const servicesWithoutIds = services.map(({ _id, ...rest }) => rest);
+  const yamlObject = useMemo(() => {
+    try {
+      const servicesWithoutIds = services.map(({ _id, ...rest }) => rest);
+      return convertLegacyToYaml(deepClean({ services: servicesWithoutIds, schemaVersion: 2 }));
+    } catch (e) {
+      console.error('Failed to convert services to YAML', e);
+      return { services: {} };
+    }
+  }, [services]);
 
-  const [value, setValue] = useState<string>(JSON.stringify({ services: servicesWithoutIds }, null, 2));
+  const [value, setValue] = useState<string>(stringify(yamlObject));
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        return 'You have made changes to the JSON. Do you want to confirm losing it?';
+        return t('MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM');
       }
     };
 
@@ -38,7 +45,7 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [isDirty]);
+  }, [isDirty, t]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: only run on mount
   useEffect(() => {
@@ -60,22 +67,17 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
     }
 
     try {
-      const parsedValue = JSON.parse(newValue);
-      const ajv = new Ajv({ allErrors: true });
-      ajv.addKeyword('message');
+      const parsedValue = parse(newValue);
+      const res = dynamicComposeSchemaYaml(parsedValue);
 
-      const validate = ajv.compile(schema);
-      const valid = validate(parsedValue);
-
-      if (valid) {
-        currentError = undefined;
+      if (res instanceof type.errors) {
+        currentError = res.summary;
       } else {
-        const formattedErrors = betterAjvErrors(schema, parsedValue, validate.errors, { format: 'cli', indent: 2 });
-        currentError = formattedErrors;
+        currentError = undefined;
       }
     } catch (err) {
       console.error(err);
-      currentError = t('MULTI_SERVICE_JSON_INVALID_FORMAT');
+      currentError = t('MULTI_SERVICE_YAML_INVALID_FORMAT');
     }
 
     setError(currentError);
@@ -86,14 +88,14 @@ export const JsonComposeEditor = ({ onChange }: Props) => {
     <div>
       <div className="w-full space-y-2 overflow-hidden">
         <CodeMirror
-          placeholder={t('MULTI_SERVICE_JSON_EDIT_PLACEHOLDER')}
+          placeholder={t('MULTI_SERVICE_YAML_EDIT_PLACEHOLDER')}
           value={value}
           height="400px"
-          extensions={[json()]}
+          extensions={[yamlLang()]}
           onChange={(e) => validateInput(e)}
           theme={copilot}
         />
-        {error && <pre className="whitespace-pre-wrap m-2">{error}</pre>}
+        {error && <pre className="whitespace-pre-wrap m-2 text-danger">{error}</pre>}
       </div>
     </div>
   );

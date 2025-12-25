@@ -173,7 +173,12 @@ const convertService = (service: Partial<Service>) => {
   }
 
   Object.keys(converted).forEach((key) => {
-    if (converted[key] === undefined) {
+    const value = converted[key];
+    if (value === undefined || value === null) {
+      delete converted[key];
+    } else if (Array.isArray(value) && value.length === 0) {
+      delete converted[key];
+    } else if (typeof value === 'object' && Object.keys(value).length === 0) {
       delete converted[key];
     }
   });
@@ -250,25 +255,30 @@ const convertServiceFromYaml = (name: string, service: Partial<ServiceSchema>): 
       | 'slave'
       | undefined;
 
-    return {
+    const vol: Record<string, unknown> = {
       hostPath,
       containerPath,
-      readOnly: options.includes('ro') || undefined,
-      shared: options.includes('z') || undefined,
-      private: options.includes('Z') || undefined,
-      bind: propagation ? { propagation } : undefined,
     };
+
+    if (options.includes('ro')) vol.readOnly = true;
+    if (options.includes('z')) vol.shared = true;
+    if (options.includes('Z')) vol.private = true;
+    if (propagation) vol.bind = { propagation };
+
+    return vol;
   });
 
   const healthCheck = healthcheck
-    ? {
-        test: healthcheck.test as string,
-        interval: healthcheck.interval as string | undefined,
-        timeout: healthcheck.timeout as string | undefined,
-        retries: healthcheck.retries as number | undefined,
-        startPeriod: healthcheck.start_period as string | undefined,
-        startInterval: healthcheck.start_interval as string | undefined,
-      }
+    ? (Object.fromEntries(
+        Object.entries({
+          test: healthcheck.test as string,
+          interval: healthcheck.interval as string | undefined,
+          timeout: healthcheck.timeout as string | undefined,
+          retries: healthcheck.retries as number | undefined,
+          startPeriod: healthcheck.start_period as string | undefined,
+          startInterval: healthcheck.start_interval as string | undefined,
+        }).filter(([_, v]) => v !== undefined),
+      ) as any)
     : undefined;
 
   const extraLabels = Array.isArray(s.labels)
@@ -320,7 +330,12 @@ const convertServiceFromYaml = (name: string, service: Partial<ServiceSchema>): 
   };
 
   Object.keys(converted).forEach((key) => {
-    if (converted[key] === undefined) {
+    const value = converted[key];
+    if (value === undefined || value === null) {
+      delete converted[key];
+    } else if (Array.isArray(value) && value.length === 0) {
+      delete converted[key];
+    } else if (typeof value === 'object' && Object.keys(value).length === 0) {
       delete converted[key];
     }
   });
@@ -343,8 +358,8 @@ export const convertLegacyToYaml = (data: unknown) => {
   });
 
   if (legacy.overrides && legacy.overrides.length > 0) {
-    newCompose['x-runtipi'] = {
-      overrides: legacy.overrides.map((override) => {
+    const overrides = legacy.overrides
+      .map((override) => {
         const overrideServices: ServicesSchema = {};
         override.services.forEach((service) => {
           if (service.name) {
@@ -352,12 +367,22 @@ export const convertLegacyToYaml = (data: unknown) => {
           }
         });
 
+        if (Object.keys(overrideServices).length === 0) {
+          return undefined;
+        }
+
         return {
           architecture: override.architecture as 'arm64' | 'amd64',
           services: overrideServices,
         };
-      }),
-    };
+      })
+      .filter((o) => o !== undefined);
+
+    if (overrides.length > 0) {
+      newCompose['x-runtipi'] = {
+        overrides: overrides as any,
+      };
+    }
   }
 
   return newCompose;

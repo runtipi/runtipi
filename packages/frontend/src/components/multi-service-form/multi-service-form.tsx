@@ -4,7 +4,7 @@ import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
 import { IconArrowsDownUp, IconCloudDataConnection, IconPlus, IconServer, IconSettings, IconVariable, IconX } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
-import { JsonComposeEditor } from './json-compose-editor';
+import { YamlComposeEditor } from './yaml-compose-editor';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { deepClean } from '@/utils/objects';
 import { type } from 'arktype';
+import { parse } from 'yaml';
 
 type Props = {
   onSubmit?: (data: typeof dynamicComposeSchemaArk.infer) => void;
@@ -28,19 +29,19 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   const { t } = useTranslation();
   const {
     services,
-    updateFromJson,
     activeService,
     setActiveService,
     addService,
     removeService,
     updateService,
+    updateFromYaml,
     error,
     validate,
     isDirty,
     setIsDirty,
   } = useMultiServiceStore();
-  const [jsonEditorOpen, setJsonEditorOpen] = useState(false);
-  const [json, setJson] = useState<{ value: string; error?: string }>({
+  const [yamlEditorOpen, setYamlEditorOpen] = useState(false);
+  const [yamlData, setYamlData] = useState<{ value: string; error?: string }>({
     value: '',
     error: undefined,
   });
@@ -82,7 +83,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   // biome-ignore lint/suspicious/noExplicitAny: We need any type here
   function saveBeforeAction<T extends (...args: any[]) => any>(action: T) {
     return (...args: Parameters<T>): ReturnType<T> => {
-      if (isDirty && jsonEditorOpen) {
+      if (isDirty && yamlEditorOpen) {
         const confirmLeave = window.confirm(t('MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM'));
         if (!confirmLeave) {
           return undefined as ReturnType<T>;
@@ -168,8 +169,8 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
   return (
     <form className="flex flex-col" onSubmit={form.handleSubmit(handleSubmit)}>
       <div className="main-container bg-card border rounded-3 mt-4 m-0">
-        {jsonEditorOpen && <JsonComposeEditor onChange={(json, jsonError) => setJson({ value: json, error: jsonError })} />}
-        {!jsonEditorOpen && (
+        {yamlEditorOpen && <YamlComposeEditor onChange={(yaml, yamlError) => setYamlData({ value: yaml, error: yamlError })} />}
+        {!yamlEditorOpen && (
           <div className="row ms-0 me-0">
             <div className="col-12 col-md-2 border-end p-0">
               <div className="d-flex justify-content-between align-items-center p-3">
@@ -255,23 +256,23 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
           </div>
         )}
         <div className="d-flex justify-content-between align-items-center p-3 rounded-bottom border-top">
-          <Button disabled={jsonEditorOpen} type="submit" className={clsx({ 'd-none': jsonEditorOpen })}>
+          <Button disabled={yamlEditorOpen} type="submit" className={clsx({ 'd-none': yamlEditorOpen })}>
             {t('MULTI_SERVICE_VALIDATE_ALL_SERVICES')}
           </Button>
           <Button
-            className={clsx({ 'd-none': !jsonEditorOpen })}
+            className={clsx({ 'd-none': !yamlEditorOpen })}
             type="button"
-            disabled={Boolean(json.error)}
+            disabled={Boolean(yamlData.error)}
             onClick={() => {
               form.clearErrors();
-              updateFromJson(JSON.parse(json.value).services);
+              updateFromYaml(parse(yamlData.value));
             }}
           >
-            {t('MULTI_SERVICE_JSON_SAVE')}
+            {t('MULTI_SERVICE_YAML_SAVE')}
           </Button>
           <div
             className={clsx('text-muted small text-center', {
-              'd-none': !jsonEditorOpen,
+              'd-none': !yamlEditorOpen,
             })}
           >
             <a
@@ -280,7 +281,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
               rel="noopener noreferrer"
               className="text-muted small underline-offset-2 hover:underline"
             >
-              {t('MULTI_SERVICE_JSON_REFERENCE')}
+              {t('MULTI_SERVICE_YAML_REFERENCE')}
             </a>
           </div>
           <Button
@@ -289,10 +290,10 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              saveBeforeAction(setJsonEditorOpen)((v) => !v);
+              saveBeforeAction(setYamlEditorOpen)((v) => !v);
             }}
           >
-            <span className="d-flex align-items-center">{jsonEditorOpen ? t('MULTI_SERVICE_BACK_TO_FORM') : t('MULTI_SERVICE_JSON_EDITOR')}</span>
+            <span className="d-flex align-items-center">{yamlEditorOpen ? t('MULTI_SERVICE_BACK_TO_FORM') : t('MULTI_SERVICE_YAML_EDITOR')}</span>
           </Button>
         </div>
       </div>

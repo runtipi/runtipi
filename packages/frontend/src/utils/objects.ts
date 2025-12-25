@@ -6,7 +6,7 @@ export function deepClean<T>(obj: T): T {
   if (obj && typeof obj === 'object') {
     return Object.entries(obj).reduce((acc, [key, value]) => {
       const cleaned = deepClean(value);
-      if (cleaned !== undefined) acc[key as keyof T] = cleaned;
+      if (cleaned !== undefined && cleaned !== null) acc[key as keyof T] = cleaned;
       return acc;
     }, {} as T);
   }
