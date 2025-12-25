@@ -5169,6 +5169,14 @@
                     "readOnly": {
                       "type": "boolean"
                     },
+                    "restart": {
+                      "enum": [
+                        "always",
+                        "no",
+                        "on-failure",
+                        "unless-stopped"
+                      ]
+                    },
                     "securityOpt": {
                       "type": "array",
                       "message": "CUSTOM_APP_ERROR_SECURITY_OPT_INVALID",
@@ -5764,6 +5772,14 @@
                           },
                           "readOnly": {
                             "type": "boolean"
+                          },
+                          "restart": {
+                            "enum": [
+                              "always",
+                              "no",
+                              "on-failure",
+                              "unless-stopped"
+                            ]
                           },
                           "securityOpt": {
                             "type": "array",
@@ -6419,6 +6435,14 @@
                     "readOnly": {
                       "type": "boolean"
                     },
+                    "restart": {
+                      "enum": [
+                        "always",
+                        "no",
+                        "on-failure",
+                        "unless-stopped"
+                      ]
+                    },
                     "securityOpt": {
                       "type": "array",
                       "message": "CUSTOM_APP_ERROR_SECURITY_OPT_INVALID",
@@ -7014,6 +7038,14 @@
                           },
                           "readOnly": {
                             "type": "boolean"
+                          },
+                          "restart": {
+                            "enum": [
+                              "always",
+                              "no",
+                              "on-failure",
+                              "unless-stopped"
+                            ]
                           },
                           "securityOpt": {
                             "type": "array",

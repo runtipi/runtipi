@@ -10,7 +10,7 @@ services:
       - 80:80
       - 443:443
       - 8080:8080
-    command: --providers.docker --log.level=DEBUG
+    command: --providers.docker --log.level=DEBUG --log.filePath=/dev/null
     volumes:
       - ./.internal/traefik:/etc/traefik
       - ./.internal/traefik/shared:/shared

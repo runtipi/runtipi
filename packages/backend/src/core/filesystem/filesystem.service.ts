@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import yaml from 'yaml';
 import { EOL } from 'node:os';
 import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
@@ -43,7 +44,7 @@ export class FilesystemService {
       if (schema) {
         const validatedContent = schema(parsedContent);
         if (validatedContent instanceof type.errors) {
-          this.logger.debug(`File ${filePath} validation error:`, validatedContent);
+          this.logger.debug(`File ${filePath} validation error:`, validatedContent.summary);
           return null;
         }
         return validatedContent;
@@ -52,6 +53,27 @@ export class FilesystemService {
       return parsedContent;
     } catch (error) {
       this.logger.debug(`Error reading file ${filePath}:`, error);
+      return null;
+    }
+  }
+
+  async readYamlFile<T extends object>(filePath: string, schema?: (data: unknown) => T | type.errors): Promise<T | null> {
+    try {
+      const fileContent = await fs.promises.readFile(this.getSafeFilePath(filePath), 'utf8');
+      const parsedContent = yaml.parse(fileContent);
+
+      if (schema) {
+        const validatedContent = schema(parsedContent);
+        if (validatedContent instanceof type.errors) {
+          this.logger.debug(`File ${filePath} validation error:`, validatedContent.summary);
+          return null;
+        }
+        return validatedContent;
+      }
+
+      return parsedContent as T;
+    } catch (error) {
+      this.logger.debug(`Error reading YAML file ${filePath}:`, error);
       return null;
     }
   }

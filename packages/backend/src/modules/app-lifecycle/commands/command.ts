@@ -1,4 +1,3 @@
-import { mergeArchitectureOverrides } from '@/common/helpers/compose-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
@@ -7,7 +6,7 @@ import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { ModuleRef } from '@nestjs/core';
-import { parseComposeJson } from '@runtipi/common/schemas';
+import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { type } from 'arktype';
@@ -33,22 +32,25 @@ export class AppLifecycleCommand {
     logger.info('Pruned containers:', pruned.ContainersDeleted, 'Space reclaimed:', pruned.SpaceReclaimed / 1024 / 1024, 'MB');
 
     let composeJson = await appFilesManager.getDockerComposeJson(appUrn);
+
     if (!composeJson.content) {
       await marketplaceService.copyAppFromRepoToInstalled(appUrn);
       composeJson = await appFilesManager.getDockerComposeJson(appUrn);
     }
 
     try {
-      const { services, overrides } = parseComposeJson(composeJson.content);
-      const architecture = configService.get('architecture');
+      const compose = dynamicComposeSchemaYaml(composeJson.content);
 
-      // Merge architecture-specific overrides with base services
-      const mergedServices = mergeArchitectureOverrides(services, overrides, architecture);
+      if (compose instanceof type.errors) {
+        logger.error('Compose JSON validation errors:', compose.summary);
+        throw new Error('Invalid app.yml format.');
+      }
+
+      const architecture = configService.get('architecture');
 
       const dockerComposeBuilder = new DockerComposeBuilder();
       const subnet = await subnetManager.allocateSubnet(appUrn);
-
-      const composeFile = dockerComposeBuilder.getDockerCompose(mergedServices, form, appUrn, subnet);
+      const composeFile = dockerComposeBuilder.getDockerCompose(compose, form, appUrn, subnet, architecture);
 
       await appFilesManager.writeDockerComposeYml(appUrn, composeFile);
     } catch (err) {

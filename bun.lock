@@ -67,7 +67,7 @@
         "validator": "^13.15.20",
         "web-push": "^3.6.7",
         "winston": "^3.17.0",
-        "yaml": "^2.7.1",
+        "yaml": "^2.8.2",
       },
       "devDependencies": {
         "@faker-js/faker": "^10.1.0",
@@ -116,6 +116,9 @@
     "packages/common": {
       "name": "@runtipi/common",
       "version": "1.0.0",
+      "dependencies": {
+        "yaml": "^2.8.2",
+      },
       "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.1",
         "@changesets/cli": "^2.29.3",
@@ -2993,7 +2996,7 @@
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
 
-    "yaml": ["yaml@2.8.1", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw=="],
+    "yaml": ["yaml@2.8.2", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A=="],
 
     "yargs": ["yargs@17.7.2", "", { "dependencies": { "cliui": "^8.0.1", "escalade": "^3.1.1", "get-caller-file": "^2.0.5", "require-directory": "^2.1.1", "string-width": "^4.2.3", "y18n": "^5.0.5", "yargs-parser": "^21.1.1" } }, "sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w=="],
 

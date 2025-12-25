@@ -1,6 +1,6 @@
 {
   "name": "@runtipi/common",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "",
   "type": "module",
   "files": [
@@ -52,5 +52,8 @@
   "peerDependencies": {
     "arktype": ">=2",
     "typescript": ">=5"
+  },
+  "dependencies": {
+    "yaml": "^2.8.2"
   }
 }

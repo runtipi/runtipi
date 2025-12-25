@@ -1,134 +1,123 @@
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import { type Service, type ServiceInput, serviceSchema } from '@runtipi/common/schemas';
+import { type DynamicComposeSchemaYaml, type XRuntipiServiceParams } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
+import deepmerge from 'deepmerge';
 import * as yaml from 'yaml';
-import { type } from 'arktype';
-import { type BuiltService, ServiceBuilder } from './service.builder';
 import { TraefikLabelsBuilder } from './traefik-labels.builder';
 
-interface Network {
-  key: string;
-  name: string;
-  external: boolean;
-  subnet?: string;
-  ipam?: {
-    config: {
-      subnet: string;
-    }[];
-  };
-}
+/**
+ * Interpolate {{RUNTIPI_APP_ID}} placeholders in labels with the actual app ID
+ */
+const interpolateLabels = (labels: Record<string, string | number | boolean>, appId: string): Record<string, string | number | boolean> => {
+  const interpolated: Record<string, string | number | boolean> = {};
 
-export class DockerComposeBuilder {
-  private services: Record<string, BuiltService> = {};
-  private networks: Record<string, Omit<Network, 'key'>> = {};
+  for (const [key, value] of Object.entries(labels)) {
+    const interpolatedKey = key.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId);
+    const interpolatedValue = typeof value === 'string' ? value.replace(/\{\{\s*RUNTIPI_APP_ID\s*\}\}/g, appId) : value;
 
-  addService(service: BuiltService) {
-    const { name: _, ...rest } = service;
-    this.services[service.name] = rest as BuiltService;
-    return this;
+    interpolated[interpolatedKey] = interpolatedValue;
   }
 
-  private addServices(services: BuiltService[]) {
-    for (const service of services) {
-      this.addService(service);
+  return interpolated;
+};
+
+/**
+ * Normalize labels to a record format
+ */
+const normalizeLabels = (labels: unknown): Record<string, string | number | boolean> => {
+  if (!labels) return {};
+  if (Array.isArray(labels)) {
+    const normalized: Record<string, string | number | boolean> = {};
+    for (const label of labels) {
+      const [key, ...valueParts] = label.split('=');
+      normalized[key] = valueParts.join('=');
     }
-    return this;
+    return normalized;
   }
 
-  addNetwork(network: Network) {
-    const networkConfig: Omit<Network, 'key'> = {
-      name: network.name,
-      external: network.external,
-    };
+  return labels as Record<string, string | number | boolean>;
+};
 
-    if (network.subnet) {
-      networkConfig.ipam = {
-        config: [{ subnet: network.subnet }],
-      };
+/**
+ * Normalize networks to a record format
+ */
+const normalizeNetworks = (networks: unknown) => {
+  if (!networks) return {};
+  if (Array.isArray(networks)) {
+    const normalized: { [key: string]: unknown } = {};
+
+    for (const net of networks) {
+      normalized[net] = {};
     }
 
-    this.networks[network.key] = networkConfig;
-    return this;
+    return normalized;
   }
 
-  build() {
-    const hasNetworks = Object.keys(this.networks).length > 0;
+  return networks as NormalizedComposeService['networks'];
+};
 
-    return yaml.stringify({
-      services: this.services,
-      networks: hasNetworks ? this.networks : undefined,
+/**
+ * Normalize ports to a string array format
+ */
+const normalizePorts = (ports: unknown) => {
+  if (!ports) return undefined;
+  if (Array.isArray(ports)) {
+    return ports.map((port) => {
+      if (typeof port === 'string') return port;
+      if (typeof port === 'object' && port !== null) {
+        // Handle long syntax: { target: 80, published: 8080, protocol: 'tcp' }
+        const { target, published, protocol } = port;
+        return `${published}:${target}${protocol ? `/${protocol}` : ''}`;
+      }
+      return String(port);
     });
   }
+  return [];
+};
 
-  private buildService = (params: Service, form: AppEventFormInput, appUrn: AppUrn) => {
+type NormalizedComposeService = DynamicComposeSchemaYaml['services'][string] & {
+  networks: { [key: string]: { gw_priority?: number } };
+  ports: string[];
+  labels: Record<string, string | number | boolean>;
+};
+
+export class DockerComposeBuilder {
+  private buildService = (service: DynamicComposeSchemaYaml['services'][string], form: AppEventFormInput, appUrn: AppUrn) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
-    const result = serviceSchema(params as unknown as ServiceInput);
 
-    if (result instanceof type.errors) {
-      let errorPayload: unknown = { summary: result.summary };
-      try {
-        errorPayload = JSON.parse(JSON.stringify(result));
-      } catch {
-        // ignore
+    const serviceCopy = { ...service };
+    serviceCopy.networks = normalizeNetworks(serviceCopy.networks);
+    serviceCopy.ports = normalizePorts(serviceCopy.ports);
+    serviceCopy.labels = normalizeLabels(serviceCopy.labels);
+
+    const xruntipiParams = service['x-runtipi'] || ({} as XRuntipiServiceParams);
+
+    if (service.network_mode) {
+      serviceCopy.networks = {} as NormalizedComposeService['networks'];
+      serviceCopy.ports = [];
+    } else {
+      serviceCopy.networks[`${appName}_${appStoreId}_network`] = {
+        gw_priority: 0,
+      };
+      if (xruntipiParams.is_main || xruntipiParams.add_to_main_network) {
+        serviceCopy.networks.tipi_main_network = {
+          gw_priority: 1,
+        };
       }
-      console.warn(`! Service ${params.name} has invalid schema: \n${JSON.stringify(errorPayload, null, 2)}\nNotify the app maintainer`);
     }
 
-    const service = new ServiceBuilder();
-    service
-      .setImage(params.image)
-      .setName(params.name)
-      .setEnvironment(params.environment)
-      .setCommand(params.command)
-      .setHealthCheck(params.healthCheck)
-      .setDependsOn(params.dependsOn)
-      .setVolumes(params.volumes)
-      .setRestartPolicy('unless-stopped')
-      .setExtraHosts(params.extraHosts)
-      .setUlimits(params.ulimits)
-      .setPorts(params.addPorts)
-      .setNetworkMode(params.networkMode)
-      .setCapAdd(params.capAdd)
-      .setDeploy(params.deploy)
-      .setHostname(params.hostname)
-      .setDevices(params.devices)
-      .setEntrypoint(params.entrypoint)
-      .setPid(params.pid)
-      .setPrivileged(params.privileged)
-      .setTty(params.tty)
-      .setUser(params.user)
-      .setWorkingDir(params.workingDir)
-      .setShmSize(params.shmSize)
-      .setCapDrop(params.capDrop)
-      .setLogging(params.logging)
-      .setReadOnly(params.readOnly)
-      .setSecurityOpt(params.securityOpt)
-      .setStopSignal(params.stopSignal)
-      .setStopGracePeriod(params.stopGracePeriod)
-      .setStdinOpen(params.stdinOpen)
-      .setSysctls(params.sysctls)
-      .setDNS(params.dns)
-      .setNetwork(`${appName}_${appStoreId}_network`);
-
-    if (params.isMain || params.addToMainNetwork) {
-      service.setNetwork('tipi_main_network', 1);
-    }
-
-    if (params.isMain) {
-      if (form.openPort && params.internalPort) {
-        service.setPort({
-          containerPort: params.internalPort,
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: intended
-          hostPort: '${APP_PORT}',
-        });
+    if (xruntipiParams.is_main) {
+      if (form.openPort && xruntipiParams.internal_port) {
+        serviceCopy.ports = serviceCopy.ports || [];
+        serviceCopy.ports.push(`\${APP_PORT}:${xruntipiParams.internal_port}`);
       }
 
-      if (params.internalPort && params.networkMode === undefined && (form.exposed || form.exposedLocal)) {
+      if (xruntipiParams.internal_port && service.network_mode === undefined && (form.exposed || form.exposedLocal)) {
         const traefikLabels = new TraefikLabelsBuilder({
           storeId: appStoreId,
           appId: appName,
-          internalPort: params.internalPort,
+          internalPort: xruntipiParams.internal_port,
           exposedLocal: form.exposedLocal,
           exposed: form.exposed,
           enableAuth: form.enableAuth,
@@ -137,33 +126,69 @@ export class DockerComposeBuilder {
           .addExposedLabels()
           .addExposedLocalLabels();
 
-        service.setLabels(traefikLabels.build());
+        serviceCopy.labels = { ...serviceCopy.labels, ...traefikLabels.build() };
       }
     }
 
-    service.setLabels({ 'runtipi.managed': true, 'runtipi.appurn': appUrn, ...params.extraLabels }).interpolateVariables(`${appName}-${appStoreId}`);
+    serviceCopy.labels = { ...serviceCopy.labels, 'runtipi.managed': 'true', 'runtipi.appurn': appUrn };
 
-    return service.build();
+    if (!service.restart) {
+      serviceCopy.restart = 'unless-stopped';
+    }
+
+    return serviceCopy as NormalizedComposeService;
   };
 
-  public getDockerCompose = (services: ServiceInput[], form: AppEventFormInput, appUrn: AppUrn, subnet: string) => {
+  public getDockerCompose = (input: DynamicComposeSchemaYaml, form: AppEventFormInput, appUrn: AppUrn, subnet: string, architecture?: string) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
+    const appId = `${appName}-${appStoreId}`;
 
-    const myServices = services.map((service) => this.buildService(service, form, appUrn));
+    const inputCopy = JSON.parse(JSON.stringify(input)) as DynamicComposeSchemaYaml;
 
-    const dockerCompose = this.addServices(myServices)
-      .addNetwork({
-        key: 'tipi_main_network',
-        name: 'runtipi_tipi_main_network',
-        external: true,
-      })
-      .addNetwork({
-        key: `${appName}_${appStoreId}_network`,
-        name: `${appName}_${appStoreId}_network`,
-        external: false,
-        subnet,
-      });
+    // Merge architecture-specific overrides
+    if (architecture && inputCopy['x-runtipi']?.overrides) {
+      const architectureOverrides = inputCopy['x-runtipi'].overrides.find((o) => o.architecture === architecture);
+      if (architectureOverrides) {
+        for (const [serviceName, overrideService] of Object.entries(architectureOverrides.services)) {
+          if (inputCopy.services[serviceName]) {
+            const arrayMode = {
+              arrayMerge: (_target: unknown[], source: unknown[]) => source,
+            };
+            inputCopy.services[serviceName] = deepmerge(inputCopy.services[serviceName], overrideService, arrayMode);
+          } else {
+            inputCopy.services[serviceName] = overrideService;
+          }
+        }
+      }
+    }
 
-    return dockerCompose.build();
+    for (const serviceName in inputCopy.services) {
+      const service = inputCopy.services[serviceName];
+      if (!service) continue;
+
+      const built = this.buildService(service, form, appUrn);
+
+      if (built.labels) {
+        built.labels = interpolateLabels(built.labels, appId);
+      }
+
+      inputCopy.services[serviceName] = built;
+      delete inputCopy.services[serviceName]?.['x-runtipi'];
+    }
+
+    delete inputCopy['x-runtipi'];
+
+    inputCopy.networks = inputCopy.networks || {};
+    inputCopy.networks.tipi_main_network = {
+      name: 'runtipi_tipi_main_network',
+      external: true,
+    };
+    inputCopy.networks[`${appName}_${appStoreId}_network`] = {
+      ipam: {
+        config: [{ subnet }],
+      },
+    };
+
+    return yaml.stringify(inputCopy);
   };
 }

@@ -1,287 +1,539 @@
-/** biome-ignore-all lint/suspicious/noTemplateCurlyInString: intended */
-import { createAppUrn } from '@/common/helpers/app-helpers';
-import type { ServiceInput } from '@runtipi/common/schemas';
 import { beforeEach, describe, expect, it } from 'vitest';
 import yaml from 'yaml';
 import { DockerComposeBuilder } from '../compose.builder';
-import { ServiceBuilder } from '../service.builder';
+import { createAppUrn } from '@/common/helpers/app-helpers';
 
 const urn = createAppUrn('nginx', 'store-id');
 const subnet = '10.128.1.0/24';
 
 describe('DockerComposeBuilder', () => {
   let composeBuilder: DockerComposeBuilder;
-  let serviceBuilder: ServiceBuilder;
 
   beforeEach(() => {
     composeBuilder = new DockerComposeBuilder();
-    serviceBuilder = new ServiceBuilder();
   });
 
-  it('should build a docker-compose file', () => {
-    const serviceName = 'service';
-    const service: ServiceInput = {
-      name: serviceName,
-      image: 'image',
-      internalPort: 80,
-    };
-
-    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
-    expect(compose).toMatchSnapshot();
+  describe('Architecture-specific file detection', () => {
+    it('should be tested in integration tests', () => {
+      // Note: Architecture file detection is tested in app-files-manager tests
+      // This is a placeholder to document the feature
+      expect(true).toBe(true);
+    });
   });
 
-  it('should correctly format deploy resources', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 80,
-      deploy: {
-        resources: {
-          limits: { cpus: '0.50', memory: '50M', pids: 1 },
-          reservations: { cpus: '0.25', memory: '20M', devices: [{ capabilities: ['gpu'], driver: 'nvidia', count: 'all' }] },
-        },
-      },
-    };
+  describe('Variable interpolation', () => {
+    it('should replace {{RUNTIPI_APP_ID}} in label values', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
-    expect(compose).toMatchSnapshot();
+services:
+  web:
+    image: nginx:alpine
+    labels:
+      runtipi.app_id: '{{RUNTIPI_APP_ID}}'
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels['runtipi.app_id']).toBe('nginx-store-id');
+    });
+
+    it('should replace {{ RUNTIPI_APP_ID }} with spaces in label values', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    labels:
+      runtipi.app_id: '{{ RUNTIPI_APP_ID }}'
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels['runtipi.app_id']).toBe('nginx-store-id');
+    });
+
+    it('should replace {{RUNTIPI_APP_ID}} in label keys', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    labels:
+      '{{RUNTIPI_APP_ID}}': 'value'
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels['nginx-store-id']).toBe('value');
+    });
+
+    it('should replace multiple {{RUNTIPI_APP_ID}} occurrences', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    labels:
+      test: '{{RUNTIPI_APP_ID}}-{{RUNTIPI_APP_ID}}'
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels.test).toBe('nginx-store-id-nginx-store-id');
+    });
+
+    it('should not replace non-string label values', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    labels:
+      numeric_label: 123
+      boolean_label: true
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels.numeric_label).toBe(123);
+      expect(resultParsed.services.web.labels.boolean_label).toBe(true);
+    });
   });
 
-  it('should correctly format devices', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 80,
-      devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
-    };
+  describe('Architecture overrides', () => {
+    it('should merge architecture-specific overrides', () => {
+      const doc = `
+services:
+  web:
+    image: nginx:alpine
+x-runtipi:
+  overrides:
+    - architecture: arm64
+      services:
+        web:
+          image: nginx:arm64
+`;
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
-    expect(compose).toMatchSnapshot();
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet, 'arm64');
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.image).toBe('nginx:arm64');
+    });
+
+    it('should not merge overrides for different architecture', () => {
+      const doc = `
+services:
+  web:
+    image: nginx:alpine
+x-runtipi:
+  overrides:
+    - architecture: arm64
+      services:
+        web:
+          image: nginx:arm64
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet, 'amd64');
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.image).toBe('nginx:alpine');
+    });
   });
 
-  it('should correctly format entrypoint as string', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 80,
-      entrypoint: 'entrypoint',
-    };
+  describe('Restart policy preservation', () => {
+    it('should preserve restart policy from YAML', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
+services:
+  web:
+    image: nginx:alpine
+    restart: always
+`;
 
-    expect(compose).toMatchSnapshot();
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.restart).toBe('always');
+    });
+
+    it('should add default restart: unless-stopped if not specified', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.restart).toBe('unless-stopped');
+    });
   });
 
-  it('should correctly format entrypoint as array', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 80,
-      entrypoint: ['entrypoint', 'arg1', 'arg2'],
-    };
+  describe('Network configuration', () => {
+    it('should add app-specific network', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
+services:
+  web:
+    image: nginx:alpine
+`;
 
-    expect(compose).toMatchSnapshot();
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.networks['nginx_store-id_network']).toBeDefined();
+      expect(resultParsed.networks['nginx_store-id_network'].ipam).toBeDefined();
+      expect(resultParsed.networks['nginx_store-id_network'].ipam.config[0].subnet).toBe(subnet);
+    });
+
+    it('should add tipi_main_network when is_main is true', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.networks.tipi_main_network).toBeDefined();
+      expect(resultParsed.networks.tipi_main_network.name).toBe('runtipi_tipi_main_network');
+      expect(resultParsed.networks.tipi_main_network.external).toBe(true);
+    });
+
+    it('should add tipi_main_network when add_to_main_network is true', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      add_to_main_network: true
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.networks.tipi_main_network).toBeDefined();
+    });
   });
 
-  it('should correctly format logging', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 80,
-      logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
-    };
+  describe('Port configuration', () => {
+    it('should add port when is_main and openPort are set', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const compose = composeBuilder.getDockerCompose([service], {}, urn, subnet);
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
 
-    expect(compose).toMatchSnapshot();
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.ports).toContain('${APP_PORT}:80');
+    });
+
+    it('should not add port when openPort is false', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: false, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.ports).toBeUndefined();
+    });
   });
 
-  it('should correctly interpolate RUNTIPI_APP_ID in service labels', () => {
-    const service = serviceBuilder
-      .setName('service')
-      .setImage('image')
-      .setLabels({
-        '{{RUNTIPI_APP_ID}}.service': true,
-        'com.docker.compose.service': '{{RUNTIPI_APP_ID}}',
-        '{{ RUNTIPI_APP_ID }}': '{{ RUNTIPI_APP_ID }}',
-      })
-      .interpolateVariables('my-test-app')
-      .build();
+  describe('Traefik labels', () => {
+    it('should add Traefik labels when exposed is true', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const compose = composeBuilder.addService(service).build();
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
 
-    expect(compose).toMatchSnapshot();
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels).toBeDefined();
+      expect(resultParsed.services.web.labels['runtipi.managed']).toBe('true');
+      expect(resultParsed.services.web.labels['runtipi.appurn']).toBe(urn);
+    });
+
+    it('should add Traefik labels when exposedLocal is true', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: false, domain: 'hello.com', exposedLocal: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.labels).toBeDefined();
+    });
+
+    it('should not add Traefik labels when not exposed', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(
+        parsed,
+        { openPort: false, domain: 'hello.com', exposed: false, exposedLocal: false },
+        urn,
+        subnet,
+      );
+
+      const resultParsed = yaml.parse(result);
+      // Should only have runtipi labels, not Traefik labels
+      expect(resultParsed.services.web.labels['runtipi.managed']).toBe('true');
+      expect(resultParsed.services.web.labels['runtipi.appurn']).toBe(urn);
+      expect(resultParsed.services.web.labels['traefik.enable']).toBeUndefined();
+    });
   });
 
-  it('should correctly format a complex docker-compose file', () => {
-    const service1: ServiceInput = {
-      name: 'service1',
-      image: 'image1',
-      internalPort: 80,
-      addPorts: [{ containerPort: 8080, hostPort: 3400 }],
-      extraHosts: ['host1', 'host2'],
-      ulimits: { nproc: 1024, nofile: 65536 },
-      command: 'node index.js',
-      volumes: [
-        { hostPath: '/host/path', containerPath: '/container/path', readOnly: true },
-        { hostPath: '/host/path2', containerPath: '/container/path2' },
-      ],
-      environment: [
-        { key: 'NODE_ENV', value: 'production' },
-        { key: 'PORT', value: 80 },
-        { key: 'SOME_VAR', value: 'value' },
-      ],
-      healthCheck: { test: 'curl -f http://localhost/ || exit 1', interval: '1m30s', timeout: '10s', retries: 3, startPeriod: '40s' },
-      dependsOn: ['service2'],
-      capAdd: ['SYS_ADMIN', 'NET_ADMIN'],
-      deploy: {
-        resources: {
-          limits: { cpus: '0.50', memory: '50M', pids: 1 },
-          reservations: { cpus: '0.25', memory: '20M', devices: [{ capabilities: ['gpu'], driver: 'nvidia', count: 'all' }] },
-        },
-      },
-      hostname: 'hostname',
-      devices: ['/dev/ttyUSB0:/dev/ttyUSB0', '/dev/sda:/dev/xvda:rwm'],
-      entrypoint: ['entrypoint', 'arg1', 'arg2'],
-      pid: '1',
-      privileged: true,
-      tty: true,
-      user: 'user',
-      workingDir: '/working/dir',
-      shmSize: '1G',
-      capDrop: ['SYS_ADMIN', 'NET_ADMIN'],
-      logging: { driver: 'json-file', options: { 'syslog-address': 'tcp://192.168.0.42:123' } },
-      readOnly: true,
-      securityOpt: ['label=disable', 'label=role:ROLE'],
-      stopSignal: 'SIGTERM',
-      stopGracePeriod: '1m',
-      stdinOpen: true,
-    };
+  describe('x-runtipi metadata', () => {
+    it('should remove x-runtipi from services', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const service2: ServiceInput = {
-      name: 'service2',
-      image: 'image2',
-      internalPort: 443,
-    };
+services:
+  web:
+    image: nginx:alpine
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
 
-    const compose = composeBuilder.getDockerCompose([service1, service2], {}, urn, subnet);
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
 
-    expect(compose).toMatchSnapshot();
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web['x-runtipi']).toBeUndefined();
+    });
+
+    it('should remove x-runtipi from root', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed['x-runtipi']).toBeUndefined();
+    });
   });
 
-  it('should add correct traefik labels to the main service', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 440,
-      isMain: true,
-    };
+  describe('Complete compose file', () => {
+    it('should build a complete docker-compose.yml', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: true, exposedLocal: true, openPort: true }, urn, subnet);
+services:
+  web:
+    image: nginx:alpine
+    restart: always
+    labels:
+      test: '{{RUNTIPI_APP_ID}}'
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
 
-    expect(compose).toMatchSnapshot();
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+
+      // Check service configuration
+      expect(resultParsed.services.web.image).toBe('nginx:alpine');
+      expect(resultParsed.services.web.restart).toBe('always');
+      expect(resultParsed.services.web.labels.test).toBe('nginx-store-id');
+      expect(resultParsed.services.web.labels['runtipi.managed']).toBe('true');
+      expect(resultParsed.services.web.labels['runtipi.appurn']).toBe(urn);
+      expect(resultParsed.services.web['x-runtipi']).toBeUndefined();
+
+      // Check networks
+      expect(resultParsed.networks['nginx_store-id_network']).toBeDefined();
+      expect(resultParsed.networks.tipi_main_network).toBeDefined();
+
+      // Check root x-runtipi removed
+      expect(resultParsed['x-runtipi']).toBeUndefined();
+    });
   });
 
-  it('should add traefik labels when service is exposed and has internalPort', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 440,
-      isMain: true,
-    };
+  describe('Network mode exclusivity', () => {
+    it('should not add networks when network_mode is set to host', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+    network_mode: host
+`;
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: true }, urn, subnet);
-    const yamlObject = yaml.parse(compose);
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
 
-    expect(yamlObject.services.service.labels).toBeDefined();
-    expect(yamlObject.services.service.labels['traefik.enable']).toBe(true);
-    expect(yamlObject.services.service.labels['traefik.http.routers.nginx-store-id.rule']).toBeDefined();
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.networks).toEqual({});
+    });
+
+    it('should not add networks when network_mode is set to none', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+    network_mode: none
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.networks).toEqual({});
+    });
+
+    it('should add networks normally when network_mode is not set', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.networks['nginx_store-id_network']).toBeDefined();
+    });
+
+    it('should clear ports when network_mode is set', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+    network_mode: host
+    ports:
+      - "8080:80"
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.ports).toEqual([]);
+    });
   });
 
-  it('should not add traefik labels when service is not exposed', () => {
-    const service: ServiceInput = {
-      name: 'service',
-      image: 'image',
-      internalPort: 440,
-      isMain: true,
-    };
+  describe('Default restart policy', () => {
+    it('should add default restart: unless-stopped when no restart specified', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+`;
 
-    const compose = composeBuilder.getDockerCompose([service], { exposed: false, exposedLocal: false }, urn, subnet);
-    const yamlObject = yaml.parse(compose);
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
 
-    expect(yamlObject.services.service.labels).toEqual({ 'runtipi.managed': true, 'runtipi.appurn': urn });
-  });
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.restart).toBe('unless-stopped');
+    });
 
-  it('should be able to parse a compose.json file', async () => {
-    const composeJson: { services: ServiceInput[] } = {
-      services: [
-        {
-          // @ts-expect-error testing extra fields
-          something: 'crazy',
-          name: 'ctfd',
-          image: 'ctfd/ctfd:3.7.5',
-          isMain: true,
-          internalPort: 8000,
-          environment: [
-            { key: 'UPLOAD_FOLDER', value: '/var/uploads' },
-            { key: 'DATABASE_URL', value: 'mysql+pymysql://tipi:${CTFD_MYSQL_DB_PASSWORD}@ctfd-db/ctfd' },
-          ],
-          dependsOn: ['ctfd-db'],
-          volumes: [
-            {
-              hostPath: '${APP_DATA_DIR}/data/uploads',
-              containerPath: '/var/log/CTFd',
-            },
-            {
-              hostPath: '${APP_DATA_DIR}/data/uploads',
-              containerPath: '/var/uploads',
-            },
-          ],
-          extraLabels: {
-            'some-label': 'some-value',
-            '{{RUNTIPI_APP_ID}}.service': true,
-            'com.docker.compose.service': '{{RUNTIPI_APP_ID}}',
-            '{{ RUNTIPI_APP_ID }}': '{{ RUNTIPI_APP_ID }}',
-            // Example of overriding
-            'traefik.http.middlewares.ctfd-web-redirect.redirectscheme.scheme': 'wrongscheme',
-          },
-        },
-        {
-          name: 'ctfd-db',
-          image: 'mariadb:10.4.12',
-          internalPort: 3306,
-          environment: [
-            { key: 'MYSQL_ROOT_PASSWORD', value: '${CTFD_MYSQL_ROOT_PASSWORD}' },
-            { key: 'MYSQL_USER', value: 'tipi' },
-            { key: 'MYSQL_PASSWORD', value: '${CTFD_MYSQL_DB_PASSWORD}' },
-            { key: 'MYSQL_DATABASE', value: 'ctfd' },
-          ],
-          volumes: [
-            {
-              hostPath: '${APP_DATA_DIR}/data/db',
-              containerPath: '/var/lib/mysql',
-            },
-          ],
-          command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--wait_timeout=28800', '--log-warnings=0'],
-        },
-        {
-          name: 'ctfd-redis',
-          image: 'redis:4',
-          internalPort: 6379,
-          volumes: [
-            {
-              hostPath: '${APP_DATA_DIR}/data/redis',
-              containerPath: '/data',
-            },
-          ],
-        },
-      ],
-    };
+    it('should preserve existing restart policy when specified', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+    restart: always
+`;
 
-    const yaml = composeBuilder.getDockerCompose(composeJson.services, { appId: 'test-app', openPort: true }, urn, subnet);
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
 
-    expect(yaml).toMatchSnapshot();
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.restart).toBe('always');
+    });
+
+    it('should preserve restart: no when explicitly set', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+    restart: "no"
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.restart).toBe('no');
+    });
   });
 });

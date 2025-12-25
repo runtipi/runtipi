@@ -145,6 +145,7 @@ export const serviceSchemaArk = type({
     .configure({ message: 'CUSTOM_APP_ERROR_LABEL_KEY_INVALID' })
     .optional(),
   dns: type('string | string[]').configure({ message: 'CUSTOM_APP_ERROR_DNS_INVALID' }).optional(),
+  restart: type("'no' | 'always' | 'on-failure' | 'unless-stopped'").optional(),
 });
 
 // dynamicComposeSchemaV2

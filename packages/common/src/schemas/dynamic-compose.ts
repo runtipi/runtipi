@@ -21,7 +21,6 @@ export const dynamicComposeSchemaV2 = dynamicComposeSchemaArk;
 // Union over supported schema versions
 export const dynamicComposeUnion = type.or(dynamicComposeSchemaV1, dynamicComposeSchemaV2);
 
-// Change when introducing breaking changes
 export const serviceSchema = serviceSchemaV2;
 export const dynamicComposeSchema = dynamicComposeSchemaV2;
 

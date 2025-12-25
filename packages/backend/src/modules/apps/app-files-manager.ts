@@ -5,7 +5,7 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import { appInfoSchema } from '@runtipi/common/schemas';
+import { appInfoSchema, convertLegacyToYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
 
@@ -89,15 +89,32 @@ export class AppFilesManager {
   }
 
   /**
-   * Get the docker-compose.json file content from the installed app
+   * Get the app compose configuration from the installed app
    * @param appUrn - The app id
-   * @returns The content of docker-compose.json as a string, or null if not found
+   * @returns The content as a DynamicComposeSchemaYaml object and path
    */
   public async getDockerComposeJson(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.json');
+
+    const appYamlPath = path.join(appInstalledDir, 'app.yml');
 
     let content = null;
+
+    try {
+      if (await this.filesystem.pathExists(appYamlPath)) {
+        content = await this.filesystem.readYamlFile(appYamlPath);
+      }
+    } catch (error) {
+      this.logger.error(`Error getting app.yml for installed app ${appUrn}:`, error);
+    }
+
+    if (content) {
+      return { path: appYamlPath, content };
+    }
+
+    // Fallback to legacy docker-compose.json
+    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.json');
+
     try {
       if (await this.filesystem.pathExists(dockerComposePath)) {
         content = await this.filesystem.readJsonFile(dockerComposePath);
@@ -106,7 +123,7 @@ export class AppFilesManager {
       this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}:`, error);
     }
 
-    return { path: dockerComposePath, content };
+    return { path: dockerComposePath, content: convertLegacyToYaml(content) };
   }
 
   /**

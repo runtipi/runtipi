@@ -63,7 +63,7 @@
     "validator": "^13.15.20",
     "web-push": "^3.6.7",
     "winston": "^3.17.0",
-    "yaml": "^2.7.1"
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
