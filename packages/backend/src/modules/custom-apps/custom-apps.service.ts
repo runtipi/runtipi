@@ -9,6 +9,7 @@ import { frontmatterSchema, type AppInfo } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
 import path from 'node:path';
+import * as yaml from 'yaml';
 import { AppsRepository } from '../apps/apps.repository';
 import type { CreateCustomAppDto, UpdateCustomAppDto } from './dto/custom-apps.dto';
 
@@ -102,8 +103,8 @@ export class CustomAppService {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const { dataDir } = this.configService.get('directories');
 
-    const configPath = path.join(dataDir, 'apps', appStoreId, appName, 'docker-compose.json');
-    const configContent = JSON.stringify(config, null, 2);
+    const configPath = path.join(dataDir, 'apps', appStoreId, appName, 'app.yml');
+    const configContent = yaml.stringify(config);
 
     const ok = await this.filesystem.writeTextFile(configPath, configContent);
     if (!ok) {
@@ -117,8 +118,9 @@ export class CustomAppService {
 
     const infoPath = path.join(dataDir, 'apps', appStoreId, appName, 'config.json');
 
-    const main = config.services.find((s) => s.isMain) ?? config.services[0];
-    const inferredPort = typeof main?.internalPort === 'number' ? main.internalPort : undefined;
+    const services = Object.values(config.services);
+    const main = services.find((s) => s['x-runtipi']?.is_main) ?? services[0];
+    const inferredPort = typeof main?.['x-runtipi']?.internal_port === 'number' ? main['x-runtipi'].internal_port : undefined;
 
     // Create a minimal app.info file for custom apps
     const appInfo = {

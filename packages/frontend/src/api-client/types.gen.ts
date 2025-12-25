@@ -589,230 +589,124 @@ export type UpdateUserConfigDto = {
 
 export type CreateCustomAppDto = {
     config: {
-        schemaVersion: 2;
-        services: Array<{
-            image: string;
-            name: string;
-            addPorts?: Array<{
-                containerPort: string | number;
-                hostPort: string | number;
-                interface?: string;
-                tcp?: boolean;
-                udp?: boolean;
-            }>;
-            addToMainNetwork?: boolean;
-            capAdd?: Array<string>;
-            capDrop?: Array<string>;
-            command?: string | Array<string>;
-            dependsOn?: {
-                [key: string]: {
-                    condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
-                };
-            } | Array<string>;
-            deploy?: {
-                resources: {
-                    limits?: {
-                        cpus?: string;
-                        memory?: string;
-                        pids?: number;
-                    };
-                    reservations?: {
-                        devices: Array<{
-                            capabilities: Array<string>;
-                            count?: number | 'all';
-                            deviceIds?: Array<string>;
-                            driver?: string;
-                        }>;
-                        cpus?: string;
-                        memory?: string;
-                    };
-                };
-            };
-            devices?: Array<string>;
-            dns?: string | Array<string>;
-            entrypoint?: string | Array<string>;
-            environment?: Array<{
-                key: string;
-                value: number | string | boolean;
-            }>;
-            extraHosts?: Array<string>;
-            extraLabels?: {
-                [key: string]: string | boolean;
-            };
-            healthCheck?: {
-                test: string;
-                interval?: string;
-                retries?: number;
-                startInterval?: string;
-                startPeriod?: string;
-                timeout?: string;
-            };
-            hostname?: string;
-            internalPort?: string | number;
-            isMain?: boolean;
-            logging?: {
-                driver: string;
-                options?: {
-                    [key: string]: string;
-                };
-            };
-            networkMode?: string;
-            pid?: string;
-            privileged?: boolean;
-            readOnly?: boolean;
-            securityOpt?: Array<string>;
-            shmSize?: string;
-            stdinOpen?: boolean;
-            stopGracePeriod?: string;
-            stopSignal?: string;
-            sysctls?: {
-                [key: string]: number;
-            };
-            tty?: boolean;
-            ulimits?: {
-                core?: number | {
-                    hard: number;
-                    soft: number;
-                };
-                memlock?: number | {
-                    hard: number;
-                    soft: number;
-                };
-                nofile?: number | {
-                    hard: number;
-                    soft: number;
-                };
-                nproc?: number | {
-                    hard: number;
-                    soft: number;
-                };
-            };
-            user?: string;
-            volumes?: Array<{
-                containerPath: string;
-                hostPath: string;
-                bind?: {
-                    propagation: 'private' | 'rprivate' | 'rshared' | 'rslave' | 'shared' | 'slave';
-                };
-                private?: boolean;
-                readOnly?: boolean;
-                shared?: boolean;
-            }>;
-            workingDir?: string;
-        }>;
-        overrides?: Array<{
-            services: Array<{
-                addPorts?: Array<{
-                    containerPort: string | number;
-                    hostPort: string | number;
-                    interface?: string;
-                    tcp?: boolean;
-                    udp?: boolean;
-                }>;
-                addToMainNetwork?: boolean;
-                capAdd?: Array<string>;
-                capDrop?: Array<string>;
-                command?: string | Array<string>;
-                dependsOn?: {
-                    [key: string]: {
-                        condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
-                    };
+        services: {
+            [key: string]: {
+                image: string;
+                labels?: {
+                    [key: string]: number | string | boolean;
                 } | Array<string>;
-                deploy?: {
-                    resources: {
-                        limits?: {
-                            cpus?: string;
-                            memory?: string;
-                            pids?: number;
+                networks?: {
+                    [key: string]: unknown;
+                } | Array<string>;
+                ports?: Array<unknown>;
+                'x-runtipi'?: {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                };
+                [key: string]: unknown | string | {
+                    [key: string]: number | string | boolean;
+                } | Array<string> | {
+                    [key: string]: unknown;
+                } | Array<string> | Array<unknown> | {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                } | undefined;
+            };
+        };
+        networks?: {
+            [key: string]: unknown;
+        };
+        'x-runtipi'?: {
+            overrides: Array<{
+                architecture: 'amd64' | 'arm64';
+                services: {
+                    [key: string]: {
+                        image?: string;
+                        labels?: {
+                            [key: string]: number | string | boolean;
+                        } | Array<string>;
+                        networks?: {
+                            [key: string]: unknown;
+                        } | Array<string>;
+                        ports?: Array<unknown>;
+                        'x-runtipi'?: {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
                         };
-                        reservations?: {
-                            devices: Array<{
-                                capabilities: Array<string>;
-                                count?: number | 'all';
-                                deviceIds?: Array<string>;
-                                driver?: string;
-                            }>;
-                            cpus?: string;
-                            memory?: string;
-                        };
+                        [key: string]: unknown | string | {
+                            [key: string]: number | string | boolean;
+                        } | Array<string> | {
+                            [key: string]: unknown;
+                        } | Array<string> | Array<unknown> | {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
+                        } | undefined;
                     };
                 };
-                devices?: Array<string>;
-                dns?: string | Array<string>;
-                entrypoint?: string | Array<string>;
-                environment?: Array<{
-                    key: string;
-                    value: number | string | boolean;
-                }>;
-                extraHosts?: Array<string>;
-                extraLabels?: {
-                    [key: string]: string | boolean;
-                };
-                healthCheck?: {
-                    test: string;
-                    interval?: string;
-                    retries?: number;
-                    startInterval?: string;
-                    startPeriod?: string;
-                    timeout?: string;
-                };
-                hostname?: string;
-                image?: string;
-                internalPort?: string | number;
-                isMain?: boolean;
-                logging?: {
-                    driver: string;
-                    options?: {
-                        [key: string]: string;
-                    };
-                };
-                name?: string;
-                networkMode?: string;
-                pid?: string;
-                privileged?: boolean;
-                readOnly?: boolean;
-                securityOpt?: Array<string>;
-                shmSize?: string;
-                stdinOpen?: boolean;
-                stopGracePeriod?: string;
-                stopSignal?: string;
-                sysctls?: {
-                    [key: string]: number;
-                };
-                tty?: boolean;
-                ulimits?: {
-                    core?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                    memlock?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                    nofile?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                    nproc?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                };
-                user?: string;
-                volumes?: Array<{
-                    containerPath: string;
-                    hostPath: string;
-                    bind?: {
-                        propagation: 'private' | 'rprivate' | 'rshared' | 'rslave' | 'shared' | 'slave';
-                    };
-                    private?: boolean;
-                    readOnly?: boolean;
-                    shared?: boolean;
-                }>;
-                workingDir?: string;
             }>;
-            architecture?: 'amd64' | 'arm64';
-        }>;
+        };
+        [key: string]: unknown | {
+            [key: string]: {
+                image: string;
+                labels?: {
+                    [key: string]: number | string | boolean;
+                } | Array<string>;
+                networks?: {
+                    [key: string]: unknown;
+                } | Array<string>;
+                ports?: Array<unknown>;
+                'x-runtipi'?: {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                };
+                [key: string]: unknown | string | {
+                    [key: string]: number | string | boolean;
+                } | Array<string> | {
+                    [key: string]: unknown;
+                } | Array<string> | Array<unknown> | {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                } | undefined;
+            };
+        } | {
+            [key: string]: unknown;
+        } | {
+            overrides: Array<{
+                architecture: 'amd64' | 'arm64';
+                services: {
+                    [key: string]: {
+                        image?: string;
+                        labels?: {
+                            [key: string]: number | string | boolean;
+                        } | Array<string>;
+                        networks?: {
+                            [key: string]: unknown;
+                        } | Array<string>;
+                        ports?: Array<unknown>;
+                        'x-runtipi'?: {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
+                        };
+                        [key: string]: unknown | string | {
+                            [key: string]: number | string | boolean;
+                        } | Array<string> | {
+                            [key: string]: unknown;
+                        } | Array<string> | Array<unknown> | {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
+                        } | undefined;
+                    };
+                };
+            }>;
+        } | undefined;
     };
     name: string;
 };
@@ -825,230 +719,124 @@ export type CreateCustomAppResponseDto = {
 
 export type UpdateCustomAppDto = {
     config: {
-        schemaVersion: 2;
-        services: Array<{
-            image: string;
-            name: string;
-            addPorts?: Array<{
-                containerPort: string | number;
-                hostPort: string | number;
-                interface?: string;
-                tcp?: boolean;
-                udp?: boolean;
-            }>;
-            addToMainNetwork?: boolean;
-            capAdd?: Array<string>;
-            capDrop?: Array<string>;
-            command?: string | Array<string>;
-            dependsOn?: {
-                [key: string]: {
-                    condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
-                };
-            } | Array<string>;
-            deploy?: {
-                resources: {
-                    limits?: {
-                        cpus?: string;
-                        memory?: string;
-                        pids?: number;
-                    };
-                    reservations?: {
-                        devices: Array<{
-                            capabilities: Array<string>;
-                            count?: number | 'all';
-                            deviceIds?: Array<string>;
-                            driver?: string;
-                        }>;
-                        cpus?: string;
-                        memory?: string;
-                    };
-                };
-            };
-            devices?: Array<string>;
-            dns?: string | Array<string>;
-            entrypoint?: string | Array<string>;
-            environment?: Array<{
-                key: string;
-                value: number | string | boolean;
-            }>;
-            extraHosts?: Array<string>;
-            extraLabels?: {
-                [key: string]: string | boolean;
-            };
-            healthCheck?: {
-                test: string;
-                interval?: string;
-                retries?: number;
-                startInterval?: string;
-                startPeriod?: string;
-                timeout?: string;
-            };
-            hostname?: string;
-            internalPort?: string | number;
-            isMain?: boolean;
-            logging?: {
-                driver: string;
-                options?: {
-                    [key: string]: string;
-                };
-            };
-            networkMode?: string;
-            pid?: string;
-            privileged?: boolean;
-            readOnly?: boolean;
-            securityOpt?: Array<string>;
-            shmSize?: string;
-            stdinOpen?: boolean;
-            stopGracePeriod?: string;
-            stopSignal?: string;
-            sysctls?: {
-                [key: string]: number;
-            };
-            tty?: boolean;
-            ulimits?: {
-                core?: number | {
-                    hard: number;
-                    soft: number;
-                };
-                memlock?: number | {
-                    hard: number;
-                    soft: number;
-                };
-                nofile?: number | {
-                    hard: number;
-                    soft: number;
-                };
-                nproc?: number | {
-                    hard: number;
-                    soft: number;
-                };
-            };
-            user?: string;
-            volumes?: Array<{
-                containerPath: string;
-                hostPath: string;
-                bind?: {
-                    propagation: 'private' | 'rprivate' | 'rshared' | 'rslave' | 'shared' | 'slave';
-                };
-                private?: boolean;
-                readOnly?: boolean;
-                shared?: boolean;
-            }>;
-            workingDir?: string;
-        }>;
-        overrides?: Array<{
-            services: Array<{
-                addPorts?: Array<{
-                    containerPort: string | number;
-                    hostPort: string | number;
-                    interface?: string;
-                    tcp?: boolean;
-                    udp?: boolean;
-                }>;
-                addToMainNetwork?: boolean;
-                capAdd?: Array<string>;
-                capDrop?: Array<string>;
-                command?: string | Array<string>;
-                dependsOn?: {
-                    [key: string]: {
-                        condition: 'service_completed_successfully' | 'service_healthy' | 'service_started';
-                    };
+        services: {
+            [key: string]: {
+                image: string;
+                labels?: {
+                    [key: string]: number | string | boolean;
                 } | Array<string>;
-                deploy?: {
-                    resources: {
-                        limits?: {
-                            cpus?: string;
-                            memory?: string;
-                            pids?: number;
+                networks?: {
+                    [key: string]: unknown;
+                } | Array<string>;
+                ports?: Array<unknown>;
+                'x-runtipi'?: {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                };
+                [key: string]: unknown | string | {
+                    [key: string]: number | string | boolean;
+                } | Array<string> | {
+                    [key: string]: unknown;
+                } | Array<string> | Array<unknown> | {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                } | undefined;
+            };
+        };
+        networks?: {
+            [key: string]: unknown;
+        };
+        'x-runtipi'?: {
+            overrides: Array<{
+                architecture: 'amd64' | 'arm64';
+                services: {
+                    [key: string]: {
+                        image?: string;
+                        labels?: {
+                            [key: string]: number | string | boolean;
+                        } | Array<string>;
+                        networks?: {
+                            [key: string]: unknown;
+                        } | Array<string>;
+                        ports?: Array<unknown>;
+                        'x-runtipi'?: {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
                         };
-                        reservations?: {
-                            devices: Array<{
-                                capabilities: Array<string>;
-                                count?: number | 'all';
-                                deviceIds?: Array<string>;
-                                driver?: string;
-                            }>;
-                            cpus?: string;
-                            memory?: string;
-                        };
+                        [key: string]: unknown | string | {
+                            [key: string]: number | string | boolean;
+                        } | Array<string> | {
+                            [key: string]: unknown;
+                        } | Array<string> | Array<unknown> | {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
+                        } | undefined;
                     };
                 };
-                devices?: Array<string>;
-                dns?: string | Array<string>;
-                entrypoint?: string | Array<string>;
-                environment?: Array<{
-                    key: string;
-                    value: number | string | boolean;
-                }>;
-                extraHosts?: Array<string>;
-                extraLabels?: {
-                    [key: string]: string | boolean;
-                };
-                healthCheck?: {
-                    test: string;
-                    interval?: string;
-                    retries?: number;
-                    startInterval?: string;
-                    startPeriod?: string;
-                    timeout?: string;
-                };
-                hostname?: string;
-                image?: string;
-                internalPort?: string | number;
-                isMain?: boolean;
-                logging?: {
-                    driver: string;
-                    options?: {
-                        [key: string]: string;
-                    };
-                };
-                name?: string;
-                networkMode?: string;
-                pid?: string;
-                privileged?: boolean;
-                readOnly?: boolean;
-                securityOpt?: Array<string>;
-                shmSize?: string;
-                stdinOpen?: boolean;
-                stopGracePeriod?: string;
-                stopSignal?: string;
-                sysctls?: {
-                    [key: string]: number;
-                };
-                tty?: boolean;
-                ulimits?: {
-                    core?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                    memlock?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                    nofile?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                    nproc?: number | {
-                        hard: number;
-                        soft: number;
-                    };
-                };
-                user?: string;
-                volumes?: Array<{
-                    containerPath: string;
-                    hostPath: string;
-                    bind?: {
-                        propagation: 'private' | 'rprivate' | 'rshared' | 'rslave' | 'shared' | 'slave';
-                    };
-                    private?: boolean;
-                    readOnly?: boolean;
-                    shared?: boolean;
-                }>;
-                workingDir?: string;
             }>;
-            architecture?: 'amd64' | 'arm64';
-        }>;
+        };
+        [key: string]: unknown | {
+            [key: string]: {
+                image: string;
+                labels?: {
+                    [key: string]: number | string | boolean;
+                } | Array<string>;
+                networks?: {
+                    [key: string]: unknown;
+                } | Array<string>;
+                ports?: Array<unknown>;
+                'x-runtipi'?: {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                };
+                [key: string]: unknown | string | {
+                    [key: string]: number | string | boolean;
+                } | Array<string> | {
+                    [key: string]: unknown;
+                } | Array<string> | Array<unknown> | {
+                    add_to_main_network?: boolean;
+                    internal_port?: number;
+                    is_main?: boolean;
+                } | undefined;
+            };
+        } | {
+            [key: string]: unknown;
+        } | {
+            overrides: Array<{
+                architecture: 'amd64' | 'arm64';
+                services: {
+                    [key: string]: {
+                        image?: string;
+                        labels?: {
+                            [key: string]: number | string | boolean;
+                        } | Array<string>;
+                        networks?: {
+                            [key: string]: unknown;
+                        } | Array<string>;
+                        ports?: Array<unknown>;
+                        'x-runtipi'?: {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
+                        };
+                        [key: string]: unknown | string | {
+                            [key: string]: number | string | boolean;
+                        } | Array<string> | {
+                            [key: string]: unknown;
+                        } | Array<string> | Array<unknown> | {
+                            add_to_main_network?: boolean;
+                            internal_port?: number;
+                            is_main?: boolean;
+                        } | undefined;
+                    };
+                };
+            }>;
+        } | undefined;
     };
 };
 

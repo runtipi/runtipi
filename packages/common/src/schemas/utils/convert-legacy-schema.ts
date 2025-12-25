@@ -1,7 +1,7 @@
 import { type } from 'arktype';
 import { type DynamicCompose, dynamicComposeUnion, MIN_SCHEMA_VERSION, type Service } from '../dynamic-compose.js';
 import { composeV1ToLatest, type dynamicComposeSchemaV1 } from './converters/v1.js';
-import type { DynamicComposeSchemaYaml } from '../compose-yaml.js';
+import type { DynamicComposeSchemaYaml, ServiceSchema, ServicesSchema } from '../compose-yaml.js';
 
 type ParsedCompose = DynamicCompose & { _schemaVersion: number };
 
@@ -178,7 +178,7 @@ const convertService = (service: Partial<Service>) => {
     }
   });
 
-  return converted;
+  return converted as ServiceSchema;
 };
 
 export const convertLegacyToYaml = (data: unknown) => {
@@ -198,7 +198,7 @@ export const convertLegacyToYaml = (data: unknown) => {
   if (legacy.overrides && legacy.overrides.length > 0) {
     newCompose['x-runtipi'] = {
       overrides: legacy.overrides.map((override) => {
-        const overrideServices = {} as Record<string, Record<string, unknown>>;
+        const overrideServices: ServicesSchema = {};
         override.services.forEach((service) => {
           if (service.name) {
             overrideServices[service.name] = convertService(service);

@@ -2,7 +2,13 @@ import { dynamicComposeSchema, serviceSchema, MIN_SCHEMA_VERSION, CURRENT_SCHEMA
 import { parseComposeJson, convertLegacyToYaml } from './utils/convert-legacy-schema.js';
 import type { DependsOn, DynamicCompose, Service, ServiceInput } from './dynamic-compose.js';
 import { dynamicComposeSchemaArk, serviceSchemaArk } from './dynamic-compose-ark.js';
-import { dynamicComposeSchemaYaml, type DynamicComposeSchemaYaml, type XRuntipiServiceParams } from './compose-yaml.js';
+import {
+  dynamicComposeSchemaYaml,
+  type DynamicComposeSchemaYaml,
+  type XRuntipiServiceParams,
+  type ServiceSchema,
+  type ServicesSchema,
+} from './compose-yaml.js';
 
 import { APP_CATEGORIES, ARCHITECTURES, FIELD_TYPES, RANDOM_ENCODINGS, appInfoSchema, formFieldSchema, frontmatterSchema } from './app-info.js';
 import type { AppCategory, AppInfo, AppInfoInput, FieldType, FormField, RandomEncoding } from './app-info.js';
@@ -41,4 +47,6 @@ export {
   type Topic,
   type DynamicComposeSchemaYaml,
   type XRuntipiServiceParams,
+  type ServiceSchema,
+  type ServicesSchema,
 };

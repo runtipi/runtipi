@@ -8,23 +8,29 @@ const xRuntipiService = type({
 
 export type XRuntipiServiceParams = type.infer<typeof xRuntipiService>;
 
-const services = type({
-  '[string]': type({
-    'x-runtipi': xRuntipiService.optional(),
-    networks: type({
-      '[string]': 'unknown',
-    })
-      .or('string[]')
-      .optional(),
-    ports: type('unknown[]').optional(),
-    labels: type({
-      '[string]': 'string | number | boolean',
-    })
-      .or('string[]')
-      .optional(),
+const serviceObject = type({
+  image: 'string',
+  networks: type({
     '[string]': 'unknown',
-  }),
+  })
+    .or('string[]')
+    .optional(),
+  ports: type('unknown[]').optional(),
+  labels: type({
+    '[string]': 'string | number | boolean',
+  })
+    .or('string[]')
+    .optional(),
+  'x-runtipi': xRuntipiService.optional(),
+  '[string]': 'unknown',
 });
+
+const services = type({
+  '[string]': serviceObject,
+});
+
+export type ServicesSchema = type.infer<typeof services>;
+export type ServiceSchema = type.infer<typeof serviceObject>;
 
 export const dynamicComposeSchemaYaml = type({
   services,
@@ -34,7 +40,9 @@ export const dynamicComposeSchemaYaml = type({
   'x-runtipi': type({
     overrides: type({
       architecture: '"arm64" | "amd64"',
-      services,
+      services: type({
+        '[string]': serviceObject.partial(),
+      }),
     }).array(),
   }).optional(),
 

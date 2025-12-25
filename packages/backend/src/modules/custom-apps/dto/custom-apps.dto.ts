@@ -1,12 +1,12 @@
 import { createArkDto } from 'nestjs-arktype';
-import { dynamicComposeSchemaArk } from '@runtipi/common/schemas';
+import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { type } from 'arktype';
 
 export const createCustomAppSchema = type({
   name: type(/^[a-z0-9-]+$/)
     .lessThanLength(51)
     .moreThanLength(0),
-  config: dynamicComposeSchemaArk,
+  config: dynamicComposeSchemaYaml,
 });
 
 export class CreateCustomAppDto extends createArkDto(createCustomAppSchema, {
@@ -22,7 +22,7 @@ export const createCustomAppResponseSchema = type({
 export class CreateCustomAppResponseDto extends createArkDto(createCustomAppResponseSchema, { name: 'CreateCustomAppResponseDto' }) {}
 
 export const updateCustomAppSchema = type({
-  config: dynamicComposeSchemaArk,
+  config: dynamicComposeSchemaYaml,
 });
 
 export class UpdateCustomAppDto extends createArkDto(updateCustomAppSchema, {
