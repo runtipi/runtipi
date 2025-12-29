@@ -6,6 +6,7 @@ import { RepoEventsQueue, repoCommandSchema } from './entities/repo-events';
 import { SystemEventsQueue, systemCommandSchema } from './entities/system-events';
 import { QueueFactory } from './queue.factory';
 import { QueueHealthIndicator } from './queue.health';
+import { QueueController } from './queue.controller';
 
 @Module({
   imports: [TerminusModule],
@@ -56,5 +57,6 @@ import { QueueHealthIndicator } from './queue.health';
     },
   ],
   exports: [AppEventsQueue, RepoEventsQueue, SystemEventsQueue, QueueHealthIndicator],
+  controllers: [QueueController],
 })
 export class QueueModule {}

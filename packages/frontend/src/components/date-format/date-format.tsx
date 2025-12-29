@@ -1,5 +1,7 @@
 import { useAppContext } from '@/context/app-context';
 import i18next from 'i18next';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
 
 type IProps = {
   date: Date | string;
@@ -32,4 +34,9 @@ export const DateFormat = ({ date }: IProps) => {
   const formattedDate = new Date(date).toLocaleString(locale, { timeZone });
 
   return <>{formattedDate}</>;
+};
+
+export const RelativeDateFormat = ({ date }: IProps) => {
+  dayjs.extend(relativeTime);
+  return <>{dayjs().to(new Date(date))}</>;
 };

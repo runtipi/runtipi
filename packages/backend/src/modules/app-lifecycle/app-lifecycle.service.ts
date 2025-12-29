@@ -36,15 +36,26 @@ export class AppLifecycleService {
     private readonly updateAppHandler: UpdateAppHandler,
   ) {
     this.logger.debug('Subscribing to app events...');
-    this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
+    this.appEventsQueue.onEvent((data, reply, registerReject) => this.invokeCommand(data, reply, registerReject));
   }
 
-  async invokeCommand(data: typeof appEventSchema.infer, reply: (response: typeof appEventResultSchema.infer) => Promise<void>) {
+  async invokeCommand(
+    data: typeof appEventSchema.infer,
+    reply: (response: typeof appEventResultSchema.infer) => Promise<void>,
+    // biome-ignore lint/suspicious/noExplicitAny: false positive
+    registerReject: (reject: (reason?: any) => void) => void,
+  ) {
     const release = await this.mutex.acquire(data.appUrn);
 
     try {
       const command = this.commandFactory.createCommand(data);
-      const { success, message } = await command.execute(data.appUrn, data.form);
+      const { success, message } = (await new Promise((resolve, reject) => {
+        registerReject(reject);
+        command.execute(data.appUrn, data.form, resolve);
+      })) as {
+        success: boolean;
+        message: string;
+      };
       await reply({ success, message });
     } catch (err) {
       this.logger.error('Error invoking command:', err);

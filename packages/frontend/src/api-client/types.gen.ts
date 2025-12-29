@@ -442,6 +442,16 @@ export type GetConfigDiffDto = {
     new: string | null;
 };
 
+export type EventsDto = {
+    events: Array<{
+        caller: string;
+        expiration: number;
+        queueName: string;
+        requestId: string;
+        timestamp: number;
+    }>;
+};
+
 export type SearchAppsDto = {
     data: Array<{
         available: boolean;
@@ -1405,6 +1415,58 @@ export type UnignoreAppVersionData = {
 
 export type UnignoreAppVersionResponses = {
     200: unknown;
+};
+
+export type GetAppEventsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/queue/events/app-events';
+};
+
+export type GetAppEventsResponses = {
+    default: EventsDto;
+};
+
+export type GetAppEventsResponse = GetAppEventsResponses[keyof GetAppEventsResponses];
+
+export type GetRepoEventsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/queue/events/repo-events';
+};
+
+export type GetRepoEventsResponses = {
+    default: EventsDto;
+};
+
+export type GetRepoEventsResponse = GetRepoEventsResponses[keyof GetRepoEventsResponses];
+
+export type CancelAppEventData = {
+    body?: never;
+    path: {
+        requestId: string;
+    };
+    query?: never;
+    url: '/api/queue/events/app-events/cancel/{requestId}';
+};
+
+export type CancelAppEventResponses = {
+    201: unknown;
+};
+
+export type CancelRepoEventData = {
+    body?: never;
+    path: {
+        requestId: string;
+    };
+    query?: never;
+    url: '/api/queue/events/repo-events/cancel/{requestId}';
+};
+
+export type CancelRepoEventResponses = {
+    201: unknown;
 };
 
 export type SearchAppsData = {

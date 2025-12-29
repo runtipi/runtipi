@@ -5,6 +5,7 @@ import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
 import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 
 export class RestoreAppCommand extends AppLifecycleCommand {
   constructor(
@@ -15,7 +16,11 @@ export class RestoreAppCommand extends AppLifecycleCommand {
     super(moduleRef, docker);
   }
 
-  public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {
+  public async execute(
+    appUrn: AppUrn,
+    _form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
     const backupManager = this.moduleRef.get(BackupManager, { strict: false });
@@ -31,9 +36,9 @@ export class RestoreAppCommand extends AppLifecycleCommand {
 
       // Done
       logger.info(`App ${appUrn} restored!`);
-      return { success: true, message: `App ${appUrn} restored successfully` };
+      resolve({ success: true, message: `App ${appUrn} restored successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'restore');
+      resolve(await this.handleAppError(err, appUrn, 'restore'));
     }
   }
 }

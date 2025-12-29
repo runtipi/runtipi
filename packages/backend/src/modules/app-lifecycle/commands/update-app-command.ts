@@ -20,7 +20,11 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     super(moduleRef, docker);
   }
 
-  public async execute(appUrn: AppUrn, form: AppEventFormInput) {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
@@ -33,7 +37,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
       parseComposeJson(composeToInstall.content);
     } catch (err) {
       logger.error(`Error parsing docker-compose.yml for app ${appUrn} from marketplace repository. Are you running the latest version of runtipi?`);
-      return this.handleAppError(err, appUrn, 'update_error');
+      resolve(await this.handleAppError(err, appUrn, 'update_error'));
     }
 
     try {
@@ -60,9 +64,9 @@ export class UpdateAppCommand extends AppLifecycleCommand {
 
       await dockerService.composeApp(appUrn, 'pull');
 
-      return { success: true, message: `App ${appUrn} updated successfully` };
+      resolve({ success: true, message: `App ${appUrn} updated successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'update_error');
+      resolve(await this.handleAppError(err, appUrn, 'update_error'));
     }
   }
 }

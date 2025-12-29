@@ -3,9 +3,14 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
+import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 
 export class UninstallAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn): Promise<{ success: boolean; message: string }> {
+  public async execute(
+    appUrn: AppUrn,
+    _form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
@@ -23,9 +28,9 @@ export class UninstallAppCommand extends AppLifecycleCommand {
       await appFilesManager.deleteAppFolder(appUrn);
       await appFilesManager.deleteAppDataDir(appUrn);
 
-      return { success: true, message: `App ${appUrn} uninstalled successfully` };
+      resolve({ success: true, message: `App ${appUrn} uninstalled successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'uninstall');
+      resolve(await this.handleAppError(err, appUrn, 'uninstall'));
     }
   }
 }

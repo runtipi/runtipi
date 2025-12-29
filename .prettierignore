@@ -1,0 +1,11 @@
+**/dist
+**/public
+**/legacy
+**/.internal
+**/metadata.ts
+**/api-client
+**/swagger.json
+**/packages/backend/src/core/database/drizzle/meta
+**/node_modules
+.gitignore
+.dockerignore

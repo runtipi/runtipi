@@ -7,7 +7,11 @@ import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class StopAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput) {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
@@ -17,7 +21,7 @@ export class StopAppCommand extends AppLifecycleCommand {
       const config = await appFilesManager.getInstalledAppInfo(appUrn);
 
       if (!config) {
-        return { success: true, message: 'App config not found. Skipping...' };
+        resolve({ success: true, message: 'App config not found. Skipping...' });
       }
 
       logger.info(`Stopping app ${appUrn}`);
@@ -32,10 +36,9 @@ export class StopAppCommand extends AppLifecycleCommand {
       await dockerService.composeApp(appUrn, 'down --remove-orphans');
 
       logger.info(`App ${appUrn} stopped successfully`);
-
-      return { success: true, message: `App ${appUrn} stopped successfully` };
+      resolve({ success: true, message: `App ${appUrn} stopped successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'stop');
+      resolve(await this.handleAppError(err, appUrn, 'stop'));
     }
   }
 }

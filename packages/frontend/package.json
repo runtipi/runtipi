@@ -44,6 +44,7 @@
     "better-ajv-errors": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.19",
     "dompurify": "^3.2.5",
     "framer-motion": "^12.23.24",
     "i18next": "^25.1.2",

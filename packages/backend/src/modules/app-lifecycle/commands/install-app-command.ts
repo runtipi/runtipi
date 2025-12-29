@@ -10,7 +10,11 @@ import { AppLifecycleCommand } from './command';
 import { parseComposeJson } from '@runtipi/common/schemas';
 
 export class InstallAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
@@ -23,7 +27,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
       parseComposeJson(composeToInstall.content);
     } catch (err) {
       logger.error(`Error parsing docker-compose.yml for app ${appUrn} from marketplace repository. Are you running the latest version of runtipi?`);
-      return this.handleAppError(err, appUrn, 'update_error');
+      resolve(await this.handleAppError(err, appUrn, 'update_error'));
     }
 
     try {
@@ -57,23 +61,23 @@ export class InstallAppCommand extends AppLifecycleCommand {
       const config = await appFilesManager.getInstalledAppInfo(appUrn);
 
       if (!config) {
-        return { success: true, message: 'App config not found. Skipping...' };
+        resolve({ success: true, message: 'App config not found. Skipping...' });
       }
 
       // run docker-compose up
-      const forcePull = config.force_pull ?? false;
+      const forcePull = config?.force_pull ?? false;
 
       if (form.skipRun) {
         logger.info(`Skipping docker-compose up for app ${appUrn} as per request`);
-        return { success: true, message: `App ${appUrn} installed successfully (skipped run)` };
+        resolve({ success: true, message: `App ${appUrn} installed successfully (skipped run)` });
       }
 
       await dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
       await appFilesManager.setAppDataDirPermissions(appUrn);
 
-      return { success: true, message: `App ${appUrn} installed successfully` };
+      resolve({ success: true, message: `App ${appUrn} installed successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'install');
+      resolve(await this.handleAppError(err, appUrn, 'install'));
     }
   }
 }

@@ -5,7 +5,11 @@ import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class GenerateAppEnvCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
 
@@ -14,9 +18,9 @@ export class GenerateAppEnvCommand extends AppLifecycleCommand {
       await this.ensureAppDir(appUrn, form);
       await appHelpers.generateEnvFile(appUrn, form);
 
-      return { success: true, message: `App ${appUrn} env file regenerated successfully` };
+      resolve({ success: true, message: `App ${appUrn} env file regenerated successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'generate_env_error');
+      resolve(await this.handleAppError(err, appUrn, 'generate_env_error'));
     }
   }
 }

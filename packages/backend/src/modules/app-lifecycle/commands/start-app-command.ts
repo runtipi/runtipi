@@ -7,7 +7,11 @@ import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 
 export class StartAppCommand extends AppLifecycleCommand {
-  public async execute(appUrn: AppUrn, form: AppEventFormInput) {
+  public async execute(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    resolve: ({ success, message }: { success: boolean; message: string }) => void,
+  ): Promise<void> {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
@@ -17,7 +21,7 @@ export class StartAppCommand extends AppLifecycleCommand {
       const config = await appFilesManager.getInstalledAppInfo(appUrn);
 
       if (!config) {
-        return { success: true, message: 'App config not found. Skipping...' };
+        resolve({ success: true, message: 'App config not found. Skipping...' });
       }
 
       logger.info(`Starting app ${appUrn}`);
@@ -29,14 +33,13 @@ export class StartAppCommand extends AppLifecycleCommand {
         await appHelpers.generateEnvFile(appUrn, form);
       }
 
-      const forcePull = !form.skipPull && config.force_pull;
+      const forcePull = !form.skipPull && config?.force_pull;
       await dockerService.composeApp(appUrn, `up --detach --force-recreate --remove-orphans ${forcePull ? '--pull always' : ''}`);
 
       logger.info(`App ${appUrn} started`);
-
-      return { success: true, message: `App ${appUrn} started successfully` };
+      resolve({ success: true, message: `App ${appUrn} started successfully` });
     } catch (err) {
-      return this.handleAppError(err, appUrn, 'start');
+      resolve(await this.handleAppError(err, appUrn, 'start'));
     }
   }
 }
