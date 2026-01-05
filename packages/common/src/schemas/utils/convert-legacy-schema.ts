@@ -269,7 +269,7 @@ const convertServiceFromYaml = (name: string, service: Partial<ServiceSchema>): 
   });
 
   const healthCheck = healthcheck
-    ? (Object.fromEntries(
+    ? Object.fromEntries(
         Object.entries({
           test: healthcheck.test as string,
           interval: healthcheck.interval as string | undefined,
@@ -278,7 +278,7 @@ const convertServiceFromYaml = (name: string, service: Partial<ServiceSchema>): 
           startPeriod: healthcheck.start_period as string | undefined,
           startInterval: healthcheck.start_interval as string | undefined,
         }).filter(([_, v]) => v !== undefined),
-      ) as any)
+      )
     : undefined;
 
   const extraLabels = Array.isArray(s.labels)
@@ -380,7 +380,7 @@ export const convertLegacyToYaml = (data: unknown) => {
 
     if (overrides.length > 0) {
       newCompose['x-runtipi'] = {
-        overrides: overrides as any,
+        overrides: overrides,
       };
     }
   }

@@ -41,7 +41,7 @@ export const dynamicComposeSchemaYaml = type({
     overrides: type({
       architecture: '"arm64" | "amd64"',
       services: type({
-        '[string]': serviceObject.partial(),
+        '[string]': serviceObject.partial().and({ image: 'string' }),
       }),
     }).array(),
   }).optional(),

@@ -76,7 +76,8 @@
         "noEmptyBlockStatements": {
           "level": "error"
         },
-        "noConsole": { "level": "error", "options": { "allow": ["error", "info", "warn"] } }
+        "noConsole": { "level": "error", "options": { "allow": ["error", "info", "warn"] } },
+        "noTemplateCurlyInString": "off"
       }
     }
   },
