@@ -22,7 +22,7 @@ const TabsList = ({ className, children, ...props }: React.ComponentProps<typeof
 const TabsTrigger = ({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) => {
   return (
     <TabsPrimitive.Trigger className={clsx('trigger nav-link', className)} {...props}>
-      <li className="nav-item">{children}</li>
+      {children}
     </TabsPrimitive.Trigger>
   );
 };

@@ -4924,6 +4924,9 @@
                                 }
                               }
                             },
+                            "required": [
+                              "image"
+                            ],
                             "additionalProperties": {}
                           }
                         }
@@ -5138,6 +5141,9 @@
                                 }
                               }
                             },
+                            "required": [
+                              "image"
+                            ],
                             "additionalProperties": {}
                           }
                         }

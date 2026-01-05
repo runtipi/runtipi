@@ -97,7 +97,7 @@ export default function EditPageContent({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
-      <MultiServiceForm onSubmit={(d) => onSubmit(convertLegacyToYaml({ ...d, schemaVersion: 2 }))} />
+      <MultiServiceForm onSubmit={(d) => onSubmit(convertLegacyToYaml(d))} />
     </>
   );
 }

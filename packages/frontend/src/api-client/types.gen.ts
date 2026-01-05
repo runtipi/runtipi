@@ -623,7 +623,7 @@ export type CreateCustomAppDto = {
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
-                        image?: string;
+                        image: string;
                         labels?: {
                             [key: string]: number | string | boolean;
                         } | Array<string>;
@@ -681,7 +681,7 @@ export type CreateCustomAppDto = {
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
-                        image?: string;
+                        image: string;
                         labels?: {
                             [key: string]: number | string | boolean;
                         } | Array<string>;
@@ -753,7 +753,7 @@ export type UpdateCustomAppDto = {
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
-                        image?: string;
+                        image: string;
                         labels?: {
                             [key: string]: number | string | boolean;
                         } | Array<string>;
@@ -811,7 +811,7 @@ export type UpdateCustomAppDto = {
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
-                        image?: string;
+                        image: string;
                         labels?: {
                             [key: string]: number | string | boolean;
                         } | Array<string>;
