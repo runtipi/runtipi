@@ -619,12 +619,17 @@
   "MULTI_SERVICE_ADVANCED_HOSTNAME_TOOLTIP": "Hostname per il container",
   "MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE": "Modalità Privilegiata",
   "MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE_TOOLTIP": "Esegui container in modalità privilegiata",
+  "MULTI_SERVICE_YAML_EDIT_PLACEHOLDER": "Edit YAML here...",
+  "MULTI_SERVICE_YAML_INVALID_FORMAT": "Invalid YAML format",
+  "MULTI_SERVICE_YAML_SAVE": "Save YAML",
+  "MULTI_SERVICE_YAML_EDITOR": "YAML Editor",
   "MULTI_SERVICE_JSON_EDIT_PLACEHOLDER": "Modifica JSON qui...",
   "MULTI_SERVICE_JSON_INVALID_FORMAT": "Formato JSON non valido",
   "MULTI_SERVICE_JSON_SAVE": "Salva JSON",
   "MULTI_SERVICE_JSON_EDITOR": "Editor JSON",
+  "MULTI_SERVICE_JSON_REFERENCE": "Riferimento Dynamic Compose",
   "MULTI_SERVICE_BACK_TO_FORM": "Torna al modulo",
   "MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM": "Le modifiche non sono state salvate. Vuoi davvero non salvarle?",
-  "MULTI_SERVICE_JSON_UPDATE_SUCCESS": "Configurazione del servizio aggiornata correttamente",
-  "MULTI_SERVICE_JSON_REFERENCE": "Riferimento Dynamic Compose"
+  "MULTI_SERVICE_YAML_UPDATE_SUCCESS": "Service configuration updated successfully",
+  "MULTI_SERVICE_YAML_REFERENCE": "Dynamic Compose Reference"
 }
