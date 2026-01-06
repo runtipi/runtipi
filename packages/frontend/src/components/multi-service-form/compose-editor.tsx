@@ -19,6 +19,9 @@ type Props = {
 };
 
 const jsonSchema = dynamicComposeSchemaArk.omit('schemaVersion').toJsonSchema({ fallback: { default: (ctx) => ctx.base } });
+const ajv = new Ajv({ allErrors: true });
+ajv.addKeyword('message');
+const validateJson = ajv.compile(jsonSchema);
 
 export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
   const { t } = useTranslation();
@@ -55,9 +58,12 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
   const checkDirty = useCallback(
     (currentVal: string, currentFormat: 'yaml' | 'json') => {
       try {
-        if (!currentVal.trim()) return;
-
         const storeObj = getCanonicalStoreObject();
+        if (!currentVal.trim()) {
+          setIsDirty(storeObj.services.length > 0);
+          return;
+        }
+
         let editorObj: unknown;
 
         if (currentFormat === 'yaml') {
@@ -77,10 +83,6 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     },
     [getCanonicalStoreObject, setIsDirty],
   );
-
-  const ajv = new Ajv({ allErrors: true });
-  ajv.addKeyword('message');
-  const validateJson = ajv.compile(jsonSchema);
 
   const validateInput = useCallback(
     (newValue: string, currentFormat: 'yaml' | 'json') => {
@@ -125,7 +127,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       setError(currentError);
       onChange(newValue, currentFormat, currentError);
     },
-    [checkDirty, onChange, setIsDirty, t, validateJson],
+    [checkDirty, onChange, setIsDirty, t],
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on mount
