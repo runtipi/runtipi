@@ -78,6 +78,10 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     [getCanonicalStoreObject, setIsDirty],
   );
 
+  const ajv = new Ajv({ allErrors: true });
+  ajv.addKeyword('message');
+  const validateJson = ajv.compile(jsonSchema);
+
   const validateInput = useCallback(
     (newValue: string, currentFormat: 'yaml' | 'json') => {
       let currentError: string | undefined;
@@ -95,16 +99,12 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
             }
           } else {
             const parsedValue = JSON.parse(newValue);
-            const ajv = new Ajv({ allErrors: true });
-            ajv.addKeyword('message');
-
-            const validate = ajv.compile(jsonSchema);
-            const valid = validate(parsedValue);
+            const valid = validateJson(parsedValue);
 
             if (valid) {
               currentError = undefined;
             } else {
-              const formattedErrors = betterAjvErrors(jsonSchema, parsedValue, validate.errors, { format: 'cli', indent: 2 });
+              const formattedErrors = betterAjvErrors(jsonSchema, parsedValue, validateJson.errors, { format: 'cli', indent: 2 });
               currentError = formattedErrors;
             }
           }
@@ -125,7 +125,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       setError(currentError);
       onChange(newValue, currentFormat, currentError);
     },
-    [checkDirty, onChange, setIsDirty, t],
+    [checkDirty, onChange, setIsDirty, t, validateJson],
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on mount
@@ -163,7 +163,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       if (newFormat === 'json') {
         const parsedYaml = parse(yamlValue);
         const legacy = convertYamlToLegacy(parsedYaml);
-        const { schemaVersion, ...rest } = legacy;
+        const { schemaVersion: _, ...rest } = legacy;
         const newJson = JSON.stringify(rest, null, 2);
 
         setJsonValue(newJson);

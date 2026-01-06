@@ -340,7 +340,7 @@ const convertServiceFromYaml = (name: string, service: Partial<ServiceSchema>): 
     }
   });
 
-  return converted as Partial<Service>;
+  return converted;
 };
 
 export const convertLegacyToYaml = (data: unknown) => {
