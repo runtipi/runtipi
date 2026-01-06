@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { APP_REL_COMPOSE_FILENAME } from '@/common/constants';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import type { ConfigurationService } from '@/core/config/configuration.service';
@@ -100,7 +101,7 @@ export class AppStoreFilesManager {
   public async getDockerComposeJson(appUrn: AppUrn) {
     const { appRepoDir } = this.getAppPaths(appUrn);
 
-    const appYamlPath = path.join(appRepoDir, 'app.yml');
+    const appYamlPath = path.join(appRepoDir, APP_REL_COMPOSE_FILENAME);
 
     let content = null;
 
@@ -109,10 +110,10 @@ export class AppStoreFilesManager {
         content = await this.filesystem.readYamlFile(appYamlPath);
       }
     } catch (error) {
-      this.logger.error(`Error getting app.yml for installed app ${appUrn}:`, error);
+      this.logger.error(`Error getting ${APP_REL_COMPOSE_FILENAME} for app ${appUrn} from repo ${this.storeConfig.slug}:`, error);
     }
 
-    if (content) {
+    if (content && typeof content === 'object' && 'x-runtipi' in content) {
       return { path: appYamlPath, content };
     }
 

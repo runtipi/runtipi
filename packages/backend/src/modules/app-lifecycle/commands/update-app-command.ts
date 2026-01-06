@@ -51,7 +51,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
         await dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans');
         await dockerService.composeApp(appUrn, 'down --rmi all --remove-orphans');
       } catch (_) {
-        logger.warn(`App ${appUrn} has likely a broken docker-compose.yml file. Continuing with update...`);
+        logger.warn(`App ${appUrn} has likely a broken compose file. Continuing with update...`);
       }
 
       await appFilesManager.deleteAppFolder(appUrn);

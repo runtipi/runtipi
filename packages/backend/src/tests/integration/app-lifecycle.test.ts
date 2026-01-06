@@ -373,7 +373,7 @@ describe('App lifecycle', () => {
       });
 
       // assert
-      const composeFileContent = await fs.promises.readFile(`${DATA_DIR}/apps/test/arch-test/docker-compose.yml`, 'utf8');
+      const composeFileContent = await fs.promises.readFile(`${DATA_DIR}/apps/test/arch-test/docker-compose.generated.yml`, 'utf8');
       expect(composeFileContent).toContain('app:arm64-latest');
       expect(composeFileContent).not.toContain('app:latest');
     });

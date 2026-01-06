@@ -38,13 +38,16 @@ export const dynamicComposeSchemaYaml = type({
     '[string]': 'unknown',
   }).optional(),
   'x-runtipi': type({
+    schema_version: '1',
     overrides: type({
       architecture: '"arm64" | "amd64"',
       services: type({
         '[string]': serviceObject.partial().and({ image: 'string' }),
       }),
-    }).array(),
-  }).optional(),
+    })
+      .array()
+      .optional(),
+  }),
 
   '[string]': 'unknown',
 });

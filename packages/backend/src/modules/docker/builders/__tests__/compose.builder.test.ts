@@ -13,14 +13,6 @@ describe('DockerComposeBuilder', () => {
     composeBuilder = new DockerComposeBuilder();
   });
 
-  describe('Architecture-specific file detection', () => {
-    it('should be tested in integration tests', () => {
-      // Note: Architecture file detection is tested in app-files-manager tests
-      // This is a placeholder to document the feature
-      expect(true).toBe(true);
-    });
-  });
-
   describe('Variable interpolation', () => {
     it('should replace {{RUNTIPI_APP_ID}} in label values', () => {
       const doc = `x-runtipi:

@@ -615,11 +615,9 @@ export type CreateCustomAppDto = {
                 } | undefined;
             };
         };
-        networks?: {
-            [key: string]: unknown;
-        };
-        'x-runtipi'?: {
-            overrides: Array<{
+        'x-runtipi': {
+            schema_version: 1;
+            overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
@@ -648,6 +646,9 @@ export type CreateCustomAppDto = {
                     };
                 };
             }>;
+        };
+        networks?: {
+            [key: string]: unknown;
         };
         [key: string]: unknown | {
             [key: string]: {
@@ -675,9 +676,8 @@ export type CreateCustomAppDto = {
                 } | undefined;
             };
         } | {
-            [key: string]: unknown;
-        } | {
-            overrides: Array<{
+            schema_version: 1;
+            overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
@@ -706,6 +706,8 @@ export type CreateCustomAppDto = {
                     };
                 };
             }>;
+        } | {
+            [key: string]: unknown;
         } | undefined;
     };
     name: string;
@@ -745,11 +747,9 @@ export type UpdateCustomAppDto = {
                 } | undefined;
             };
         };
-        networks?: {
-            [key: string]: unknown;
-        };
-        'x-runtipi'?: {
-            overrides: Array<{
+        'x-runtipi': {
+            schema_version: 1;
+            overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
@@ -778,6 +778,9 @@ export type UpdateCustomAppDto = {
                     };
                 };
             }>;
+        };
+        networks?: {
+            [key: string]: unknown;
         };
         [key: string]: unknown | {
             [key: string]: {
@@ -805,9 +808,8 @@ export type UpdateCustomAppDto = {
                 } | undefined;
             };
         } | {
-            [key: string]: unknown;
-        } | {
-            overrides: Array<{
+            schema_version: 1;
+            overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
                     [key: string]: {
@@ -836,6 +838,8 @@ export type UpdateCustomAppDto = {
                     };
                 };
             }>;
+        } | {
+            [key: string]: unknown;
         } | undefined;
     };
 };

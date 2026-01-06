@@ -43,7 +43,7 @@ export class AppLifecycleCommand {
 
       if (compose instanceof type.errors) {
         logger.error('Compose JSON validation errors:', compose.summary);
-        throw new Error('Invalid app.yml format.');
+        throw new Error('Invalid docker-compose.yml format.');
       }
 
       const architecture = configService.get('architecture');
@@ -54,20 +54,22 @@ export class AppLifecycleCommand {
 
       await appFilesManager.writeDockerComposeYml(appUrn, composeFile);
     } catch (err) {
-      logger.error(`Error generating docker-compose.yml file for app ${appUrn}`);
+      logger.error(`Error generating docker-compose.generated.yml file for app ${appUrn}`);
 
       if (err instanceof type.errors) {
         const msg = err.summary;
         logger.error(msg);
         logger.error('Report this issue to the appstore maintainer.');
-        throw new Error(`Error generating docker-compose.yml file for app ${appUrn}.\n${msg}\nReport this issue to the appstore maintainer.`);
+        throw new Error(
+          `Error generating docker-compose.generated.yml file for app ${appUrn}.\n${msg}\nReport this issue to the appstore maintainer.`,
+        );
       }
 
       logger.error(err);
       Sentry.captureException(err, {
         tags: { appId: appUrn, event: 'ensure_app_dir' },
       });
-      throw new Error(`Error generating docker-compose.yml file for app ${appUrn}.`);
+      throw new Error(`Error generating docker-compose.generated.yml file for app ${appUrn}.`);
     }
 
     // Set permissions

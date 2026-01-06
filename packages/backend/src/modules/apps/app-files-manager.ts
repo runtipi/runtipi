@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { APP_GENERATED_COMPOSE_FILENAME, APP_REL_COMPOSE_FILENAME } from '@/common/constants';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
@@ -74,18 +75,29 @@ export class AppFilesManager {
    */
   public async getDockerComposeYaml(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.yml');
+    const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
-    let content = null;
     try {
       if (await this.filesystem.pathExists(dockerComposePath)) {
-        content = await this.filesystem.readTextFile(dockerComposePath);
+        const content = await this.filesystem.readTextFile(dockerComposePath);
+        return { path: dockerComposePath, content };
+      }
+
+      // Check for legacy generated file (docker-compose.yml without x-runtipi)
+      const legacyPath = path.join(appInstalledDir, APP_REL_COMPOSE_FILENAME);
+      if (await this.filesystem.pathExists(legacyPath)) {
+        const legacyContent = await this.filesystem.readYamlFile(legacyPath);
+        // If it DOES NOT have x-runtipi, it is the old generated file
+        if (legacyContent && typeof legacyContent === 'object' && !('x-runtipi' in legacyContent)) {
+          const content = await this.filesystem.readTextFile(legacyPath);
+          return { path: legacyPath, content };
+        }
       }
     } catch (error) {
-      this.logger.error(`Error getting docker-compose.yml for installed app ${appUrn}:`, error);
+      this.logger.error(`Error getting ${APP_GENERATED_COMPOSE_FILENAME} for installed app ${appUrn}:`, error);
     }
 
-    return { path: dockerComposePath, content };
+    return { path: dockerComposePath, content: null };
   }
 
   /**
@@ -96,7 +108,8 @@ export class AppFilesManager {
   public async getDockerComposeJson(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
 
-    const appYamlPath = path.join(appInstalledDir, 'app.yml');
+    // 1. Try new source name: docker-compose.yml
+    const appYamlPath = path.join(appInstalledDir, APP_REL_COMPOSE_FILENAME);
 
     let content = null;
 
@@ -105,25 +118,27 @@ export class AppFilesManager {
         content = await this.filesystem.readYamlFile(appYamlPath);
       }
     } catch (error) {
-      this.logger.error(`Error getting app.yml for installed app ${appUrn}:`, error);
+      this.logger.error(`Error getting ${APP_REL_COMPOSE_FILENAME} for installed app ${appUrn}:`, error);
     }
 
-    if (content) {
+    // Check if it has metadata (valid source file)
+    if (content && typeof content === 'object' && 'x-runtipi' in content) {
       return { path: appYamlPath, content };
     }
 
-    // Fallback to legacy docker-compose.json
-    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.json');
+    // 2. Fallback to legacy source: docker-compose.json
+    const dockerComposeLegacyPath = path.join(appInstalledDir, 'docker-compose.json');
 
     try {
-      if (await this.filesystem.pathExists(dockerComposePath)) {
-        content = await this.filesystem.readJsonFile(dockerComposePath);
+      if (await this.filesystem.pathExists(dockerComposeLegacyPath)) {
+        const jsonContent = await this.filesystem.readJsonFile(dockerComposeLegacyPath);
+        return { path: dockerComposeLegacyPath, content: convertLegacyToYaml(jsonContent) };
       }
     } catch (error) {
       this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}:`, error);
     }
 
-    return { path: dockerComposePath, content: convertLegacyToYaml(content) };
+    return { path: appYamlPath, content };
   }
 
   /**
@@ -133,7 +148,7 @@ export class AppFilesManager {
    */
   public async writeDockerComposeYml(appUrn: AppUrn, composeFile: string) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    const dockerComposePath = path.join(appInstalledDir, 'docker-compose.yml');
+    const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
     await this.filesystem.writeTextFile(dockerComposePath, composeFile);
   }

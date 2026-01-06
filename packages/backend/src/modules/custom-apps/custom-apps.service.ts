@@ -1,3 +1,4 @@
+import { APP_REL_COMPOSE_FILENAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { createAppUrn, extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
@@ -103,7 +104,7 @@ export class CustomAppService {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const { dataDir } = this.configService.get('directories');
 
-    const configPath = path.join(dataDir, 'apps', appStoreId, appName, 'app.yml');
+    const configPath = path.join(dataDir, 'apps', appStoreId, appName, APP_REL_COMPOSE_FILENAME);
     const configContent = yaml.stringify(config);
 
     const ok = await this.filesystem.writeTextFile(configPath, configContent);

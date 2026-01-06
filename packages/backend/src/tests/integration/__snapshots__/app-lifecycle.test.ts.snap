@@ -16,7 +16,7 @@ exports[`App lifecycle > install app > should not delete an existing app-data fo
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        ├─ docker-compose.yml
+   │        ├─ docker-compose.generated.yml
    │        └─ metadata/
    │           └─ description.md
    ├─ backups/
@@ -48,7 +48,7 @@ exports[`App lifecycle > install app > should successfully install app and creat
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        ├─ docker-compose.yml
+   │        ├─ docker-compose.generated.yml
    │        └─ metadata/
    │           └─ description.md
    ├─ backups/
@@ -86,21 +86,21 @@ exports[`App lifecycle > update all apps > should update multiple apps that have
    │     │  ├─ config.json
    │     │  ├─ data/
    │     │  ├─ docker-compose.json
-   │     │  ├─ docker-compose.yml
+   │     │  ├─ docker-compose.generated.yml
    │     │  └─ metadata/
    │     │     └─ description.md
    │     ├─ app2/
    │     │  ├─ config.json
    │     │  ├─ data/
    │     │  ├─ docker-compose.json
-   │     │  ├─ docker-compose.yml
+   │     │  ├─ docker-compose.generated.yml
    │     │  └─ metadata/
    │     │     └─ description.md
    │     └─ app3/
    │        ├─ config.json
    │        ├─ data/
    │        ├─ docker-compose.json
-   │        ├─ docker-compose.yml
+   │        ├─ docker-compose.generated.yml
    │        └─ metadata/
    │           └─ description.md
    ├─ backups/
