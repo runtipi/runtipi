@@ -619,12 +619,17 @@
   "MULTI_SERVICE_ADVANCED_HOSTNAME_TOOLTIP": "Ім'я хоста для контейнера",
   "MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE": "Режим привілеїв",
   "MULTI_SERVICE_ADVANCED_PRIVILEGED_MODE_TOOLTIP": "Запустити контейнер в режимі привілеїв",
+  "MULTI_SERVICE_YAML_EDIT_PLACEHOLDER": "Edit YAML here...",
+  "MULTI_SERVICE_YAML_INVALID_FORMAT": "Invalid YAML format",
+  "MULTI_SERVICE_YAML_SAVE": "Save YAML",
+  "MULTI_SERVICE_YAML_EDITOR": "YAML Editor",
   "MULTI_SERVICE_JSON_EDIT_PLACEHOLDER": "Редагувати JSON тут...",
   "MULTI_SERVICE_JSON_INVALID_FORMAT": "Невірний формат JSON",
   "MULTI_SERVICE_JSON_SAVE": "Зберегти JSON",
   "MULTI_SERVICE_JSON_EDITOR": "Редактор JSON",
+  "MULTI_SERVICE_JSON_REFERENCE": "Динамічне посилання на Compose",
   "MULTI_SERVICE_BACK_TO_FORM": "Назад до заповнення",
   "MULTI_SERVICE_UNSAVED_CHANGES_CONFIRM": "У вас є незбережені зміни. Ви впевнені, що хочете вийти без збереження?",
-  "MULTI_SERVICE_JSON_UPDATE_SUCCESS": "Конфігурація сервісу успішно змінена",
-  "MULTI_SERVICE_JSON_REFERENCE": "Динамічне посилання на Compose"
+  "MULTI_SERVICE_YAML_UPDATE_SUCCESS": "Service configuration updated successfully",
+  "MULTI_SERVICE_YAML_REFERENCE": "Dynamic Compose Reference"
 }
