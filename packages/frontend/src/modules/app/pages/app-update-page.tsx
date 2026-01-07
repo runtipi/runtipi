@@ -9,11 +9,10 @@ import { copilot } from '@uiw/codemirror-theme-copilot';
 import CodeMirror from '@uiw/react-codemirror';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
-import { IconArrowRight, IconChevronLeft, IconChevronRight, IconInfoCircle } from '@tabler/icons-react';
-import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
+import { IconArrowRight, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import type { TranslatableError } from '@/types/error.types';
 import { redirect, useLocation, useNavigate, useParams } from 'react-router';
 import type { Route } from './+types/app-update-page';
@@ -60,6 +59,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
 
   const [backupApp, setBackupApp] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
+  const [isComposeDifferent, setIsComposeDifferent] = useState(false);
 
   const configDiffQuery = useQuery({
     ...getAppConfigDiffOptions({ path: { urn: info.urn } }),
@@ -68,6 +68,13 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
   const composeDiffQuery = useQuery({
     ...getAppComposeDiffOptions({ path: { urn: info.urn } }),
   });
+
+  useEffect(() => {
+    if (!composeDiffQuery.isLoading) {
+      setIsComposeDifferent(composeDiffQuery.data?.new !== composeDiffQuery.data?.current);
+      return;
+    }
+  }, [composeDiffQuery]);
 
   const update = useMutation({
     ...updateAppMutation(),
@@ -87,7 +94,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="card" data-testid="app-update">
       <div className="card-header border-0 pb-0">
-        <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center border-bottom pb-4 w-100">
+        <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center border-bottom pb-3 w-100">
           <AppLogo urn={info.urn} size={96} alt={info.name} />
           <div className="mt-3 mt-lg-0 ms-lg-3">
             <h2 className="mb-1">{t('APP_UPDATE_FORM_TITLE', { name: info.name })}</h2>
@@ -99,14 +106,14 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
-      <div className="card-body pt-2">
+      <div className="card-body pt-2 pb-0">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Stepper currentStep={currentStep}>
             <StepTriggerList>
               <StepTrigger step={0} title={t('APP_UPDATE_INFORMATION_TITLE')} onStepChange={setCurrentStep} />
               <StepTrigger step={1} title={t('APP_UPDATE_CONFIGURATION_TITLE')} onStepChange={setCurrentStep} />
-              <StepTrigger step={2} title={t('APP_UPDATE_COMPOSE_TITLE')} onStepChange={setCurrentStep} />
-              <StepTrigger step={3} title={t('APP_UPDATE_BACKUP_TITLE')} onStepChange={setCurrentStep} />
+              {isComposeDifferent && <StepTrigger step={2} title={t('APP_UPDATE_COMPOSE_TITLE')} onStepChange={setCurrentStep} />}
+              <StepTrigger step={isComposeDifferent ? 3 : 2} title={t('APP_UPDATE_BACKUP_TITLE')} onStepChange={setCurrentStep} />
             </StepTriggerList>
             <div className="mt-1">
               <StepContent step={0}>
@@ -142,74 +149,69 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                   </ScrollArea>
                 )}
               </StepContent>
-              <StepContent step={2}>
-                <div className="text-muted">{t('APP_UPDATE_COMPOSE_SUBTITLE')}</div>
-                {composeDiffQuery.isLoading && <LoadingBlock />}
-                {!composeDiffQuery.isLoading && (
-                  <ScrollArea maxheight={500} className="mt-3 border rounded">
-                    <CodeMirror
-                      value={composeDiffQuery.data?.new ?? ''}
-                      readOnly
-                      height="400px"
-                      theme={copilot}
-                      extensions={[
-                        unifiedMergeView({
-                          original: composeDiffQuery.data?.current ?? '',
-                          mergeControls: false,
-                        }),
-                      ]}
-                    />
-                  </ScrollArea>
-                )}
-                <Alert variant="info" className="mt-3">
-                  <AlertIcon>
-                    <IconInfoCircle stroke={2} />
-                  </AlertIcon>
-                  <div>
-                    <AlertHeading>{t('APP_UPDATE_COMPOSE_ALERT_TITLE')}</AlertHeading>
-                    <AlertDescription>{t('APP_UPDATE_COMPOSE_ALERT_SUBTITLE')}</AlertDescription>
-                  </div>
-                </Alert>
-              </StepContent>
-              <StepContent step={3}>
+              {isComposeDifferent && (
+                <StepContent step={2}>
+                  <div className="text-muted">{t('APP_UPDATE_COMPOSE_SUBTITLE')}</div>
+                  {composeDiffQuery.isLoading && <LoadingBlock />}
+                  {!composeDiffQuery.isLoading && (
+                    <ScrollArea maxheight={500} className="mt-3 border rounded">
+                      <CodeMirror
+                        value={composeDiffQuery.data?.new ?? ''}
+                        readOnly
+                        height="400px"
+                        theme={copilot}
+                        extensions={[
+                          unifiedMergeView({
+                            original: composeDiffQuery.data?.current ?? '',
+                            mergeControls: false,
+                          }),
+                        ]}
+                      />
+                    </ScrollArea>
+                  )}
+                </StepContent>
+              )}
+              <StepContent step={isComposeDifferent ? 3 : 2}>
                 <div className="text-muted">{t('APP_UPDATE_BACKUP_SUBTITLE')}</div>
-                <Switch checked={backupApp} onCheckedChange={setBackupApp} label={t('APP_UPDATE_FORM_BACKUP')} className="mt-3" />
+                <Switch checked={backupApp} onCheckedChange={setBackupApp} label={t('APP_UPDATE_FORM_BACKUP')} className="mt-3 mb-0" />
               </StepContent>
             </div>
           </Stepper>
         </motion.div>
       </div>
-      <div className="card-footer border-0 d-flex align-items-center justify-content-between gap-3">
-        <Button variant="ghost" onClick={() => navigate(location.state?.from || '/apps')}>
-          <IconChevronLeft className="me-1" size={16} />
-          {t('APP_ACTION_CANCEL')}
-        </Button>
-        <div className="d-flex align-items-center justify-content-end gap-2">
-          {currentStep > 0 && (
-            <Button variant="link" onClick={() => setCurrentStep((step) => step - 1)} className="me-2">
-              {t('APP_UPDATE_FORM_BACK')}
-            </Button>
-          )}
-          {currentStep < 3 && (
-            <Button onClick={() => setCurrentStep((step) => step + 1)}>
-              {t('APP_UPDATE_FORM_NEXT')}
-              <IconChevronRight className="ms-2 text-muted" size={12} />
-            </Button>
-          )}
-          {currentStep === 3 && (
-            <Button
-              onClick={() =>
-                update.mutate({
-                  path: { urn: info.urn },
-                  body: { performBackup: backupApp },
-                })
-              }
-              intent="success"
-              loading={update.isPending}
-            >
-              {t('APP_UPDATE_FORM_SUBMIT')}
-            </Button>
-          )}
+      <div className="card-footer border-0">
+        <div className="d-flex align-items-center justify-content-between gap-3 pt-3 border-top">
+          <Button onClick={() => navigate(location.state?.from || '/apps')}>
+            <IconChevronLeft className="me-1" size={16} />
+            {t('APP_ACTION_CANCEL')}
+          </Button>
+          <div className="d-flex align-items-center justify-content-end gap-2">
+            {currentStep > 0 && (
+              <Button onClick={() => setCurrentStep((step) => step - 1)} className="me-2">
+                {t('APP_UPDATE_FORM_BACK')}
+              </Button>
+            )}
+            {currentStep < (isComposeDifferent ? 3 : 2) && (
+              <Button variant="outline" onClick={() => setCurrentStep((step) => step + 1)}>
+                {t('APP_UPDATE_FORM_NEXT')}
+                <IconChevronRight className="ms-2 text-muted" size={12} />
+              </Button>
+            )}
+            {currentStep === (isComposeDifferent ? 3 : 2) && (
+              <Button
+                onClick={() =>
+                  update.mutate({
+                    path: { urn: info.urn },
+                    body: { performBackup: backupApp },
+                  })
+                }
+                intent="success"
+                loading={update.isPending}
+              >
+                {t('APP_UPDATE_FORM_SUBMIT')}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>
