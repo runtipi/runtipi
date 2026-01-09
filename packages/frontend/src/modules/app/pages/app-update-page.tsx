@@ -9,7 +9,7 @@ import { copilot } from '@uiw/codemirror-theme-copilot';
 import CodeMirror from '@uiw/react-codemirror';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
 import { IconArrowRight, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
@@ -60,7 +60,6 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
 
   const [backupApp, setBackupApp] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
-  const [isComposeDifferent, setIsComposeDifferent] = useState(false);
 
   const configDiffQuery = useQuery({
     ...getAppConfigDiffOptions({ path: { urn: info.urn } }),
@@ -70,12 +69,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
     ...getAppComposeDiffOptions({ path: { urn: info.urn } }),
   });
 
-  useEffect(() => {
-    if (!composeDiffQuery.isLoading) {
-      setIsComposeDifferent(composeDiffQuery.data?.new !== composeDiffQuery.data?.current);
-      return;
-    }
-  }, [composeDiffQuery]);
+  const isComposeDifferent = composeDiffQuery.data?.new !== composeDiffQuery.data?.current;
 
   const update = useMutation({
     ...updateAppMutation(),
