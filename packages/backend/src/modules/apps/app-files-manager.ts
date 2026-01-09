@@ -6,7 +6,7 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import { appInfoSchema, convertLegacyToYaml } from '@runtipi/common/schemas';
+import { appInfoSchema, convertLegacyToYaml, dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
 
@@ -73,7 +73,7 @@ export class AppFilesManager {
    * @param appUrn - The app id
    * @returns The content of docker-compose.yml as a string, or null if not found
    */
-  public async getDockerComposeYaml(appUrn: AppUrn) {
+  public async getGeneratedDockerComposeYaml(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
@@ -101,11 +101,11 @@ export class AppFilesManager {
   }
 
   /**
-   * Get the app compose configuration from the installed app
+   * Get the source docker-compose.yml file content from the installed app
    * @param appUrn - The app id
    * @returns The content as a DynamicComposeSchemaYaml object and path
    */
-  public async getDockerComposeJson(appUrn: AppUrn) {
+  public async getSourceDockerComposeYaml(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
 
     // 1. Try new source name: docker-compose.yml
@@ -123,7 +123,13 @@ export class AppFilesManager {
 
     // Check if it has metadata (valid source file)
     if (content && typeof content === 'object' && 'x-runtipi' in content) {
-      return { path: appYamlPath, content };
+      const compose = dynamicComposeSchemaYaml(content);
+
+      if (compose instanceof type.errors) {
+        throw new Error(`Invalid ${APP_REL_COMPOSE_FILENAME} format for app ${appUrn}.`);
+      }
+
+      return { path: appYamlPath, content: compose };
     }
 
     // 2. Fallback to legacy source: docker-compose.json
@@ -132,13 +138,20 @@ export class AppFilesManager {
     try {
       if (await this.filesystem.pathExists(dockerComposeLegacyPath)) {
         const jsonContent = await this.filesystem.readJsonFile(dockerComposeLegacyPath);
-        return { path: dockerComposeLegacyPath, content: convertLegacyToYaml(jsonContent) };
+
+        const compose = dynamicComposeSchemaYaml(convertLegacyToYaml(jsonContent));
+
+        if (compose instanceof type.errors) {
+          throw new Error(`Invalid docker-compose.json format for app ${appUrn}.`);
+        }
+
+        return { path: dockerComposeLegacyPath, content: compose };
       }
     } catch (error) {
       this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}:`, error);
     }
 
-    return { path: appYamlPath, content };
+    return { path: appYamlPath, content: null };
   }
 
   /**

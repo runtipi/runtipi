@@ -41,7 +41,7 @@ export class DockerService {
 
     args.push('--project-name', appUrn.replace(':', '_'));
 
-    const composeFile = await this.appFilesManager.getDockerComposeYaml(appUrn);
+    const composeFile = await this.appFilesManager.getGeneratedDockerComposeYaml(appUrn);
     args.push('-f', composeFile.path);
 
     // User defined overrides

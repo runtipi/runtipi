@@ -6,7 +6,6 @@ import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { ModuleRef } from '@nestjs/core';
-import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { type } from 'arktype';
@@ -31,26 +30,22 @@ export class AppLifecycleCommand {
 
     logger.info('Pruned containers:', pruned.ContainersDeleted, 'Space reclaimed:', pruned.SpaceReclaimed / 1024 / 1024, 'MB');
 
-    let composeJson = await appFilesManager.getDockerComposeJson(appUrn);
+    let composeJson = await appFilesManager.getSourceDockerComposeYaml(appUrn);
 
     if (!composeJson.content) {
       await marketplaceService.copyAppFromRepoToInstalled(appUrn);
-      composeJson = await appFilesManager.getDockerComposeJson(appUrn);
+      composeJson = await appFilesManager.getSourceDockerComposeYaml(appUrn);
+      if (!composeJson.content) {
+        throw new Error(`Failed to retrieve docker-compose.yml for app ${appUrn}`);
+      }
     }
 
     try {
-      const compose = dynamicComposeSchemaYaml(composeJson.content);
-
-      if (compose instanceof type.errors) {
-        logger.error('Compose JSON validation errors:', compose.summary);
-        throw new Error('Invalid docker-compose.yml format.');
-      }
-
       const architecture = configService.get('architecture');
 
       const dockerComposeBuilder = new DockerComposeBuilder();
       const subnet = await subnetManager.allocateSubnet(appUrn);
-      const composeFile = dockerComposeBuilder.getDockerCompose(compose, form, appUrn, subnet, architecture);
+      const composeFile = dockerComposeBuilder.getDockerCompose(composeJson.content, form, appUrn, subnet, architecture);
 
       await appFilesManager.writeDockerComposeYml(appUrn, composeFile);
     } catch (err) {

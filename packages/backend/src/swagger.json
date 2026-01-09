@@ -4717,6 +4717,16 @@
       "GetUserConfigDto": {
         "type": "object",
         "properties": {
+          "actualEnv": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "appEnv": {
             "anyOf": [
               {
@@ -4739,12 +4749,24 @@
           },
           "isEnabled": {
             "type": "boolean"
+          },
+          "sourceCompose": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
+          "actualEnv",
           "appEnv",
           "dockerCompose",
-          "isEnabled"
+          "isEnabled",
+          "sourceCompose"
         ]
       },
       "UpdateUserConfigDto": {

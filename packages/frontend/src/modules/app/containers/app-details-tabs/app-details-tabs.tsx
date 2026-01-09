@@ -85,14 +85,14 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
           {t('APP_LOGS_TAB_TITLE')}
         </TabsTrigger>
         <TabsTrigger onClick={() => handleTabChange('user-config')} value="user-config" disabled={!app} className="d-none d-md-block">
-          {t('APP_USER_CONFIG_TAB_TITLE')}
+          {t('APP_FILES_TAB_TITLE')}
         </TabsTrigger>
         <DropdownMenu>
           <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleTabChange('backups')}>{t('APP_BACKUPS_TAB_TITLE')}</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('APP_LOGS_TAB_TITLE')}</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleTabChange('user-config')}>{t('APP_USER_CONFIG_TAB_TITLE')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleTabChange('user-config')}>{t('APP_FILES_TAB_TITLE')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TabsList>

@@ -23,6 +23,8 @@ interface AppUserConfigProps {
   info: AppInfo;
   initialDockerCompose?: string;
   initialAppEnv?: string;
+  initialSourceCompose?: string;
+  initialActualEnv?: string;
   initialIsEnabled?: boolean;
 }
 
@@ -38,17 +40,26 @@ export const AppUserConfig = (props: AppUserConfigProps) => {
       info={info}
       initialAppEnv={data.appEnv || ''}
       initialDockerCompose={data.dockerCompose || ''}
+      initialSourceCompose={data.sourceCompose || ''}
+      initialActualEnv={data.actualEnv || ''}
       initialIsEnabled={data.isEnabled}
     />
   );
 };
 
-export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose, initialIsEnabled }: AppUserConfigProps) => {
+export const AppUserConfigEditors = ({
+  info,
+  initialAppEnv,
+  initialDockerCompose,
+  initialSourceCompose,
+  initialActualEnv,
+  initialIsEnabled,
+}: AppUserConfigProps) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('docker-compose');
 
   const [dockerCompose, setDockerCompose] = useState(initialDockerCompose ?? '');
-  const [appEnv, setAppEnv] = useState(initialAppEnv ?? '');
+  const [appEnv, _setAppEnv] = useState(initialAppEnv ?? '');
   const [isEnabled, setIsEnabled] = useState(initialIsEnabled ?? true);
 
   const updateMutation = useMutation({
@@ -99,17 +110,26 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
             <AlertDescription>{t('USER_CONFIG_WARNING_DESCRIPTION')}</AlertDescription>
           </div>
         </Alert>
-        <div className="d-flex mb-3 align-items-center justify-content-between">
-          <Switch className="mt-2" label={t('USER_CONFIG_ENABLE')} checked={isEnabled} onCheckedChange={handleToggleEnabled} />
-          <Button onClick={handleSave}>{t('SAVE')}</Button>
-        </div>
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="docker-compose">docker-compose.yml</TabsTrigger>
               <TabsTrigger value="app-env">app.env</TabsTrigger>
+              <TabsTrigger value="overrides">{t('USER_CONFIG_OVERRIDES_TAB_TITLE')}</TabsTrigger>
             </TabsList>
             <TabsContent value="docker-compose">
+              <CodeMirror readOnly value={initialSourceCompose} height="400px" extensions={[yaml()]} theme={copilot} />
+              <div className="mt-2 text-muted small">{t('USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION')}</div>
+            </TabsContent>
+            <TabsContent value="app-env">
+              <CodeMirror readOnly value={initialActualEnv} height="400px" theme={copilot} />
+              <div className="mt-2 text-muted small">{t('USER_CONFIG_ACTUAL_ENV_DESCRIPTION')}</div>
+            </TabsContent>
+            <TabsContent value="overrides">
+              <div className="d-flex mb-3 align-items-center justify-content-between">
+                <Switch className="mt-2" label={t('USER_CONFIG_ENABLE')} checked={isEnabled} onCheckedChange={handleToggleEnabled} />
+                <Button onClick={handleSave}>{t('SAVE')}</Button>
+              </div>
               <CodeMirror
                 readOnly={!isEnabled}
                 value={dockerCompose}
@@ -126,11 +146,8 @@ export const AppUserConfigEditors = ({ info, initialAppEnv, initialDockerCompose
                   a: <a target="_blank" rel="noopener" href="https://docs.docker.com/reference/compose-file/merge/" />,
                   code: <code />,
                 }}
-                className="mt-2"
+                className="mt-2 d-block"
               />
-            </TabsContent>
-            <TabsContent value="app-env">
-              <CodeMirror readOnly={!isEnabled} value={appEnv} height="400px" onChange={(value) => setAppEnv(value)} theme={copilot} />
             </TabsContent>
           </Tabs>
         </div>
