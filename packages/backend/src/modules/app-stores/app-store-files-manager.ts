@@ -98,7 +98,7 @@ export class AppStoreFilesManager {
     }
   }
 
-  public async getDockerComposeJson(appUrn: AppUrn) {
+  public async getSourceDockerComposeYaml(appUrn: AppUrn) {
     const { appRepoDir } = this.getAppPaths(appUrn);
 
     const appYamlPath = path.join(appRepoDir, APP_REL_COMPOSE_FILENAME);

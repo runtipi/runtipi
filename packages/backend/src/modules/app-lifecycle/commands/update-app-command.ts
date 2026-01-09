@@ -29,7 +29,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
     const backupManager = this.moduleRef.get(BackupManager, { strict: false });
 
-    const composeToInstall = await marketplaceService.getDockerComposeJson(appUrn);
+    const composeToInstall = await marketplaceService.getSourceDockerComposeYaml(appUrn);
     const compose = dynamicComposeSchemaYaml(composeToInstall.content);
 
     if (compose instanceof type.errors) {

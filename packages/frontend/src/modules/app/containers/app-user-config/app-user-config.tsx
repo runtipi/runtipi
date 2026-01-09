@@ -59,7 +59,7 @@ export const AppUserConfigEditors = ({
   const [activeTab, setActiveTab] = useState('docker-compose');
 
   const [dockerCompose, setDockerCompose] = useState(initialDockerCompose ?? '');
-  const [appEnv, _setAppEnv] = useState(initialAppEnv ?? '');
+  const appEnv = initialAppEnv ?? '';
   const [isEnabled, setIsEnabled] = useState(initialIsEnabled ?? true);
 
   const updateMutation = useMutation({

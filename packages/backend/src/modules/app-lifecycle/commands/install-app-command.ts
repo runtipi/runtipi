@@ -19,7 +19,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
     const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
     const envUtils = this.moduleRef.get(EnvUtils, { strict: false });
 
-    const composeToInstall = await marketplaceService.getDockerComposeJson(appUrn);
+    const composeToInstall = await marketplaceService.getSourceDockerComposeYaml(appUrn);
     const compose = dynamicComposeSchemaYaml(composeToInstall.content);
 
     if (compose instanceof type.errors) {

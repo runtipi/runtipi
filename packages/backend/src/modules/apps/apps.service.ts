@@ -120,8 +120,8 @@ export class AppsService {
     }
 
     const [currentCompose, storeCompose] = await Promise.all([
-      this.appFilesManager.getDockerComposeJson(appUrn),
-      this.marketplaceService.getDockerComposeJson(appUrn),
+      this.appFilesManager.getSourceDockerComposeYaml(appUrn),
+      this.marketplaceService.getSourceDockerComposeYaml(appUrn),
     ]);
 
     return {

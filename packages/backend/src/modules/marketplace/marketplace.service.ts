@@ -244,9 +244,9 @@ export class MarketplaceService {
     return store.copyDataDir(appUrn, envMap);
   }
 
-  public async getDockerComposeJson(appUrn: AppUrn) {
+  public async getSourceDockerComposeYaml(appUrn: AppUrn) {
     const { store } = this.getStoreFromUrn(appUrn);
-    return store.getDockerComposeJson(appUrn);
+    return store.getSourceDockerComposeYaml(appUrn);
   }
 
   public async getConfigJson(appUrn: AppUrn) {
