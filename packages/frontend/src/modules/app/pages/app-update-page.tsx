@@ -91,6 +91,17 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
     [metadata?.latestDockerVersion, metadata?.latestVersion],
   );
 
+  const steps = useMemo(() => {
+    return [
+      { id: 'info', title: t('APP_UPDATE_INFORMATION_TITLE') },
+      { id: 'config', title: t('APP_UPDATE_CONFIGURATION_TITLE') },
+      ...(isComposeDifferent ? [{ id: 'compose', title: t('APP_UPDATE_COMPOSE_TITLE') }] : []),
+      { id: 'backup', title: t('APP_UPDATE_BACKUP_TITLE') },
+    ];
+  }, [isComposeDifferent, t]);
+
+  const isLastStep = currentStep === steps.length - 1;
+
   return (
     <div className="card" data-testid="app-update">
       <div className="card-header border-0 pb-0">
@@ -110,13 +121,12 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Stepper currentStep={currentStep}>
             <StepTriggerList>
-              <StepTrigger step={0} title={t('APP_UPDATE_INFORMATION_TITLE')} onStepChange={setCurrentStep} />
-              <StepTrigger step={1} title={t('APP_UPDATE_CONFIGURATION_TITLE')} onStepChange={setCurrentStep} />
-              {isComposeDifferent && <StepTrigger step={2} title={t('APP_UPDATE_COMPOSE_TITLE')} onStepChange={setCurrentStep} />}
-              <StepTrigger step={isComposeDifferent ? 3 : 2} title={t('APP_UPDATE_BACKUP_TITLE')} onStepChange={setCurrentStep} />
+              {steps.map((step, index) => (
+                <StepTrigger key={step.id} step={index} title={step.title} onStepChange={setCurrentStep} />
+              ))}
             </StepTriggerList>
             <div className="mt-1">
-              <StepContent step={0}>
+              <StepContent step={steps.findIndex((s) => s.id === 'info')}>
                 <div className="text-muted">
                   <Trans
                     t={t}
@@ -129,7 +139,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                   />
                 </div>
               </StepContent>
-              <StepContent step={1}>
+              <StepContent step={steps.findIndex((s) => s.id === 'config')}>
                 <div className="text-muted">{t('APP_UPDATE_CONFIGURATION_SUBTITLE')}</div>
                 {configDiffQuery.isLoading && <LoadingBlock />}
                 {!configDiffQuery.isLoading && (
@@ -150,7 +160,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                 )}
               </StepContent>
               {isComposeDifferent && (
-                <StepContent step={2}>
+                <StepContent step={steps.findIndex((s) => s.id === 'compose')}>
                   <div className="text-muted">{t('APP_UPDATE_COMPOSE_SUBTITLE')}</div>
                   {composeDiffQuery.isLoading && <LoadingBlock />}
                   {!composeDiffQuery.isLoading && (
@@ -171,7 +181,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                   )}
                 </StepContent>
               )}
-              <StepContent step={isComposeDifferent ? 3 : 2}>
+              <StepContent step={steps.findIndex((s) => s.id === 'backup')}>
                 <div className="text-muted">{t('APP_UPDATE_BACKUP_SUBTITLE')}</div>
                 <Switch checked={backupApp} onCheckedChange={setBackupApp} label={t('APP_UPDATE_FORM_BACKUP')} className="mt-3 mb-0" />
               </StepContent>
@@ -191,13 +201,13 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                 {t('APP_UPDATE_FORM_BACK')}
               </Button>
             )}
-            {currentStep < (isComposeDifferent ? 3 : 2) && (
+            {!isLastStep && (
               <Button variant="outline" onClick={() => setCurrentStep((step) => step + 1)}>
                 {t('APP_UPDATE_FORM_NEXT')}
                 <IconChevronRight className="ms-2 text-muted" size={12} />
               </Button>
             )}
-            {currentStep === (isComposeDifferent ? 3 : 2) && (
+            {isLastStep && (
               <Button
                 onClick={() =>
                   update.mutate({
