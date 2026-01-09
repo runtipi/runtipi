@@ -17,6 +17,7 @@ import type { TranslatableError } from '@/types/error.types';
 import { redirect, useLocation, useNavigate, useParams } from 'react-router';
 import type { Route } from './+types/app-update-page';
 import { getApp } from '@/api-client';
+import yaml from 'yaml';
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   if (!params.appId || !params.storeId) {
@@ -166,13 +167,13 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                   {!composeDiffQuery.isLoading && (
                     <ScrollArea maxheight={500} className="mt-3 border rounded">
                       <CodeMirror
-                        value={composeDiffQuery.data?.new ?? ''}
+                        value={yaml.stringify(JSON.parse(composeDiffQuery.data?.new ?? '{}')) ?? ''}
                         readOnly
                         height="400px"
                         theme={copilot}
                         extensions={[
                           unifiedMergeView({
-                            original: composeDiffQuery.data?.current ?? '',
+                            original: yaml.stringify(JSON.parse(composeDiffQuery.data?.current ?? '{}')) ?? '',
                             mergeControls: false,
                           }),
                         ]}
