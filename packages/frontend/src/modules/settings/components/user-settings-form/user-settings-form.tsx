@@ -52,6 +52,7 @@ const settingsSchema = type({
   persistTraefikConfig: 'boolean?',
   domain: 'string?',
   appDataPath: 'string?',
+  mediaPath: 'string?',
   forwardAuthUrl: 'string.url?',
   logLevel: type.enumerated(...Object.values(LOG_LEVEL_ENUM)).optional(),
   themeColor: type.enumerated(...Object.values(THEME_COLOR_ENUM)).optional(),
@@ -75,6 +76,7 @@ export type SettingsFormValues = {
   persistTraefikConfig?: boolean;
   domain?: string;
   appDataPath?: string;
+  mediaPath?: string;
   forwardAuthUrl?: string;
   logLevel?: LogLevel;
   themeColor?: string;
@@ -527,6 +529,22 @@ export const UserSettingsForm = (props: IProps) => {
                 }
                 error={errors.appDataPath?.message}
                 placeholder="/path/to/app/data"
+              />
+            </div>
+            <div className="mb-3">
+              <Input
+                {...register('mediaPath')}
+                label={
+                  <>
+                    {t('SETTINGS_GENERAL_MEDIA_PATH')}
+                    <Tooltip className="tooltip" anchorSelect=".media-path-hint">
+                      {t('SETTINGS_GENERAL_MEDIA_PATH_HINT')}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help media-path-hint')}>?</span>
+                  </>
+                }
+                error={errors.mediaPath?.message}
+                placeholder="/path/to/media/data"
               />
             </div>
             <div className="mb-3">

@@ -101,6 +101,15 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     appDataPath = appDataPath.slice(0, -appDataSegment.length);
   }
 
+  // Ensure that the media path does not contain the /media suffix
+  let mediaPath = settings.mediaPath || envMap.get('RUNTIPI_MEDIA_PATH');
+  const mediaSegment = '/media';
+
+  while (mediaPath?.endsWith(mediaSegment)) {
+    logger.warn('Your media path setting should not end with /media. Please remove the /media suffix.');
+    mediaPath = mediaPath.slice(0, -mediaSegment.length);
+  }
+
   envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
   envMap.set('APPS_REPO_ID', repoId);
   envMap.set('APPS_REPO_URL', settings.appsRepoUrl || envMap.get('APPS_REPO_URL') || DEFAULT_REPO_URL);
@@ -111,6 +120,7 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set('JWT_SECRET', jwtSecret);
   envMap.set('DOMAIN', settings.domain || envMap.get('DOMAIN') || 'example.com');
   envMap.set('RUNTIPI_APP_DATA_PATH', appDataPath || rootFolderHost);
+  envMap.set('RUNTIPI_MEDIA_PATH', mediaPath || rootFolderHost);
   envMap.set('RUNTIPI_FORWARD_AUTH_URL', settings.forwardAuthUrl || envMap.get('RUNTIPI_FORWARD_AUTH_URL') || 'http://runtipi:3000/api/auth/traefik');
   envMap.set('POSTGRES_HOST', 'runtipi-db');
   envMap.set('POSTGRES_DBNAME', 'tipi');

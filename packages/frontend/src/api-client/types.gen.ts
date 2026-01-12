@@ -51,6 +51,7 @@ export type AppContextDto = {
         allowAutoThemes: boolean;
         allowErrorMonitoring: boolean;
         appDataPath: string;
+        mediaPath: string;
         appsRepoUrl: string;
         demoMode: boolean;
         dnsIp: string;
@@ -88,6 +89,7 @@ export type UserSettingsBody = {
     allowAutoThemes?: boolean;
     allowErrorMonitoring?: boolean;
     appDataPath?: string;
+    mediaPath?: string;
     appsRepoUrl?: string;
     demoMode?: boolean;
     dnsIp?: string;

@@ -2396,6 +2396,10 @@
                 "type": "string",
                 "pattern": "^\\S.*\\S$|^\\S?$"
               },
+              "mediaPath": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
+              },
               "appsRepoUrl": {
                 "type": "string",
                 "format": "uri"
@@ -2488,6 +2492,7 @@
               "allowAutoThemes",
               "allowErrorMonitoring",
               "appDataPath",
+              "mediaPath",
               "appsRepoUrl",
               "demoMode",
               "dnsIp",
@@ -2567,6 +2572,9 @@
             "type": "boolean"
           },
           "appDataPath": {
+            "type": "string"
+          },
+          "mediaPath": {
             "type": "string"
           },
           "appsRepoUrl": {
