@@ -1,16 +1,13 @@
 import { LoggerService } from '@/core/logger/logger.service';
-import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { AppHelpers } from '@/modules/apps/app.helpers';
-import { BackupManager } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
-import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
+import { AppInstallationService } from '@/modules/app-lifecycle/services/app-installation.service';
+import { AppSourceFactory } from '@/modules/apps/sources/app-source.factory';
+import { BackupManager } from '@/modules/backups/backup.manager';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
-import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
-import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
-import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
-import { type } from 'arktype';
+import type Dockerode from 'dockerode';
+import type { ModuleRef } from '@nestjs/core';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
@@ -23,29 +20,32 @@ export class UpdateAppCommand extends AppLifecycleCommand {
 
   public async execute(appUrn: AppUrn, form: AppEventFormInput) {
     const logger = this.moduleRef.get(LoggerService, { strict: false });
-    const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
-    const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
-    const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
     const backupManager = this.moduleRef.get(BackupManager, { strict: false });
+    const installationService = this.moduleRef.get(AppInstallationService, { strict: false });
+    const appSourceFactory = this.moduleRef.get(AppSourceFactory, { strict: false });
 
-    const composeToInstall = await marketplaceService.getSourceDockerComposeYaml(appUrn);
-    const compose = dynamicComposeSchemaYaml(composeToInstall.content);
+    // Validate if app is still available in source
+    const source = appSourceFactory.getSource(appUrn);
+    const compose = await source.getCompose();
 
-    if (compose instanceof type.errors) {
-      logger.error('Compose JSON validation errors:', compose.summary);
-      return this.handleAppError(compose.summary, appUrn, 'update_error');
+    if (!compose) {
+      return this.handleAppError(`App source or compose not available for ${appUrn}. Cannot update.`, appUrn, 'update_error');
     }
 
     try {
       if (this.performBackup) {
         await dockerService.composeApp(appUrn, 'stop');
-        await backupManager.backupApp(appUrn);
+        await backupManager.backupApp(appUrn).catch((err) => {
+          logger.error(`Backup failed for ${appUrn} before update: ${err.message}`);
+          throw err;
+        });
       }
 
       logger.info(`Updating app ${appUrn}`);
-      await this.ensureAppDir(appUrn, form);
-      await appHelpers.generateEnvFile(appUrn, form);
+
+      // Use the harmonized installation service to prepare everything
+      await installationService.prepareInstallation(appUrn, form);
 
       try {
         await dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans');
@@ -53,11 +53,6 @@ export class UpdateAppCommand extends AppLifecycleCommand {
       } catch (_) {
         logger.warn(`App ${appUrn} has likely a broken compose file. Continuing with update...`);
       }
-
-      await appFilesManager.deleteAppFolder(appUrn);
-      await marketplaceService.copyAppFromRepoToInstalled(appUrn);
-
-      await this.ensureAppDir(appUrn, form);
 
       await dockerService.composeApp(appUrn, 'pull');
 

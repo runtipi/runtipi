@@ -1,14 +1,10 @@
-import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
-import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder';
-import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
-import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
+import { AppInstallationService } from '@/modules/app-lifecycle/services/app-installation.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import type { ModuleRef } from '@nestjs/core';
 import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
-import { type } from 'arktype';
 import Dockerode from 'dockerode';
 
 export class AppLifecycleCommand {
@@ -18,47 +14,14 @@ export class AppLifecycleCommand {
   ) {}
 
   protected async ensureAppDir(appUrn: AppUrn, form: AppEventFormInput): Promise<void> {
-    const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
-    const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
     const logger = this.moduleRef.get(LoggerService, { strict: false });
-    const subnetManager = this.moduleRef.get(SubnetManagerService, { strict: false });
-    const configService = this.moduleRef.get(ConfigurationService, { strict: false });
-
-    const pruned = await this.docker
-      .pruneContainers({ filters: { label: [`runtipi.appurn=${appUrn}`] } })
-      .catch(() => ({ ContainersDeleted: [], SpaceReclaimed: 0 }));
-
-    logger.info('Pruned containers:', pruned.ContainersDeleted, 'Space reclaimed:', pruned.SpaceReclaimed / 1024 / 1024, 'MB');
-
-    let composeJson = await appFilesManager.getSourceDockerComposeYaml(appUrn);
-
-    if (!composeJson.content) {
-      await marketplaceService.copyAppFromRepoToInstalled(appUrn);
-      composeJson = await appFilesManager.getSourceDockerComposeYaml(appUrn);
-      if (!composeJson.content) {
-        throw new Error(`Failed to retrieve docker-compose.yml for app ${appUrn}`);
-      }
-    }
+    const installationService = this.moduleRef.get(AppInstallationService, { strict: false });
+    const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
 
     try {
-      const architecture = configService.get('architecture');
-
-      const dockerComposeBuilder = new DockerComposeBuilder();
-      const subnet = await subnetManager.allocateSubnet(appUrn);
-      const composeFile = dockerComposeBuilder.getDockerCompose(composeJson.content, form, appUrn, subnet, architecture);
-
-      await appFilesManager.writeDockerComposeYml(appUrn, composeFile);
+      await installationService.generateComposeFile(appUrn, form);
     } catch (err) {
       logger.error(`Error generating docker-compose.generated.yml file for app ${appUrn}`);
-
-      if (err instanceof type.errors) {
-        const msg = err.summary;
-        logger.error(msg);
-        logger.error('Report this issue to the appstore maintainer.');
-        throw new Error(
-          `Error generating docker-compose.generated.yml file for app ${appUrn}.\n${msg}\nReport this issue to the appstore maintainer.`,
-        );
-      }
 
       logger.error(err);
       Sentry.captureException(err, {

@@ -9,6 +9,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import MiniSearch from 'minisearch';
 import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
 import { AppStoreService, RESERVED_APP_STORE_SLUGS } from '../app-stores/app-store.service';
+import { AppPathsService } from '../apps/app-paths.service';
 
 type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
 
@@ -40,6 +41,7 @@ export class MarketplaceService {
     private readonly filesystem: FilesystemService,
     private readonly logger: LoggerService,
     private readonly appStoreService: AppStoreService,
+    private readonly appPaths: AppPathsService,
   ) {}
 
   async initialize() {
@@ -48,14 +50,14 @@ export class MarketplaceService {
     const stores = await this.appStoreService.getAllAppStores();
 
     for (const config of stores) {
-      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config);
+      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, this.appPaths, config);
       this.stores.set(config.slug, store);
     }
 
     // TODO: This is a temporary fix to ensure that internal app stores are always present.
     for (const reservedSlug of RESERVED_APP_STORE_SLUGS) {
       if (!this.stores.has(reservedSlug)) {
-        const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, {
+        const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, this.appPaths, {
           branch: 'main',
           createdAt: Math.floor(Date.now() / 1000),
           enabled: false,
@@ -232,16 +234,6 @@ export class MarketplaceService {
   public async getAppUpdateInfo(appUrn: AppUrn) {
     const { store } = this.getStoreFromUrn(appUrn);
     return store.getAppUpdateInfo(appUrn);
-  }
-
-  public async copyAppFromRepoToInstalled(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
-    return store.copyAppFromRepoToInstalled(appUrn);
-  }
-
-  public async copyDataDir(appUrn: AppUrn, envMap: Map<string, string>) {
-    const { store } = this.getStoreFromUrn(appUrn);
-    return store.copyDataDir(appUrn, envMap);
   }
 
   public async getSourceDockerComposeYaml(appUrn: AppUrn) {
