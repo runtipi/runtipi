@@ -1,13 +1,12 @@
 import path from 'node:path';
-import { APP_GENERATED_COMPOSE_FILENAME, APP_REL_COMPOSE_FILENAME } from '@/common/constants';
+import { APP_GENERATED_COMPOSE_FILENAME } from '@/common/constants';
 import { execAsync } from '@/common/helpers/exec-helpers';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import { appInfoSchema, convertLegacyToYaml, dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppPathsService } from './app-paths.service';
-import { type } from 'arktype';
+import { AppSourceFactory } from './sources/app-source.factory';
 
 @Injectable()
 export class AppFilesManager {
@@ -15,6 +14,7 @@ export class AppFilesManager {
     private readonly filesystem: FilesystemService,
     private readonly logger: LoggerService,
     private readonly appPaths: AppPathsService,
+    private readonly appSourceFactory: AppSourceFactory,
   ) {}
 
   public getAppPaths(appUrn: AppUrn) {
@@ -26,32 +26,8 @@ export class AppFilesManager {
    * @param id - The app id
    */
   public async getInstalledAppInfo(appUrn: AppUrn) {
-    try {
-      const appInstalledDir = this.appPaths.getAppInstalledDir(appUrn);
-
-      if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
-        const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
-
-        const config = JSON.parse(configFile ?? '{}');
-        const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
-
-        if (parsedConfig instanceof type.errors) {
-          this.logger.error(`App ${appUrn} config error:`);
-          this.logger.error(parsedConfig.summary);
-          return null;
-        }
-
-        if (parsedConfig.available) {
-          const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
-
-          return { ...parsedConfig, description };
-        }
-      }
-    } catch (_) {
-      return null;
-    }
-
-    return null;
+    const source = this.appSourceFactory.getInstalledSource(appUrn);
+    return source.getAppInfo();
   }
 
   /**
@@ -60,7 +36,7 @@ export class AppFilesManager {
    * @returns The content of docker-compose.yml as a string, or null if not found
    */
   public async getGeneratedDockerComposeYaml(appUrn: AppUrn) {
-    const { appInstalledDir } = this.getAppPaths(appUrn);
+    const appInstalledDir = this.appPaths.getAppInstalledDir(appUrn);
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
     try {
@@ -70,7 +46,7 @@ export class AppFilesManager {
       }
 
       // Check for legacy generated file (docker-compose.yml without x-runtipi)
-      const legacyPath = path.join(appInstalledDir, APP_REL_COMPOSE_FILENAME);
+      const legacyPath = this.appPaths.getAppComposePath(appInstalledDir);
       if (await this.filesystem.pathExists(legacyPath)) {
         const legacyContent = await this.filesystem.readYamlFile(legacyPath);
         // If it DOES NOT have x-runtipi, it is the old generated file
@@ -92,52 +68,13 @@ export class AppFilesManager {
    * @returns The content as a DynamicComposeSchemaYaml object and path
    */
   public async getSourceDockerComposeYaml(appUrn: AppUrn) {
-    const { appInstalledDir } = this.getAppPaths(appUrn);
+    const source = this.appSourceFactory.getInstalledSource(appUrn);
+    const content = await source.getCompose();
 
-    // 1. Try new source name: docker-compose.yml
-    const appYamlPath = path.join(appInstalledDir, APP_REL_COMPOSE_FILENAME);
-
-    let content = null;
-
-    try {
-      if (await this.filesystem.pathExists(appYamlPath)) {
-        content = await this.filesystem.readYamlFile(appYamlPath);
-      }
-    } catch (error) {
-      this.logger.error(`Error getting ${APP_REL_COMPOSE_FILENAME} for installed app ${appUrn}:`, error);
-    }
-
-    // Check if it has metadata (valid source file)
-    if (content && typeof content === 'object' && 'x-runtipi' in content) {
-      const compose = dynamicComposeSchemaYaml(content);
-
-      if (compose instanceof type.errors) {
-        throw new Error(`Invalid ${APP_REL_COMPOSE_FILENAME} format for app ${appUrn}.`);
-      }
-
-      return { path: appYamlPath, content: compose };
-    }
-
-    // 2. Fallback to legacy source: docker-compose.json
-    const dockerComposeLegacyPath = path.join(appInstalledDir, 'docker-compose.json');
-
-    try {
-      if (await this.filesystem.pathExists(dockerComposeLegacyPath)) {
-        const jsonContent = await this.filesystem.readJsonFile(dockerComposeLegacyPath);
-
-        const compose = dynamicComposeSchemaYaml(convertLegacyToYaml(jsonContent));
-
-        if (compose instanceof type.errors) {
-          throw new Error(`Invalid docker-compose.json format for app ${appUrn}.`);
-        }
-
-        return { path: dockerComposeLegacyPath, content: compose };
-      }
-    } catch (error) {
-      this.logger.error(`Error getting docker-compose.json for installed app ${appUrn}:`, error);
-    }
-
-    return { path: appYamlPath, content: null };
+    return {
+      path: this.appPaths.getAppComposePath(this.appPaths.getAppInstalledDir(appUrn)),
+      content,
+    };
   }
 
   /**
@@ -236,8 +173,7 @@ export class AppFilesManager {
    * @returns The content of config.json as a string, or null if not found
    */
   public async getConfigJson(appUrn: AppUrn) {
-    const { appInstalledDir } = this.getAppPaths(appUrn);
-    const configPath = path.join(appInstalledDir, 'config.json');
+    const configPath = this.appPaths.getAppConfigPath(this.appPaths.getAppInstalledDir(appUrn));
 
     let content = null;
     try {

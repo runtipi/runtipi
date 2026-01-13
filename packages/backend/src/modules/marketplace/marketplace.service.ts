@@ -7,9 +7,9 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import MiniSearch from 'minisearch';
-import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
-import { AppStoreService, RESERVED_APP_STORE_SLUGS } from '../app-stores/app-store.service';
+import { AppStoreService } from '../app-stores/app-store.service';
 import { AppPathsService } from '../apps/app-paths.service';
+import { AppSourceFactory } from '../apps/sources/app-source.factory';
 
 type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
 
@@ -30,7 +30,6 @@ const filterApp =
 
 @Injectable()
 export class MarketplaceService {
-  private stores: Map<string, AppStoreFilesManager> = new Map();
   private appsAvailable: AppList | null = null;
   private miniSearch: MiniSearch<AppList[number]> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
@@ -42,69 +41,38 @@ export class MarketplaceService {
     private readonly logger: LoggerService,
     private readonly appStoreService: AppStoreService,
     private readonly appPaths: AppPathsService,
+    private readonly appSourceFactory: AppSourceFactory,
   ) {}
 
   async initialize() {
-    this.stores.clear();
-
-    const stores = await this.appStoreService.getAllAppStores();
-
-    for (const config of stores) {
-      const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, this.appPaths, config);
-      this.stores.set(config.slug, store);
-    }
-
-    // TODO: This is a temporary fix to ensure that internal app stores are always present.
-    for (const reservedSlug of RESERVED_APP_STORE_SLUGS) {
-      if (!this.stores.has(reservedSlug)) {
-        const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, this.appPaths, {
-          branch: 'main',
-          createdAt: Math.floor(Date.now() / 1000),
-          enabled: false,
-          hash: reservedSlug,
-          name: reservedSlug,
-          slug: reservedSlug,
-          url: 'https://example.com',
-          updatedAt: Math.floor(Date.now() / 1000),
-        });
-        this.stores.set(reservedSlug, store);
-      }
-    }
-
     await this.appStoreService.pullRepositories();
     this.invalidateCache();
 
-    this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));
-  }
-
-  private getStoreFromUrn(appUrn: AppUrn) {
-    const { appStoreId } = extractAppUrn(appUrn);
-
-    const store = this.stores.get(appStoreId);
-    if (!store) {
-      throw new Error(`Store ${appStoreId} not found`);
-    }
-
-    return { store };
+    this.logger.debug('Marketplace service initialized');
   }
 
   async getAppInfoFromAppStore(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
-
-    return store.getAppInfoFromAppStore(appUrn);
+    const source = this.appSourceFactory.getSource(appUrn);
+    return source.getAppInfo();
   }
 
   async getAppInfoFromAppStoreOrInstalled(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
+    const info = await this.getAppInfoFromAppStore(appUrn);
+    if (info) {
+      return info;
+    }
 
-    return store.getAppInfoFromAppStoreOrInstalled(appUrn);
+    const source = this.appSourceFactory.getInstalledSource(appUrn);
+    return source.getAppInfo();
   }
 
   async getAvailableAppUrns(): Promise<AppUrn[]> {
+    const stores = await this.appStoreService.getAllAppStores();
     const allUrns: AppUrn[] = [];
-    for (const store of this.stores.values()) {
-      if (store.storeConfig.enabled) {
-        const urns = await store.getAvailableAppUrns();
+
+    for (const store of stores) {
+      if (store.enabled) {
+        const urns = await this.appStoreService.getAvailableAppUrns(store.slug);
         allUrns.push(...urns);
       }
     }
@@ -121,10 +89,7 @@ export class MarketplaceService {
     const limit = pLimit(10);
     const apps = await Promise.all(
       appUrns.map(async (appUrn) => {
-        return limit(() => {
-          const { store } = this.getStoreFromUrn(appUrn);
-          return store.getAppInfoFromAppStore(appUrn);
-        });
+        return limit(() => this.getAppInfoFromAppStore(appUrn));
       }),
     );
 
@@ -227,22 +192,59 @@ export class MarketplaceService {
    * @returns The image of the app
    */
   public async getAppImage(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
-    return store.getAppImage(appUrn);
+    const source = this.appSourceFactory.getSource(appUrn);
+    const logo = await source.getLogo();
+
+    if (!logo) {
+      const installedSource = this.appSourceFactory.getInstalledSource(appUrn);
+      return installedSource.getLogo();
+    }
+
+    return logo;
   }
 
   public async getAppUpdateInfo(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
-    return store.getAppUpdateInfo(appUrn);
+    const source = this.appSourceFactory.getSource(appUrn);
+    const config = await source.getAppInfo();
+    const paths = this.appPaths.getAppPaths(appUrn);
+
+    if (config) {
+      return {
+        ...paths,
+        latestVersion: config.tipi_version,
+        minTipiVersion: config.min_tipi_version ?? null,
+        latestDockerVersion: config.version,
+      };
+    }
+
+    return {
+      latestVersion: 0,
+      latestDockerVersion: '0.0.0',
+      minTipiVersion: null,
+      ...paths,
+    };
   }
 
   public async getSourceDockerComposeYaml(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
-    return store.getSourceDockerComposeYaml(appUrn);
+    const source = this.appSourceFactory.getSource(appUrn);
+    return {
+      path: this.appPaths.getAppComposePath(this.appPaths.getAppRepoDir(appUrn)),
+      content: await source.getCompose(),
+    };
   }
 
   public async getConfigJson(appUrn: AppUrn) {
-    const { store } = this.getStoreFromUrn(appUrn);
-    return store.getConfigJson(appUrn);
+    const configPath = this.appPaths.getAppConfigPath(this.appPaths.getAppRepoDir(appUrn));
+
+    let content = null;
+    try {
+      if (await this.filesystem.pathExists(configPath)) {
+        content = await this.filesystem.readJsonFile(configPath);
+      }
+    } catch (error) {
+      this.logger.error(`Error getting config.json for app ${appUrn}:`, error);
+    }
+
+    return { path: configPath, content };
   }
 }

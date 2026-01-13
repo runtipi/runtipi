@@ -8,6 +8,7 @@ import { AppPathsService } from '../app-paths.service';
 import type { AppSource } from './app-source.interface';
 import { StoreAppSource } from './store-app-source';
 import { CustomAppSource } from './custom-app-source';
+import { InstalledAppSource } from './installed-app-source';
 
 @Injectable()
 export class AppSourceFactory {
@@ -26,5 +27,9 @@ export class AppSourceFactory {
     }
 
     return new StoreAppSource(appUrn, this.filesystem, this.logger, this.configuration, this.appPaths);
+  }
+
+  public getInstalledSource(appUrn: AppUrn): AppSource {
+    return new InstalledAppSource(appUrn, this.filesystem, this.logger, this.configuration, this.appPaths);
   }
 }

@@ -54,11 +54,13 @@ export class MarketplaceController {
 
   @Get('apps/:urn/image')
   async getImage(@Param('urn') urn: string, @Res() res: Response, @Req() req: Request) {
-    const { image, etag } = await this.marketplaceService.getAppImage(castAppUrn(urn));
+    const result = await this.marketplaceService.getAppImage(castAppUrn(urn));
 
-    if (!image) {
+    if (!result) {
       throw new NotFoundException('App image not found');
     }
+
+    const { image, etag } = result;
 
     if (req.headers['if-none-match'] === etag) {
       res.set({

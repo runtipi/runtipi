@@ -1,12 +1,8 @@
 import { BaseAppSource } from './base-app-source';
 import type { AppSource } from './app-source.interface';
 
-export class CustomAppSource extends BaseAppSource implements AppSource {
+export class InstalledAppSource extends BaseAppSource implements AppSource {
   protected getBaseDir() {
     return this.appPaths.getAppInstalledDir(this.appUrn);
-  }
-
-  override async hasDataDir() {
-    return false; // Custom apps don't have a template data dir in repo
   }
 }

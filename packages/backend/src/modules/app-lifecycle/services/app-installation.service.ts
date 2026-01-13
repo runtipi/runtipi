@@ -5,10 +5,10 @@ import { DockerComposeBuilder } from '@/modules/docker/builders/compose.builder'
 import { SubnetManagerService } from '@/modules/network/subnet-manager.service';
 import { AppFileSystemService } from '@/modules/apps/app-file-system.service';
 import { AppSourceFactory } from '@/modules/apps/sources/app-source.factory';
+import { StoreAppSource } from '@/modules/apps/sources/store-app-source';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { Injectable, Inject } from '@nestjs/common';
-import { extractAppUrn } from '@/common/helpers/app-helpers';
 import type { AppUrn } from '@runtipi/common/types';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
 import Dockerode from 'dockerode';
@@ -39,18 +39,17 @@ export class AppInstallationService {
    * 6. Setting permissions
    */
   async prepareInstallation(appUrn: AppUrn, form: AppEventFormInput): Promise<void> {
-    const { appStoreId } = extractAppUrn(appUrn);
+    const source = this.appSourceFactory.getSource(appUrn);
 
     this.logger.info(`Preparing installation for app ${appUrn}`);
 
-    // LOG UID/GID if available
     if (process.getuid && process.getgid) {
       this.logger.info(`Installing app as User ID: ${process.getuid()}, Group ID: ${process.getgid()}`);
     }
 
     // 1. Copy app from source to installed (only for non-custom apps)
     // Custom apps are already in their "installed" folder
-    if (appStoreId !== '_user') {
+    if (source instanceof StoreAppSource) {
       await this.appFileSystem.copyAppFromRepoToInstalled(appUrn);
     }
 

@@ -46,4 +46,28 @@ export class AppPathsService {
     const { directories } = this.configuration.getConfig();
     return path.join(directories.dataDir, 'user-config', appStoreId, appName);
   }
+
+  public getAppConfigPath(baseDir: string) {
+    return path.join(baseDir, 'config.json');
+  }
+
+  public getAppComposePath(baseDir: string) {
+    return path.join(baseDir, 'docker-compose.yml');
+  }
+
+  public getAppLegacyComposePath(baseDir: string) {
+    return path.join(baseDir, 'docker-compose.json');
+  }
+
+  public getAppLogoPath(baseDir: string) {
+    return path.join(baseDir, 'metadata', 'logo.jpg');
+  }
+
+  public getAppDescriptionPath(baseDir: string) {
+    return path.join(baseDir, 'metadata', 'description.md');
+  }
+
+  public getAppDataTemplateDir(baseDir: string) {
+    return path.join(baseDir, 'data');
+  }
 }

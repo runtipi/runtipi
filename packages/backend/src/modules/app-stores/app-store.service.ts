@@ -8,6 +8,10 @@ import { RepoEventsQueue } from '../queue/entities/repo-events';
 import { AppStoreRepository } from './app-store.repository';
 import { ReposHelpers } from './repos.helpers';
 
+import { AppPathsService } from '../apps/app-paths.service';
+import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import type { AppUrn } from '@runtipi/common/types';
+
 export const RESERVED_APP_STORE_SLUGS = ['_user'];
 
 @Injectable()
@@ -18,6 +22,8 @@ export class AppStoreService {
     private readonly repoHelpers: ReposHelpers,
     private readonly config: ConfigurationService,
     private readonly appStoreRepository: AppStoreRepository,
+    private readonly appPaths: AppPathsService,
+    private readonly filesystem: FilesystemService,
   ) {
     this.repoQueue.onEvent(async (data, reply) => {
       switch (data.command) {
@@ -163,5 +169,19 @@ export class AppStoreService {
 
   public async deleteAllRepos() {
     await this.repoHelpers.deleteAllRepos();
+  }
+
+  public async getAvailableAppUrns(storeSlug: string): Promise<AppUrn[]> {
+    const appsRepoFolder = this.appPaths.getAppStoreFolder(storeSlug);
+
+    if (!(await this.filesystem.pathExists(appsRepoFolder))) {
+      this.logger.error(`Apps repo ${storeSlug} not found. Make sure your repo is configured correctly.`);
+      return [];
+    }
+
+    const appsDir = await this.filesystem.listFiles(appsRepoFolder);
+    const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
+
+    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${app}:${storeSlug}` as AppUrn);
   }
 }

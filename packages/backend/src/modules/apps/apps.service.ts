@@ -7,6 +7,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppsRepository } from './apps.repository';
+import { AppSourceFactory } from './sources/app-source.factory';
 
 type AppList = Awaited<ReturnType<AppsRepository['getApps']>>;
 
@@ -17,6 +18,7 @@ export class AppsService {
     private readonly appFilesManager: AppFilesManager,
     private readonly logger: LoggerService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly appSourceFactory: AppSourceFactory,
   ) {}
 
   private async populateAppInfo(apps: AppList) {
@@ -26,7 +28,8 @@ export class AppsService {
       apps.map(async (app) => {
         return limit(async () => {
           const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
+          const source = this.appSourceFactory.getInstalledSource(appUrn);
+          const appInfo = await source.getAppInfo();
 
           const updateInfo = await this.marketplaceService.getAppUpdateInfo(appUrn).catch((_) => {
             return { latestVersion: 0, latestDockerVersion: '0.0.0' };
@@ -73,7 +76,8 @@ export class AppsService {
       return { latestVersion: 0, latestDockerVersion: '0.0.0' };
     });
 
-    let info = await this.appFilesManager.getInstalledAppInfo(appUrn);
+    const source = this.appSourceFactory.getInstalledSource(appUrn);
+    let info = await source.getAppInfo();
 
     const userCompose = await this.appFilesManager.getUserComposeFile(appUrn);
     const userEnv = await this.appFilesManager.getUserEnv(appUrn);
@@ -119,14 +123,14 @@ export class AppsService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
     }
 
-    const [currentCompose, storeCompose] = await Promise.all([
-      this.appFilesManager.getSourceDockerComposeYaml(appUrn),
-      this.marketplaceService.getSourceDockerComposeYaml(appUrn),
-    ]);
+    const installedSource = this.appSourceFactory.getInstalledSource(appUrn);
+    const storeSource = this.appSourceFactory.getSource(appUrn);
+
+    const [currentCompose, storeCompose] = await Promise.all([installedSource.getCompose(), storeSource.getCompose()]);
 
     return {
-      current: currentCompose.content ? JSON.stringify(currentCompose.content, null, 2) : null,
-      new: storeCompose.content ? JSON.stringify(storeCompose.content, null, 2) : null,
+      current: currentCompose ? JSON.stringify(currentCompose, null, 2) : null,
+      new: storeCompose ? JSON.stringify(storeCompose, null, 2) : null,
     };
   }
 
@@ -136,14 +140,14 @@ export class AppsService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', {}, 404);
     }
 
-    const [currentConfig, storeConfig] = await Promise.all([
-      this.appFilesManager.getConfigJson(appUrn),
-      this.marketplaceService.getConfigJson(appUrn),
-    ]);
+    const installedSource = this.appSourceFactory.getInstalledSource(appUrn);
+    const storeSource = this.appSourceFactory.getSource(appUrn);
+
+    const [currentConfig, storeConfig] = await Promise.all([installedSource.getAppInfo(), storeSource.getAppInfo()]);
 
     return {
-      current: currentConfig.content ? JSON.stringify(currentConfig.content, null, 2) : null,
-      new: storeConfig.content ? JSON.stringify(storeConfig.content, null, 2) : null,
+      current: currentConfig ? JSON.stringify(currentConfig, null, 2) : null,
+      new: storeConfig ? JSON.stringify(storeConfig, null, 2) : null,
     };
   }
 

@@ -15,7 +15,6 @@ export class InstallAppCommand extends AppLifecycleCommand {
     const installationService = this.moduleRef.get(AppInstallationService, { strict: false });
     const appSourceFactory = this.moduleRef.get(AppSourceFactory, { strict: false });
 
-    // Validate compose before starting (Fail fast)
     const source = appSourceFactory.getSource(appUrn);
     const compose = await source.getCompose();
 
@@ -24,7 +23,6 @@ export class InstallAppCommand extends AppLifecycleCommand {
     }
 
     try {
-      // Use the harmonized installation service
       await installationService.prepareInstallation(appUrn, form);
 
       try {
