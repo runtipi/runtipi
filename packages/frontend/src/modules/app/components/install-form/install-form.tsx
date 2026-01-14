@@ -22,7 +22,7 @@ import { InstallFormField } from './install-form-field';
 interface IProps {
   formFields?: FormField[];
   onSubmit: (values: FormValues) => void;
-  initialValues?: { [key: string]: unknown };
+  initialValues?: { [key: string]: unknown } & { forcePull?: boolean };
   info: AppInfo;
   loading?: boolean;
   formId: string;
@@ -38,6 +38,7 @@ export type FormValues = {
   isVisibleOnGuestDashboard?: boolean;
   enableAuth: boolean;
   maxBackups?: number;
+  forcePull?: boolean;
   [key: string]: unknown;
 };
 
@@ -56,7 +57,9 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
     watch,
     setError,
     control,
-  } = useForm<FormValues>({});
+  } = useForm<FormValues>({
+    defaultValues: initialValues,
+  });
   const watchExposed = watch('exposed', false);
   const watchOpenPort = watch('openPort', !info.force_expose);
   const watchExposedLocal = watch('exposedLocal', false);
@@ -319,6 +322,34 @@ export const InstallForm: React.FC<IProps> = ({ formFields = [], info, onSubmit,
           placeholder={globalMaxBackups === 0 ? undefined : globalMaxBackups.toString()}
         />
         <span className="text-muted">{t('APP_INSTALL_FORM_MAX_BACKUPS_HINT', { value: globalMaxBackups })}</span>
+      </div>
+      <div className="mb-3">
+        <Controller
+          control={control}
+          name="forcePull"
+          defaultValue={initialValues?.forcePull ?? info.force_pull ?? false}
+          render={({ field: { onChange, value, ref, ...props } }) => {
+            const checkedValue = value !== undefined ? value : false;
+            return (
+              <Switch
+                {...props}
+                className="mb-3"
+                ref={ref}
+                checked={checkedValue}
+                onCheckedChange={onChange}
+                label={
+                  <>
+                    {t('APP_INSTALL_FORM_FORCE_PULL')}
+                    <Tooltip className="tooltip" anchorSelect=".force-pull-hint">
+                      {t('APP_INSTALL_FORM_FORCE_PULL_HINT')}
+                    </Tooltip>
+                    <span className={clsx('ms-1 form-help force-pull-hint')}>?</span>
+                  </>
+                }
+              />
+            );
+          }}
+        />
       </div>
     </form>
   );

@@ -351,7 +351,7 @@ export const convertLegacyToYaml = (data: unknown) => {
 
   const newCompose: DynamicComposeSchemaYaml = {
     'x-runtipi': {
-      schema_version: 1,
+      schema_version: 2,
     },
     services: {},
   };
@@ -383,7 +383,7 @@ export const convertLegacyToYaml = (data: unknown) => {
 
     if (overrides.length > 0) {
       newCompose['x-runtipi'] = {
-        schema_version: 1,
+        schema_version: 2,
         overrides: overrides,
       };
     }

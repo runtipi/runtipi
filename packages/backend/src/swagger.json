@@ -4397,6 +4397,9 @@
           "exposedLocal": {
             "type": "boolean"
           },
+          "forcePull": {
+            "type": "boolean"
+          },
           "isVisibleOnGuestDashboard": {
             "type": "boolean"
           },
@@ -4866,7 +4869,10 @@
                 "type": "object",
                 "properties": {
                   "schema_version": {
-                    "const": 1
+                    "enum": [
+                      1,
+                      2
+                    ]
                   },
                   "overrides": {
                     "type": "array",
@@ -5087,7 +5093,10 @@
                 "type": "object",
                 "properties": {
                   "schema_version": {
-                    "const": 1
+                    "enum": [
+                      1,
+                      2
+                    ]
                   },
                   "overrides": {
                     "type": "array",

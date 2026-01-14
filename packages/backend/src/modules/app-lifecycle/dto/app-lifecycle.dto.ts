@@ -14,6 +14,7 @@ export const appFormSchema = type({
   skipEnv: 'boolean = false',
   skipPull: 'boolean = false',
   skipRun: 'boolean = false',
+  forcePull: 'boolean?',
   '[string]': 'unknown',
 });
 
