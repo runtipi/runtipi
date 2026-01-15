@@ -497,6 +497,7 @@ export type AppFormBody = {
     enableAuth?: boolean;
     exposed?: boolean;
     exposedLocal?: boolean;
+    forcePull?: boolean;
     isVisibleOnGuestDashboard?: boolean;
     localSubdomain?: string;
     maxBackups?: number;
@@ -618,7 +619,7 @@ export type CreateCustomAppDto = {
             };
         };
         'x-runtipi': {
-            schema_version: 1;
+            schema_version: 1 | 2;
             overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
@@ -678,7 +679,7 @@ export type CreateCustomAppDto = {
                 } | undefined;
             };
         } | {
-            schema_version: 1;
+            schema_version: 1 | 2;
             overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
@@ -750,7 +751,7 @@ export type UpdateCustomAppDto = {
             };
         };
         'x-runtipi': {
-            schema_version: 1;
+            schema_version: 1 | 2;
             overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
@@ -810,7 +811,7 @@ export type UpdateCustomAppDto = {
                 } | undefined;
             };
         } | {
-            schema_version: 1;
+            schema_version: 1 | 2;
             overrides?: Array<{
                 architecture: 'amd64' | 'arm64';
                 services: {
