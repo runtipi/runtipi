@@ -205,7 +205,7 @@
   "USER_CONFIG_WARNING_TITLE": "Внимание",
   "USER_CONFIG_WARNING_DESCRIPTION": "Редактирование конфигурации пользователя может нарушить работу приложения. Убедитесь, что вы знаете, что делаете. Если ваше приложение не запускается после редактирования конфигурации пользователя, поищите логи в консоли браузера или на странице настроек runtipi.",
   "USER_CONFIG_OVERRIDES_TAB_TITLE": "переопределения",
-  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "Это исходный docker-compose.yml файл только для чтения.",
+  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "This is the generated docker-compose.yml file. It is read-only.",
   "USER_CONFIG_ACTUAL_ENV_DESCRIPTION": "Это исходный app.env файл только для чтения.",
   "USER_CONFIG_ENABLE": "Включить настройки пользователя",
   "USER_CONFIG_UPDATE_SUCCESS": "Настройки пользователя успешно обновлены",
