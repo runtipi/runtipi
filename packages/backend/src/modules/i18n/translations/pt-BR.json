@@ -205,7 +205,7 @@
   "USER_CONFIG_WARNING_TITLE": "Aviso",
   "USER_CONFIG_WARNING_DESCRIPTION": "Ao editar a configuração do usuário, você poderá quebrar o aplicativo. Certifique-se de que você sabe o que está fazendo. Se seu aplicativo não conseguir iniciar depois de editar a configuração do usuário, procure os logs no console do navegador ou na página de configurações de execução.",
   "USER_CONFIG_OVERRIDES_TAB_TITLE": "overrides",
-  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "This is the source docker-compose.yml file. It is read-only.",
+  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "This is the generated docker-compose.yml file. It is read-only.",
   "USER_CONFIG_ACTUAL_ENV_DESCRIPTION": "This is the current app.env file. It is read-only.",
   "USER_CONFIG_ENABLE": "Habilitar configuração do usuário",
   "USER_CONFIG_UPDATE_SUCCESS": "Configuração do usuário atualizada com sucesso",
