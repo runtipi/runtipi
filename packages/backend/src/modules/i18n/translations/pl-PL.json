@@ -205,7 +205,7 @@
   "USER_CONFIG_WARNING_TITLE": "Ostrzeżenie",
   "USER_CONFIG_WARNING_DESCRIPTION": "Edytowanie konfiguracji użytkownika może uszkodzić aplikację. Upewnij się, że wiesz co robisz. Jeżeli twoja aplikacja nie będzie chciała się uruchomić po edycji konfiguracji użytkownika, poszukaj logów w konsoli przeglądarki lub na stronie ustawień runtipi.",
   "USER_CONFIG_OVERRIDES_TAB_TITLE": "nadpisania",
-  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "This is the generated docker-compose.yml file. It is read-only.",
+  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "To jest wygenerowany plik docker-compose.yml. Jest tylko do odczytu.",
   "USER_CONFIG_ACTUAL_ENV_DESCRIPTION": "To jest bieżący plik app.env. Jest tylko do odczytu.",
   "USER_CONFIG_ENABLE": "Włącz konfigurację użytkownika",
   "USER_CONFIG_UPDATE_SUCCESS": "Konfiguracja użytkownika zaktualizowana pomyślnie",
