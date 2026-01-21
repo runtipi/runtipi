@@ -205,7 +205,7 @@
   "USER_CONFIG_WARNING_TITLE": "Warning",
   "USER_CONFIG_WARNING_DESCRIPTION": "By editing the user config, you may break the app. Make sure you know what you are doing. If your app fails to start after editing the user config, look for the logs in the browser console or in the runtipi settings page.",
   "USER_CONFIG_OVERRIDES_TAB_TITLE": "overrides",
-  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "This is the source docker-compose.yml file. It is read-only.",
+  "USER_CONFIG_SOURCE_COMPOSE_DESCRIPTION": "This is the generated docker-compose.yml file. It is read-only.",
   "USER_CONFIG_ACTUAL_ENV_DESCRIPTION": "This is the current app.env file. It is read-only.",
   "USER_CONFIG_ENABLE": "Enable user config",
   "USER_CONFIG_UPDATE_SUCCESS": "User config updated successfully",
