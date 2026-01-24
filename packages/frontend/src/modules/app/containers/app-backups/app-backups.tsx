@@ -117,7 +117,7 @@ export const AppBackups = ({ info, status }: Props) => {
         <div className="">
           <h3 className="h3 mb-0">{t('BACKUPS_LIST')}</h3>
         </div>
-        <div className="d-flex gap-2">
+        <div className="d-flex flex-column flex-sm-row gap-2">
           <Button onClick={uploadModalDisclosure.open} disabled={disableActions}>
             {t('APP_BACKUP_UPLOAD')}
           </Button>
