@@ -73,15 +73,22 @@ const convertService = (service: Partial<Service>) => {
     deploy,
   } = service;
 
-  const ports = addPorts?.map((port) => {
-    const { interface: iface, hostPort, containerPort, tcp, udp } = port;
+  let ports: string[] | undefined;
 
-    if (tcp && udp) {
-      return `${iface ? `${iface}:` : ''}${hostPort}:${containerPort}`;
+  if (typeof addPorts !== 'undefined') {
+    ports = [];
+    for (const port of addPorts) {
+      const { interface: iface, hostPort, containerPort, tcp, udp } = port;
+
+      if (tcp && udp) {
+        ports.push(`${iface ? `${iface}:` : ''}${hostPort}:${containerPort}/tcp`);
+        ports.push(`${iface ? `${iface}:` : ''}${hostPort}:${containerPort}/udp`);
+        continue;
+      }
+
+      ports.push(`${iface ? `${iface}:` : ''}${hostPort}:${containerPort}${tcp ? '/tcp' : ''}${udp ? '/udp' : ''}`);
     }
-
-    return `${iface ? `${iface}:` : ''}${hostPort}:${containerPort}${tcp ? '/tcp' : ''}${udp ? '/udp' : ''}`;
-  });
+  }
 
   const envVars = environment?.map((env) => {
     return `${env.key}=${env.value}`;
