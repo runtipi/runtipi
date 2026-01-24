@@ -1,0 +1,3 @@
+input[type='file']::file-selector-button {
+  background-color: var(--tblr-bg-surface) !important;
+}

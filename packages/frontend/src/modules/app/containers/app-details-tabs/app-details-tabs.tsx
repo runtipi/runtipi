@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
 import clsx from 'clsx';
+import './app-details-tabs.css';
 
 const AppDescriptionEditor = React.lazy(() =>
   import('../../components/app-description-editor/app-description-editor').then((module) => ({ default: module.AppDescriptionEditor })),
