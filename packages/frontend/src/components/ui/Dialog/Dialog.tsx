@@ -45,8 +45,8 @@ const DialogContent = ({ className, children, ...props }: React.ComponentProps<t
     <DialogOverlay />
     <DialogPrimitive.Content className={clsx('modal-content mt-1', className)} {...props}>
       {children}
-      <DialogPrimitive.Close className="btn-close">
-        <span data-testid="modal-close-button" className="btn-close" aria-description="Close" />
+      <DialogPrimitive.Close className="btn-close" aria-label="Close dialog">
+        <span data-testid="modal-close-button" className="btn-close" aria-hidden="true" />
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>

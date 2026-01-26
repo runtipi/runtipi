@@ -29,12 +29,9 @@ export const PasswordInput = (props: Props) => {
             onClick={() => setPasswordVisible(!passwordVisible)}
             type="button"
             className="toggle-password-visibility"
+            aria-label={passwordVisible ? t('APP_INSTALL_FORM_HIDE_PASSWORD') : t('APP_INSTALL_FORM_SHOW_PASSWORD')}
           >
-            {passwordVisible ? (
-              <IconEyeClosed aria-label={t('APP_INSTALL_FORM_HIDE_PASSWORD')} size={16} />
-            ) : (
-              <IconEye aria-label={t('APP_INSTALL_FORM_SHOW_PASSWORD')} size={16} />
-            )}
+            {passwordVisible ? <IconEyeClosed size={16} aria-hidden="true" /> : <IconEye size={16} aria-hidden="true" />}
           </Button>
         </span>
       }
