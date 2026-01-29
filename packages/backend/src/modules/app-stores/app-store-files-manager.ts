@@ -207,9 +207,19 @@ export class AppStoreFilesManager {
     }
 
     const appsDir = await this.filesystem.listFiles(appsRepoFolder);
-    const skippedFiles = ['__tests__', 'docker-compose.common.yml', 'schema.json', '.DS_Store'];
+    const skippedDirs = ['__tests__'];
 
-    return appsDir.filter((app) => !skippedFiles.includes(app)).map((app) => `${app}:${this.storeConfig.slug}` as AppUrn);
+    const validApps = await Promise.all(
+      appsDir
+        .filter((app) => !skippedDirs.includes(app))
+        .map(async (app) => {
+          const appPath = path.join(appsRepoFolder, app);
+          const isDir = await this.filesystem.isDirectory(appPath);
+          return isDir ? app : null;
+        }),
+    );
+
+    return validApps.filter((app): app is string => app !== null).map((app) => `${app}:${this.storeConfig.slug}` as AppUrn);
   }
 
   /**
