@@ -40,9 +40,11 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
           {renderItem(t('HEADER_SETTINGS'), 'settings', IconSettings)}
         </ul>
         {Boolean(isUpdateAvailable) && (
-          <span className="ms-2 badge text-white bg-green d-none d-lg-block" role="status" aria-live="polite">
+          // biome-ignore lint/a11y/useSemanticElements: explicit role="status" reinforces accessibility intent
+          // biome-ignore lint/a11y/noRedundantRoles: explicit role="status" for assistive technology compatibility
+          <output className="ms-2 badge text-white bg-green d-none d-lg-block" role="status" aria-live="polite">
             {t('HEADER_UPDATE_AVAILABLE')}
-          </span>
+          </output>
         )}
       </div>
     </nav>
