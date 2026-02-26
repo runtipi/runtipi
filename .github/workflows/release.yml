@@ -140,7 +140,7 @@ jobs:
           done
 
       - name: Upload CLI
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cli
           path: bin
