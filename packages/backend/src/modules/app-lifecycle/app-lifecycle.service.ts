@@ -36,14 +36,26 @@ export class AppLifecycleService {
     private readonly updateAppHandler: UpdateAppHandler,
   ) {
     this.logger.debug('Subscribing to app events...');
-    this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
+    this.appEventsQueue.onEvent((data, reply, signal) => this.invokeCommand(data, reply, signal));
   }
 
-  async invokeCommand(data: typeof appEventSchema.infer, reply: (response: typeof appEventResultSchema.infer) => Promise<void>) {
+  async invokeCommand(data: typeof appEventSchema.infer, reply: (response: typeof appEventResultSchema.infer) => Promise<void>, signal: AbortSignal) {
     const release = await this.mutex.acquire(data.appUrn);
 
     try {
       const command = this.commandFactory.createCommand(data);
+      await new Promise(async () => {
+        let _i = 0;
+        while (true) {
+          await new Promise((resolve, reject) => {
+            signal.addEventListener('abort', () => reject(new Error('aborted')));
+            setTimeout(() => {
+              _i++;
+              resolve(1);
+            }, 1000);
+          });
+        }
+      });
       const { success, message } = await command.execute(data.appUrn, data.form);
       await reply({ success, message });
     } catch (err) {

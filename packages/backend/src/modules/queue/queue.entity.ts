@@ -4,6 +4,7 @@ import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
 import { type } from 'arktype';
 import type { EventPublisher } from './event.publisher';
+import { createHash } from 'node:crypto';
 
 export type ArkTypeSchema<TOut = unknown, TIn = unknown> = {
   (data: TIn): TOut | type.errors;
@@ -24,16 +25,29 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
     private eventSchema: T,
     private resultSchema: R,
     private logger: LoggerService,
-  ) {}
+    private cancelers: Map<string, () => void>,
+  ) {
+    this.cancelers = new Map<string, () => void>();
+  }
 
-  public onEvent(callback: (data: Infer<T> & { eventId: string }, reply: (response: InferIn<R>) => Promise<void>) => Promise<void>) {
+  public onEvent(
+    callback: (data: Infer<T> & { eventId: string }, reply: (response: InferIn<R>) => Promise<void>, signal: AbortSignal) => Promise<void>,
+  ) {
     try {
       this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
         let rpcSuccess = false;
         let rpcResultMessage = '';
 
+        const hash = createHash('sha256').update(JSON.stringify(req.body)).digest('hex');
+        const abort = new AbortController();
+
+        this.cancelers.set(hash, () => {
+          this.logger.error('Attempting to cancel event with hash', hash);
+          abort.abort();
+        });
+
         try {
-          await callback(req.body, reply);
+          await callback(req.body, reply, abort.signal);
           rpcSuccess = true;
           rpcResultMessage = 'RPC processed successfully.';
         } catch (error) {
@@ -63,12 +77,16 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
   }
 
   async publish(event: unknown): Promise<{ success: boolean; message: string } | Infer<R>> {
-    try {
-      const eventData = this.eventSchema(event as never);
-      if (eventData instanceof type.errors) {
-        throw new Error(`Invalid event data: ${eventData.summary}`);
-      }
+    const eventData = this.eventSchema(event as never);
+    if (eventData instanceof type.errors) {
+      const err = new Error(`Invalid event data: ${eventData.summary}`);
+      Sentry.captureException(err, { tags: { queueName: this.queueName } });
+      return { success: false, message: String(err) };
+    }
 
+    const hash = createHash('sha256').update(JSON.stringify(eventData)).digest('hex');
+
+    try {
       const res = await this.rpcClient.send(this.queueName, eventData);
       const response = this.resultSchema(res.body as never);
       if (!(response instanceof type.errors)) {
@@ -77,6 +95,13 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
 
       throw new Error(`Invalid response schema: ${response.summary}`);
     } catch (err) {
+      // first try to cancel the event if possible
+      const cancel = this.cancelers.get(hash);
+      if (cancel) {
+        cancel();
+      }
+      this.cancelers.delete(hash);
+
       if (err instanceof AMQPConnectionError) {
         this.logger.error('Connection to the queue was lost. Try restarting your instance before retrying.');
       }

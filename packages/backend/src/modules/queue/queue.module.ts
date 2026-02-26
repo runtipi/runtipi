@@ -14,8 +14,9 @@ import { QueueHealthIndicator } from './queue.health';
     QueueFactory,
     {
       provide: AppEventsQueue,
-      useFactory: async (queueFactory: QueueFactory, config: ConfigurationService) => {
-        const timeout = config.get('userSettings').eventsTimeout * 60 * 1000;
+      useFactory: async (queueFactory: QueueFactory, _config: ConfigurationService) => {
+        // const timeout = config.get('userSettings').eventsTimeout * 60 * 1000;
+        const timeout = 10 * 1000;
 
         return await queueFactory.createQueue({
           queueName: 'app-events-queue',
