@@ -152,7 +152,7 @@ jobs:
       id: ${{ steps.create_release.outputs.id }}
     steps:
       - name: Download CLI
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: cli
           path: cli

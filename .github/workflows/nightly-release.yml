@@ -105,7 +105,7 @@ jobs:
     needs: [build-images, build-cli]
     steps:
       - name: Download CLI
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: cli
           path: cli
