@@ -11,7 +11,7 @@ import * as yaml from 'yaml';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsRepository } from '../apps/apps.repository';
 import { MarketplaceService } from '../marketplace/marketplace.service';
-import type { TemplateDiff, UpdateAppConfigDto } from './dto/app-config.dto';
+import type { UpdateAppConfigDto } from './dto/app-config.dto';
 
 @Injectable()
 export class AppConfigService {
@@ -24,13 +24,13 @@ export class AppConfigService {
     private readonly appFilesManager: AppFilesManager,
   ) {}
 
-  private getConfigPath(appUrn: AppUrn): string {
+  private getConfigPath(appUrn: AppUrn) {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const { dataDir } = this.configService.get('directories');
     return path.join(dataDir, 'apps', appStoreId, appName, APP_REL_COMPOSE_FILENAME);
   }
 
-  async updateAppConfig(appUrn: AppUrn, dto: UpdateAppConfigDto): Promise<void> {
+  async updateAppConfig(appUrn: AppUrn, dto: UpdateAppConfigDto) {
     if (this.configService.get('demoMode')) {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
@@ -44,7 +44,12 @@ export class AppConfigService {
 
     try {
       yaml.parse(dto.config);
+    } catch (error) {
+      this.logger.error(`Failed to parse YAML config for app ${appUrn}:`, error);
+      throw new TranslatableError('APP_ERROR_INVALID_CONFIG', { id: appUrn }, HttpStatus.BAD_REQUEST);
+    }
 
+    try {
       const ok = await this.filesystem.writeTextFile(configPath, dto.config);
       if (!ok) {
         throw new Error(`Failed to write config at ${configPath}`);
@@ -52,12 +57,12 @@ export class AppConfigService {
 
       this.logger.info(`App ${appUrn} config updated successfully`);
     } catch (error) {
-      this.logger.error(`Failed to update app ${appUrn} config:`, error);
-      throw new TranslatableError('APP_ERROR_INVALID_CONFIG', { id: appUrn }, HttpStatus.BAD_REQUEST);
+      this.logger.error(`Failed to save config for app ${appUrn}:`, error);
+      throw new TranslatableError('APP_ERROR_SAVE_CONFIG', { id: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async getAppConfig(appUrn: AppUrn): Promise<string | null> {
+  async getAppConfig(appUrn: AppUrn) {
     try {
       const { content } = await this.appFilesManager.getSourceDockerComposeYaml(appUrn);
       if (!content) {
@@ -70,7 +75,7 @@ export class AppConfigService {
     }
   }
 
-  async getTemplateDiff(appUrn: AppUrn): Promise<TemplateDiff> {
+  async getTemplateDiff(appUrn: AppUrn) {
     const app = await this.appsRepository.getAppByUrn(appUrn);
     const resolvedTemplateUrn = app?.templateUrn ?? (app?.appStoreSlug !== '_user' ? appUrn : null);
 
@@ -92,7 +97,8 @@ export class AppConfigService {
     }
 
     const localContentStr = localResult.content ? yaml.stringify(localResult.content) : '';
-    const templateContentStr = typeof templateConfig.content === 'string' ? templateConfig.content : yaml.stringify(templateConfig.content);
+    const templateContentStr =
+      typeof templateConfig.content === 'string' ? yaml.stringify(yaml.parse(templateConfig.content)) : yaml.stringify(templateConfig.content);
 
     const hasChanges = localContentStr !== templateContentStr;
 
@@ -111,7 +117,7 @@ export class AppConfigService {
     };
   }
 
-  async syncWithTemplate(appUrn: AppUrn): Promise<void> {
+  async syncWithTemplate(appUrn: AppUrn) {
     if (this.configService.get('demoMode')) {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
@@ -148,7 +154,7 @@ export class AppConfigService {
     this.logger.info(`App ${appUrn} synced with template successfully`);
   }
 
-  private async backupConfig(appUrn: AppUrn): Promise<void> {
+  private async backupConfig(appUrn: AppUrn) {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const { dataDir } = this.configService.get('directories');
     const configPath = this.getConfigPath(appUrn);

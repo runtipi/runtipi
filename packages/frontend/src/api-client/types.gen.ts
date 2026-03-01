@@ -414,25 +414,25 @@ export type GetAppDto = {
     };
     app?: {
         createdAt: number;
-         domain: string | null;
-         exposed: boolean;
-         exposedLocal: boolean;
-         id: number;
-         ignoredVersion: number | null;
-         isVisibleOnGuestDashboard: boolean;
-         openPort: boolean;
-         pendingRestart: boolean;
-         port: number | null;
-         status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
-         templateUrn: string | null;
-         updatedAt: number;
-         version: number;
-         config?: {
-             [key: string]: unknown;
-         };
-         enableAuth?: boolean;
-         localSubdomain?: string | null;
-     } | null;
+        domain: string | null;
+        exposed: boolean;
+        exposedLocal: boolean;
+        id: number;
+        ignoredVersion: number | null;
+        isVisibleOnGuestDashboard: boolean;
+        openPort: boolean;
+        pendingRestart: boolean;
+        port: number | null;
+        status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+        templateUrn: string | null;
+        updatedAt: number;
+        version: number;
+        config?: {
+            [key: string]: unknown;
+        };
+        enableAuth?: boolean;
+        localSubdomain?: string | null;
+    } | null;
 };
 
 export type GetComposeDiffDto = {
