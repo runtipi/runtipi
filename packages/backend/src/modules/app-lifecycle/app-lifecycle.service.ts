@@ -78,7 +78,7 @@ export class AppLifecycleService {
     return this.resetAppHandler.execute(params.appUrn);
   }
 
-  public async updateAppConfig(params: { appUrn: AppUrn; form: unknown }) {
+  public async updateAppSettings(params: { appUrn: AppUrn; form: unknown }) {
     return this.updateConfigHandler.execute(params.appUrn, { form: params.form });
   }
 

@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcknowledgeWelcomeData, AcknowledgeWelcomeResponses, AppContextData, AppContextResponses, AppEventsData, AppEventsResponses, AppLogsEventsData, AppLogsEventsResponses, BackupAllAppsData, BackupAllAppsResponses, BackupAppData, BackupAppResponses, CancelResetPasswordData, CancelResetPasswordResponses, ChangePasswordData, ChangePasswordResponses, ChangeUsernameData, ChangeUsernameResponses, CheckData, CheckErrors, CheckResetPasswordRequestData, CheckResetPasswordRequestResponses, CheckResponses, CreateAppStoreData, CreateAppStoreResponses, CreateCustomAppData, CreateCustomAppResponses, CreateLinkData, CreateLinkResponses, DeleteAppBackupData, DeleteAppBackupResponses, DeleteAppStoreData, DeleteAppStoreResponses, DeleteLinkData, DeleteLinkResponses, DisableTotpData, DisableTotpResponses, DisableUserConfigData, DisableUserConfigResponses, DownloadBackupData, DownloadBackupResponses, DownloadLocalCertificateData, DownloadLocalCertificateResponses, EditLinkData, EditLinkResponses, EnableUserConfigData, EnableUserConfigResponses, GetAllAppStoresData, GetAllAppStoresResponses, GetAppBackupsData, GetAppBackupsResponses, GetAppComposeDiffData, GetAppComposeDiffResponses, GetAppConfigDiffData, GetAppConfigDiffResponses, GetAppData, GetAppResponses, GetEnabledAppStoresData, GetEnabledAppStoresResponses, GetGuestAppsData, GetGuestAppsResponses, GetGuestLinksData, GetGuestLinksResponses, GetImageData, GetImageResponses, GetInstalledAppsData, GetInstalledAppsResponses, GetLinksData, GetLinksResponses, GetRandomPortData, GetRandomPortResponses, GetTotpUriData, GetTotpUriResponses, GetTranslationData, GetTranslationResponses, GetUserConfigData, GetUserConfigResponses, IgnoreAppVersionData, IgnoreAppVersionResponses, IncrementAllAppVersionsData, IncrementAllAppVersionsResponses, InstallAppData, InstallAppResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, PullAppStoresData, PullAppStoresResponses, RegisterData, RegisterResponses, ResetAppData, ResetAppResponses, ResetPasswordData, ResetPasswordResponses, RestartAllAppsData, RestartAllAppsResponses, RestartAppData, RestartAppResponses, RestoreAppBackupData, RestoreAppBackupResponses, RuntipiLogsEventsData, RuntipiLogsEventsResponses, SearchAppsData, SearchAppsResponses, SeedDatabaseData, SeedDatabaseResponses, SetAllAppSubnetToNullData, SetAllAppSubnetToNullResponses, SetAllAppUpdateAvailableData, SetAllAppUpdateAvailableResponses, SetupTotpData, SetupTotpResponses, StartAllApps2Data, StartAllApps2Responses, StartAllAppsData, StartAllAppsResponses, StartAppData, StartAppResponses, StopAllAppsData, StopAllAppsResponses, StopAppData, StopAppResponses, SystemLoadData, SystemLoadResponses, TraefikData, TraefikResponses, UnignoreAppVersionData, UnignoreAppVersionResponses, UninstallAllAppsData, UninstallAllAppsResponses, UninstallAppData, UninstallAppResponses, UpdateAllAppsData, UpdateAllAppsResponses, UpdateAppConfigData, UpdateAppConfigResponses, UpdateAppData, UpdateAppMetadataData, UpdateAppMetadataResponses, UpdateAppResponses, UpdateAppStoreData, UpdateAppStoreResponses, UpdateCustomAppData, UpdateCustomAppResponses, UpdateUserConfigData, UpdateUserConfigResponses, UpdateUserSettingsData, UpdateUserSettingsResponses, UploadAppImageData, UploadAppImageResponses, UploadBackupData, UploadBackupResponses, UserContextData, UserContextResponses, VerifyTotpData, VerifyTotpResponses } from './types.gen';
+import type { AcknowledgeWelcomeData, AcknowledgeWelcomeResponses, AppContextData, AppContextResponses, AppEventsData, AppEventsResponses, AppLogsEventsData, AppLogsEventsResponses, BackupAllAppsData, BackupAllAppsResponses, BackupAppData, BackupAppResponses, CancelResetPasswordData, CancelResetPasswordResponses, ChangePasswordData, ChangePasswordResponses, ChangeUsernameData, ChangeUsernameResponses, CheckData, CheckErrors, CheckResetPasswordRequestData, CheckResetPasswordRequestResponses, CheckResponses, CreateAppStoreData, CreateAppStoreResponses, CreateCustomAppData, CreateCustomAppResponses, CreateLinkData, CreateLinkResponses, DeleteAppBackupData, DeleteAppBackupResponses, DeleteAppStoreData, DeleteAppStoreResponses, DeleteLinkData, DeleteLinkResponses, DisableTotpData, DisableTotpResponses, DisableUserConfigData, DisableUserConfigResponses, DownloadBackupData, DownloadBackupResponses, DownloadLocalCertificateData, DownloadLocalCertificateResponses, EditLinkData, EditLinkResponses, EnableUserConfigData, EnableUserConfigResponses, GetAllAppStoresData, GetAllAppStoresResponses, GetAppBackupsData, GetAppBackupsResponses, GetAppComposeDiffData, GetAppComposeDiffResponses, GetAppConfigDiffData, GetAppConfigDiffResponses, GetAppData, GetAppResponses, GetEditableAppConfigData, GetEditableAppConfigResponses, GetEnabledAppStoresData, GetEnabledAppStoresResponses, GetGuestAppsData, GetGuestAppsResponses, GetGuestLinksData, GetGuestLinksResponses, GetImageData, GetImageResponses, GetInstalledAppsData, GetInstalledAppsResponses, GetLinksData, GetLinksResponses, GetRandomPortData, GetRandomPortResponses, GetTemplateDiffData, GetTemplateDiffResponses, GetTotpUriData, GetTotpUriResponses, GetTranslationData, GetTranslationResponses, GetUserConfigData, GetUserConfigResponses, IgnoreAppVersionData, IgnoreAppVersionResponses, IncrementAllAppVersionsData, IncrementAllAppVersionsResponses, InstallAppData, InstallAppResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, PullAppStoresData, PullAppStoresResponses, RegisterData, RegisterResponses, ResetAppData, ResetAppResponses, ResetPasswordData, ResetPasswordResponses, RestartAllAppsData, RestartAllAppsResponses, RestartAppData, RestartAppResponses, RestoreAppBackupData, RestoreAppBackupResponses, RuntipiLogsEventsData, RuntipiLogsEventsResponses, SearchAppsData, SearchAppsResponses, SeedDatabaseData, SeedDatabaseResponses, SetAllAppSubnetToNullData, SetAllAppSubnetToNullResponses, SetAllAppUpdateAvailableData, SetAllAppUpdateAvailableResponses, SetupTotpData, SetupTotpResponses, StartAllApps2Data, StartAllApps2Responses, StartAllAppsData, StartAllAppsResponses, StartAppData, StartAppResponses, StopAllAppsData, StopAllAppsResponses, StopAppData, StopAppResponses, SyncWithTemplateData, SyncWithTemplateResponses, SystemLoadData, SystemLoadResponses, TraefikData, TraefikResponses, UnignoreAppVersionData, UnignoreAppVersionResponses, UninstallAllAppsData, UninstallAllAppsResponses, UninstallAppData, UninstallAppResponses, UpdateAllAppsData, UpdateAllAppsResponses, UpdateAppData, UpdateAppMetadataData, UpdateAppMetadataResponses, UpdateAppResponses, UpdateAppSettingsData, UpdateAppSettingsResponses, UpdateAppStoreData, UpdateAppStoreResponses, UpdateCustomAppData, UpdateCustomAppResponses, UpdateEditableAppConfigData, UpdateEditableAppConfigResponses, UpdateUserConfigData, UpdateUserConfigResponses, UpdateUserSettingsData, UpdateUserSettingsResponses, UploadAppImageData, UploadAppImageResponses, UploadBackupData, UploadBackupResponses, UserContextData, UserContextResponses, VerifyTotpData, VerifyTotpResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -383,8 +383,8 @@ export const updateApp = <ThrowOnError extends boolean = false>(options: Options
     });
 };
 
-export const updateAppConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateAppConfigData, ThrowOnError>) => {
-    return (options.client ?? client).patch<UpdateAppConfigResponses, unknown, ThrowOnError>({
+export const updateAppSettings = <ThrowOnError extends boolean = false>(options: Options<UpdateAppSettingsData, ThrowOnError>) => {
+    return (options.client ?? client).patch<UpdateAppSettingsResponses, unknown, ThrowOnError>({
         url: '/api/app-lifecycle/{urn}/update-config',
         ...options,
         headers: {
@@ -634,6 +634,38 @@ export const updateAppMetadata = <ThrowOnError extends boolean = false>(options:
             'Content-Type': 'application/json',
             ...options.headers
         }
+    });
+};
+
+export const getEditableAppConfig = <ThrowOnError extends boolean = false>(options: Options<GetEditableAppConfigData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetEditableAppConfigResponses, unknown, ThrowOnError>({
+        url: '/api/apps/{urn}/config',
+        ...options
+    });
+};
+
+export const updateEditableAppConfig = <ThrowOnError extends boolean = false>(options: Options<UpdateEditableAppConfigData, ThrowOnError>) => {
+    return (options.client ?? client).post<UpdateEditableAppConfigResponses, unknown, ThrowOnError>({
+        url: '/api/apps/{urn}/config',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const getTemplateDiff = <ThrowOnError extends boolean = false>(options: Options<GetTemplateDiffData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetTemplateDiffResponses, unknown, ThrowOnError>({
+        url: '/api/apps/{urn}/template/diff',
+        ...options
+    });
+};
+
+export const syncWithTemplate = <ThrowOnError extends boolean = false>(options: Options<SyncWithTemplateData, ThrowOnError>) => {
+    return (options.client ?? client).post<SyncWithTemplateResponses, unknown, ThrowOnError>({
+        url: '/api/apps/{urn}/template/sync',
+        ...options
     });
 };
 

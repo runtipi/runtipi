@@ -4,15 +4,16 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { convertLegacyToYaml, convertYamlToLegacy } from '@runtipi/common/schemas';
 import * as yaml from 'yaml';
+import { getEditableAppConfig } from '@/api-client';
+import { updateEditableAppConfigMutation } from '@/api-client/@tanstack/react-query.gen';
 import { MultiServiceForm } from '@/components/multi-service-form/multi-service-form';
 import { Input } from '@/components/ui/Input/Input';
 import type { TranslatableError } from '@/types/error.types';
 import { useEffect, useId, useState } from 'react';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import type { Route } from './+types/app-edit-page';
-import { getAppConfig } from '@/api-client/app-config';
 
-export async function clientLoader({ params }: Route.ActionArgs) {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const { appId, storeId } = params;
 
   if (!appId) {
@@ -21,14 +22,14 @@ export async function clientLoader({ params }: Route.ActionArgs) {
 
   const urn = storeId ? `${appId}:${storeId}` : `${appId}:_user`;
 
-  const { data } = await getAppConfig({ path: { urn } });
+  const response = await getEditableAppConfig({ path: { urn } });
+  const config = response.data?.config;
 
-  const configData = data as { config?: string };
-  if (!configData.config) {
+  if (!config) {
     return redirect('/apps');
   }
 
-  return { config: configData.config, urn };
+  return { config, urn };
 }
 
 export default function AppEditPage({ loaderData }: Route.ComponentProps) {
@@ -39,7 +40,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   const { setServices } = useMultiServiceStore();
   const id = useId();
 
-  const appName = params.appId;
+  const appName = params.appId ?? '';
   const storeId = params.storeId || '_user';
   const urn = `${appName}:${storeId}`;
 
@@ -61,10 +62,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   }, [loaderData, setServices, id, navigate, t]);
 
   const updateApp = useMutation({
-    mutationFn: async (config: string) => {
-      const { updateAppConfig } = await import('@/api-client/app-config');
-      return updateAppConfig({ path: { urn }, body: { config } });
-    },
+    ...updateEditableAppConfigMutation(),
     onSuccess: () => {
       toast.success(t('APP_CONFIG_UPDATE_SUCCESS', { name: appName }));
       navigate(`/apps/${storeId === '_user' ? appName : `${storeId}/${appName}`}`);
@@ -75,7 +73,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   });
 
   const onSubmit = (data: ReturnType<typeof convertYamlToLegacy>) => {
-    updateApp.mutate(yaml.stringify(convertLegacyToYaml(data)));
+    updateApp.mutate({ path: { urn }, body: { config: yaml.stringify(convertLegacyToYaml(data)) } });
   };
 
   if (!ready) {

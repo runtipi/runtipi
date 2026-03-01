@@ -61,8 +61,8 @@ export class AppLifecycleController {
 
   @Patch(':urn/update-config')
   @ApiResponse({ type: LifecycleRequestDto })
-  async updateAppConfig(@Param('urn') urn: string, @Body() body: AppFormBody) {
-    const res = await this.appLifecycleService.updateAppConfig({ appUrn: castAppUrn(urn), form: body });
+  async updateAppSettings(@Param('urn') urn: string, @Body() body: AppFormBody) {
+    const res = await this.appLifecycleService.updateAppSettings({ appUrn: castAppUrn(urn), form: body });
     return LifecycleRequestDto.parse(res, { reportOnly: true });
   }
 

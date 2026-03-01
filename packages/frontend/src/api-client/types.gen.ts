@@ -414,25 +414,25 @@ export type GetAppDto = {
     };
     app?: {
         createdAt: number;
-         domain: string | null;
-         exposed: boolean;
-         exposedLocal: boolean;
-         id: number;
-         ignoredVersion: number | null;
-         isVisibleOnGuestDashboard: boolean;
-         openPort: boolean;
-         pendingRestart: boolean;
-         port: number | null;
-         status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
-         templateUrn: string | null;
-         updatedAt: number;
-         version: number;
-         config?: {
-             [key: string]: unknown;
-         };
-         enableAuth?: boolean;
-         localSubdomain?: string | null;
-     } | null;
+        domain: string | null;
+        exposed: boolean;
+        exposedLocal: boolean;
+        id: number;
+        ignoredVersion: number | null;
+        isVisibleOnGuestDashboard: boolean;
+        openPort: boolean;
+        pendingRestart: boolean;
+        port: number | null;
+        status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+        templateUrn: string | null;
+        updatedAt: number;
+        version: number;
+        config?: {
+            [key: string]: unknown;
+        };
+        enableAuth?: boolean;
+        localSubdomain?: string | null;
+    } | null;
 };
 
 export type GetComposeDiffDto = {
@@ -851,6 +851,26 @@ export type UpdateCustomAppDto = {
 
 export type UpdateAppMetadataDto = {
     data: string;
+};
+
+export type GetAppConfigDto = {
+    config: string | null;
+};
+
+export type UpdateAppConfigBodyDto = {
+    config: string;
+};
+
+export type AppConfigSuccessDto = {
+    success: boolean;
+};
+
+export type TemplateDiffDto = {
+    hasChanges: boolean;
+    localVersion: number;
+    templateVersion: number;
+    current?: string;
+    template?: string;
 };
 
 export type UserContextData = {
@@ -1421,7 +1441,7 @@ export type UpdateAppResponses = {
 
 export type UpdateAppResponse = UpdateAppResponses[keyof UpdateAppResponses];
 
-export type UpdateAppConfigData = {
+export type UpdateAppSettingsData = {
     body: AppFormBody;
     path: {
         urn: string;
@@ -1430,11 +1450,11 @@ export type UpdateAppConfigData = {
     url: '/api/app-lifecycle/{urn}/update-config';
 };
 
-export type UpdateAppConfigResponses = {
+export type UpdateAppSettingsResponses = {
     default: LifecycleRequestDto;
 };
 
-export type UpdateAppConfigResponse = UpdateAppConfigResponses[keyof UpdateAppConfigResponses];
+export type UpdateAppSettingsResponse = UpdateAppSettingsResponses[keyof UpdateAppSettingsResponses];
 
 export type UpdateAllAppsData = {
     body?: never;
@@ -1847,6 +1867,66 @@ export type UpdateAppMetadataData = {
 export type UpdateAppMetadataResponses = {
     default: unknown;
 };
+
+export type GetEditableAppConfigData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/config';
+};
+
+export type GetEditableAppConfigResponses = {
+    default: GetAppConfigDto;
+};
+
+export type GetEditableAppConfigResponse = GetEditableAppConfigResponses[keyof GetEditableAppConfigResponses];
+
+export type UpdateEditableAppConfigData = {
+    body: UpdateAppConfigBodyDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/config';
+};
+
+export type UpdateEditableAppConfigResponses = {
+    default: AppConfigSuccessDto;
+};
+
+export type UpdateEditableAppConfigResponse = UpdateEditableAppConfigResponses[keyof UpdateEditableAppConfigResponses];
+
+export type GetTemplateDiffData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/template/diff';
+};
+
+export type GetTemplateDiffResponses = {
+    default: TemplateDiffDto;
+};
+
+export type GetTemplateDiffResponse = GetTemplateDiffResponses[keyof GetTemplateDiffResponses];
+
+export type SyncWithTemplateData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/template/sync';
+};
+
+export type SyncWithTemplateResponses = {
+    default: AppConfigSuccessDto;
+};
+
+export type SyncWithTemplateResponse = SyncWithTemplateResponses[keyof SyncWithTemplateResponses];
 
 export type SeedDatabaseData = {
     body?: never;

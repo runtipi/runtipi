@@ -63,6 +63,7 @@
   "APP_ERROR_DOMAIN_NOT_VALID": "Domain {{domain}} is not a valid domain",
   "APP_ERROR_DOMAIN_REQUIRED_IF_EXPOSE_APP": "Domain is required if app is exposed",
   "APP_ERROR_INVALID_CONFIG": "App {{id}} has an invalid config.json file",
+  "APP_ERROR_SAVE_CONFIG": "Failed to save config for app {{id}}",
   "APP_ERROR_PORT_ALREADY_IN_USE": "Port {{port}} is already in use by app {{id}}",
   "APP_ERROR_EVENT_IN_PROGRESS": "An event is already in progress for app {{id}}. Please wait until it finishes or for it to timeout.",
   "APP_ERROR_COMPOSE_SCHEMA_TOO_OLD": "This app uses an outdated configuration format (version {{version}}) that is no longer supported. Please update Runtipi to the latest version to install this app.",
