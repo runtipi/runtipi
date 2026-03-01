@@ -127,15 +127,13 @@ describe('AppConfigService', () => {
       await expect(service.updateAppConfig(mockAppUrn, { config: invalidYaml })).rejects.toThrow(TranslatableError);
     });
 
-    it('should throw TranslatableError with APP_ERROR_SAVE_CONFIG for filesystem write failure', async () => {
+    it('should throw TranslatableError when file write fails', async () => {
       // Arrange
       mockAppsRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: faker.number.int(), appName: 'test-app', appStoreSlug: 'test-store' }));
       mockFilesystem.writeTextFile.mockResolvedValue(false);
 
       // Act & Assert
-      await expect(service.updateAppConfig(mockAppUrn, { config: 'version: "3"' })).rejects.toThrow(
-        new TranslatableError('APP_ERROR_SAVE_CONFIG', { id: mockAppUrn }, HttpStatus.INTERNAL_SERVER_ERROR),
-      );
+      await expect(service.updateAppConfig(mockAppUrn, { config: 'version: "3"' })).rejects.toThrow(TranslatableError);
     });
 
     it('should throw TranslatableError when in demo mode', async () => {

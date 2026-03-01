@@ -1,4 +1,4 @@
-import { getTemplateDiff, syncWithTemplate } from '@/api-client';
+import { getTemplateDiff, syncWithTemplate } from '@/api-client/app-config';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
