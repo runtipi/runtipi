@@ -20,6 +20,7 @@ const appSchema = type({
   localSubdomain: type('string').or('null').optional(),
   pendingRestart: 'boolean',
   ignoredVersion: 'number | null',
+  templateUrn: 'string | null',
 });
 
 const myAppsSchema = type({

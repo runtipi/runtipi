@@ -2078,6 +2078,60 @@
         ]
       }
     },
+    "/api/apps/{urn}/config": {
+      "get": {
+        "operationId": "getAppConfig",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppConfig"
+        ]
+      },
+      "post": {
+        "operationId": "updateAppConfig",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppConfig"
+        ]
+      }
+    },
+    "/api/apps/{urn}/template/diff": {
+      "get": {
+        "operationId": "getTemplateDiff",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppConfig"
+        ]
+      }
+    },
+    "/api/apps/{urn}/template/sync": {
+      "post": {
+        "operationId": "syncWithTemplate",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AppConfig"
+        ]
+      }
+    },
     "/api/debug/seed": {
       "post": {
         "operationId": "seedDatabase",
@@ -2990,6 +3044,16 @@
                         "updating"
                       ]
                     },
+                    "templateUrn": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "updatedAt": {
                       "type": "number"
                     },
@@ -3026,6 +3090,7 @@
                     "pendingRestart",
                     "port",
                     "status",
+                    "templateUrn",
                     "updatedAt",
                     "version"
                   ]
@@ -3390,6 +3455,16 @@
                         "updating"
                       ]
                     },
+                    "templateUrn": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "updatedAt": {
                       "type": "number"
                     },
@@ -3426,6 +3501,7 @@
                     "pendingRestart",
                     "port",
                     "status",
+                    "templateUrn",
                     "updatedAt",
                     "version"
                   ]
@@ -4067,6 +4143,16 @@
                       "updating"
                     ]
                   },
+                  "templateUrn": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "updatedAt": {
                     "type": "number"
                   },
@@ -4103,6 +4189,7 @@
                   "pendingRestart",
                   "port",
                   "status",
+                  "templateUrn",
                   "updatedAt",
                   "version"
                 ]

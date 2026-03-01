@@ -218,6 +218,13 @@
       "when": 1762869350391,
       "tag": "0030_redundant_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1772133459465,
+      "tag": "0031_editable_apps",
+      "breakpoints": true
     }
   ]
 }
