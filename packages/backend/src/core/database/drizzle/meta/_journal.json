@@ -225,6 +225,13 @@
       "when": 1772133459465,
       "tag": "0031_editable_apps",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1772553729519,
+      "tag": "0032_new_slipstream",
+      "breakpoints": true
     }
   ]
 }

@@ -98,3 +98,15 @@ export const appStore = pgTable('app_store', {
   createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
   updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
 });
+
+export const oidc = pgTable('oidc', {
+  id: serial().primaryKey().notNull(),
+  name: varchar().notNull(),
+  clientId: varchar().notNull(),
+  clientSecret: varchar().notNull(),
+  authorizeUri: varchar().notNull(),
+  tokenUri: varchar().notNull(),
+  userInfoUri: varchar().notNull(),
+  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+});
