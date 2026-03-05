@@ -11,9 +11,25 @@ export const oidcProviderSchema = type({
   userInfoUri: 'string',
 });
 
+export const oidcProviderPublicSchema = type({
+  id: 'number',
+  name: 'string',
+});
+
+export const oidcProviderAuthRes = type({
+  url: 'string',
+});
+
 export const oidcProvidersSchema = type({
   providers: oidcProviderSchema.array(),
 });
 
+export const publicOidcProvidersSchema = type({
+  providers: oidcProviderPublicSchema.array(),
+});
+
 export class OidcProviderDto extends createArkDto(oidcProviderSchema, { name: 'OidcProviderDto', input: true }) {}
 export class OidcProvidersDto extends createArkDto(oidcProvidersSchema, { name: 'OidcProvidersDto' }) {}
+export class PublicOidcProviderDto extends createArkDto(oidcProviderPublicSchema, { name: 'PublicOidcProviderDto' }) {}
+export class PublicOidcProvidersDto extends createArkDto(publicOidcProvidersSchema, { name: 'PublicOidcProvidersDto' }) {}
+export class OidcProviderAuthResDto extends createArkDto(oidcProviderAuthRes, { name: 'OidcProviderAuthResDto' }) {}
