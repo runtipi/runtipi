@@ -70,4 +70,14 @@ export class OidcRepository {
     const provider = await this.db.select().from(oidcTable).where(eq(oidcTable.name, name));
     return provider[0];
   }
+
+  /**
+   * Retrieves a single OIDC provider by its ID.
+   * @param {number} id - The ID of the provider to be retrieved.
+   * @returns The provider.
+   */
+  public async getProviderById(id: number) {
+    const provider = await this.db.select().from(oidcTable).where(eq(oidcTable.id, id));
+    return provider[0];
+  }
 }

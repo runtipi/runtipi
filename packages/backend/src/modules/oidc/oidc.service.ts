@@ -34,8 +34,8 @@ export class OidcService {
     return config;
   }
 
-  public async getProviderAuthUrl(name: string, url: string) {
-    const provider = await this.oidcRepository.getProviderByName(name);
+  public async getProviderAuthUrl(id: number, url: string) {
+    const provider = await this.oidcRepository.getProviderById(id);
 
     if (!provider) return null;
 
@@ -49,7 +49,7 @@ export class OidcService {
 
     // We will use the request domain to avoid needing a static domain set
     const redirectUri = `${url}/api/oidc/callback/${provider.name}`;
-    const authUrl = client.buildAuthorizationUrl(config, { state, redirect_uri: redirectUri });
+    const authUrl = client.buildAuthorizationUrl(config, { state, redirect_uri: redirectUri, scope: 'openid email' });
     return authUrl;
   }
 
@@ -126,5 +126,15 @@ export class OidcService {
 
   public async getOidcProviders() {
     return await this.oidcRepository.getProviders();
+  }
+
+  public async getOidcProvidersPublic() {
+    const providers = await this.oidcRepository.getProviders();
+    return providers.map((p) => {
+      return {
+        id: p.id,
+        name: p.name,
+      };
+    });
   }
 }
