@@ -216,7 +216,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     const redirectUrl = body.redirectUrl ? (this.createForwardAuthRedirectUrl(sessionId, req, body.redirectUrl) ?? undefined) : undefined;
 
@@ -229,7 +229,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     const redirectUrl = body.redirectUrl ? (this.createForwardAuthRedirectUrl(sessionId, req, body.redirectUrl) ?? undefined) : undefined;
 
@@ -241,7 +241,7 @@ export class AuthController {
   async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.register(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     return RegisterDto.parse({ success: true }, { reportOnly: true });
   }

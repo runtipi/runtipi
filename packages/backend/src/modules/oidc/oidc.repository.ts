@@ -48,7 +48,7 @@ export class OidcRepository {
    * @returns An array of providers.
    */
   public async getProviders() {
-    return this.db.select().from(oidcTable).orderBy(oidcTable.id);
+    return await this.db.select().from(oidcTable).orderBy(oidcTable.id);
   }
 
   /**

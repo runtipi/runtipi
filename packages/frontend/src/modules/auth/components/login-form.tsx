@@ -18,10 +18,13 @@ interface IProps {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
   loginType: string;
+  oauthProviders: { id: number; name: string }[];
+  onOAuthClick: (provider: { id: number }) => void;
 }
 
-export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) => {
+export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oauthProviders, onOAuthClick }) => {
   const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -69,6 +72,18 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
           <Link to="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
         </div>
       </form>
+      {oauthProviders.length > 0 && (
+        <div className="mt-3">
+          <div className="text-center mb-3">Or login with</div>
+          <div className="d-flex gap-3">
+            {oauthProviders.map((provider) => (
+              <Button key={provider.id} onClick={() => onOAuthClick(provider)} intent="primary" className="w-100">
+                {provider.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };
