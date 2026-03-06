@@ -124,8 +124,8 @@ export class OidcService {
     }
   }
 
-  public async storeTrustedSub(sub: string, userId: number) {
-    return await this.oidcRepository.storeTrustedSub(sub, userId);
+  public async storeTrustedSub(sub: string, userId: number, providerId: number) {
+    return await this.oidcRepository.storeTrustedSub(sub, userId, providerId);
   }
 
   public async getTrustedSubsByUserId(userId: number) {
@@ -154,6 +154,14 @@ export class OidcService {
 
   public async getOidcProviders() {
     return await this.oidcRepository.getProviders();
+  }
+
+  public async getOidcProviderById(id: number) {
+    return await this.oidcRepository.getProviderById(id);
+  }
+
+  public async deleteTrustedSubsByProviderId(providerId: number) {
+    return await this.oidcRepository.deleteTrustedSubsByProviderId(providerId);
   }
 
   public async getOidcProvidersPublic() {

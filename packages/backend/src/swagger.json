@@ -2341,7 +2341,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OidcProvidersDto"
+                  "$ref": "#/components/schemas/OidcProviderDto"
                 }
               }
             }
@@ -6028,6 +6028,9 @@
             "items": {
               "type": "object",
               "properties": {
+                "providerId": {
+                  "type": "number"
+                },
                 "sub": {
                   "type": "string"
                 },
@@ -6036,6 +6039,7 @@
                 }
               },
               "required": [
+                "providerId",
                 "sub"
               ]
             }

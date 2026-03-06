@@ -929,6 +929,7 @@ export type OidcProviderAuthResDto = {
 
 export type TrustedSubsDto = {
     subs: Array<{
+        providerId: number;
         sub: string;
         createdAt?: number;
     }>;
@@ -2043,7 +2044,7 @@ export type CreateProviderData = {
 };
 
 export type CreateProviderResponses = {
-    default: OidcProvidersDto;
+    default: OidcProviderDto;
 };
 
 export type CreateProviderResponse = CreateProviderResponses[keyof CreateProviderResponses];

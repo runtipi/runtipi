@@ -13,6 +13,7 @@ CREATE TABLE "oidc" (
 CREATE TABLE "oidc_trusted_subs" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"userId" integer NOT NULL,
+	"providerId" integer NOT NULL,
 	"sub" varchar NOT NULL,
 	"created_at" integer DEFAULT extract(epoch from now()) NOT NULL,
 	"updated_at" integer DEFAULT extract(epoch from now()) NOT NULL
