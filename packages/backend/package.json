@@ -103,7 +103,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.8.3",
     "unplugin-swc": "^1.5.2",
-    "vite-tsconfig-paths": "5.1.4",
+    "vite-tsconfig-paths": "6.1.1",
     "vitest": "^4.0.6",
     "vitest-mock-extended": "^3.1.0",
     "wait-for-expect": "^4.0.0"

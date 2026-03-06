@@ -91,7 +91,7 @@
     "globals": "^16.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.1.9",
-    "vite-tsconfig-paths": "^5.1.4",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.6"
   }
 }
