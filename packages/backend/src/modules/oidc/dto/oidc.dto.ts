@@ -21,9 +21,10 @@ export const oidcProviderAuthRes = type({
 });
 
 export const trustedSubSchema = type({
+  id: 'number',
   sub: 'string',
   providerId: 'number',
-  'createdAt?': 'number',
+  createdAt: 'number',
 });
 
 export const oidcProvidersSchema = type({

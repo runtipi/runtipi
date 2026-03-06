@@ -73,9 +73,7 @@ export const AddOAuthProviderDialog = () => {
 
   return (
     <>
-      <Button onClick={() => addProviderdialogDisclosure.open()} className="mt-3">
-        Create Provider
-      </Button>
+      <Button onClick={() => addProviderdialogDisclosure.open()}>Create Provider</Button>
       <Dialog open={addProviderdialogDisclosure.isOpen} onOpenChange={addProviderdialogDisclosure.toggle}>
         <DialogContent>
           <DialogHeader>

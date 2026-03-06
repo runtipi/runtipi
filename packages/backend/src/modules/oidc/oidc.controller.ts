@@ -125,7 +125,7 @@ export class OidcController {
 
     const trustedSubs = await this.oidcService.getTrustedSubsByUserId(req.user.id);
     return TrustedSubsDto.parse({
-      subs: trustedSubs.map((entry) => ({ sub: entry.sub, providerId: entry.providerId, createdAt: entry.createdAt })),
+      subs: trustedSubs,
     });
   }
 

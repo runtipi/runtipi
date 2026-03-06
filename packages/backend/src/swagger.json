@@ -5789,17 +5789,22 @@
             "items": {
               "type": "object",
               "properties": {
+                "createdAt": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "number"
+                },
                 "providerId": {
                   "type": "number"
                 },
                 "sub": {
                   "type": "string"
-                },
-                "createdAt": {
-                  "type": "number"
                 }
               },
               "required": [
+                "createdAt",
+                "id",
                 "providerId",
                 "sub"
               ]

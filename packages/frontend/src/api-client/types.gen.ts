@@ -904,9 +904,10 @@ export type OidcProviderAuthResDto = {
 
 export type TrustedSubsDto = {
     subs: Array<{
+        createdAt: number;
+        id: number;
         providerId: number;
         sub: string;
-        createdAt?: number;
     }>;
 };
 
