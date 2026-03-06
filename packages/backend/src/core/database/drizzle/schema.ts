@@ -114,6 +114,7 @@ export const oidc = pgTable('oidc', {
 export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
   id: serial().primaryKey().notNull(),
   userId: integer().notNull(),
+  providerId: integer().notNull(),
   sub: varchar().notNull(),
   createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
   updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),

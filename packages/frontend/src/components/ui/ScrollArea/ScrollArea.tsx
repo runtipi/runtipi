@@ -21,7 +21,7 @@ const ScrollBar = ({ className, orientation = 'vertical', ...props }: React.Comp
 
 const ScrollArea = ({ className, children, ...props }: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & { maxheight: number }) => (
   <ScrollAreaPrimitive.Root className={clsx('position-relative overflow-hidden', className)} {...props}>
-    <ScrollAreaPrimitive.Viewport style={{ maxHeight: props.maxheight }} className={clsx(styles.viewport, 'w-100')}>
+    <ScrollAreaPrimitive.Viewport style={{ maxHeight: props.maxheight, paddingRight: '1rem' }} className={clsx(styles.viewport, 'w-100')}>
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar />

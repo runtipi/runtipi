@@ -40,10 +40,14 @@ export class OidcController {
   }
 
   @Post('providers/new')
-  @ApiResponse({ type: OidcProvidersDto })
+  @ApiResponse({ type: OidcProviderDto })
   @UseGuards(AuthGuard)
   async createProvider(@Body() provider: OidcProviderDto) {
-    return await this.oidcService.createOidcProvider(provider);
+    const res = await this.oidcService.createOidcProvider(provider);
+    if (!res) {
+      throw new Error('Failed to create provider');
+    }
+    return OidcProviderDto.parse({ ...res });
   }
 
   @Patch('providers/:id/edit')
@@ -57,6 +61,7 @@ export class OidcController {
   @ApiResponse({ type: OidcProvidersDto })
   @UseGuards(AuthGuard)
   async deleteProvider(@Param('id') id: number) {
+    await this.oidcService.deleteTrustedSubsByProviderId(id);
     return await this.oidcService.deleteOidcProvider(id);
   }
 
@@ -71,6 +76,13 @@ export class OidcController {
   @Get('providers/:id/callback')
   async handleCallback(@Param('id') id: number, @Query() query: { state: string }, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const reqUrl = new URL(`${req.protocol}://${req.host}${req.url}`);
+
+    const provider = await this.oidcService.getOidcProviderById(id);
+
+    if (!provider) {
+      throw new Error('Failed to find provider');
+    }
+
     const tokenRes = await this.oidcService.getTokenFromCallback(query.state, reqUrl);
     const userInfo = await this.oidcService.fetchUserInfo(id, tokenRes.access_token);
 
@@ -97,7 +109,7 @@ export class OidcController {
     const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub);
 
     if (!trustedSubEntry) {
-      await this.oidcService.storeTrustedSub(userInfo.sub, req.user.id);
+      await this.oidcService.storeTrustedSub(userInfo.sub, req.user.id, provider.id);
     }
 
     return res.redirect(`${reqUrl.origin}/settings?tab=security`);
@@ -113,7 +125,7 @@ export class OidcController {
 
     const trustedSubs = await this.oidcService.getTrustedSubsByUserId(req.user.id);
     return TrustedSubsDto.parse({
-      subs: trustedSubs.map((entry) => ({ sub: entry.sub, createdAt: entry.createdAt })),
+      subs: trustedSubs.map((entry) => ({ sub: entry.sub, providerId: entry.providerId, createdAt: entry.createdAt })),
     });
   }
 

@@ -104,7 +104,15 @@ export class OidcRepository {
    * @param {string} sub - The sub of the trusted entry to be stored.
    * @param {number} userId - The ID of the user to associate the trusted sub entry with.
    */
-  public async storeTrustedSub(sub: string, userId: number) {
-    await this.db.insert(oidcTrustedSubs).values({ sub, userId });
+  public async storeTrustedSub(sub: string, userId: number, providerId: number) {
+    await this.db.insert(oidcTrustedSubs).values({ sub, userId, providerId });
+  }
+
+  /**
+   * Deletes all trusted sub entries for a given provider ID.
+   * @param {number} providerId - The ID of the provider to delete trusted sub entries for.
+   */
+  public async deleteTrustedSubsByProviderId(providerId: number) {
+    await this.db.delete(oidcTrustedSubs).where(eq(oidcTrustedSubs.providerId, providerId));
   }
 }

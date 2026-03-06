@@ -1,5 +1,5 @@
 {
-  "id": "a4bf146b-fbd6-4c70-a2ac-5ebdf3ef8afd",
+  "id": "0c033298-acc0-4416-a6f9-3d0c0c2a9b37",
   "prevId": "d4ef54f9-1df7-4b5c-ab4d-f5ef53758e2b",
   "version": "7",
   "dialect": "postgresql",
@@ -419,6 +419,12 @@
         },
         "userId": {
           "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "providerId": {
+          "name": "providerId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
