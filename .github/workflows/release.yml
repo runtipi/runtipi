@@ -81,7 +81,7 @@ jobs:
             latest=${{ needs.determine-release-type.outputs.release_type == 'release' }}
 
       - name: Build and push images
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           secrets: |
