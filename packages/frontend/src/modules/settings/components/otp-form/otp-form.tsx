@@ -79,7 +79,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
     if (!uri || totpEnabled) return null;
 
     return (
-      <div className="mt-4">
+      <div className="mt-4 mb-4">
         <div className="mb-4">
           <p className="text-muted">{t('SETTINGS_SECURITY_SCAN_QR_CODE')}</p>
           <QRCodeSVG value={uri} />
@@ -114,7 +114,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
 
   return (
     <>
-      {!key && <Switch onCheckedChange={handleTotp} checked={totpEnabled} label={t('SETTINGS_SECURITY_ENABLE_2FA')} />}
+      {!key && <Switch onCheckedChange={handleTotp} checked={totpEnabled} label={t('SETTINGS_SECURITY_ENABLE_2FA')} className="mb-4" />}
       {getTotpUri.isPending && (
         <div className="progress w-50">
           <div className="progress-bar progress-bar-indeterminate bg-green" />

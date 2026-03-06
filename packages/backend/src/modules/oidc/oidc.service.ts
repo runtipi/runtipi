@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import type { OidcRepository } from './oidc.repository';
+import { OidcRepository } from './oidc.repository';
 import { OidcProviderDto } from './dto/oidc.dto';
 import * as client from 'openid-client';
+import { LoggerService } from '@/core/logger/logger.service';
 
 type TrustedState = {
   clientId: string;
@@ -14,7 +15,10 @@ export class OidcService {
   // Trusted states will hold all of the available states for OIDC authentication
   private trustedStatesStore: Map<string, TrustedState> = new Map();
 
-  constructor(private readonly oidcRepository: OidcRepository) {}
+  constructor(
+    private readonly oidcRepository: OidcRepository,
+    private readonly logger: LoggerService,
+  ) {}
 
   private buildClientConfig(provider: OidcProviderDto) {
     // We will extract the issuer from the provider's authorize URI
@@ -34,82 +38,96 @@ export class OidcService {
     return config;
   }
 
-  public async getProviderAuthUrl(id: number, url: string) {
-    const provider = await this.oidcRepository.getProviderById(id);
+  public async getProviderAuthUrl(id: number, reqUrl: URL): Promise<string> {
+    try {
+      const provider = await this.oidcRepository.getProviderById(id);
 
-    if (!provider) return null;
+      if (!provider) {
+        throw new Error('Provider not found');
+      }
 
-    const config = this.buildClientConfig(provider);
+      const config = this.buildClientConfig(provider);
+      const state = client.randomState();
+      const expiresAt = Date.now() + 3600000;
 
-    // We will use the state as the lookup key since you can have multiple
-    // sessions trying to authenticate with the same provider
-    const state = client.randomState();
-    const expiresAt = Date.now() + 3600000; // 1 hour
-    this.trustedStatesStore.set(state, { clientId: provider.clientId, expiresAt, url });
+      this.trustedStatesStore.set(state, { clientId: provider.clientId, expiresAt, url: reqUrl.origin });
 
-    // We will use the request domain to avoid needing a static domain set
-    const redirectUri = `${url}/api/oidc/callback/${provider.name}`;
-    const authUrl = client.buildAuthorizationUrl(config, { state, redirect_uri: redirectUri, scope: 'openid email' });
-    return authUrl;
+      const redirectUri = `${reqUrl.origin}/api/oidc/providers/${provider.id}/callback`;
+      const authUrl = client.buildAuthorizationUrl(config, { state, redirect_uri: redirectUri, scope: 'openid' });
+
+      return authUrl.href;
+    } catch (error) {
+      this.logger.error('Failed to get auth url', error);
+      throw error;
+    }
   }
 
-  public async handleCallback(clientId: string, code: string, state: string, url: string) {
-    // Try to load a state from the store
-    const trustedState = this.trustedStatesStore.get(state);
+  public async getTokenFromCallback(state: string, reqUrl: URL): Promise<client.TokenEndpointResponse> {
+    try {
+      const trustedState = this.trustedStatesStore.get(state);
 
-    if (!trustedState) return null;
+      if (!trustedState) {
+        throw new Error('Invalid state');
+      }
 
-    // Ensure the state is still valid, the url matches, and the client id matches
-    if (trustedState.expiresAt < Date.now()) {
-      this.trustedStatesStore.delete(state);
-      return null;
-    }
+      if (trustedState.expiresAt < Date.now()) {
+        this.trustedStatesStore.delete(state);
+        throw new Error('State expired');
+      }
 
-    if (trustedState.url !== url) {
-      this.trustedStatesStore.delete(state);
-      return null;
-    }
+      if (trustedState.url !== reqUrl.origin) {
+        this.trustedStatesStore.delete(state);
+        throw new Error('Invalid redirect URI');
+      }
 
-    if (trustedState.clientId !== clientId) {
-      this.trustedStatesStore.delete(state);
-      return null;
-    }
+      const provider = await this.oidcRepository.getProviderByClientId(trustedState.clientId);
 
-    // Load provider information
-    const provider = await this.oidcRepository.getProviderByClientId(clientId);
+      if (!provider) {
+        this.trustedStatesStore.delete(state);
+        throw new Error('Invalid provider');
+      }
 
-    if (!provider) return null;
+      const config = this.buildClientConfig(provider);
 
-    const config = this.buildClientConfig(provider);
-    const urlObj = new URL(url);
-
-    // Exchange the authorization code for a token
-    const tokenResponse = await client.authorizationCodeGrant(
-      config,
-      urlObj,
-      {
+      const tokenResponse = await client.authorizationCodeGrant(config, reqUrl, {
         expectedState: state,
-      },
-      { code },
-    );
+        idTokenExpected: true,
+      });
 
-    // Clean up the state after successful exchange
-    this.trustedStatesStore.delete(state);
+      this.trustedStatesStore.delete(state);
 
-    return tokenResponse;
+      return tokenResponse;
+    } catch (error) {
+      this.logger.error('Failed to get token from callback', error);
+      throw error;
+    }
   }
 
-  public async fetchUserInfo(token: string, sub: string, clientId: string) {
-    // Load provider information
-    const provider = await this.oidcRepository.getProviderByClientId(clientId);
+  public async fetchUserInfo(id: number, access_token: string): Promise<{ sub: string }> {
+    try {
+      const provider = await this.oidcRepository.getProviderById(id);
 
-    if (!provider) return null;
+      if (!provider) {
+        throw new Error('Invalid provider');
+      }
 
-    const config = this.buildClientConfig(provider);
+      const config = this.buildClientConfig(provider);
 
-    // Fetch user info
-    const userInfoResponse = await client.fetchUserInfo(config, token, sub);
-    return userInfoResponse;
+      const userInfoResponse = await client.fetchProtectedResource(config, access_token, new URL(provider.userInfoUri), 'GET');
+
+      const bodyJson = (await userInfoResponse.json()) as { sub?: string };
+
+      if (!bodyJson?.sub) {
+        throw new Error('Sub claim not found');
+      }
+
+      return {
+        sub: bodyJson.sub,
+      };
+    } catch (error) {
+      this.logger.error('Failed to fetch user info', error);
+      throw error;
+    }
   }
 
   public async createOidcProvider(provider: OidcProviderDto) {

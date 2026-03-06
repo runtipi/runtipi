@@ -36,6 +36,7 @@ import { GithubModule } from './utils/github/github.module';
 import { ArkValidationPipe } from 'nestjs-arktype';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CustomAppsModule } from './modules/custom-apps/custom-apps.module';
+import { OidcModule } from './modules/oidc/oidc.module';
 
 const imports: (DynamicModule | typeof I18nModule)[] = [
   SentryModule.forRoot(),
@@ -64,6 +65,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   GithubModule,
   CustomAppsModule,
   AppConfigModule,
+  OidcModule,
 ];
 
 const { NODE_ENV } = process.env;

@@ -2,7 +2,7 @@ import { type } from 'arktype';
 import { createArkDto } from 'nestjs-arktype';
 
 export const oidcProviderSchema = type({
-  id: 'number',
+  'id?': 'number',
   name: 'string',
   clientId: 'string',
   clientSecret: 'string',

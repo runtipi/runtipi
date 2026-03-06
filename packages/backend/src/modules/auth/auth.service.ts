@@ -13,6 +13,9 @@ import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
+import { LoggerService } from '@/core/logger/logger.service';
+import { type Request as ExpressRequest, type Response as ExpressResponse } from 'express';
+import { SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from '@/common/constants';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +27,31 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
+    private logger: LoggerService,
   ) {}
+
+  public async setSessionCookie(res: ExpressResponse, sessionId: string, req: ExpressRequest) {
+    const host = req.headers['x-forwarded-host'] as string | undefined;
+    const proto = req.headers['x-forwarded-proto'] as string | undefined;
+    const domain = this.getCookieDomain(host);
+    const secure = Boolean(domain) && proto === 'https';
+
+    this.logger.debug('Request headers', req.headers);
+    this.logger.debug('Setting session cookie', { host, domain, proto, secure });
+
+    if (this.config.get('userSettings').experimental.insecureCookie) {
+      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
+      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    } else {
+      res.cookie(SESSION_COOKIE_NAME, sessionId, {
+        httpOnly: true,
+        secure,
+        sameSite: 'lax',
+        maxAge: SESSION_COOKIE_MAX_AGE,
+        domain,
+      });
+    }
+  }
 
   public getCookieDomain(domain?: string) {
     if (!domain || !validator.isFQDN(domain)) {

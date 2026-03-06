@@ -1,6 +1,5 @@
-import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
+import { SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
-import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Body, Controller, Get, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
@@ -28,31 +27,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly logger: LoggerService,
-    private readonly config: ConfigurationService,
   ) {}
-
-  private async setSessionCookie(res: Response, sessionId: string, req: Request) {
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    const domain = this.authService.getCookieDomain(host);
-    const secure = Boolean(domain) && proto === 'https';
-
-    this.logger.debug('Request headers', req.headers);
-    this.logger.debug('Setting session cookie', { host, domain, proto, secure });
-
-    if (this.config.get('userSettings').experimental.insecureCookie) {
-      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
-      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
-    } else {
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        secure,
-        sameSite: 'lax',
-        maxAge: SESSION_COOKIE_MAX_AGE,
-        domain,
-      });
-    }
-  }
 
   @Post('/login')
   @ApiResponse({ type: LoginDto })
@@ -63,7 +38,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     return LoginDto.parse({ success: true }, { reportOnly: true });
   }
@@ -73,7 +48,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     return LoginDto.parse({ success: true }, { reportOnly: true });
   }
@@ -83,7 +58,7 @@ export class AuthController {
   async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.register(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     return RegisterDto.parse({ success: true }, { reportOnly: true });
   }
