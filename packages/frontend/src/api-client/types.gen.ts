@@ -883,7 +883,7 @@ export type OidcProvidersDto = {
         clientSecret: string;
         name: string;
         tokenUri: string;
-        userInfoUri: string;
+        userinfoUri: string;
         id?: number;
     }>;
 };
@@ -894,12 +894,19 @@ export type OidcProviderDto = {
     clientSecret: string;
     name: string;
     tokenUri: string;
-    userInfoUri: string;
+    userinfoUri: string;
     id?: number;
 };
 
 export type OidcProviderAuthResDto = {
     url: string;
+};
+
+export type TrustedSubsDto = {
+    subs: Array<{
+        sub: string;
+        createdAt?: number;
+    }>;
 };
 
 export type UserContextData = {
@@ -2027,6 +2034,32 @@ export type HandleCallbackData = {
 };
 
 export type HandleCallbackResponses = {
+    200: unknown;
+};
+
+export type GetTrustedSubsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/subs/trusted';
+};
+
+export type GetTrustedSubsResponses = {
+    200: TrustedSubsDto;
+};
+
+export type GetTrustedSubsResponse = GetTrustedSubsResponses[keyof GetTrustedSubsResponses];
+
+export type DeleteTrustedSubData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/api/oidc/subs/{id}/delete';
+};
+
+export type DeleteTrustedSubResponses = {
     200: unknown;
 };
 

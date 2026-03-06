@@ -21,7 +21,7 @@ export const OAuthForm = () => {
     clientSecret: 'string',
     authorizeUri: 'string',
     tokenUri: 'string',
-    userInfoUri: 'string',
+    userinfoUri: 'string',
   });
 
   type FormValues = typeof schema.infer;
@@ -111,13 +111,13 @@ export const OAuthForm = () => {
             {...register('tokenUri')}
           />
           <Input
-            error={formState.errors.userInfoUri?.message}
+            error={formState.errors.userinfoUri?.message}
             disabled={createProvider.isPending}
             type="text"
             label="User Info URI"
             placeholder="https://example.com/userinfo"
             className="mb-3"
-            {...register('userInfoUri')}
+            {...register('userinfoUri')}
           />
           <Button type="submit">Submit</Button>
         </form>
