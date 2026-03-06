@@ -2475,6 +2475,50 @@
         ]
       }
     },
+    "/api/oidc/subs/trusted": {
+      "get": {
+        "operationId": "getTrustedSubs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedSubsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Oidc"
+        ]
+      }
+    },
+    "/api/oidc/subs/{id}/delete": {
+      "delete": {
+        "operationId": "deleteTrustedSub",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Oidc"
+        ]
+      }
+    },
     "/api/debug/seed": {
       "post": {
         "operationId": "seedDatabase",
@@ -5909,7 +5953,7 @@
                 "tokenUri": {
                   "type": "string"
                 },
-                "userInfoUri": {
+                "userinfoUri": {
                   "type": "string"
                 },
                 "id": {
@@ -5922,7 +5966,7 @@
                 "clientSecret",
                 "name",
                 "tokenUri",
-                "userInfoUri"
+                "userinfoUri"
               ]
             }
           }
@@ -5949,7 +5993,7 @@
           "tokenUri": {
             "type": "string"
           },
-          "userInfoUri": {
+          "userinfoUri": {
             "type": "string"
           },
           "id": {
@@ -5962,7 +6006,7 @@
           "clientSecret",
           "name",
           "tokenUri",
-          "userInfoUri"
+          "userinfoUri"
         ]
       },
       "OidcProviderAuthResDto": {
@@ -5974,6 +6018,31 @@
         },
         "required": [
           "url"
+        ]
+      },
+      "TrustedSubsDto": {
+        "type": "object",
+        "properties": {
+          "subs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sub": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "sub"
+              ]
+            }
+          }
+        },
+        "required": [
+          "subs"
         ]
       }
     }

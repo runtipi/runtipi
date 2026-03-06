@@ -1,19 +1,18 @@
 import { Controller, Get, Injectable, Post, UseGuards, Body, Patch, Param, Delete, Req, Query, Res } from '@nestjs/common';
 import { OidcService } from './oidc.service';
 import { ApiResponse } from '@nestjs/swagger';
-import { OidcProviderAuthResDto, OidcProviderDto, OidcProvidersDto, PublicOidcProvidersDto } from './dto/oidc.dto';
+import { OidcProviderAuthResDto, OidcProviderDto, OidcProvidersDto, PublicOidcProvidersDto, TrustedSubsDto } from './dto/oidc.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { type Request as ExpressRequest, type Response as ExpressResponse } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { SessionManager } from '../auth/session.manager';
 
+// TODO: Throw is NOT error handling
+
 @Injectable()
 @Controller('oidc')
 export class OidcController {
-  // temp
-  private trustedSubs: Array<string> = [];
-
   constructor(
     private readonly oidcService: OidcService,
     private readonly authService: AuthService,
@@ -73,30 +72,54 @@ export class OidcController {
   async handleCallback(@Param('id') id: number, @Query() query: { state: string }, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const reqUrl = new URL(`${req.protocol}://${req.host}${req.url}`);
     const tokenRes = await this.oidcService.getTokenFromCallback(query.state, reqUrl);
-
     const userInfo = await this.oidcService.fetchUserInfo(id, tokenRes.access_token);
 
     if (!req.user) {
-      if (this.trustedSubs.includes(userInfo.sub)) {
-        const user = await this.userRepository.getFirstOperator();
+      const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub);
 
-        if (!user) {
-          throw new Error('Failed to find operator');
-        }
-
-        const sessionId = await this.sessionManager.createSession(user.id);
-
-        await this.authService.setSessionCookie(res, sessionId, req);
-
-        return res.redirect(`${reqUrl.origin}/dashboard`);
+      if (!trustedSubEntry) {
+        throw new Error('Unauthorized');
       }
-      throw new Error('Unauthorized');
+
+      const user = await this.userRepository.getFirstOperator();
+
+      if (!user) {
+        throw new Error('Failed to find operator');
+      }
+
+      const sessionId = await this.sessionManager.createSession(user.id);
+
+      await this.authService.setSessionCookie(res, sessionId, req);
+
+      return res.redirect(`${reqUrl.origin}/dashboard`);
     }
 
-    if (!this.trustedSubs.includes(userInfo.sub)) {
-      this.trustedSubs.push(userInfo.sub);
+    const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub);
+
+    if (!trustedSubEntry) {
+      await this.oidcService.storeTrustedSub(userInfo.sub, req.user.id);
     }
 
     return res.redirect(`${reqUrl.origin}/settings?tab=security`);
+  }
+
+  @Get('/subs/trusted')
+  @ApiResponse({ status: 200, type: TrustedSubsDto })
+  @UseGuards(AuthGuard)
+  async getTrustedSubs(@Req() req: ExpressRequest) {
+    if (!req.user) {
+      throw new Error('Failed to get user info');
+    }
+
+    const trustedSubs = await this.oidcService.getTrustedSubsByUserId(req.user.id);
+    return TrustedSubsDto.parse({
+      subs: trustedSubs.map((entry) => ({ sub: entry.sub, createdAt: entry.createdAt })),
+    });
+  }
+
+  @Delete('/subs/:id/delete')
+  @UseGuards(AuthGuard)
+  async deleteTrustedSub(@Param('id') id: number) {
+    return await this.oidcService.deleteTrustedSub(id);
   }
 }

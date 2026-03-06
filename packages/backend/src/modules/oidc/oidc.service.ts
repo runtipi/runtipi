@@ -12,7 +12,6 @@ type TrustedState = {
 
 @Injectable()
 export class OidcService {
-  // Trusted states will hold all of the available states for OIDC authentication
   private trustedStatesStore: Map<string, TrustedState> = new Map();
 
   constructor(
@@ -21,19 +20,16 @@ export class OidcService {
   ) {}
 
   private buildClientConfig(provider: OidcProviderDto) {
-    // We will extract the issuer from the provider's authorize URI
     const providerUrl = new URL(provider.authorizeUri);
     const issuer = providerUrl.origin;
 
-    // Build basic metadata since we cannot rely on discovery
     const server: client.ServerMetadata = {
       issuer: issuer,
       authorization_endpoint: provider.authorizeUri,
       token_endpoint: provider.tokenUri,
-      userinfo_endpoint: provider.userInfoUri,
+      userinfo_endpoint: provider.userinfoUri,
     };
 
-    // Finally, create the configuration with the client secret
     const config = new client.Configuration(server, provider.clientId, provider.clientSecret);
     return config;
   }
@@ -112,9 +108,7 @@ export class OidcService {
       }
 
       const config = this.buildClientConfig(provider);
-
-      const userInfoResponse = await client.fetchProtectedResource(config, access_token, new URL(provider.userInfoUri), 'GET');
-
+      const userInfoResponse = await client.fetchProtectedResource(config, access_token, new URL(provider.userinfoUri), 'GET');
       const bodyJson = (await userInfoResponse.json()) as { sub?: string };
 
       if (!bodyJson?.sub) {
@@ -128,6 +122,22 @@ export class OidcService {
       this.logger.error('Failed to fetch user info', error);
       throw error;
     }
+  }
+
+  public async storeTrustedSub(sub: string, userId: number) {
+    return await this.oidcRepository.storeTrustedSub(sub, userId);
+  }
+
+  public async getTrustedSubsByUserId(userId: number) {
+    return await this.oidcRepository.getTrustedSubsByUserId(userId);
+  }
+
+  public async deleteTrustedSub(id: number) {
+    return await this.oidcRepository.deleteTrustedSub(id);
+  }
+
+  public async getTrustedSub(sub: string) {
+    return await this.oidcRepository.getTrustedSub(sub);
   }
 
   public async createOidcProvider(provider: OidcProviderDto) {

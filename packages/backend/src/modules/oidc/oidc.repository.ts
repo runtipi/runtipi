@@ -1,7 +1,7 @@
 import { DATABASE, type Database } from '@/core/database/database.module';
 import { Inject, Injectable } from '@nestjs/common';
 import type { OidcProviderDto } from './dto/oidc.dto';
-import { oidc as oidcTable } from '@/core/database/drizzle/schema';
+import { oidc as oidcTable, oidcTrustedSubs } from '@/core/database/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 @Injectable()
@@ -14,8 +14,8 @@ export class OidcRepository {
    * @returns The newly added provider.
    */
   public async createProvider(provider: OidcProviderDto) {
-    const { name, clientId, clientSecret, authorizeUri, tokenUri, userInfoUri } = provider;
-    const newProviders = await this.db.insert(oidcTable).values({ name, clientId, clientSecret, authorizeUri, tokenUri, userInfoUri }).returning();
+    const { name, clientId, clientSecret, authorizeUri, tokenUri, userinfoUri } = provider;
+    const newProviders = await this.db.insert(oidcTable).values({ name, clientId, clientSecret, authorizeUri, tokenUri, userinfoUri }).returning();
     return newProviders[0];
   }
 
@@ -26,10 +26,10 @@ export class OidcRepository {
    * @throws Error if no id is provided.
    */
   public async editProvider(providerId: number, provider: OidcProviderDto) {
-    const { name, clientId, clientSecret, authorizeUri, tokenUri, userInfoUri } = provider;
+    const { name, clientId, clientSecret, authorizeUri, tokenUri, userinfoUri } = provider;
     const updatedProviders = await this.db
       .update(oidcTable)
-      .set({ name, clientId, clientSecret, authorizeUri, tokenUri, userInfoUri })
+      .set({ name, clientId, clientSecret, authorizeUri, tokenUri, userinfoUri })
       .where(eq(oidcTable.id, providerId))
       .returning();
     return updatedProviders[0];
@@ -62,16 +62,6 @@ export class OidcRepository {
   }
 
   /**
-   * Retrieves a single OIDC provider by its name.
-   * @param {string} name - The name of the provider to be retrieved.
-   * @returns The provider.
-   */
-  public async getProviderByName(name: string) {
-    const provider = await this.db.select().from(oidcTable).where(eq(oidcTable.name, name));
-    return provider[0];
-  }
-
-  /**
    * Retrieves a single OIDC provider by its ID.
    * @param {number} id - The ID of the provider to be retrieved.
    * @returns The provider.
@@ -79,5 +69,42 @@ export class OidcRepository {
   public async getProviderById(id: number) {
     const provider = await this.db.select().from(oidcTable).where(eq(oidcTable.id, id));
     return provider[0];
+  }
+
+  /**
+   * Retrieves a single trusted sub entry by the sub itself.
+   * @param {string} sub - The sub of the trusted entry to be retrieved.
+   * @returns The trusted sub entry.
+   */
+  public async getTrustedSub(sub: string) {
+    const trustedSub = await this.db.select().from(oidcTrustedSubs).where(eq(oidcTrustedSubs.sub, sub));
+    return trustedSub[0];
+  }
+
+  /**
+   * Retrieves all trusted sub entries for a given user ID.
+   * @param {number} userId - The ID of the user to retrieve trusted sub entries for.
+   * @returns An array of trusted sub entries.
+   */
+  public async getTrustedSubsByUserId(userId: number) {
+    const trustedSubs = await this.db.select().from(oidcTrustedSubs).where(eq(oidcTrustedSubs.userId, userId));
+    return trustedSubs;
+  }
+
+  /**
+   * Deletes a trusted sub entry by its ID.
+   * @param {number} id - The ID of the trusted entry to be deleted.
+   */
+  public async deleteTrustedSub(id: number) {
+    await this.db.delete(oidcTrustedSubs).where(eq(oidcTrustedSubs.id, id));
+  }
+
+  /**
+   * Stores a new trusted sub entry.
+   * @param {string} sub - The sub of the trusted entry to be stored.
+   * @param {number} userId - The ID of the user to associate the trusted sub entry with.
+   */
+  public async storeTrustedSub(sub: string, userId: number) {
+    await this.db.insert(oidcTrustedSubs).values({ sub, userId });
   }
 }
