@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { OAuthForm } from '../oauth-form/oauth-form';
 import { DropdownMenuItem } from '@/components/ui/DropdownMenu';
+import { useEffect } from 'react';
 
 interface EditOAuthProviderDialogProps {
   provider: GetProvidersPrivateResponse['providers'][number];
@@ -23,7 +24,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
   const editProvider = useMutation({
     ...editProviderMutation(),
     onSuccess: () => {
-      toast.success('Provider updated successfully');
+      toast.success(t('SETTINGS_SECURITY_OAUTH_PROVIDER_EDIT_SUCCESS'));
       setEdited(true);
     },
     onError: (e: TranslatableError) => {
@@ -34,7 +35,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
   const getProviderUrl = useMutation({
     ...getProviderAuthUrlMutation(),
     onSuccess: (res: GetProviderAuthUrlResponse) => {
-      toast.success('Redirecting to your provider');
+      toast.success(t('SETTINGS_SECURITY_OAUTH_AUTHORIZE_REDIRECT'));
       setTimeout(() => {
         window.location.href = res.url;
       }, 500);
@@ -47,23 +48,29 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
   const formId = useId();
   const editProviderDialogDisclosure = useDisclosure();
 
+  useEffect(() => {
+    if (!editProviderDialogDisclosure.isOpen) {
+      setEdited(false);
+    }
+  }, [editProviderDialogDisclosure.isOpen]);
+
   return (
     <>
       <DropdownMenuItem onClick={() => editProviderDialogDisclosure.open()} onSelect={(e) => e.preventDefault()}>
-        Edit
+        {t('EDIT')}
       </DropdownMenuItem>
       <Dialog open={editProviderDialogDisclosure.isOpen} onOpenChange={editProviderDialogDisclosure.toggle}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editing {provider.name}</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_OAUTH_EDIT_MODAL_TITLE', { provider: provider.name })}</DialogTitle>
           </DialogHeader>
           <DialogDescription>
             <ScrollArea maxheight={500}>
               {edited ? (
-                <p className="text-muted">After making changes, it's recommended to authenticate again to ensure everything is up to date.</p>
+                <p className="text-muted">{t('SETTINGS_SECURITY_OAUTH_EDIT_AUTHORIZE_SUBTITLE')}</p>
               ) : (
                 <>
-                  <p className="text-muted mb-3">You can edit the provider details below.</p>
+                  <p className="text-muted mb-3">{t('SETTINGS_SECURITY_OAUTH_EDIT_SUBTITLE')}</p>
                   <OAuthForm
                     onSubmit={(values) => editProvider.mutate({ path: { id: provider.id! }, body: values })}
                     formId={formId}
@@ -81,15 +88,15 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
               onClick={() => editProviderDialogDisclosure.close()}
               disabled={editProvider.isPending || getProviderUrl.isPending}
             >
-              {edited ? 'Close' : 'Cancel'}
+              {edited ? t('CLOSE') : t('ACTIONS_CANCEL')}
             </Button>
             {edited ? (
               <Button intent="primary" onClick={() => getProviderUrl.mutate({ path: { id: provider.id! } })} disabled={getProviderUrl.isPending}>
-                Authorize
+                {t('SETTINGS_SECURITY_OAUTH_AUTHORIZE')}
               </Button>
             ) : (
               <Button intent="primary" type="submit" form={formId} disabled={editProvider.isPending}>
-                Update
+                {t('UPDATE')}
               </Button>
             )}
           </DialogFooter>

@@ -36,54 +36,60 @@ export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues }: OAuthF
         error={formState.errors.name?.message}
         disabled={isLoading}
         type="text"
-        label="Name"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_NAME')}
         placeholder="My Provider"
         className="mb-3"
+        required
         {...register('name')}
       />
       <Input
         error={formState.errors.clientId?.message}
         disabled={isLoading}
         type="text"
-        label="Client ID"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_CLIENT_ID')}
         placeholder="client-id"
         className="mb-3"
+        required
         {...register('clientId')}
       />
       <Input
         error={formState.errors.clientSecret?.message}
         disabled={isLoading}
         type="password"
-        label="Client Secret"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_CLIENT_SECRET')}
         placeholder="client-secret"
         className="mb-3"
+        required
         {...register('clientSecret')}
       />
       <Input
         error={formState.errors.authorizeUri?.message}
         disabled={isLoading}
         type="text"
-        label="Authorize URI"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_AUTHORIZE_URL')}
         placeholder="https://example.com/authorize"
         className="mb-3"
+        required
         {...register('authorizeUri')}
       />
       <Input
         error={formState.errors.tokenUri?.message}
         disabled={isLoading}
         type="text"
-        label="Token URL"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_TOKEN_URL')}
         placeholder="https://example.com/token"
         className="mb-3"
+        required
         {...register('tokenUri')}
       />
       <Input
         error={formState.errors.userinfoUri?.message}
         disabled={isLoading}
         type="text"
-        label="User Info URL"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_USER_INFO_URL')}
         placeholder="https://example.com/userinfo"
         className="mb-3"
+        required
         {...register('userinfoUri')}
       />
     </form>
