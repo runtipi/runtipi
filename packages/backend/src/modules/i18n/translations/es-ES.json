@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Registre su cuenta",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Volver al inicio de sesión",
   "AUTH_RESET_PASSWORD_CANCEL": "Cancelar cambio de contraseña",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Ejecuta este comando en el servidor y recarga la página. Si ya has hecho esto previamente, es posible que la solicitud haya caducado. En ese caso, inténtelo de nuevo por favor",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Restablecer contraseña",
   "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Restablecer contraseña",
