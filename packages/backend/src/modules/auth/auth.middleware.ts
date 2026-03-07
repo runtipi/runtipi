@@ -23,6 +23,7 @@ export class AuthMiddleware implements NestMiddleware {
       if (!Number.isNaN(Number(userId))) {
         const user = await this.userRepository.getUserDtoById(Number(userId));
         req.user = user;
+        req.authMethod = 'session';
       }
 
       return next();
@@ -42,10 +43,11 @@ export class AuthMiddleware implements NestMiddleware {
         if (sub === 'cli') {
           const user = await this.userRepository.getFirstOperator();
           req.user = user;
+          req.authMethod = 'cli';
         }
 
         return next();
-      } catch (error) {
+      } catch (_error) {
         return next();
       }
     }

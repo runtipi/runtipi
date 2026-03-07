@@ -183,10 +183,6 @@ export type ResetPasswordDto = {
     success: boolean;
 };
 
-export type CheckResetPasswordRequestDto = {
-    isRequestPending: boolean;
-};
-
 export type MyAppsDto = {
     installed: Array<{
         app: {
@@ -1065,30 +1061,6 @@ export type DisableTotpData = {
 export type DisableTotpResponses = {
     200: unknown;
 };
-
-export type CancelResetPasswordData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/auth/reset-password';
-};
-
-export type CancelResetPasswordResponses = {
-    200: unknown;
-};
-
-export type CheckResetPasswordRequestData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/auth/reset-password';
-};
-
-export type CheckResetPasswordRequestResponses = {
-    default: CheckResetPasswordRequestDto;
-};
-
-export type CheckResetPasswordRequestResponse = CheckResetPasswordRequestResponses[keyof CheckResetPasswordRequestResponses];
 
 export type ResetPasswordData = {
     body: ResetPasswordBody;
