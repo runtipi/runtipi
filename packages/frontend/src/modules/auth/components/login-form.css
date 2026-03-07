@@ -1,0 +1,10 @@
+.forgot-password-link {
+  position: relative;
+  text-align: right;
+  bottom: 4.18rem; /* not perfect but not noticeable */
+  margin-top: 0;
+}
+
+.form-footer {
+  margin-top: 0;
+}
