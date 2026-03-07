@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Créez votre compte",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Retour au login",
   "AUTH_RESET_PASSWORD_CANCEL": "Annuler la demande de changement de mot de passe",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Pour commencer, exécutez cette commande sur votre serveur puis actualisez cette page. Si vous l'avez déjà fait, la demande de réinitialisation du mot de passe peut avoir expiré. Dans ce cas, veuillez réessayer.",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Réinitialiser",
   "AUTH_RESET_PASSWORD_SUCCESS": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe et votre nom d'utilisateur <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Mot de passe réinitialisé",
