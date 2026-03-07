@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Зареєструвати обліковий запис",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Повернутися до входу",
   "AUTH_RESET_PASSWORD_CANCEL": "Скасувати запит на зміну пароля",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Щоб почати, запустіть цю команду на своєму сервері, а потім оновіть цю сторінку. Якщо ви раніше це вже робили, запит на скидання пароля може бути недійсним. У цьому випадку спробуйте ще раз",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Скинути пароль",
   "AUTH_RESET_PASSWORD_SUCCESS": "Твій пароль було скинуто. Тепер ти можеш увійти, використовуючи новий пароль та своє ім’я користувача: <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Скинути пароль",
