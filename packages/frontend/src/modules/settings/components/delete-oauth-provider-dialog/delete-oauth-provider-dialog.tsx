@@ -6,6 +6,7 @@ import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { DropdownMenuItem } from '@/components/ui/DropdownMenu';
 
 interface DeleteProviderDialogProps {
   providerId: number;
@@ -30,9 +31,9 @@ export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeletePr
 
   return (
     <>
-      <Button size="sm" onClick={() => deleteProviderDialogDisclosure.open()} intent="danger">
+      <DropdownMenuItem onClick={() => deleteProviderDialogDisclosure.open()} onSelect={(e) => e.preventDefault()} className="text-danger">
         Delete
-      </Button>
+      </DropdownMenuItem>
       <Dialog open={deleteProviderDialogDisclosure.isOpen} onOpenChange={deleteProviderDialogDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>
