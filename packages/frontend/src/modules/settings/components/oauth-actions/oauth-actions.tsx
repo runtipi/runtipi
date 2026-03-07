@@ -10,6 +10,7 @@ import type { TranslatableError } from '@/types/error.types';
 import type { GetProviderAuthUrlResponse } from '@/api-client';
 import { Button } from '@/components/ui/Button';
 import { DateFormat } from '@/components/date-format/date-format';
+import { EditOAuthProviderDialog } from '../edit-oauth-provider-dialog/edit-oauth-provider-dialog';
 
 export const OAuthActions = () => {
   const { t } = useTranslation();
@@ -85,10 +86,11 @@ export const OAuthActions = () => {
                         // We have checked for the id already
                         onClick={() => getProviderUrl.mutate({ path: { id: provider.id! } })}
                         disabled={getProviderUrl.isPending}
-                        className="me-2"
+                        className="me-1"
                       >
                         Authorize
                       </Button>
+                      <EditOAuthProviderDialog provider={provider} />
                       <DeleteOAuthProviderDialog providerId={provider.id} providerName={provider.name} />
                     </TableCell>
                   </TableRow>
