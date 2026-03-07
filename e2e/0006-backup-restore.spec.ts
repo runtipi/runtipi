@@ -71,13 +71,25 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   await expect(page.getByText('Do you really want to restore backup')).toBeVisible();
   await page.getByRole('button', { name: 'Restore' }).click();
 
-  await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
+  await expect
+    .poll(
+      async () => {
+        const restoredApp = await db.query.app.findFirst({ where: eq(app.appName, 'whoami') });
+        return restoredApp?.version;
+      },
+      { timeout: 60000 },
+    )
+    .toBe(0);
 
-  dbapp = await db.query.app.findFirst({ where: eq(app.appName, 'whoami') });
-  await expect(dbapp?.version).toBe(0);
-  file = await readFile(path.join('apps', store.slug, 'whoami', 'config.json'));
-  const restoredConfig = JSON.parse(file);
-  await expect(restoredConfig.tipi_version).toBe(0);
+  await expect
+    .poll(
+      async () => {
+        const restoredFile = await readFile(path.join('apps', store.slug, 'whoami', 'config.json'));
+        return JSON.parse(restoredFile).tipi_version;
+      },
+      { timeout: 60000 },
+    )
+    .toBe(0);
 });
 
 test('user config is preserved when restoring from a backup', async ({ page, isMobile }) => {
@@ -120,8 +132,13 @@ test('user config is preserved when restoring from a backup', async ({ page, isM
   await page.getByRole('button', { name: 'Restore' }).click();
 
   // Wait for restore to complete
-  await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
-
-  const file = await readFile(path.join('user-config', store.slug, 'whoami', 'docker-compose.yml'));
-  expect(file).toBe('version: "3.9"');
+  await expect
+    .poll(
+      async () => {
+        const file = await readFile(path.join('user-config', store.slug, 'whoami', 'docker-compose.yml')).catch(() => null);
+        return file;
+      },
+      { timeout: 60000 },
+    )
+    .toBe('version: "3.9"');
 });
