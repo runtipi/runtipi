@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Crea un nuovo account",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Torna alla pagina di login",
   "AUTH_RESET_PASSWORD_CANCEL": "Annulla richiesta di cambio password",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Per iniziare, esegui questo comando sul tuo server e aggiorna questa pagina. Se l'hai fatto in precedenza, la richiesta di reimpostazione della password potrebbe essere scaduta. In tal caso riprova",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Resetta password",
   "AUTH_RESET_PASSWORD_SUCCESS": "La tua password è stata resettata. Ora puoi accedere con la tua nuova password e il tuo nome utente <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Resettata la password",
