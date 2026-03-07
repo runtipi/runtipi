@@ -77,7 +77,7 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oaut
       </form>
       {oauthProviders.length > 0 && (
         <div className="mt-3">
-          <div className="hr-text">Or login with</div>
+          <div className="hr-text">{t('AUTH_FORM_OAUTH_DIVIDER')}</div>
           <div className="d-flex gap-3 flex-column">
             {oauthProviders.map((provider) => (
               <Button key={provider.id} onClick={() => onOAuthClick(provider)} intent="dark" variant="outline" className="w-100">

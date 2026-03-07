@@ -35,7 +35,7 @@ export const OAuthActions = () => {
   const getProviderUrl = useMutation({
     ...getProviderAuthUrlMutation(),
     onSuccess: (res: GetProviderAuthUrlResponse) => {
-      toast.success('Redirecting to your provider');
+      toast.success(t('SETTINGS_SECURITY_OAUTH_AUTHORIZE_REDIRECT'));
       setTimeout(() => {
         window.location.href = res.url;
       }, 500);
@@ -47,7 +47,7 @@ export const OAuthActions = () => {
 
   const deleteSub = useMutation({
     ...deleteTrustedSubMutation(),
-    onSuccess: () => toast.success('Sub deleted!'),
+    onSuccess: () => toast.success(t('SETTINGS_SECURITY_OAUTH_SUB_DELETE_SUCCESS')),
     onError: (e: TranslatableError) => {
       toast.error(t(e.message, e.intlParams));
     },
@@ -55,14 +55,14 @@ export const OAuthActions = () => {
 
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url);
-    toast.success('Copied to clipboard');
+    toast.success(t('SETTINGS_SECURITY_OAUTH_SUB_COPIED_CLIPBOARD'));
   };
 
   if (oauthProviders.providers.length === 0) {
     return (
       <div className="mt-2 card">
         <div className="card-body">
-          <p className="text-muted fst-italic mt-1">No providers configured yet.</p>
+          <p className="text-muted fst-italic mt-1">{t('SETTINGS_SECURITY_OAUTH_NO_PROVIDERS')}</p>
         </div>
       </div>
     );
@@ -91,14 +91,16 @@ export const OAuthActions = () => {
                       <strong>{provider.name}</strong>
                     </p>
                     <div className="text-muted">
-                      {providerSubs.length} trusted user{providerSubs.length !== 1 ? 's' : ''}
+                      {providerSubs.length > 1
+                        ? t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_MANY', { count: providerSubs.length })
+                        : t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_ONE')}
                     </div>
                   </div>
                 </div>
 
                 <div className="d-flex flex-md-row flex-column gap-2">
                   <Button variant="outline" intent="dark" onClick={() => setExpandedProvider(isExpanded ? null : provider.id!)}>
-                    {isExpanded ? 'Hide Details' : 'Details'}
+                    {isExpanded ? t('SETTINGS_SECURITY_OAUTH_DETAILS_HIDE') : t('SETTINGS_SECURITY_OAUTH_DETAILS_SHOW')}
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -108,7 +110,9 @@ export const OAuthActions = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuGroup>
-                        <DropdownMenuItem onClick={() => getProviderUrl.mutate({ path: { id: provider.id! } })}>Authorize</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => getProviderUrl.mutate({ path: { id: provider.id! } })}>
+                          {t('SETTINGS_SECURITY_OAUTH_AUTHORIZE')}
+                        </DropdownMenuItem>
                         <EditOAuthProviderDialog provider={provider} />
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
@@ -123,15 +127,15 @@ export const OAuthActions = () => {
               {isExpanded && (
                 <div key={provider.id} className={clsx('mt-3', isLast && 'border-top pt-3')}>
                   <dl className="row mb-3 small">
-                    <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">Client ID</dt>
+                    <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">{t('SETTINGS_SECURITY_OAUTH_FORM_CLIENT_ID')}</dt>
                     <dd className="col-sm-10 mb-3 mb-md-1">
                       <code>{provider.clientId}</code>
                     </dd>
-                    <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">Callback URL</dt>
+                    <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">{t('SETTINGS_SECURITY_OAUTH_CALLBACK_URL')}</dt>
                     <dd className="col-sm-10 mb-0">
                       <code
                         title="Click to copy"
-                        aria-label="Copy callback URL to clipboard"
+                        aria-label={t('SETTINGS_SECURITY_OAUTH_CALLBACK_URL_HINT')}
                         onClick={() => copyToClipboard(callbackUrl)}
                         onKeyDown={(e) => e.key === 'Enter' && copyToClipboard(callbackUrl)}
                         style={{ cursor: 'pointer' }}
@@ -142,16 +146,17 @@ export const OAuthActions = () => {
                   </dl>
 
                   {providerSubs.length === 0 ? (
-                    <p className="small fst-italic">No trusted users yet.</p>
+                    <p className="small fst-italic">{t('SETTINGS_SECURITY_OAUTH_NO_TRUSTED_USERS')}</p>
                   ) : (
                     <>
-                      <p className="small mb-2">The accounts below (identified by their subject IDs) are allowed to sign in via {provider.name}.</p>
+                      <p className="small mb-2">{t('SETTINGS_SECURITY_OAUTH_TRUSTED_USERS_DESCRIPTION', { provider: provider.name })}</p>
                       {providerSubs.map((sub) => (
                         <div key={sub.sub} className="d-flex justify-content-between align-items-center py-2 border-bottom">
                           <div className="small">
                             <code>{sub.sub}</code>
                             <span className="ms-1 text-muted">
-                              added <DateFormat date={new Date(sub.createdAt * 1000)} />
+                              {t('SETTINGS_SECURITY_OAUTH_SUB_ENTRY_ADDED')}&nbsp;
+                              <DateFormat date={new Date(sub.createdAt * 1000)} />
                             </span>
                           </div>
                           <Button
@@ -161,7 +166,7 @@ export const OAuthActions = () => {
                             onClick={() => deleteSub.mutate({ path: { id: sub.id } })}
                             disabled={deleteSub.isPending}
                           >
-                            Remove
+                            {t('REMOVE')}
                           </Button>
                         </div>
                       ))}

@@ -82,7 +82,7 @@ export default () => {
   const getOAuthUrl = useMutation({
     ...getProviderAuthUrlMutation(),
     onSuccess: (res: GetProviderAuthUrlResponse) => {
-      toast.success('Redirecting to your provider');
+      toast.success(t('SETTINGS_SECURITY_OAUTH_AUTHORIZE_REDIRECT'));
       setTimeout(() => {
         window.location.href = res.url;
       }, 500);

@@ -21,7 +21,7 @@ export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeletePr
   const deleteMutation = useMutation({
     ...deleteProviderMutation(),
     onSuccess: () => {
-      toast.success('Provider deleted successfully');
+      toast.success(t('SETTINGS_SECURITY_OAUTH_DELETE_SUCCESS'));
       deleteProviderDialogDisclosure.close();
     },
     onError: (e: TranslatableError) => {
@@ -32,22 +32,22 @@ export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeletePr
   return (
     <>
       <DropdownMenuItem onClick={() => deleteProviderDialogDisclosure.open()} onSelect={(e) => e.preventDefault()} className="text-danger">
-        Delete
+        {t('DELETE')}
       </DropdownMenuItem>
       <Dialog open={deleteProviderDialogDisclosure.isOpen} onOpenChange={deleteProviderDialogDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Delete {providerName}?</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_OAUTH_DELETE_TITLE', { provider: providerName })}</DialogTitle>
           </DialogHeader>
           <DialogDescription>
-            <p className="text-muted">Are you sure you want to delete this provider? You will not be able to login again using this provider.</p>
+            <p className="text-muted">{t('SETTINGS_SECURITY_OAUTH_DELETE_SUBTITLE')}</p>
           </DialogDescription>
           <DialogFooter>
             <Button onClick={() => deleteProviderDialogDisclosure.close()} variant="outline" intent="dark">
-              Cancel
+              {t('ACTIONS_CANCEL')}
             </Button>
             <Button onClick={() => deleteMutation.mutate({ path: { id: providerId } })} intent="danger">
-              Delete
+              {t('DELETE')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -40,7 +40,7 @@ export const SecurityContainer = (props: { totpEnabled: boolean; username?: stri
             <IconBrandOauth className="me-2" />
             <h2 className="mb-0">OAuth</h2>
           </div>
-          <p className="text-muted">Manage your OAuth providers.</p>
+          <p className="text-muted">{t('SETTINGS_SECURITY_OAUTH_DESCRIPTION')}</p>
         </div>
         <AddOAuthProviderDialog />
       </div>
