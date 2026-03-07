@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Fiók regisztráció",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Vissza a belépéshez",
   "AUTH_RESET_PASSWORD_CANCEL": "Jelszómódosítási kérés visszavonása",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "A kezdéshez futtassa ezt a parancsot a kiszolgálón, majd frissítse ezt az oldalt. Ha ezt már korábban megtette, akkor a jelszó-visszaállítási kérelem már lejárt. Ebben az esetben kérjük, próbálja meg újra",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Jelszó visszaállítása",
   "AUTH_RESET_PASSWORD_SUCCESS": "A jelszavad vissza lett állítva. Most már be tudsz jelentkezni az új jelszavaddal és a felhasználóneveddel <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Jelszó visszaállítása",
