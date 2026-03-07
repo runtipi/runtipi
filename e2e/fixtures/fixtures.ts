@@ -37,6 +37,8 @@ export const installApp = async (page: Page, storeSlug: string, appId: string, o
   // Install app
   await page.getByRole('button', { name: 'Install' }).click();
 
+  const installDialog = page.getByRole('dialog');
+  await expect(installDialog).toBeVisible();
   await expect(page.getByText('Expose app on local network')).toBeVisible();
 
   if (opts.visibleOnGuestDashboard) {
@@ -44,9 +46,18 @@ export const installApp = async (page: Page, storeSlug: string, appId: string, o
   }
 
   if (opts.domain) {
-    await page.getByRole('switch', { name: 'Expose app on the internet' }).setChecked(true);
-    const domainInput = page.getByRole('textbox', { name: 'Domain name' });
-    await expect(domainInput).toBeVisible();
+    const exposeSwitch = installDialog.getByRole('switch', { name: 'Expose app on the internet' });
+    await expect(exposeSwitch).toBeVisible();
+
+    if ((await exposeSwitch.getAttribute('aria-checked')) !== 'true') {
+      await exposeSwitch.click();
+    }
+
+    await expect(exposeSwitch).toHaveAttribute('aria-checked', 'true');
+
+    const domainInput = installDialog.locator('input[name="domain"]');
+    await expect(domainInput).toBeVisible({ timeout: 10000 });
+    await domainInput.scrollIntoViewIfNeeded();
     await domainInput.fill(opts.domain);
   }
 
