@@ -45,7 +45,9 @@ export const installApp = async (page: Page, storeSlug: string, appId: string, o
 
   if (opts.domain) {
     await page.getByRole('switch', { name: 'Expose app on the internet' }).setChecked(true);
-    await page.getByRole('textbox', { name: 'Domain name' }).fill(opts.domain);
+    const domainInput = page.getByRole('textbox', { name: 'Domain name' });
+    await expect(domainInput).toBeVisible();
+    await domainInput.fill(opts.domain);
   }
 
   await page.getByRole('button', { name: 'Install' }).click();

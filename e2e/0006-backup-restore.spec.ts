@@ -111,13 +111,13 @@ test('user config is preserved when restoring from a backup', async ({ page, isM
     await page.getByRole('tab', { name: 'Backups' }).click();
   }
 
+  await expect(page.getByRole('button', { name: 'Restore' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Backup now' }).click();
   await expect(page.getByText('Backup Whoami')).toBeVisible();
   await page.getByRole('button', { name: 'Backup' }).click();
 
   // Wait for backup to complete
-  await expect(page.getByText('Backing up')).toBeVisible();
-  await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
+  await expect(page.getByRole('button', { name: 'Restore' })).toHaveCount(1, { timeout: 60000 });
 
   await deleteFile(path.join('user-config', store.slug, 'whoami', 'docker-compose.yml'));
 
