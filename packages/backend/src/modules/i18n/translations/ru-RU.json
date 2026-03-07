@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Зарегистрируйте аккаунт",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Вернуться на страницу входа",
   "AUTH_RESET_PASSWORD_CANCEL": "Отменить запрос на смену пароля",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Чтобы начать, запустите команду на вашем сервере и обновите эту страницу. Если вы уже сделали это, возможно, запрос на сброс пароля истёк. В этом случае повторите попытку",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Запустите эту команду на сервере, чтобы запустить сброс пароля.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Сбросить пароль",
   "AUTH_RESET_PASSWORD_SUCCESS": "Ваш пароль был сброшен. Теперь вы можете войти с новым паролем и именем пользователя <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Пароль сброшен",
