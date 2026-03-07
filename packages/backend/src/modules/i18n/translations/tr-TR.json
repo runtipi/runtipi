@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "Hesabınızı kaydedin",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Giriş ekranına dön",
   "AUTH_RESET_PASSWORD_CANCEL": "Parola değiştirme isteğini iptal et",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Başlamak için sunucunuzda bu komutu çalıştırın ve ardından bu sayfayı yenileyin. Daha önce yaptıysanız, parola sıfırlama isteğinin süresi dolmuş olabilir. Bu durumda lütfen yeniden deneyin",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "Parolayı sıfırla",
   "AUTH_RESET_PASSWORD_SUCCESS": "Parolanız sıfırlandı. Artık yeni parolanız ve <code>{{username}}</code> kullanıcı adınızla giriş yapabilirsiniz",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "Parola sıfırlandı",
