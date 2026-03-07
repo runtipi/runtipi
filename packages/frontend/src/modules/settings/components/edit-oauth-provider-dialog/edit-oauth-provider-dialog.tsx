@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { OAuthForm } from '../oauth-form/oauth-form';
+import { DropdownMenuItem } from '@/components/ui/DropdownMenu';
 
 interface EditOAuthProviderDialogProps {
   provider: GetProvidersPrivateResponse['providers'][number];
@@ -43,14 +44,14 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
     },
   });
 
-  const editProviderDialogDisclosure = useDisclosure();
   const formId = useId();
+  const editProviderDialogDisclosure = useDisclosure();
 
   return (
     <>
-      <Button size="sm" onClick={() => editProviderDialogDisclosure.open()} className="me-1" intent="primary">
+      <DropdownMenuItem onClick={() => editProviderDialogDisclosure.open()} onSelect={(e) => e.preventDefault()}>
         Edit
-      </Button>
+      </DropdownMenuItem>
       <Dialog open={editProviderDialogDisclosure.isOpen} onOpenChange={editProviderDialogDisclosure.toggle}>
         <DialogContent>
           <DialogHeader>
