@@ -1,7 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { type } from 'arktype';
-import { arktypeResolver } from '@hookform/resolvers/arktype';
-import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { createProviderMutation, getProviderAuthUrlMutation } from '@/api-client/@tanstack/react-query.gen';
 import toast from 'react-hot-toast';
@@ -10,29 +7,14 @@ import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { useId, useState } from 'react';
-import { Input } from '@/components/ui/Input';
 import type { CreateProviderResponse, GetProviderAuthUrlResponse } from '@/api-client';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { OAuthForm } from '../oauth-form/oauth-form';
 
 export const AddOAuthProviderDialog = () => {
   const { t } = useTranslation();
   const [isCreated, setIsCreated] = useState(false);
   const [providerId, setProviderId] = useState<number | undefined>(undefined);
-
-  const schema = type({
-    name: 'string',
-    clientId: 'string',
-    clientSecret: 'string',
-    authorizeUri: 'string',
-    tokenUri: 'string',
-    userinfoUri: 'string',
-  });
-
-  type FormValues = typeof schema.infer;
-
-  const { register, handleSubmit, formState } = useForm<FormValues>({
-    resolver: arktypeResolver(schema),
-  });
 
   const createProvider = useMutation({
     ...createProviderMutation(),
@@ -64,12 +46,7 @@ export const AddOAuthProviderDialog = () => {
   });
 
   const addProviderdialogDisclosure = useDisclosure();
-
   const formId = useId();
-
-  const onSubmit = handleSubmit((values) => {
-    createProvider.mutate({ body: values });
-  });
 
   return (
     <>
@@ -89,62 +66,7 @@ export const AddOAuthProviderDialog = () => {
               ) : (
                 <>
                   <p className="text-muted mb-3">Please fill out the form below to create a new OAuth provider.</p>
-                  <form id={formId} onSubmit={onSubmit}>
-                    <Input
-                      error={formState.errors.name?.message}
-                      disabled={createProvider.isPending}
-                      type="text"
-                      label="Name"
-                      placeholder="My Provider"
-                      className="mb-3"
-                      {...register('name')}
-                    />
-                    <Input
-                      error={formState.errors.clientId?.message}
-                      disabled={createProvider.isPending}
-                      type="text"
-                      label="Client ID"
-                      placeholder="client-id"
-                      className="mb-3"
-                      {...register('clientId')}
-                    />
-                    <Input
-                      error={formState.errors.clientSecret?.message}
-                      disabled={createProvider.isPending}
-                      type="password"
-                      label="Client Secret"
-                      placeholder="client-secret"
-                      className="mb-3"
-                      {...register('clientSecret')}
-                    />
-                    <Input
-                      error={formState.errors.authorizeUri?.message}
-                      disabled={createProvider.isPending}
-                      type="text"
-                      label="Authorize URI"
-                      placeholder="https://example.com/authorize"
-                      className="mb-3"
-                      {...register('authorizeUri')}
-                    />
-                    <Input
-                      error={formState.errors.tokenUri?.message}
-                      disabled={createProvider.isPending}
-                      type="text"
-                      label="Token URL"
-                      placeholder="https://example.com/token"
-                      className="mb-3"
-                      {...register('tokenUri')}
-                    />
-                    <Input
-                      error={formState.errors.userinfoUri?.message}
-                      disabled={createProvider.isPending}
-                      type="text"
-                      label="User Info URL"
-                      placeholder="https://example.com/userinfo"
-                      className="mb-3"
-                      {...register('userinfoUri')}
-                    />
-                  </form>
+                  <OAuthForm onSubmit={(values) => createProvider.mutate({ body: values })} formId={formId} isLoading={createProvider.isPending} />
                 </>
               )}
             </ScrollArea>
