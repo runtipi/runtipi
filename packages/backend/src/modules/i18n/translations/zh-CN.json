@@ -366,7 +366,7 @@
   "AUTH_REGISTER_TITLE": "注册您的账户",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "返回登录界面",
   "AUTH_RESET_PASSWORD_CANCEL": "取消密码更改请求",
-  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "请在您的服务器上运行此命令，然后刷新此页面。如果您之前已经这样做过，密码重置请求可能已过期。在这种情况下，请重试",
+  "AUTH_RESET_PASSWORD_INSTRUCTIONS": "Run this command on your server to start a password reset request.",
   "AUTH_RESET_PASSWORD_SUBMIT": "重置密码",
   "AUTH_RESET_PASSWORD_SUCCESS": "Your password has been reset. You can now login with your new password and your username <code>{{username}}</code>",
   "AUTH_RESET_PASSWORD_SUCCESS_TITLE": "密码重置",
