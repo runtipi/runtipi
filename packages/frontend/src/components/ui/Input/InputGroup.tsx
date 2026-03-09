@@ -43,7 +43,7 @@ export const InputGroup = ({
         {prefix}
         <input
           suppressHydrationWarning
-          aria-label={name}
+          aria-label={label ? undefined : name}
           type={type}
           name={name}
           id={name}

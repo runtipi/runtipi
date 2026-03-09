@@ -21,6 +21,14 @@ describe('Input', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('should use the field name as the accessible label when no visible label is provided', () => {
+    // arrange
+    render(<Input name="test-input" />);
+
+    // assert
+    expect(screen.getByRole('textbox', { name: 'test-input' })).toBeInTheDocument();
+  });
+
   it('should render the placeholder if provided', () => {
     // arrange
     render(<Input name="test-input" placeholder="Test Placeholder" />);

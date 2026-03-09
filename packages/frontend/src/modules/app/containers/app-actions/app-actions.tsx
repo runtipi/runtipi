@@ -10,6 +10,7 @@ import {
   IconLockOff,
   IconPlayerPause,
   IconPlayerPlay,
+  IconRefresh,
   IconRotateClockwise,
   IconSettings,
   IconTrash,
@@ -33,6 +34,7 @@ import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-d
 import { StopDialog } from '../../components/dialogs/stop-dialog/stop-dialog';
 import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/uninstall-dialog';
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
+import { TemplateSyncDialog } from '../../components/template-sync-dialog/template-sync-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
 import { Tooltip } from 'react-tooltip';
 import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
@@ -72,6 +74,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const updateSettingsDisclosure = useDisclosure();
   const uninstallDisclosure = useDisclosure();
   const resetAppDisclosure = useDisclosure();
+  const syncTemplateDisclosure = useDisclosure();
 
   const { t } = useTranslation();
   const { setOptimisticStatus } = useAppStatus();
@@ -200,14 +203,21 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
 
+  const storeId = info.urn.split(':')[1];
+  const isCustomApp = storeId === '_user';
+  const editPath = isCustomApp ? `/apps/${info.id}/edit` : `/apps/${storeId}/${info.id}/edit`;
+
   const EditConfigListItem = (
-    <DropdownMenuItem
-      onClick={() => navigate(`/apps/${info.id}/edit`)}
-      key="edit-config"
-      disabled={app?.status !== 'stopped' && app?.status !== 'missing'}
-    >
+    <DropdownMenuItem onClick={() => navigate(editPath)} key="edit-config" disabled={app?.status !== 'stopped' && app?.status !== 'missing'}>
       <IconEdit className="me-2" size={16} />
-      {t('CUSTOM_APP_EDIT_CONFIG')}
+      {t('APP_EDIT_CONFIG')}
+    </DropdownMenuItem>
+  );
+
+  const SyncTemplateListItem = (
+    <DropdownMenuItem onClick={syncTemplateDisclosure.open} key="sync-template">
+      <IconRefresh className="me-2" size={16} />
+      {t('APP_SYNC_WITH_TEMPLATE')}
     </DropdownMenuItem>
   );
 
@@ -252,16 +262,17 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
 
   const buttons: React.JSX.Element[] = [];
   const listItems: React.JSX.Element[] = [];
+  const listItemsAdvanced: React.JSX.Element[] = [];
   const listItemsDestructive: React.JSX.Element[] = [];
-
-  if (info.urn.split(':')[1] === '_user') {
-    listItems.push(EditConfigListItem);
-  }
 
   switch (app?.status ?? 'missing') {
     case 'stopped':
       buttons.push(StartButton);
       listItems.push(SettingsListItem);
+      listItemsAdvanced.push(EditConfigListItem);
+      if (app && (app.templateUrn || !isCustomApp)) {
+        listItemsAdvanced.push(SyncTemplateListItem);
+      }
       listItemsDestructive.push(ResetListItem);
       listItemsDestructive.push(RemoveListItem);
       if (updateAvailable && !versionIsIgnored) {
@@ -275,6 +286,10 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
       buttons.push(StopButton);
       listItems.push(SettingsListItem);
       listItems.push(RestartListItem);
+      listItemsAdvanced.push(EditConfigListItem);
+      if (app && (app.templateUrn || !isCustomApp)) {
+        listItemsAdvanced.push(SyncTemplateListItem);
+      }
       listItemsDestructive.push(ResetListItem);
       listItemsDestructive.push(RemoveListItem);
 
@@ -346,6 +361,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         info={info}
         config={app?.config ?? {}}
       />
+      <TemplateSyncDialog appUrn={info.urn} isOpen={syncTemplateDisclosure.isOpen} onClose={syncTemplateDisclosure.close} />
       <div className="mt-1 btn-list d-flex">
         {buttons.map((button) => {
           return createElement(button.type, {
@@ -363,6 +379,8 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuGroup>{listItems}</DropdownMenuGroup>
+              {listItemsAdvanced.length > 0 ? <DropdownMenuSeparator /> : null}
+              <DropdownMenuGroup>{listItemsAdvanced}</DropdownMenuGroup>
               {listItemsDestructive.length > 0 ? <DropdownMenuSeparator /> : null}
               <DropdownMenuGroup>{listItemsDestructive}</DropdownMenuGroup>
             </DropdownMenuContent>

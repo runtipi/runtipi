@@ -34,6 +34,7 @@ import { MutexModule } from './utils/mutex/mutex.module';
 import { DockerModule } from './modules/docker/docker.module';
 import { GithubModule } from './utils/github/github.module';
 import { ArkValidationPipe } from 'nestjs-arktype';
+import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CustomAppsModule } from './modules/custom-apps/custom-apps.module';
 
 const imports: (DynamicModule | typeof I18nModule)[] = [
@@ -62,6 +63,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   DockerModule,
   GithubModule,
   CustomAppsModule,
+  AppConfigModule,
 ];
 
 const { NODE_ENV } = process.env;

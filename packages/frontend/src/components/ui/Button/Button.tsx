@@ -76,11 +76,15 @@ export interface ButtonProps extends React.ComponentProps<'button'>, VariantProp
 
 const Button = ({ className, variant, size, intent, asChild = false, disabled, loading, ...props }: ButtonProps) => {
   const Comp = asChild ? Slot : 'button';
+  const isDisabled = disabled || loading;
+
   return (
     <Comp
-      disabled={disabled}
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
+      aria-busy={loading}
       style={{ height: size ? 'auto' : '36px' }}
-      className={clsx(buttonVariants({ variant, size, intent, className }), { disabled: disabled || loading, 'btn-loading': loading }, className)}
+      className={clsx(buttonVariants({ variant, size, intent, className }), { disabled: isDisabled, 'btn-loading': loading }, className)}
       {...props}
     />
   );

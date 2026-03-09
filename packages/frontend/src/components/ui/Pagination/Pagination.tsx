@@ -34,20 +34,20 @@ PaginationLink.displayName = 'PaginationLink';
 
 const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink aria-label="Go to previous page" small={false} className={clsx('', className)} {...props}>
-    <IconChevronLeft className="" />
+    <IconChevronLeft aria-hidden="true" className="" />
   </PaginationLink>
 );
 PaginationPrevious.displayName = 'PaginationPrevious';
 
 const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink aria-label="Go to next page" small={false} className={clsx('', className)} {...props}>
-    <IconChevronRight className="" />
+    <IconChevronRight aria-hidden="true" className="" />
   </PaginationLink>
 );
 PaginationNext.displayName = 'PaginationNext';
 
 const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<'span'>) => (
-  <span aria-hidden className={clsx('px-1 d-flex align-items-center justify-content-center h-100 paginaton-link', className)} {...props}>
+  <span aria-hidden="true" className={clsx('px-1 d-flex align-items-center justify-content-center h-100 paginaton-link', className)} {...props}>
     <IconDots size={14} className="mx-1" />
   </span>
 );

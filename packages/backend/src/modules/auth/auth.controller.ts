@@ -2,14 +2,13 @@ import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants'
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
   ChangePasswordBody,
   ChangeUsernameBody,
-  CheckResetPasswordRequestDto,
   DisableTotpBody,
   GetTotpUriBody,
   GetTotpUriDto,
@@ -172,24 +171,16 @@ export class AuthController {
   }
 
   @Post('/reset-password')
+  @UseGuards(AuthGuard)
   @ApiResponse({ type: ResetPasswordDto })
-  async resetPassword(@Body() body: ResetPasswordBody) {
+  async resetPassword(@Body() body: ResetPasswordBody, @Req() req: Request) {
+    if (req.authMethod !== 'cli') {
+      throw new UnauthorizedException();
+    }
+
     const { email } = await this.authService.changeOperatorPassword(body);
 
     return ResetPasswordDto.parse({ success: true, email }, { reportOnly: true });
-  }
-
-  @Delete('/reset-password')
-  async cancelResetPassword() {
-    await this.authService.cancelPasswordChangeRequest();
-  }
-
-  @Get('/reset-password')
-  @ApiResponse({ type: CheckResetPasswordRequestDto })
-  async checkResetPasswordRequest() {
-    const isPending = await this.authService.checkPasswordChangeRequest();
-
-    return CheckResetPasswordRequestDto.parse({ isRequestPending: isPending }, { reportOnly: true });
   }
 
   @Get('/traefik')

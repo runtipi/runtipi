@@ -57,5 +57,8 @@ export const createMockApp = (data: Partial<App>): App => ({
   userConfigEnabled: true,
   maxBackups: null,
   ignoredVersion: null,
+  templateUrn: null,
+  templateVersion: null,
+  lastTemplateSyncAt: null,
   ...data,
 });

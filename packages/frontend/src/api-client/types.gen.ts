@@ -183,10 +183,6 @@ export type ResetPasswordDto = {
     success: boolean;
 };
 
-export type CheckResetPasswordRequestDto = {
-    isRequestPending: boolean;
-};
-
 export type MyAppsDto = {
     installed: Array<{
         app: {
@@ -201,6 +197,7 @@ export type MyAppsDto = {
             pendingRestart: boolean;
             port: number | null;
             status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+            templateUrn: string | null;
             updatedAt: number;
             version: number;
             config?: {
@@ -282,6 +279,7 @@ export type GuestAppsDto = {
             pendingRestart: boolean;
             port: number | null;
             status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+            templateUrn: string | null;
             updatedAt: number;
             version: number;
             config?: {
@@ -422,6 +420,7 @@ export type GetAppDto = {
         pendingRestart: boolean;
         port: number | null;
         status: 'backing_up' | 'installing' | 'missing' | 'resetting' | 'restarting' | 'restoring' | 'running' | 'starting' | 'stopped' | 'stopping' | 'uninstalling' | 'updating';
+        templateUrn: string | null;
         updatedAt: number;
         version: number;
         config?: {
@@ -850,6 +849,26 @@ export type UpdateAppMetadataDto = {
     data: string;
 };
 
+export type GetAppConfigDto = {
+    config: string | null;
+};
+
+export type UpdateAppConfigBodyDto = {
+    config: string;
+};
+
+export type AppConfigSuccessDto = {
+    success: boolean;
+};
+
+export type TemplateDiffDto = {
+    hasChanges: boolean;
+    localVersion: number;
+    templateVersion: number;
+    current?: string;
+    template?: string;
+};
+
 export type UserContextData = {
     body?: never;
     path?: never;
@@ -1042,30 +1061,6 @@ export type DisableTotpData = {
 export type DisableTotpResponses = {
     200: unknown;
 };
-
-export type CancelResetPasswordData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/auth/reset-password';
-};
-
-export type CancelResetPasswordResponses = {
-    200: unknown;
-};
-
-export type CheckResetPasswordRequestData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/auth/reset-password';
-};
-
-export type CheckResetPasswordRequestResponses = {
-    default: CheckResetPasswordRequestDto;
-};
-
-export type CheckResetPasswordRequestResponse = CheckResetPasswordRequestResponses[keyof CheckResetPasswordRequestResponses];
 
 export type ResetPasswordData = {
     body: ResetPasswordBody;
@@ -1418,7 +1413,7 @@ export type UpdateAppResponses = {
 
 export type UpdateAppResponse = UpdateAppResponses[keyof UpdateAppResponses];
 
-export type UpdateAppConfigData = {
+export type UpdateAppSettingsData = {
     body: AppFormBody;
     path: {
         urn: string;
@@ -1427,11 +1422,11 @@ export type UpdateAppConfigData = {
     url: '/api/app-lifecycle/{urn}/update-config';
 };
 
-export type UpdateAppConfigResponses = {
+export type UpdateAppSettingsResponses = {
     default: LifecycleRequestDto;
 };
 
-export type UpdateAppConfigResponse = UpdateAppConfigResponses[keyof UpdateAppConfigResponses];
+export type UpdateAppSettingsResponse = UpdateAppSettingsResponses[keyof UpdateAppSettingsResponses];
 
 export type UpdateAllAppsData = {
     body?: never;
@@ -1844,6 +1839,66 @@ export type UpdateAppMetadataData = {
 export type UpdateAppMetadataResponses = {
     default: unknown;
 };
+
+export type GetEditableAppConfigData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/config';
+};
+
+export type GetEditableAppConfigResponses = {
+    default: GetAppConfigDto;
+};
+
+export type GetEditableAppConfigResponse = GetEditableAppConfigResponses[keyof GetEditableAppConfigResponses];
+
+export type UpdateEditableAppConfigData = {
+    body: UpdateAppConfigBodyDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/config';
+};
+
+export type UpdateEditableAppConfigResponses = {
+    default: AppConfigSuccessDto;
+};
+
+export type UpdateEditableAppConfigResponse = UpdateEditableAppConfigResponses[keyof UpdateEditableAppConfigResponses];
+
+export type GetTemplateDiffData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/template/diff';
+};
+
+export type GetTemplateDiffResponses = {
+    default: TemplateDiffDto;
+};
+
+export type GetTemplateDiffResponse = GetTemplateDiffResponses[keyof GetTemplateDiffResponses];
+
+export type SyncWithTemplateData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/apps/{urn}/template/sync';
+};
+
+export type SyncWithTemplateResponses = {
+    default: AppConfigSuccessDto;
+};
+
+export type SyncWithTemplateResponse = SyncWithTemplateResponses[keyof SyncWithTemplateResponses];
 
 export type SeedDatabaseData = {
     body?: never;

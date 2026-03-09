@@ -12,15 +12,19 @@ type SwitchProps = React.ComponentPropsWithoutRef<RootProps> & {
   ref?: React.Ref<React.ElementRef<RootProps>>;
 };
 
-const Switch = ({ className, label, ...props }: SwitchProps) => (
-  <label htmlFor={props.name} aria-labelledby={props.name} className={clsx('form-check form-switch form-check-sigle', className)}>
-    <SwitchPrimitives.Root aria-label={props.name} className="form-check-input switch-root" {...props}>
-      <SwitchPrimitives.Thumb />
-    </SwitchPrimitives.Root>
-    <span id={props.name} className="form-check-label text-muted">
-      {label}
-    </span>
-  </label>
-);
+const Switch = ({ className, label, ...props }: SwitchProps) => {
+  const labelId = props.name ? `${props.name}-label` : undefined;
+
+  return (
+    <label htmlFor={props.name} className={clsx('form-check form-switch form-check-sigle', className)}>
+      <SwitchPrimitives.Root aria-labelledby={labelId} className="form-check-input switch-root" {...props}>
+        <SwitchPrimitives.Thumb />
+      </SwitchPrimitives.Root>
+      <span id={labelId} className="form-check-label text-muted">
+        {label}
+      </span>
+    </label>
+  );
+};
 
 export { Switch };

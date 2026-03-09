@@ -1,4 +1,4 @@
-import { updateAppConfigMutation } from '@/api-client/@tanstack/react-query.gen';
+import { updateAppSettingsMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import type { AppInfo, AppStatus } from '@/types/app.types';
@@ -24,7 +24,7 @@ export const UpdateSettingsDialog: React.FC<IProps> = ({ info, config, isOpen, o
   const formId = useId();
 
   const updateConfig = useMutation({
-    ...updateAppConfigMutation(),
+    ...updateAppSettingsMutation(),
     onError: (e: TranslatableError) => {
       toast.error(t(e.message, e.intlParams));
     },

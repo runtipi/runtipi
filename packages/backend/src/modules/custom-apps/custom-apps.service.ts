@@ -176,10 +176,6 @@ export class CustomAppService {
 
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
-    if (appStoreId !== APPS_FOLDER) {
-      throw new TranslatableError('CUSTOM_APP_ERROR_NOT_CUSTOM', { urn: appUrn }, HttpStatus.BAD_REQUEST);
-    }
-
     const existingApp = await this.appsRepository.getAppByUrn(appUrn);
     if (!existingApp) {
       throw new TranslatableError('CUSTOM_APP_ERROR_NOT_FOUND', { urn: appUrn }, HttpStatus.NOT_FOUND);

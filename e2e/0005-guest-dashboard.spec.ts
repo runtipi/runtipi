@@ -13,7 +13,7 @@ test('user can activate the guest dashboard and see it when logged out', async (
   await page.goto('/settings');
 
   await page.getByRole('tab', { name: 'Settings' }).click();
-  await page.getByLabel('guestDashboard').setChecked(true);
+  await page.getByRole('switch', { name: 'Enable guest dashboard' }).setChecked(true);
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
 
@@ -36,7 +36,7 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
 
   await page.goto('/settings');
   await page.getByRole('tab', { name: 'Settings' }).click();
-  await page.getByLabel('guestDashboard').setChecked(true);
+  await page.getByRole('switch', { name: 'Enable guest dashboard' }).setChecked(true);
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
 
@@ -60,7 +60,7 @@ test('user can deactivate the guest dashboard and not see it when logged out', a
   await page.goto('/settings');
 
   await page.getByRole('tab', { name: 'Settings' }).click();
-  await page.getByLabel('guestDashboard').setChecked(false);
+  await page.getByRole('switch', { name: 'Enable guest dashboard' }).setChecked(false);
   await page.getByRole('button', { name: 'Update settings' }).click();
   await page.getByTestId('logout-button').click();
 

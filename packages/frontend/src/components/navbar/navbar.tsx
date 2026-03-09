@@ -19,9 +19,9 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
     const itemClass = clsx('nav-item', { active: isActive, 'border-primary': isActive });
 
     return (
-      <li aria-label={title} data-testid={`nav-item-${name}`} className={itemClass}>
-        <Link to={`/${name}`} className="nav-link">
-          <span className={`nav-link-icon d-md-none d-lg-inline-block navbar-icon-${name}`}>
+      <li data-testid={`nav-item-${name}`} className={itemClass}>
+        <Link to={`/${name}`} className="nav-link" aria-label={title} aria-current={isActive ? 'page' : undefined}>
+          <span className={`nav-link-icon d-md-none d-lg-inline-block navbar-icon-${name}`} aria-hidden="true">
             <IconComponent size={24} />
           </span>
           <span className="nav-link-title">{title}</span>
@@ -31,7 +31,7 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
   };
 
   return (
-    <div id="navbar-menu" className="collapse navbar-collapse">
+    <nav id="navbar-menu" className="collapse navbar-collapse" aria-label={t('HEADER_MAIN_NAVIGATION')}>
       <div className="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
         <ul className="navbar-nav gap-1">
           {renderItem(t('HEADER_DASHBOARD'), 'dashboard', IconHome)}
@@ -39,8 +39,14 @@ export const NavBar: React.FC<IProps> = ({ isUpdateAvailable }) => {
           {renderItem(t('HEADER_APP_STORE'), 'app-store', IconBrandAppstore)}
           {renderItem(t('HEADER_SETTINGS'), 'settings', IconSettings)}
         </ul>
-        {Boolean(isUpdateAvailable) && <span className="ms-2 badge text-white bg-green d-none d-lg-block">{t('HEADER_UPDATE_AVAILABLE')}</span>}
+        {Boolean(isUpdateAvailable) && (
+          // biome-ignore lint/a11y/useSemanticElements: explicit role="status" reinforces accessibility intent
+          // biome-ignore lint/a11y/noRedundantRoles: explicit role="status" for assistive technology compatibility
+          <output className="ms-2 badge text-white bg-green d-none d-lg-block" role="status" aria-live="polite">
+            {t('HEADER_UPDATE_AVAILABLE')}
+          </output>
+        )}
       </div>
-    </div>
+    </nav>
   );
 };

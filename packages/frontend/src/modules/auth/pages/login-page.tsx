@@ -33,10 +33,10 @@ export default () => {
   const redirect_url = searchParams.get('redirect_url');
   const app = searchParams.get('app');
 
-  const loginType = capitalize(app ?? '') || 'your account';
-
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const loginType = capitalize(app ?? '') || t('AUTH_LOGIN_TYPE_ACCOUNT');
 
   const login = useMutation({
     ...loginMutation(),

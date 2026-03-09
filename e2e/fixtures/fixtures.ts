@@ -37,15 +37,28 @@ export const installApp = async (page: Page, storeSlug: string, appId: string, o
   // Install app
   await page.getByRole('button', { name: 'Install' }).click();
 
+  const installDialog = page.getByRole('dialog');
+  await expect(installDialog).toBeVisible();
   await expect(page.getByText('Expose app on local network')).toBeVisible();
 
   if (opts.visibleOnGuestDashboard) {
-    await page.getByLabel('isVisibleOnGuestDashboard').setChecked(true);
+    await page.getByRole('switch', { name: 'Display on guest dashboard' }).setChecked(true);
   }
 
   if (opts.domain) {
-    await page.getByLabel('exposed', { exact: true }).setChecked(true);
-    await page.getByRole('textbox', { name: 'domain' }).fill(opts.domain);
+    const exposeSwitch = installDialog.getByRole('switch', { name: 'Expose app on the internet' });
+    await expect(exposeSwitch).toBeVisible();
+
+    if ((await exposeSwitch.getAttribute('aria-checked')) !== 'true') {
+      await exposeSwitch.click();
+    }
+
+    await expect(exposeSwitch).toHaveAttribute('aria-checked', 'true');
+
+    const domainInput = installDialog.locator('input[name="domain"]');
+    await expect(domainInput).toBeVisible({ timeout: 10000 });
+    await domainInput.scrollIntoViewIfNeeded();
+    await domainInput.fill(opts.domain);
   }
 
   await page.getByRole('button', { name: 'Install' }).click();

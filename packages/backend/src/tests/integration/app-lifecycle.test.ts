@@ -581,7 +581,7 @@ describe('App lifecycle', () => {
       });
 
       // act
-      await appLifecycleService.updateAppConfig({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
+      await appLifecycleService.updateAppSettings({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
 
       // assert
       const app = await appsRepository.getAppByUrn(appInfo.urn);
@@ -600,7 +600,7 @@ describe('App lifecycle', () => {
       });
 
       // act
-      await appLifecycleService.updateAppConfig({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
+      await appLifecycleService.updateAppSettings({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
 
       // assert
       const app = await appsRepository.getAppByUrn(appInfo.urn);

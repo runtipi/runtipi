@@ -62,6 +62,9 @@ export const app = pgTable('app', {
   pendingRestart: boolean('pending_restart').default(false).notNull(),
   userConfigEnabled: boolean('user_config_enabled').default(true).notNull(),
   maxBackups: integer('max_backups'),
+  templateUrn: varchar('template_urn'),
+  lastTemplateSyncAt: integer('last_template_sync_at'),
+  templateVersion: integer('template_version'),
 });
 
 export const appRelations = relations(app, ({ one }) => ({

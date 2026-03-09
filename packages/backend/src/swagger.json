@@ -420,37 +420,6 @@
         "tags": [
           "Auth"
         ]
-      },
-      "delete": {
-        "operationId": "cancelResetPassword",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Auth"
-        ]
-      },
-      "get": {
-        "operationId": "checkResetPasswordRequest",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CheckResetPasswordRequestDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Auth"
-        ]
       }
     },
     "/api/auth/traefik": {
@@ -1174,7 +1143,7 @@
     },
     "/api/app-lifecycle/{urn}/update-config": {
       "patch": {
-        "operationId": "updateAppConfig",
+        "operationId": "updateAppSettings",
         "parameters": [
           {
             "name": "urn",
@@ -2078,6 +2047,138 @@
         ]
       }
     },
+    "/api/apps/{urn}/config": {
+      "get": {
+        "operationId": "getEditableAppConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAppConfigDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": [
+          "AppConfig"
+        ]
+      },
+      "post": {
+        "operationId": "updateEditableAppConfig",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppConfigBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppConfigSuccessDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": [
+          "AppConfig"
+        ]
+      }
+    },
+    "/api/apps/{urn}/template/diff": {
+      "get": {
+        "operationId": "getTemplateDiff",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDiffDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": [
+          "AppConfig"
+        ]
+      }
+    },
+    "/api/apps/{urn}/template/sync": {
+      "post": {
+        "operationId": "syncWithTemplate",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppConfigSuccessDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": [
+          "AppConfig"
+        ]
+      }
+    },
     "/api/debug/seed": {
       "post": {
         "operationId": "seedDatabase",
@@ -2901,17 +3002,6 @@
           "success"
         ]
       },
-      "CheckResetPasswordRequestDto": {
-        "type": "object",
-        "properties": {
-          "isRequestPending": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "isRequestPending"
-        ]
-      },
       "MyAppsDto": {
         "type": "object",
         "properties": {
@@ -2990,6 +3080,16 @@
                         "updating"
                       ]
                     },
+                    "templateUrn": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "updatedAt": {
                       "type": "number"
                     },
@@ -3026,6 +3126,7 @@
                     "pendingRestart",
                     "port",
                     "status",
+                    "templateUrn",
                     "updatedAt",
                     "version"
                   ]
@@ -3390,6 +3491,16 @@
                         "updating"
                       ]
                     },
+                    "templateUrn": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "updatedAt": {
                       "type": "number"
                     },
@@ -3426,6 +3537,7 @@
                     "pendingRestart",
                     "port",
                     "status",
+                    "templateUrn",
                     "updatedAt",
                     "version"
                   ]
@@ -4067,6 +4179,16 @@
                       "updating"
                     ]
                   },
+                  "templateUrn": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "updatedAt": {
                     "type": "number"
                   },
@@ -4103,6 +4225,7 @@
                   "pendingRestart",
                   "port",
                   "status",
+                  "templateUrn",
                   "updatedAt",
                   "version"
                 ]
@@ -5235,6 +5358,71 @@
         },
         "required": [
           "data"
+        ]
+      },
+      "GetAppConfigDto": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "config"
+        ]
+      },
+      "UpdateAppConfigBodyDto": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "config"
+        ]
+      },
+      "AppConfigSuccessDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      },
+      "TemplateDiffDto": {
+        "type": "object",
+        "properties": {
+          "hasChanges": {
+            "type": "boolean"
+          },
+          "localVersion": {
+            "type": "number"
+          },
+          "templateVersion": {
+            "type": "number"
+          },
+          "current": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "hasChanges",
+          "localVersion",
+          "templateVersion"
         ]
       }
     }
