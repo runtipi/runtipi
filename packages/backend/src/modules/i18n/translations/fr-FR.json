@@ -362,7 +362,7 @@
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
   "AUTH_LOGIN_SUBMIT": "Connexion",
   "AUTH_LOGIN_TITLE": "Se connecter à {{type}}",
-  "AUTH_LOGIN_TYPE_ACCOUNT": "your account",
+  "AUTH_LOGIN_TYPE_ACCOUNT": "votre compte",
   "AUTH_REGISTER_SUBMIT": "S'inscrire",
   "AUTH_REGISTER_TITLE": "Créez votre compte",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Retour au login",
