@@ -1,4 +1,4 @@
-import type { GetProviderAuthUrlResponse, GetProvidersPrivateResponse } from '@/api-client';
+import type { GetProviderAuthUrlResponse } from '@/api-client';
 import { editProviderMutation, getProviderAuthUrlMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +12,10 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { OAuthForm } from '../oauth-form/oauth-form';
 import { DropdownMenuItem } from '@/components/ui/DropdownMenu';
 import { useEffect } from 'react';
+import type { Provider } from '@/types/oidc.types';
 
-interface EditOAuthProviderDialogProps {
-  provider: GetProvidersPrivateResponse['providers'][number];
+export interface EditOAuthProviderDialogProps {
+  provider: Provider;
 }
 
 export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogProps) => {
@@ -72,7 +73,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
                 <>
                   <p className="text-muted mb-3">{t('SETTINGS_SECURITY_OAUTH_EDIT_SUBTITLE')}</p>
                   <OAuthForm
-                    onSubmit={(values) => editProvider.mutate({ path: { id: provider.id! }, body: values })}
+                    onSubmit={(values) => editProvider.mutate({ path: { id: provider.id }, body: values })}
                     formId={formId}
                     isLoading={editProvider.isPending}
                     initialValues={provider}
@@ -91,7 +92,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
               {edited ? t('CLOSE') : t('ACTIONS_CANCEL')}
             </Button>
             {edited ? (
-              <Button intent="primary" onClick={() => getProviderUrl.mutate({ path: { id: provider.id! } })} disabled={getProviderUrl.isPending}>
+              <Button intent="primary" onClick={() => getProviderUrl.mutate({ path: { id: provider.id } })} disabled={getProviderUrl.isPending}>
                 {t('SETTINGS_SECURITY_OAUTH_AUTHORIZE')}
               </Button>
             ) : (
