@@ -8,8 +8,6 @@ import { AuthService } from '../auth/auth.service';
 import { UserRepository } from '../user/user.repository';
 import { SessionManager } from '../auth/session.manager';
 
-// TODO: Throw is NOT error handling
-
 @Injectable()
 @Controller('oidc')
 export class OidcController {
@@ -67,9 +65,15 @@ export class OidcController {
 
   @Post('providers/:id/url')
   @ApiResponse({ type: OidcProviderAuthResDto })
-  async getProviderAuthUrl(@Param('id') id: number, @Req() req: ExpressRequest) {
+  async getProviderAuthUrl(@Param('id') id: number, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const reqUrl = new URL(`${req.protocol}://${req.host}${req.url}`);
     const authUrl = await this.oidcService.getProviderAuthUrl(id, reqUrl);
+
+    if (!authUrl) {
+      const params = new URLSearchParams({ error: 'Failed to get auth url', redirect_to: '/login' });
+      return res.redirect(`${reqUrl.origin}/error?${params}`);
+    }
+
     return OidcProviderAuthResDto.parse({ url: authUrl });
   }
 
@@ -80,23 +84,37 @@ export class OidcController {
     const provider = await this.oidcService.getOidcProviderById(id);
 
     if (!provider) {
-      throw new Error('Failed to find provider');
+      const params = new URLSearchParams({ error: 'Provider not found', redirect_to: '/login' });
+      return res.redirect(`${reqUrl.origin}/error?${params}`);
     }
 
     const tokenRes = await this.oidcService.getTokenFromCallback(query.state, reqUrl);
+
+    if (!tokenRes) {
+      const params = new URLSearchParams({ error: 'Failed to get token', redirect_to: '/login' });
+      return res.redirect(`${reqUrl.origin}/error?${params}`);
+    }
+
     const userInfo = await this.oidcService.fetchUserInfo(id, tokenRes.access_token);
+
+    if (!userInfo) {
+      const params = new URLSearchParams({ error: 'Failed to get user info', redirect_to: '/login' });
+      return res.redirect(`${reqUrl.origin}/error?${params}`);
+    }
 
     if (!req.user) {
       const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub);
 
       if (!trustedSubEntry) {
-        throw new Error('Unauthorized');
+        const params = new URLSearchParams({ error: 'Unauthorized', redirect_to: '/login' });
+        return res.redirect(`${reqUrl.origin}/error?${params}`);
       }
 
       const user = await this.userRepository.getFirstOperator();
 
       if (!user) {
-        throw new Error('Failed to find operator');
+        const params = new URLSearchParams({ error: 'Failed to find operator', redirect_to: '/login' });
+        return res.redirect(`${reqUrl.origin}/error?${params}`);
       }
 
       const sessionId = await this.sessionManager.createSession(user.id);
@@ -120,7 +138,7 @@ export class OidcController {
   @UseGuards(AuthGuard)
   async getTrustedSubs(@Req() req: ExpressRequest) {
     if (!req.user) {
-      throw new Error('Failed to get user info');
+      return 401;
     }
 
     const trustedSubs = await this.oidcService.getTrustedSubsByUserId(req.user.id);
