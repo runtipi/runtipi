@@ -362,6 +362,7 @@
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "Introduce tu contraseña",
   "AUTH_LOGIN_SUBMIT": "Iniciar Sesión",
   "AUTH_LOGIN_TITLE": "Login to {{type}}",
+  "AUTH_LOGIN_TYPE_ACCOUNT": "your account",
   "AUTH_REGISTER_SUBMIT": "Registrar",
   "AUTH_REGISTER_TITLE": "Registre su cuenta",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Volver al inicio de sesión",
