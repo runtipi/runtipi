@@ -362,6 +362,7 @@
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "輸入你的密碼",
   "AUTH_LOGIN_SUBMIT": "登入",
   "AUTH_LOGIN_TITLE": "Login to {{type}}",
+  "AUTH_LOGIN_TYPE_ACCOUNT": "your account",
   "AUTH_REGISTER_SUBMIT": "註冊帳號",
   "AUTH_REGISTER_TITLE": "註冊你的帳號",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "返回登入",
