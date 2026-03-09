@@ -362,6 +362,7 @@
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "Введіть пароль",
   "AUTH_LOGIN_SUBMIT": "Увійти",
   "AUTH_LOGIN_TITLE": "Увійти до {{type}}",
+  "AUTH_LOGIN_TYPE_ACCOUNT": "your account",
   "AUTH_REGISTER_SUBMIT": "Зареєструватися",
   "AUTH_REGISTER_TITLE": "Зареєструвати обліковий запис",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Повернутися до входу",
