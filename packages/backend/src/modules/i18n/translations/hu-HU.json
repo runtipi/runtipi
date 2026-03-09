@@ -362,6 +362,7 @@
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "Jelszó megadása",
   "AUTH_LOGIN_SUBMIT": "Belépés",
   "AUTH_LOGIN_TITLE": "Bejelentkezés a(z) {{type}}-ba",
+  "AUTH_LOGIN_TYPE_ACCOUNT": "your account",
   "AUTH_REGISTER_SUBMIT": "Regisztráció",
   "AUTH_REGISTER_TITLE": "Fiók regisztráció",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Vissza a belépéshez",
