@@ -362,6 +362,7 @@
   "AUTH_FORM_PASSWORD_PLACEHOLDER": "Introduceţi parola",
   "AUTH_LOGIN_SUBMIT": "Autentificare",
   "AUTH_LOGIN_TITLE": "Login to {{type}}",
+  "AUTH_LOGIN_TYPE_ACCOUNT": "your account",
   "AUTH_REGISTER_SUBMIT": "Înregistrare",
   "AUTH_REGISTER_TITLE": "Înregistrați-vă contul",
   "AUTH_RESET_PASSWORD_BACK_TO_LOGIN": "Inapoi la autentificare",
