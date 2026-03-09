@@ -34,7 +34,7 @@ export class OidcService {
     return config;
   }
 
-  public async getProviderAuthUrl(id: number, reqUrl: URL): Promise<string> {
+  public async getProviderAuthUrl(id: number, reqUrl: URL): Promise<string | null> {
     try {
       const provider = await this.oidcRepository.getProviderById(id);
 
@@ -54,11 +54,11 @@ export class OidcService {
       return authUrl.href;
     } catch (error) {
       this.logger.error('Failed to get auth url', error);
-      throw error;
+      return null;
     }
   }
 
-  public async getTokenFromCallback(state: string, reqUrl: URL): Promise<client.TokenEndpointResponse> {
+  public async getTokenFromCallback(state: string, reqUrl: URL): Promise<client.TokenEndpointResponse | null> {
     try {
       const trustedState = this.trustedStatesStore.get(state);
 
@@ -95,11 +95,11 @@ export class OidcService {
       return tokenResponse;
     } catch (error) {
       this.logger.error('Failed to get token from callback', error);
-      throw error;
+      return null;
     }
   }
 
-  public async fetchUserInfo(id: number, access_token: string): Promise<{ sub: string }> {
+  public async fetchUserInfo(id: number, access_token: string): Promise<{ sub: string } | null> {
     try {
       const provider = await this.oidcRepository.getProviderById(id);
 
@@ -120,7 +120,7 @@ export class OidcService {
       };
     } catch (error) {
       this.logger.error('Failed to fetch user info', error);
-      throw error;
+      return null;
     }
   }
 
