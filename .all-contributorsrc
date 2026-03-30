@@ -529,6 +529,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "MarkHaakman",
+      "name": "MarkHaakman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15815364?v=4",
+      "profile": "https://github.com/MarkHaakman",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
