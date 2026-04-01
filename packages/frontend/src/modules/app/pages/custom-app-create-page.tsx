@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input/Input';
 import type { TranslatableError } from '@/types/error.types';
 import { useState } from 'react';
 import { type } from 'arktype';
+import { useMultiServiceStore } from '@/stores/multiServiceStore';
 
 const RESERVED_APP_NAMES = ['create'];
 
@@ -17,6 +18,7 @@ export default () => {
   const navigate = useNavigate();
   const [appName, setAppName] = useState('');
   const [appNameError, setAppNameError] = useState<string>();
+  const { composeExtras } = useMultiServiceStore();
 
   const appNameSchema = type('string').narrow((name, ctx) => {
     if (name.length < 1) ctx.reject({ message: t('CUSTOM_APP_NAME_REQUIRED') });
@@ -71,7 +73,7 @@ export default () => {
           </div>
         </div>
       </div>
-      <MultiServiceForm onSubmit={(d) => onSubmit(convertLegacyToYaml(d))} />
+      <MultiServiceForm onSubmit={(d) => onSubmit({ ...convertLegacyToYaml(d), ...composeExtras })} />
     </>
   );
 };
