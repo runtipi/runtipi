@@ -1,5 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Ακύρωση",
+  "CANCEL": "Cancel",
+  "CLOSE": "Close",
   "APP_ACTION_INSTALL": "Εγκατάσταση",
   "APP_ACTION_LOADING": "Φόρτωση",
   "APP_ACTION_OPEN": "Άνοιγμα",
@@ -295,6 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Δεν μπορείτε να διαγράψετε το τελευταίο appstore",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Υπάρχουν εγκατεστημένες εφαρμογές που ανήκουν σε αυτό το appstore. Παρακαλώ απεγκαταστήστε τις πρώτα",
   "APP_STORE_ADD_DIALOG_TITLE": "Προσθήκη appstore",
+  "APP_STORE_ADD_BUTTON": "Add appstore",
   "APP_STORE_ADD_FORM_NAME": "Όνομα appstore",
   "APP_STORE_ADD_FORM_URL": "Διεύθυνση appstore",
   "APP_STORE_ADD_FORM_SUBMIT": "Δημιουργία νέου appstore",
