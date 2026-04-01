@@ -1,5 +1,7 @@
 {
   "APP_ACTION_CANCEL": "取消",
+  "CANCEL": "Cancel",
+  "CLOSE": "Close",
   "APP_ACTION_INSTALL": "",
   "APP_ACTION_LOADING": "",
   "APP_ACTION_OPEN": "打开",
@@ -295,6 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "你不能删除最后一个应用商店",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "有一些已安装的应用属于此应用商店。请先将它们卸载",
   "APP_STORE_ADD_DIALOG_TITLE": "添加应用商店",
+  "APP_STORE_ADD_BUTTON": "Add appstore",
   "APP_STORE_ADD_FORM_NAME": "应用商店名称",
   "APP_STORE_ADD_FORM_URL": "应用商店URL",
   "APP_STORE_ADD_FORM_SUBMIT": "创建新应用商店",
