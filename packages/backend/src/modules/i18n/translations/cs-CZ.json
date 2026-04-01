@@ -1,5 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Cancel",
+  "CANCEL": "Cancel",
+  "CLOSE": "Close",
   "APP_ACTION_INSTALL": "Install",
   "APP_ACTION_LOADING": "Loading",
   "APP_ACTION_OPEN": "Open",
@@ -295,6 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "You cannot delete the last appstore",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "There are installed apps that belong to this appstore. Please uninstall them first",
   "APP_STORE_ADD_DIALOG_TITLE": "Add appstore",
+  "APP_STORE_ADD_BUTTON": "Add appstore",
   "APP_STORE_ADD_FORM_NAME": "Appstore name",
   "APP_STORE_ADD_FORM_URL": "Appstore URL",
   "APP_STORE_ADD_FORM_SUBMIT": "Create new appstore",
