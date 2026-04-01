@@ -160,13 +160,13 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                   {!composeDiffQuery.isLoading && (
                     <ScrollArea maxheight={500} className="mt-3 border rounded">
                       <CodeMirror
-                        value={yaml.stringify(JSON.parse(composeDiffQuery.data?.new ?? '{}')) ?? ''}
+                        value={yaml.stringify(JSON.parse(composeDiffQuery.data?.new ?? '{}'), { nullStr: '' }) ?? ''}
                         readOnly
                         height="400px"
                         theme={copilot}
                         extensions={[
                           unifiedMergeView({
-                            original: yaml.stringify(JSON.parse(composeDiffQuery.data?.current ?? '{}')) ?? '',
+                            original: yaml.stringify(JSON.parse(composeDiffQuery.data?.current ?? '{}'), { nullStr: '' }) ?? '',
                             mergeControls: false,
                           }),
                         ]}

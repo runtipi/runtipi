@@ -1,5 +1,5 @@
 import { convertLegacyToYaml } from '@runtipi/common/schemas';
-import { parse } from 'yaml';
+import { parse, stringify } from 'yaml';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMultiServiceStore } from './multiServiceStore';
 
@@ -50,8 +50,11 @@ volumes:
         },
       },
       volumes: {
-        dockhand_data: {},
+        dockhand_data: null,
       },
     });
+    expect(stringify(rebuiltYaml, { nullStr: '' })).toContain(`volumes:
+  dockhand_data:
+`);
   });
 });

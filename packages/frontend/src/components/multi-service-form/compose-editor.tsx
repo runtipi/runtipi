@@ -35,12 +35,12 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
   }, [services]);
 
   const getCanonicalStoreYamlObject = useCallback(() => {
-    return deepClean({ ...convertLegacyToYaml(getCanonicalStoreObject()), ...composeExtras });
+    return { ...deepClean(convertLegacyToYaml(getCanonicalStoreObject())), ...composeExtras };
   }, [composeExtras, getCanonicalStoreObject]);
 
   const [yamlValue, setYamlValue] = useState<string>(() => {
     try {
-      return stringify(getCanonicalStoreYamlObject());
+      return stringify(getCanonicalStoreYamlObject(), { nullStr: '' });
     } catch (e) {
       console.error('Failed to init yaml', e);
       return '';
@@ -178,8 +178,10 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       } else {
         const parsedJson = JSON.parse(jsonValue);
         const legacyInput = { ...parsedJson, schemaVersion: 2 };
-        const yamlObj = { ...convertLegacyToYaml(legacyInput), ...composeExtras };
-        const newYaml = stringify(yamlObj);
+        const parsedYaml = parse(yamlValue) as Record<string, unknown>;
+        const yamlExtras = Object.fromEntries(Object.entries(parsedYaml).filter(([key]) => key !== 'services' && key !== 'x-runtipi'));
+        const yamlObj = { ...convertLegacyToYaml(legacyInput), ...yamlExtras };
+        const newYaml = stringify(yamlObj, { nullStr: '' });
 
         setYamlValue(newYaml);
         setFormat('yaml');

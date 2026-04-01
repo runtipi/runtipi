@@ -75,7 +75,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   });
 
   const onSubmit = (data: ReturnType<typeof convertYamlToLegacy>) => {
-    updateApp.mutate({ path: { urn }, body: { config: yaml.stringify({ ...convertLegacyToYaml(data), ...composeExtras }) } });
+    updateApp.mutate({ path: { urn }, body: { config: yaml.stringify({ ...convertLegacyToYaml(data), ...composeExtras }, { nullStr: '' }) } });
   };
 
   if (!ready) {

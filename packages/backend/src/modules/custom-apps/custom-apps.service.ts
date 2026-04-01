@@ -117,7 +117,7 @@ export class CustomAppService {
 
   private async writeDockerComposeConfig(appUrn: AppUrn, config: CreateCustomAppDto['config']): Promise<void> {
     const { composePath } = this.getCustomAppPaths(appUrn);
-    const configContent = yaml.stringify(config);
+    const configContent = yaml.stringify(config, { nullStr: '' });
 
     const ok = await this.filesystem.writeTextFile(composePath, configContent);
     if (!ok) {
