@@ -1,5 +1,7 @@
 {
   "APP_ACTION_CANCEL": "İptal Et",
+  "CANCEL": "Cancel",
+  "CLOSE": "Close",
   "APP_ACTION_INSTALL": "Yükle",
   "APP_ACTION_LOADING": "Yükleniyor",
   "APP_ACTION_OPEN": "Aç",
@@ -295,6 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Son uygulama mağazasını silemezsiniz",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Bu uygulama mağazasına ait yüklü uygulamalar var. Lütfen önce onları kaldırın",
   "APP_STORE_ADD_DIALOG_TITLE": "Uygulama mağazası ekle",
+  "APP_STORE_ADD_BUTTON": "Add appstore",
   "APP_STORE_ADD_FORM_NAME": "Uygulama mağazası adı",
   "APP_STORE_ADD_FORM_URL": "Uygulama mağazası URL'si",
   "APP_STORE_ADD_FORM_SUBMIT": "Yeni uygulama mağazası oluştur",
