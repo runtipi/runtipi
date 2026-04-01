@@ -1,5 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Mégsem",
+  "CANCEL": "Cancel",
+  "CLOSE": "Close",
   "APP_ACTION_INSTALL": "Telepítés",
   "APP_ACTION_LOADING": "Betöltés",
   "APP_ACTION_OPEN": "Megnyitás",
@@ -295,6 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Nem törölheti az utolsó alkalmazásboltot",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Vannak telepített alkalmazások, amelyek ehhez az alkalmazásbolthoz tartoznak. Kérjük, először távolítsa el őket",
   "APP_STORE_ADD_DIALOG_TITLE": "Alkalmazásbolt hozzáadása",
+  "APP_STORE_ADD_BUTTON": "Add appstore",
   "APP_STORE_ADD_FORM_NAME": "Alkalmazásbolt neve",
   "APP_STORE_ADD_FORM_URL": "Alkalmazásbolt URL",
   "APP_STORE_ADD_FORM_SUBMIT": "Új alkalmazásbolt létrehozása",
