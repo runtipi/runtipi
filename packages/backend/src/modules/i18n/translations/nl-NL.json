@@ -1,5 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Annuleren",
+  "CANCEL": "Cancel",
+  "CLOSE": "Close",
   "APP_ACTION_INSTALL": "Installeren",
   "APP_ACTION_LOADING": "Laden",
   "APP_ACTION_OPEN": "Open",
@@ -295,6 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Je kan de vorige AppStore niet verwijderen",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Er zijn applicaties geïnstalleerd die deel uitmaken van deze applicatie. U kunt deze best eerst verwijderen",
   "APP_STORE_ADD_DIALOG_TITLE": "Voeg appstore bij",
+  "APP_STORE_ADD_BUTTON": "Add appstore",
   "APP_STORE_ADD_FORM_NAME": "Appstore naam",
   "APP_STORE_ADD_FORM_URL": "Appstore link",
   "APP_STORE_ADD_FORM_SUBMIT": "Maak een nieuwe appstore",
