@@ -1,7 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Anuluj",
-  "CANCEL": "Cancel",
-  "CLOSE": "Close",
+  "CANCEL": "Anuluj",
+  "CLOSE": "Zamknij",
   "APP_ACTION_INSTALL": "Zainstaluj",
   "APP_ACTION_LOADING": "Ładowanie",
   "APP_ACTION_OPEN": "Otwórz",
@@ -297,7 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Nie możesz usunąć ostatniego appstore",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Niektóre aplikacje, które pochodzą z tego appstore są zainstalowane. Najpierw je odinstaluj",
   "APP_STORE_ADD_DIALOG_TITLE": "Dodaj appstore",
-  "APP_STORE_ADD_BUTTON": "Add appstore",
+  "APP_STORE_ADD_BUTTON": "Dodaj appstore",
   "APP_STORE_ADD_FORM_NAME": "Nazwa appstore",
   "APP_STORE_ADD_FORM_URL": "URL appstore",
   "APP_STORE_ADD_FORM_SUBMIT": "Utwórz nowy appstore",
