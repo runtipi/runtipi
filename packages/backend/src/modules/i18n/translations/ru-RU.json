@@ -1,7 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Отменить",
-  "CANCEL": "Cancel",
-  "CLOSE": "Close",
+  "CANCEL": "Отменить",
+  "CLOSE": "Закрыть",
   "APP_ACTION_INSTALL": "Установить",
   "APP_ACTION_LOADING": "Загружается",
   "APP_ACTION_OPEN": "Открыть",
@@ -297,7 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Нельзя удалить последний Appstore",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Есть установленные приложения из этого appstore. Пожалуйста, сначала удалите их",
   "APP_STORE_ADD_DIALOG_TITLE": "Добавить Appstore",
-  "APP_STORE_ADD_BUTTON": "Add appstore",
+  "APP_STORE_ADD_BUTTON": "Добавить Appstore",
   "APP_STORE_ADD_FORM_NAME": "Название Appstore",
   "APP_STORE_ADD_FORM_URL": "Appstore URL",
   "APP_STORE_ADD_FORM_SUBMIT": "Создать новый Appstore",
