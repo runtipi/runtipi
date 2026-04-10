@@ -1,7 +1,7 @@
 {
   "APP_ACTION_CANCEL": "Annulla",
-  "CANCEL": "Cancel",
-  "CLOSE": "Close",
+  "CANCEL": "Annulla",
+  "CLOSE": "Chiudi",
   "APP_ACTION_INSTALL": "Installa",
   "APP_ACTION_LOADING": "Caricamento",
   "APP_ACTION_OPEN": "Apri",
@@ -297,7 +297,7 @@
   "APP_STORE_DELETE_ERROR_LAST_STORE": "Non puoi eliminare l'ultimo app store",
   "APP_STORE_DELETE_ERROR_APPS_EXIST": "Ci sono applicazioni installate che appartengono a questo app store. Per favore disinstallale prima",
   "APP_STORE_ADD_DIALOG_TITLE": "Aggiungi un App Store",
-  "APP_STORE_ADD_BUTTON": "Add appstore",
+  "APP_STORE_ADD_BUTTON": "Aggiungi un App Store",
   "APP_STORE_ADD_FORM_NAME": "Nome dell'App Store",
   "APP_STORE_ADD_FORM_URL": "Indirizzo URL dell'App Store",
   "APP_STORE_ADD_FORM_SUBMIT": "Crea nuovo app store",
