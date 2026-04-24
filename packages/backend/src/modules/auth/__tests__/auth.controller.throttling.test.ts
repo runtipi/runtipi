@@ -1,3 +1,4 @@
+import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Test } from '@nestjs/testing';
@@ -17,6 +18,7 @@ it('throttles repeated login attempts before they reach the controller', async (
   const authService = mock<AuthService>();
   const logger = mock<LoggerService>();
   const config = mock<ConfigurationService>();
+  const cache = mock<CacheService>();
 
   authService.login.mockResolvedValue({ totpSessionId: '550e8400-e29b-41d4-a716-446655440000' });
 
@@ -40,6 +42,10 @@ it('throttles repeated login attempts before they reach the controller', async (
       {
         provide: ConfigurationService,
         useValue: config,
+      },
+      {
+        provide: CacheService,
+        useValue: cache,
       },
     ],
   }).compile();
@@ -71,6 +77,7 @@ it('does not throttle repeated traefik auth checks', async () => {
   const authService = mock<AuthService>();
   const logger = mock<LoggerService>();
   const config = mock<ConfigurationService>();
+  const cache = mock<CacheService>();
 
   const moduleRef = await Test.createTestingModule({
     imports: [ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }])],
@@ -92,6 +99,10 @@ it('does not throttle repeated traefik auth checks', async () => {
       {
         provide: ConfigurationService,
         useValue: config,
+      },
+      {
+        provide: CacheService,
+        useValue: cache,
       },
     ],
   }).compile();

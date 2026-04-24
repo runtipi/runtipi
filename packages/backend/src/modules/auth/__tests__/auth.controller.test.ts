@@ -1,5 +1,7 @@
+import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
+import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_NAME } from '@/common/constants';
 import { Test } from '@nestjs/testing';
 import { type INestApplication, type NestMiddleware } from '@nestjs/common';
 import { ArkValidationPipe } from 'nestjs-arktype';
@@ -24,6 +26,7 @@ describe('AuthController reset-password security', () => {
   const authService = mock<AuthService>();
   const logger = mock<LoggerService>();
   const config = mock<ConfigurationService>();
+  const cache = mock<CacheService>();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -42,6 +45,10 @@ describe('AuthController reset-password security', () => {
           provide: ConfigurationService,
           useValue: config,
         },
+        {
+          provide: CacheService,
+          useValue: cache,
+        },
       ],
     }).compile();
 
@@ -49,6 +56,16 @@ describe('AuthController reset-password security', () => {
     app.useGlobalPipes(new ArkValidationPipe());
     app.use(((req, _res, next) => {
       req.cookies = {};
+      if (req.headers.cookie?.includes(`${SESSION_COOKIE_NAME}=session-id`)) {
+        req.cookies[SESSION_COOKIE_NAME] = 'session-id';
+        req.user = cliUser;
+        req.authMethod = 'session';
+      }
+      if (req.headers.cookie?.includes(`${FORWARD_AUTH_COOKIE_NAME}=forward-session-id`)) {
+        req.cookies[FORWARD_AUTH_COOKIE_NAME] = 'forward-session-id';
+        req.user = cliUser;
+        req.authMethod = 'forward-auth';
+      }
       if (req.headers.authorization === 'Bearer cli-token') {
         req.user = cliUser;
         req.authMethod = 'cli';
@@ -67,6 +84,8 @@ describe('AuthController reset-password security', () => {
     authService.cancelPasswordChangeRequest.mockReset();
     authService.checkPasswordChangeRequest.mockReset();
     authService.getCookieDomain.mockReset();
+    cache.set.mockReset();
+    cache.del.mockReset();
     config.get.mockReset();
   });
 
@@ -101,5 +120,69 @@ describe('AuthController reset-password security', () => {
 
     expect(response.status).toBe(201);
     expect(authService.changeOperatorPassword).toHaveBeenCalledWith({ newPassword: 'new-password-123' });
+  });
+
+  it('sets the forward-auth cookie for safe redirects', async () => {
+    authService.getCookieDomain.mockReturnValue('.example.com');
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/forward-auth')
+      .set('Host', 'Example.COM')
+      .set('Origin', 'http://example.com')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .send({ redirectUrl: 'https://app.example.com' });
+
+    expect(response.status).toBe(204);
+    expect(response.headers['set-cookie']?.[0]).toContain(`${FORWARD_AUTH_COOKIE_NAME}=`);
+    expect(response.headers['set-cookie']?.[0]).not.toContain(`${FORWARD_AUTH_COOKIE_NAME}=session-id`);
+    expect(cache.set).toHaveBeenCalledWith(expect.stringMatching(/^forward-auth:/), 'session-id', 86_400);
+  });
+
+  it('rejects forward-auth when the cookie domain is unavailable', async () => {
+    authService.getCookieDomain.mockReturnValue(undefined);
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/forward-auth')
+      .set('Host', 'example.com')
+      .set('Origin', 'http://example.com')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .send({ redirectUrl: 'https://app.example.com' });
+
+    expect(response.status).toBe(401);
+    expect(response.headers['set-cookie']).toBeUndefined();
+  });
+
+  it('rejects forward-auth for unsafe redirects', async () => {
+    authService.getCookieDomain.mockReturnValue('.example.com');
+
+    const response = await request(app.getHttpServer())
+      .post('/auth/forward-auth')
+      .set('Host', 'example.com')
+      .set('Origin', 'http://example.com')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .send({ redirectUrl: 'https://evil.com' });
+
+    expect(response.status).toBe(401);
+    expect(response.headers['set-cookie']).toBeUndefined();
+  });
+
+  it('does not authorize traefik auth checks with a dashboard session cookie', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/auth/traefik')
+      .set('X-Forwarded-Uri', '/')
+      .set('X-Forwarded-Proto', 'https')
+      .set('X-Forwarded-Host', 'app.example.com')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`);
+
+    expect(response.status).toBe(302);
+    expect(response.headers.location).toBe('https://example.com/login?redirect_url=https%3A%2F%2Fapp.example.com%2F&app=app');
+  });
+
+  it('authorizes traefik auth checks with a forward-auth cookie', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/auth/traefik')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id; ${FORWARD_AUTH_COOKIE_NAME}=forward-session-id`);
+
+    expect(response.status).toBe(200);
   });
 });

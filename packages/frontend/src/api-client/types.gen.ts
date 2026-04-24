@@ -125,6 +125,7 @@ export type LoadDto = {
 
 export type LoginBody = {
     password: string;
+    redirectUrl?: string;
     username: string;
 };
 
@@ -134,6 +135,7 @@ export type LoginDto = {
 };
 
 export type VerifyTotpBody = {
+    redirectUrl?: string;
     totpCode: string;
     totpSessionId: string;
 };

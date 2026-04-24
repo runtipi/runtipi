@@ -1,5 +1,7 @@
-import { SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
+import crypto from 'node:crypto';
+import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
+import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Body, Controller, Get, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
@@ -13,6 +15,7 @@ import {
   DisableTotpBody,
   GetTotpUriBody,
   GetTotpUriDto,
+  ForwardAuthBody,
   LoginBody,
   LoginDto,
   RegisterBody,
@@ -26,6 +29,7 @@ import { ApiResponse } from '@nestjs/swagger';
 
 const AUTH_THROTTLE_TTL = 60_000;
 const AUTH_THROTTLE_LIMIT = 20;
+const FORWARD_AUTH_SESSION_EXPIRATION = SESSION_COOKIE_MAX_AGE / 1000;
 
 @Controller('auth')
 export class AuthController {
@@ -33,28 +37,82 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
+    private readonly cache: CacheService,
   ) {}
 
-  private async setSessionCookie(res: Response, sessionId: string, req: Request) {
-    const host = req.headers['x-forwarded-host'] as string | undefined;
+  private getRequestHost(req: Request) {
+    const host = (req.headers['x-forwarded-host'] as string | undefined) ?? req.headers.host;
+    return host?.split(',')[0]?.trim().split(':')[0]?.toLowerCase();
+  }
+
+  private isSafeForwardAuthRedirect(req: Request, redirectUrl?: string) {
+    if (!redirectUrl) {
+      return false;
+    }
+
+    const host = this.getRequestHost(req);
+    if (!host) {
+      return false;
+    }
+
+    try {
+      const url = new URL(redirectUrl);
+      return ['http:', 'https:'].includes(url.protocol) && url.hostname.endsWith(`.${host}`);
+    } catch {
+      return false;
+    }
+  }
+
+  private setForwardAuthCookie(res: Response, sessionId: string, req: Request, redirectUrl: string) {
+    const domain = this.authService.getCookieDomain(this.getRequestHost(req));
     const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    const domain = this.authService.getCookieDomain(host);
-    const secure = Boolean(domain) && proto === 'https';
+    const secure = proto === 'https';
+
+    if (!domain || !this.isSafeForwardAuthRedirect(req, redirectUrl)) {
+      return false;
+    }
+
+    const forwardAuthSessionId = crypto.randomUUID();
+    this.cache.set(`forward-auth:${forwardAuthSessionId}`, sessionId, FORWARD_AUTH_SESSION_EXPIRATION);
+
+    res.cookie(FORWARD_AUTH_COOKIE_NAME, forwardAuthSessionId, {
+      httpOnly: true,
+      secure,
+      sameSite: 'lax',
+      maxAge: SESSION_COOKIE_MAX_AGE,
+      domain,
+    });
+
+    return true;
+  }
+
+  private async setSessionCookie(res: Response, sessionId: string, req: Request, redirectUrl?: string) {
+    const host = this.getRequestHost(req);
+    const proto = req.headers['x-forwarded-proto'] as string | undefined;
+    const secure = proto === 'https';
 
     this.logger.debug('Request headers', req.headers);
-    this.logger.debug('Setting session cookie', { host, domain, proto, secure });
+    this.logger.debug('Setting session cookie', { host, proto, secure });
 
     if (this.config.get('userSettings').experimental.insecureCookie) {
       this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
       res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
     } else {
+      const legacyDomain = this.authService.getCookieDomain(host);
+      if (legacyDomain) {
+        res.clearCookie(SESSION_COOKIE_NAME, { domain: legacyDomain });
+      }
+
       res.cookie(SESSION_COOKIE_NAME, sessionId, {
         httpOnly: true,
         secure,
         sameSite: 'lax',
         maxAge: SESSION_COOKIE_MAX_AGE,
-        domain,
       });
+    }
+
+    if (redirectUrl) {
+      this.setForwardAuthCookie(res, sessionId, req, redirectUrl);
     }
   }
 
@@ -68,7 +126,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.setSessionCookie(res, sessionId, req, body.redirectUrl);
 
     return LoginDto.parse({ success: true }, { reportOnly: true });
   }
@@ -79,7 +137,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.setSessionCookie(res, sessionId, req, body.redirectUrl);
 
     return LoginDto.parse({ success: true }, { reportOnly: true });
   }
@@ -96,14 +154,39 @@ export class AuthController {
 
   @Post('/logout')
   async logout(@Res() res: Response, @Req() req: Request) {
+    const domain = this.authService.getCookieDomain(this.getRequestHost(req));
     res.clearCookie(SESSION_COOKIE_NAME);
+    if (domain) {
+      res.clearCookie(FORWARD_AUTH_COOKIE_NAME, { domain });
+    }
     const sessionId = req.cookies[SESSION_COOKIE_NAME];
+    const forwardAuthSessionId = req.cookies[FORWARD_AUTH_COOKIE_NAME];
+
+    if (forwardAuthSessionId) {
+      this.cache.del(`forward-auth:${forwardAuthSessionId}`);
+    }
 
     if (!sessionId) {
       return;
     }
 
     await this.authService.logout(sessionId);
+
+    return res.status(204).send();
+  }
+
+  @Post('/forward-auth')
+  @UseGuards(AuthGuard)
+  async forwardAuth(@Body() body: ForwardAuthBody, @Req() req: Request, @Res() res: Response) {
+    const sessionId = req.cookies[SESSION_COOKIE_NAME];
+
+    if (req.authMethod !== 'session' || !sessionId) {
+      throw new UnauthorizedException();
+    }
+
+    if (!this.setForwardAuthCookie(res, sessionId, req, body.redirectUrl)) {
+      throw new UnauthorizedException();
+    }
 
     return res.status(204).send();
   }
@@ -192,7 +275,7 @@ export class AuthController {
   @Get('/traefik')
   @SkipThrottle()
   async traefik(@Req() req: Request, @Res() res: Response) {
-    if (req.user) {
+    if (req.user && req.authMethod === 'forward-auth') {
       this.logger.debug('User already logged in');
       return res.status(200).send();
     }

@@ -135,12 +135,6 @@ export class AuthService {
    * @param {LoginBody} input - An object containing the email and password fields
    */
   public register = async (input: RegisterBody) => {
-    const operators = await this.userRepository.getOperators();
-
-    if (operators.length > 0) {
-      throw new TranslatableError('AUTH_ERROR_ADMIN_ALREADY_EXISTS', {}, HttpStatus.FORBIDDEN);
-    }
-
     const { password, username } = input;
     const email = username.trim().toLowerCase();
 
@@ -159,10 +153,10 @@ export class AuthService {
     }
 
     const hash = await this.passwordService.hash(password);
-    const newUser = await this.userRepository.createUser({ username: email, password: hash, operator: true });
+    const newUser = await this.userRepository.createFirstOperator({ username: email, password: hash });
 
     if (!newUser) {
-      throw new TranslatableError('AUTH_ERROR_ERROR_CREATING_USER', {}, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new TranslatableError('AUTH_ERROR_ADMIN_ALREADY_EXISTS', {}, HttpStatus.FORBIDDEN);
     }
 
     const sessionId = await this.sessionManager.createSession(newUser.id);

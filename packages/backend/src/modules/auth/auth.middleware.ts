@@ -1,4 +1,4 @@
-import { SESSION_COOKIE_NAME } from '@/common/constants';
+import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_NAME } from '@/common/constants';
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { Injectable, type NestMiddleware } from '@nestjs/common';
@@ -16,9 +16,23 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: Request, _: Response, next: NextFunction) {
     const sessionId = req.cookies[SESSION_COOKIE_NAME];
+    const forwardAuthSessionId = req.cookies[FORWARD_AUTH_COOKIE_NAME];
     const bearerToken = req.headers.authorization;
+    const isTraefikAuthRequest = req.path.endsWith('/auth/traefik');
 
-    if (sessionId) {
+    if (forwardAuthSessionId && isTraefikAuthRequest) {
+      const sessionId = this.cache.get(`forward-auth:${forwardAuthSessionId}`);
+      const userId = sessionId ? this.cache.get(`session:${sessionId}`) : undefined;
+      if (!Number.isNaN(Number(userId))) {
+        const user = await this.userRepository.getUserDtoById(Number(userId));
+        req.user = user;
+        req.authMethod = 'forward-auth';
+      }
+
+      return next();
+    }
+
+    if (sessionId && !isTraefikAuthRequest) {
       const userId = this.cache.get(`session:${sessionId}`);
       if (!Number.isNaN(Number(userId))) {
         const user = await this.userRepository.getUserDtoById(Number(userId));

@@ -4,7 +4,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: UserDto;
-      authMethod?: 'session' | 'cli';
+      authMethod?: 'session' | 'forward-auth' | 'cli';
     }
   }
 }
