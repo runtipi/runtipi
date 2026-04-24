@@ -14,19 +14,67 @@ export class AuthMiddleware implements NestMiddleware {
     private readonly userRepository: UserRepository,
   ) {}
 
+  // cookie-parser keeps one value per name; stale cookies from older domains can mask the fresh forward-auth cookie.
+  private getCookieValues(req: Request, name: string) {
+    const values = new Set<string>();
+    const parsedValue = req.cookies?.[name];
+
+    if (typeof parsedValue === 'string') {
+      values.add(parsedValue);
+    }
+
+    const rawCookieHeader = req.headers.cookie;
+    const cookieHeaders = Array.isArray(rawCookieHeader) ? rawCookieHeader : [rawCookieHeader];
+
+    for (const cookieHeader of cookieHeaders) {
+      if (!cookieHeader) {
+        continue;
+      }
+
+      for (const cookie of cookieHeader.split(';')) {
+        const [cookieName, ...cookieValueParts] = cookie.split('=');
+        if (cookieName?.trim() !== name || cookieValueParts.length === 0) {
+          continue;
+        }
+
+        const cookieValue = cookieValueParts.join('=').trim();
+        if (!cookieValue) {
+          continue;
+        }
+
+        try {
+          values.add(decodeURIComponent(cookieValue));
+        } catch {
+          values.add(cookieValue);
+        }
+      }
+    }
+
+    return [...values];
+  }
+
   async use(req: Request, _: Response, next: NextFunction) {
     const sessionId = req.cookies[SESSION_COOKIE_NAME];
-    const forwardAuthSessionId = req.cookies[FORWARD_AUTH_COOKIE_NAME];
+    const forwardAuthSessionIds = this.getCookieValues(req, FORWARD_AUTH_COOKIE_NAME);
     const bearerToken = req.headers.authorization;
     const isTraefikAuthRequest = req.path.endsWith('/auth/traefik');
 
-    if (forwardAuthSessionId && isTraefikAuthRequest) {
-      const sessionId = this.cache.get(`forward-auth:${forwardAuthSessionId}`);
-      const userId = sessionId ? this.cache.get(`session:${sessionId}`) : undefined;
-      if (!Number.isNaN(Number(userId))) {
-        const user = await this.userRepository.getUserDtoById(Number(userId));
-        req.user = user;
-        req.authMethod = 'forward-auth';
+    if (forwardAuthSessionIds.length > 0 && isTraefikAuthRequest) {
+      for (const forwardAuthSessionId of forwardAuthSessionIds) {
+        const sessionId = this.cache.get(`forward-auth:${forwardAuthSessionId}`);
+        const userId = sessionId ? this.cache.get(`session:${sessionId}`) : undefined;
+        const numericUserId = Number(userId);
+
+        if (Number.isNaN(numericUserId)) {
+          continue;
+        }
+
+        const user = await this.userRepository.getUserDtoById(numericUserId);
+        if (user) {
+          req.user = user;
+          req.authMethod = 'forward-auth';
+          break;
+        }
       }
 
       return next();
