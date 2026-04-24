@@ -14,17 +14,23 @@ export class AuthMiddleware implements NestMiddleware {
     private readonly userRepository: UserRepository,
   ) {}
 
+  private isTraefikAuthRequest(req: Request) {
+    return [req.path, req.originalUrl, req.url].some((url) => url?.split('?')[0]?.endsWith('/auth/traefik'));
+  }
+
   async use(req: Request, _: Response, next: NextFunction) {
     const sessionId = req.cookies[SESSION_COOKIE_NAME];
     const forwardAuthSessionId = req.cookies[FORWARD_AUTH_COOKIE_NAME];
     const bearerToken = req.headers.authorization;
-    const isTraefikAuthRequest = req.path.endsWith('/auth/traefik');
+    const isTraefikAuthRequest = this.isTraefikAuthRequest(req);
 
     if (forwardAuthSessionId && isTraefikAuthRequest) {
       const sessionId = this.cache.get(`forward-auth:${forwardAuthSessionId}`);
       const userId = sessionId ? this.cache.get(`session:${sessionId}`) : undefined;
-      if (!Number.isNaN(Number(userId))) {
-        const user = await this.userRepository.getUserDtoById(Number(userId));
+      const numericUserId = Number(userId);
+
+      if (!Number.isNaN(numericUserId)) {
+        const user = await this.userRepository.getUserDtoById(numericUserId);
         req.user = user;
         req.authMethod = 'forward-auth';
       }

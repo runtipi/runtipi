@@ -77,6 +77,33 @@ describe('AuthMiddleware', () => {
     expect(next).toHaveBeenCalledOnce();
   });
 
+  it('detects traefik auth requests from the original url when path is rewritten', async () => {
+    const req = {
+      cookies: {
+        [FORWARD_AUTH_COOKIE_NAME]: 'forward-session-id',
+      },
+      headers: {},
+      originalUrl: '/api/auth/traefik',
+      path: '/',
+      url: '/',
+    } as unknown as Request;
+
+    cache.get.mockImplementation((key: string) => {
+      if (key === 'forward-auth:forward-session-id') return 'session-id';
+      if (key === 'session:session-id') return '1';
+      return undefined;
+    });
+    userRepository.getUserDtoById.mockResolvedValue(user);
+
+    await middleware.use(req, {} as Response, next);
+
+    expect(cache.get).toHaveBeenCalledWith('forward-auth:forward-session-id');
+    expect(cache.get).toHaveBeenCalledWith('session:session-id');
+    expect(req.user).toEqual(user);
+    expect(req.authMethod).toBe('forward-auth');
+    expect(next).toHaveBeenCalledOnce();
+  });
+
   it('does not accept a dashboard session id as a forward-auth cookie value', async () => {
     const req = {
       cookies: {
