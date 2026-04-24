@@ -311,7 +311,7 @@
   "APP_UPDATE_CONFIG_SUCCESS": "Configuration de l'application mise à jour avec succès. Redémarrez l'application pour appliquer les modifications",
   "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "La mise à jour de l'application {{id}} nécessite une version de Runtipi {{minVersion}} ou supérieure. Veuillez mettre à jour votre instance.",
   "APP_UPDATE_INFORMATION_TITLE": "Informations",
-  "APP_UPDATE_INFORMATION_SUBTITLE": "Pour mettre à jour {} vers la version <name/>{}<strong/>, suivez les étapes pour examiner et appliquer la mise à jour.",
+  "APP_UPDATE_INFORMATION_SUBTITLE": "Pour mettre à jour <name/> vers la version <strong/>, suivez les étapes pour examiner et appliquer la mise à jour.",
   "APP_UPDATE_CONFIGURATION_TITLE": "Configuration",
   "APP_UPDATE_CONFIGURATION_SUBTITLE": "Examinez la nouvelle configuration de l'application.",
   "APP_UPDATE_COMPOSE_TITLE": "Fichier Compose",
