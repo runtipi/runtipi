@@ -46,6 +46,7 @@ const forwardAuthSchema = type({
 const loginResponseSchema = type({
   success: 'boolean',
   totpSessionId: 'string?',
+  redirectUrl: 'string.url?',
 });
 
 const registerResponseSchema = type({

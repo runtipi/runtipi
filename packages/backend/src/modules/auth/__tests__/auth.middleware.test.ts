@@ -64,7 +64,7 @@ describe('AuthMiddleware', () => {
     } as unknown as Request;
 
     cache.get.mockImplementation((key: string) => {
-      if (key === 'forward-auth:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
       if (key === 'session:session-id') return '1';
       return undefined;
     });
@@ -72,7 +72,7 @@ describe('AuthMiddleware', () => {
 
     await middleware.use(req, {} as Response, next);
 
-    expect(cache.get).toHaveBeenCalledWith('forward-auth:forward-session-id');
+    expect(cache.get).toHaveBeenCalledWith('forward-auth-session:forward-session-id');
     expect(cache.get).toHaveBeenCalledWith('session:session-id');
     expect(req.user).toEqual(user);
     expect(req.authMethod).toBe('forward-auth');
@@ -93,7 +93,7 @@ describe('AuthMiddleware', () => {
     } as unknown as Request;
 
     cache.get.mockImplementation((key: string) => {
-      if (key === 'forward-auth:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
       if (key === 'session:session-id') return '1';
       return undefined;
     });
@@ -101,7 +101,7 @@ describe('AuthMiddleware', () => {
 
     await middleware.use(req, {} as Response, next);
 
-    expect(cache.get).toHaveBeenCalledWith('forward-auth:forward-session-id');
+    expect(cache.get).toHaveBeenCalledWith('forward-auth-session:forward-session-id');
     expect(cache.get).toHaveBeenCalledWith('session:session-id');
     expect(req.user).toEqual(user);
     expect(req.authMethod).toBe('forward-auth');
@@ -120,7 +120,7 @@ describe('AuthMiddleware', () => {
     } as unknown as Request;
 
     cache.get.mockImplementation((key: string) => {
-      if (key === 'forward-auth:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
       if (key === 'session:session-id') return '1';
       return undefined;
     });
@@ -128,7 +128,7 @@ describe('AuthMiddleware', () => {
 
     await middleware.use(req, {} as Response, next);
 
-    expect(cache.get).toHaveBeenCalledWith('forward-auth:forward-session-id');
+    expect(cache.get).toHaveBeenCalledWith('forward-auth-session:forward-session-id');
     expect(cache.get).not.toHaveBeenCalledWith('session:session-id');
     expect(req.user).toBeUndefined();
     expect(req.authMethod).toBeUndefined();
@@ -150,7 +150,7 @@ describe('AuthMiddleware', () => {
 
     await middleware.use(req, {} as Response, next);
 
-    expect(cache.get).toHaveBeenCalledWith('forward-auth:session-id');
+    expect(cache.get).toHaveBeenCalledWith('forward-auth-session:session-id');
     expect(cache.get).not.toHaveBeenCalledWith('session:session-id');
     expect(req.user).toBeUndefined();
     expect(req.authMethod).toBeUndefined();

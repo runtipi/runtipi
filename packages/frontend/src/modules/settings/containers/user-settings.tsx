@@ -51,7 +51,12 @@ export const UserSettingsContainer = ({ initialValues }: Props) => {
 
   return (
     <div className="card-body">
-      <UserSettingsForm initialValues={initialValues} currentLocale={currentLocale as Locale} onSubmit={onSubmit} />
+      <UserSettingsForm
+        initialValues={initialValues}
+        currentLocale={currentLocale as Locale}
+        onSubmit={onSubmit}
+        loading={updateSettings.isPending}
+      />
     </div>
   );
 };

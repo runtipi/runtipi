@@ -47,7 +47,7 @@ export class AuthMiddleware implements NestMiddleware {
     const isTraefikAuthRequest = this.isTraefikAuthRequest(req);
 
     if (forwardAuthSessionId && isTraefikAuthRequest) {
-      const forwardAuthSession = this.getForwardAuthSession(this.cache.get(`forward-auth:${forwardAuthSessionId}`) ?? '');
+      const forwardAuthSession = this.getForwardAuthSession(this.cache.get(`forward-auth-session:${forwardAuthSessionId}`) ?? '');
       const forwardedHost = this.getForwardedHost(req);
       const userId =
         forwardAuthSession && forwardedHost && forwardAuthSession.host === forwardedHost

@@ -130,6 +130,7 @@ export type LoginBody = {
 };
 
 export type LoginDto = {
+    redirectUrl?: string;
     success: boolean;
     totpSessionId?: string;
 };

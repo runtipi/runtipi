@@ -30,6 +30,13 @@ const createForwardAuthSession = async (redirectUrl: string) => {
   if (!response.ok) {
     throw new Error('Unable to create forward-auth session');
   }
+
+  const body = (await response.json()) as { redirectUrl?: string };
+  if (!body.redirectUrl) {
+    throw new Error('Unable to create forward-auth redirect');
+  }
+
+  return body.redirectUrl;
 };
 
 export async function clientLoader() {
@@ -70,9 +77,9 @@ export default () => {
     let cancelled = false;
 
     createForwardAuthSession(redirect_url)
-      .then(() => {
+      .then((authRedirectUrl) => {
         if (!cancelled) {
-          window.location.href = redirect_url;
+          window.location.href = authRedirectUrl;
         }
       })
       .catch(() => {
@@ -95,8 +102,8 @@ export default () => {
         setUserContext({ isLoggedIn: true });
         refreshUserContext();
 
-        if (redirect_url && isSafeRedirect(redirect_url)) {
-          window.location.href = redirect_url;
+        if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
+          window.location.href = data.redirectUrl;
           return;
         }
         navigate('/dashboard');
@@ -112,12 +119,12 @@ export default () => {
     onError: (e: TranslatableError) => {
       toast.error(t(e.message, e.intlParams));
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setUserContext({ isLoggedIn: true });
       refreshUserContext();
 
-      if (redirect_url && isSafeRedirect(redirect_url)) {
-        window.location.href = redirect_url;
+      if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
         return;
       }
       navigate('/dashboard');
