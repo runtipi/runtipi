@@ -49,4 +49,20 @@ describe('cron-scheduler', () => {
     await vi.advanceTimersByTimeAsync(10 * 60_000);
     expect(task).toHaveBeenCalledTimes(2);
   });
+
+  it('waits through delays longer than the Node timer limit', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 0, 2, 0, 0, 0));
+
+    const task = vi.fn();
+    const scheduledTask = scheduleCron('0 0 1 * *', task);
+
+    await vi.advanceTimersByTimeAsync(2_147_483_647);
+    expect(task).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(30 * 24 * 60 * 60 * 1000 - 2_147_483_647);
+    expect(task).toHaveBeenCalledTimes(1);
+
+    scheduledTask.stop();
+  });
 });

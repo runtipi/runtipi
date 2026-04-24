@@ -2,6 +2,8 @@ import { CronExpressionParser } from 'cron-parser';
 
 type CronTask = () => void | Promise<void>;
 
+const MAX_TIMER_DELAY = 2_147_483_647;
+
 export type ScheduledCronTask = {
   stop: () => void;
 };
@@ -42,13 +44,23 @@ export function scheduleCron(pattern: string, task: CronTask): ScheduledCronTask
       return;
     }
 
-    timeout = setTimeout(async () => {
-      try {
-        await task();
-      } finally {
-        scheduleNextRun();
-      }
-    }, getNextCronDelay(pattern));
+    const delay = getNextCronDelay(pattern);
+
+    timeout = setTimeout(
+      async () => {
+        if (delay > MAX_TIMER_DELAY) {
+          scheduleNextRun();
+          return;
+        }
+
+        try {
+          await task();
+        } finally {
+          scheduleNextRun();
+        }
+      },
+      Math.min(delay, MAX_TIMER_DELAY),
+    );
   };
 
   scheduleNextRun();
