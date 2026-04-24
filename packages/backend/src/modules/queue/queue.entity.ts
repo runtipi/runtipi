@@ -1,8 +1,8 @@
 import type { LoggerService } from '@/core/logger/logger.service';
 import * as Sentry from '@sentry/nestjs';
-import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
 import { type } from 'arktype';
+import { scheduleCron, validateCronPattern } from './cron-scheduler';
 import type { EventPublisher } from './event.publisher';
 
 export type ArkTypeSchema<TOut = unknown, TIn = unknown> = {
@@ -94,7 +94,7 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
   }
 
   public publishRepeatable(data: unknown, cronPattern: string) {
-    if (!cron.validate(cronPattern)) {
+    if (!validateCronPattern(cronPattern)) {
       throw new Error('Invalid cron pattern');
     }
 
@@ -103,7 +103,7 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
       throw new Error(`Invalid event data: ${eventData.summary}`);
     }
 
-    cron.schedule(cronPattern, async () => {
+    scheduleCron(cronPattern, async () => {
       try {
         await this.rpcClient.send(this.queueName, eventData);
       } catch (e) {

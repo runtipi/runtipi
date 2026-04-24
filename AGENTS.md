@@ -1,0 +1,4 @@
+- The dev server is running at http://localhost:3000
+- Credentials :
+  - Username: test@test.com
+  - Password: password
