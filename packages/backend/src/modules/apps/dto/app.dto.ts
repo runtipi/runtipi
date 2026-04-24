@@ -31,6 +31,16 @@ const myAppsSchema = type({
   }).array(),
 });
 
+const guestAppSchema = appSchema.omit('config').onUndeclaredKey('delete');
+
+const guestAppsSchema = type({
+  installed: type({
+    app: guestAppSchema,
+    info: AppInfoDto.schema,
+    metadata: MetadataDto.schema,
+  }).array(),
+});
+
 const getAppSchema = type({
   app: appSchema.or('null').optional(),
   info: AppInfoDto.schema,
@@ -55,7 +65,7 @@ export class AppDto extends createArkDto(appSchema, { name: 'AppDto' }) {}
 export class MyAppsDto extends createArkDto(myAppsSchema, {
   name: 'MyAppsDto',
 }) {}
-export class GuestAppsDto extends createArkDto(myAppsSchema, {
+export class GuestAppsDto extends createArkDto(guestAppsSchema, {
   name: 'GuestAppsDto',
 }) {}
 export class GetAppDto extends createArkDto(getAppSchema, {

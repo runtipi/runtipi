@@ -19,12 +19,42 @@ export class BackupManager {
     private readonly appFilesManager: AppFilesManager,
   ) {}
 
-  public backupApp = async (appUrn: AppUrn) => {
+  private getBackupPaths(appUrn: AppUrn) {
     const { dataDir } = this.config.get('directories');
     const { appStoreId, appName } = extractAppUrn(appUrn);
-    const backupName = `${appName}-${appStoreId}-${Date.now()}`;
 
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+    return {
+      appName,
+      appStoreId,
+      backupDir: path.join(dataDir, 'backups', appStoreId, appName),
+      userConfigDir: path.join(dataDir, 'user-config', appStoreId, appName),
+    };
+  }
+
+  private getValidatedBackupFilename(filename: string) {
+    const sanitizedFilename = sanitizeFilename(filename);
+
+    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
+      throw new Error('Invalid backup filename');
+    }
+
+    return sanitizedFilename;
+  }
+
+  private getBackupFilePath(appUrn: AppUrn, filename: string) {
+    const { backupDir } = this.getBackupPaths(appUrn);
+    const sanitizedFilename = this.getValidatedBackupFilename(filename);
+
+    return {
+      backupDir,
+      sanitizedFilename,
+      backupPath: this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename)),
+    };
+  }
+
+  public backupApp = async (appUrn: AppUrn) => {
+    const { appName, appStoreId, backupDir, userConfigDir } = this.getBackupPaths(appUrn);
+    const backupName = `${appName}-${appStoreId}-${Date.now()}`;
 
     const tempDir = await this.filesystem.createTempDirectory(appUrn);
 
@@ -37,7 +67,6 @@ export class BackupManager {
     await this.filesystem.createDirectory(tempDir);
 
     const { appDataDir, appInstalledDir } = this.appFilesManager.getAppPaths(appUrn);
-    const userConfigDir = path.join(dataDir, 'user-config', appStoreId, appName);
 
     await this.filesystem.copyDirectory(appDataDir, path.join(tempDir, 'app-data'), {
       recursive: true,
@@ -72,23 +101,14 @@ export class BackupManager {
   };
 
   public restoreApp = async (appUrn: AppUrn, filename: string) => {
-    const { dataDir } = this.config.get('directories');
     const restoreDir = await this.filesystem.createTempDirectory(appUrn);
 
     if (!restoreDir) {
       throw new Error('Failed to create temp directory');
     }
 
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const { appStoreId, appName } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-
-    const archive = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupDir, backupPath: archive } = this.getBackupFilePath(appUrn, filename);
+    const { userConfigDir } = this.getBackupPaths(appUrn);
 
     if (!archive.startsWith(backupDir)) {
       throw new Error('Invalid backup file path');
@@ -111,7 +131,6 @@ export class BackupManager {
     this.logger.debug('stdout:', stdout);
 
     const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
-    const userConfigDir = path.join(dataDir, 'user-config', appStoreId, appName);
 
     // Remove old data directories
     await this.filesystem.removeDirectory(appDataDir);
@@ -140,17 +159,7 @@ export class BackupManager {
    * @param filename - The filename of the backup
    */
   public async deleteBackup(appUrn: AppUrn, filename: string) {
-    const { dataDir } = this.config.get('directories');
-
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupPath } = this.getBackupFilePath(appUrn, filename);
 
     if (await this.filesystem.pathExists(backupPath)) {
       await this.filesystem.removeFile(backupPath);
@@ -198,10 +207,7 @@ export class BackupManager {
    * @returns The list of backups
    */
   public async listBackupsByAppId(appUrn: AppUrn) {
-    const { dataDir } = this.config.get('directories');
-
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupsDir = path.join(dataDir, 'backups', appStoreId, appName);
+    const { backupDir: backupsDir } = this.getBackupPaths(appUrn);
 
     if (!(await this.filesystem.pathExists(backupsDir))) {
       return [];
@@ -231,17 +237,7 @@ export class BackupManager {
    * @returns The backup file path
    */
   public async getBackupPath(appUrn: AppUrn, filename: string): Promise<string> {
-    const { dataDir } = this.config.get('directories');
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupPath } = this.getBackupFilePath(appUrn, filename);
 
     if (!(await this.filesystem.pathExists(backupPath))) {
       throw new Error('The backup file does not exist');
@@ -257,17 +253,7 @@ export class BackupManager {
    * @param fileBuffer - The file buffer
    */
   public async uploadBackup(appUrn: AppUrn, filename: string, fileBuffer: Buffer): Promise<void> {
-    const { dataDir } = this.config.get('directories');
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupDir, backupPath, sanitizedFilename } = this.getBackupFilePath(appUrn, filename);
 
     // Create backup directory if it doesn't exist
     await this.filesystem.createDirectory(backupDir);

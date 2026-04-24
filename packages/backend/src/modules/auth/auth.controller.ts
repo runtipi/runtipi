@@ -3,6 +3,7 @@ import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Body, Controller, Get, Patch, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -22,6 +23,9 @@ import {
   VerifyTotpBody,
 } from './dto/auth.dto';
 import { ApiResponse } from '@nestjs/swagger';
+
+const AUTH_THROTTLE_TTL = 60_000;
+const AUTH_THROTTLE_LIMIT = 20;
 
 @Controller('auth')
 export class AuthController {
@@ -55,6 +59,7 @@ export class AuthController {
   }
 
   @Post('/login')
+  @Throttle({ default: { ttl: AUTH_THROTTLE_TTL, limit: AUTH_THROTTLE_LIMIT } })
   @ApiResponse({ type: LoginDto })
   async login(@Body() body: LoginBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId, totpSessionId } = await this.authService.login(body);
@@ -69,6 +74,7 @@ export class AuthController {
   }
 
   @Post('/verify-totp')
+  @Throttle({ default: { ttl: AUTH_THROTTLE_TTL, limit: AUTH_THROTTLE_LIMIT } })
   @ApiResponse({ type: LoginDto })
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.verifyTotp(body);
@@ -184,6 +190,7 @@ export class AuthController {
   }
 
   @Get('/traefik')
+  @SkipThrottle()
   async traefik(@Req() req: Request, @Res() res: Response) {
     if (req.user) {
       this.logger.debug('User already logged in');

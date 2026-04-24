@@ -25,7 +25,7 @@ const validateJson = ajv.compile(jsonSchema);
 
 export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
   const { t } = useTranslation();
-  const { services, setIsDirty, isDirty: isDirtyStore } = useMultiServiceStore();
+  const { services, composeExtras, setIsDirty, isDirty: isDirtyStore } = useMultiServiceStore();
   const [error, setError] = useState<string | undefined>(undefined);
   const [format, setFormat] = useState<'yaml' | 'json'>(initialFormat);
 
@@ -34,10 +34,13 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     return deepClean({ services: servicesWithoutIds, schemaVersion: 2 });
   }, [services]);
 
+  const getCanonicalStoreYamlObject = useCallback(() => {
+    return { ...deepClean(convertLegacyToYaml(getCanonicalStoreObject())), ...composeExtras };
+  }, [composeExtras, getCanonicalStoreObject]);
+
   const [yamlValue, setYamlValue] = useState<string>(() => {
     try {
-      const legacy = getCanonicalStoreObject();
-      return stringify(convertLegacyToYaml(legacy));
+      return stringify(getCanonicalStoreYamlObject(), { nullStr: '' });
     } catch (e) {
       console.error('Failed to init yaml', e);
       return '';
@@ -64,16 +67,17 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
           return;
         }
 
-        let editorObj: unknown;
-
         if (currentFormat === 'yaml') {
-          const parsed = parse(currentVal);
-          editorObj = convertYamlToLegacy(parsed);
-        } else {
-          const parsed = JSON.parse(currentVal);
-          editorObj = { ...parsed, schemaVersion: 2 };
+          const editorObj = deepClean(parse(currentVal));
+          const storeYaml = getCanonicalStoreYamlObject();
+          const isDirty = JSON.stringify(editorObj) !== JSON.stringify(storeYaml);
+
+          setIsDirty(isDirty);
+          return;
         }
 
+        const parsed = JSON.parse(currentVal);
+        const editorObj = { ...parsed, schemaVersion: 2 };
         const isDirty = JSON.stringify(deepClean(editorObj)) !== JSON.stringify(deepClean(storeObj));
 
         setIsDirty(isDirty);
@@ -81,7 +85,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
         setIsDirty(true);
       }
     },
-    [getCanonicalStoreObject, setIsDirty],
+    [getCanonicalStoreObject, getCanonicalStoreYamlObject, setIsDirty],
   );
 
   const validateInput = useCallback(
@@ -174,8 +178,10 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       } else {
         const parsedJson = JSON.parse(jsonValue);
         const legacyInput = { ...parsedJson, schemaVersion: 2 };
-        const yamlObj = convertLegacyToYaml(legacyInput);
-        const newYaml = stringify(yamlObj);
+        const parsedYaml = parse(yamlValue) as Record<string, unknown>;
+        const yamlExtras = Object.fromEntries(Object.entries(parsedYaml).filter(([key]) => key !== 'services' && key !== 'x-runtipi'));
+        const yamlObj = { ...convertLegacyToYaml(legacyInput), ...yamlExtras };
+        const newYaml = stringify(yamlObj, { nullStr: '' });
 
         setYamlValue(newYaml);
         setFormat('yaml');

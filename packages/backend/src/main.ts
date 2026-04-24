@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { type INestApplication, type LogLevel, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
@@ -34,7 +35,7 @@ async function setupSwagger(app: INestApplication) {
 async function bootstrap() {
   await generateSystemEnvFile();
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     abortOnError: true,
     logger: [process.env.LOG_LEVEL as LogLevel, 'error', 'warn', 'fatal'],
   });
@@ -42,6 +43,7 @@ async function bootstrap() {
   const appService = app.get(AppService);
   await appService.bootstrap();
 
+  app.set('trust proxy', true);
   app.setGlobalPrefix('/api');
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();

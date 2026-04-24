@@ -311,7 +311,7 @@
   "APP_UPDATE_CONFIG_SUCCESS": "Конфігурацію додатка успішно оновлено. Перезапустіть додаток, щоб застосувати зміни",
   "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "Оновлення додатка {{id}} вимагає Runtipi версії {{minVersion}} або новішої. Будь ласка, оновіть вашу інстанцію.",
   "APP_UPDATE_INFORMATION_TITLE": "Інформація",
-  "APP_UPDATE_INFORMATION_SUBTITLE": "To update <name/> to version <strong/>, follow the steps to review and apply the update.",
+  "APP_UPDATE_INFORMATION_SUBTITLE": "Щоб оновити <name/> до версії <strong/>, виконайте кроки для перегляду та застосування оновлення.",
   "APP_UPDATE_CONFIGURATION_TITLE": "Конфігурація",
   "APP_UPDATE_CONFIGURATION_SUBTITLE": "Переглянути нові конфігурації додатку.",
   "APP_UPDATE_COMPOSE_TITLE": "Створити файл",

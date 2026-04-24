@@ -311,7 +311,7 @@
   "APP_UPDATE_CONFIG_SUCCESS": "Configuração do aplicativo atualizada com sucesso. Reinicie o aplicativo para aplicar as alterações",
   "APP_UPDATE_ERROR_MIN_TIPI_VERSION": "A atualização do aplicativo {{id}} requer a versão do Tipi {{minVersion}} ou superior. Por favor, atualize sua instância.",
   "APP_UPDATE_INFORMATION_TITLE": "Informação",
-  "APP_UPDATE_INFORMATION_SUBTITLE": "To update <name/> to version <strong/>, follow the steps to review and apply the update.",
+  "APP_UPDATE_INFORMATION_SUBTITLE": "Para atualizar o <name/> para a versão <strong/>, siga os passos para revisar e aplicar a atualização.",
   "APP_UPDATE_CONFIGURATION_TITLE": "Configuração",
   "APP_UPDATE_CONFIGURATION_SUBTITLE": "Revise a nova configuração do aplicativo.",
   "APP_UPDATE_COMPOSE_TITLE": "Compor arquivo",

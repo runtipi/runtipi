@@ -72,6 +72,7 @@ Runtipi is licensed under the GNU General Public License v3.0. TL;DR — You may
 ## 🙏 Acknowledgements
 
 - [GitHub](https://github.com) - Thanks for generously giving us access to your full product suite
+- [OpenAI](https://openai.com) - Thanks for providing free access to codex and security tools for the project
 - [Freepik](https://www.flaticon.com/free-icons/tipi?utm_source=runtipi&utm_campaign=readme) - Thanks for providing a free logo for the project
 - [Sentry](https://sentry.io?utm_source=runtipi&utm_campaign=readme) - Thanks for providing error tracking for the project
 - [Crowdin](https://crowdin.com?utm_source=runtipi&utm_campaign=readme) - Thanks for providing localization management for the project

@@ -1,7 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import slugify from 'slugify';
 import type { UpdateAppStoreBodyDto } from '../marketplace/dto/marketplace.dto';
 import { RepoEventsQueue } from '../queue/entities/repo-events';
@@ -107,6 +107,11 @@ export class AppStoreService {
    */
   public async deleteAppStore(slug: string) {
     const stores = await this.appStoreRepository.getAllAppStores();
+    const store = stores.find((appStore) => appStore.slug === slug);
+
+    if (!store) {
+      throw new NotFoundException(`App store ${slug} not found`);
+    }
 
     if (stores.length === 1) {
       throw new TranslatableError('APP_STORE_DELETE_ERROR_LAST_STORE', {}, HttpStatus.BAD_REQUEST);
@@ -140,6 +145,10 @@ export class AppStoreService {
     }
 
     const slug = slugify(body.name, { lower: true, trim: true });
+
+    if (!slug || !/^[a-z0-9_-]+$/.test(slug)) {
+      throw new BadRequestException('Invalid app store name');
+    }
 
     const existingSlug = await this.appStoreRepository.getAppStoreBySlug(slug);
     if (existingSlug) {

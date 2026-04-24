@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
+import { ArchiveService } from '@/core/archive/archive.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { DATABASE } from '@/core/database/database.module';
 import { DatabaseService } from '@/core/database/database.service';
@@ -15,6 +17,7 @@ import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
+import { BackupManager } from '@/modules/backups/backup.manager';
 import { DOCKERODE } from '@/modules/docker/docker.module';
 import { DockerService } from '@/modules/docker/docker.service';
 import { EnvUtils } from '@/modules/env/env.utils';
@@ -52,10 +55,12 @@ describe('App lifecycle', () => {
   let appLifecycleService: AppLifecycleService;
   let marketplaceService: MarketplaceService;
   let appsRepository: AppsRepository;
+  let filesystemService: FilesystemService;
   const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
   const dockerService = mock<DockerService>();
   const loggerService = mock<LoggerService>();
+  const archiveService = mock<ArchiveService>();
 
   configurationService.get.calledWith('queue').mockReturnValue({
     host: 'localhost',
@@ -67,7 +72,7 @@ describe('App lifecycle', () => {
     appDir: APP_DIR,
     appDataDir: APP_DATA_DIR,
   });
-  configurationService.get.calledWith('userSettings').mockReturnValue(fromPartial({ eventsTimeout: 1 }));
+  configurationService.get.calledWith('userSettings').mockReturnValue(fromPartial({ eventsTimeout: 1, maxBackups: 1 }));
   configurationService.get.calledWith('demoMode').mockReturnValue(false);
   dockerService.composeApp.mockResolvedValue({ success: true, stdout: '', stderr: '' });
 
@@ -92,6 +97,7 @@ describe('App lifecycle', () => {
         AppStoreService,
         AppStoreRepository,
         FilesystemService,
+        BackupManager,
         QueueFactory,
         AppLifecycleCommandFactory,
         AppFilesManager,
@@ -147,6 +153,10 @@ describe('App lifecycle', () => {
           provide: LoggerService,
           useValue: loggerService,
         },
+        {
+          provide: ArchiveService,
+          useValue: archiveService,
+        },
       ],
     })
       .useMocker(mock)
@@ -156,8 +166,21 @@ describe('App lifecycle', () => {
     databaseService = moduleRef.get(DatabaseService);
     marketplaceService = moduleRef.get(MarketplaceService);
     appsRepository = moduleRef.get(AppsRepository);
+    filesystemService = moduleRef.get(FilesystemService);
 
     databaseService.db = db;
+
+    archiveService.createTarGz.mockImplementation(async (_sourceDir, destinationFile) => {
+      await fs.promises.mkdir(path.dirname(destinationFile), { recursive: true });
+      await fs.promises.writeFile(destinationFile, 'archive');
+      return { stdout: '', stderr: '' };
+    });
+    archiveService.extractTarGz.mockResolvedValue({ stdout: '', stderr: '' });
+    vi.spyOn(filesystemService, 'createTempDirectory').mockImplementation(async (prefix) => {
+      const tempDir = path.join('/tmp', `${prefix}-${Date.now()}`);
+      await fs.promises.mkdir(tempDir, { recursive: true });
+      return tempDir;
+    });
 
     configurationService.getConfig.mockReturnValue(
       fromPartial({
@@ -245,6 +268,41 @@ describe('App lifecycle', () => {
         .catch(() => false);
       expect(dataFileExists).toBe(true);
     });
+
+    it('should keep only the configured number of backups when updating with backups enabled', async () => {
+      const appInfo = await createAppInStore('test', { id: 'backup-retention-test', tipi_version: 1 });
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+        expect(app?.version).toBe(1);
+      });
+
+      await createAppInStore('test', { id: appInfo.id, tipi_version: 2 });
+      await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: true });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+        expect(app?.version).toBe(2);
+      });
+
+      await createAppInStore('test', { id: appInfo.id, tipi_version: 3 });
+      await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: true });
+
+      await waitFor(async () => {
+        const app = await appsRepository.getAppByUrn(appInfo.urn);
+        expect(app?.status).toBe('running');
+        expect(app?.version).toBe(3);
+      });
+
+      await waitFor(async () => {
+        const backups = await fs.promises.readdir(`${DATA_DIR}/backups/test/${appInfo.id}`);
+        expect(backups).toHaveLength(1);
+      });
+    });
   });
 
   describe('update all apps', () => {
@@ -297,7 +355,10 @@ describe('App lifecycle', () => {
       expect(app1?.status).toBe('running');
       expect(app2?.status).toBe('running');
       expect(app3?.status).toBe('running');
-      expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
+
+      const tree = (fs as unknown as FsMock).tree().replace(/-\d+\.tar\.gz/g, '-TIMESTAMP.tar.gz');
+
+      expect(tree).toMatchSnapshot();
     });
   });
 

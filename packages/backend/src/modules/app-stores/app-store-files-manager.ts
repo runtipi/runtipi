@@ -41,6 +41,32 @@ export class AppStoreFilesManager {
     };
   }
 
+  private async getAppInfoFromDirectory(appUrn: AppUrn, appDirectory: string) {
+    if (!(await this.filesystem.pathExists(path.join(appDirectory, 'config.json')))) {
+      return;
+    }
+
+    const configFile = await this.filesystem.readTextFile(path.join(appDirectory, 'config.json'));
+
+    const config = JSON.parse(configFile ?? '{}');
+    const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
+
+    if (parsedConfig instanceof type.errors) {
+      this.logger.error(`App ${appUrn} installed config error:`);
+      this.logger.error(parsedConfig.summary);
+
+      return null;
+    }
+
+    if (!parsedConfig.available) {
+      return null;
+    }
+
+    const description = (await this.filesystem.readTextFile(path.join(appDirectory, 'metadata', 'description.md'))) ?? '';
+
+    return { ...parsedConfig, description };
+  }
+
   /**
    * Get the app info from the app store
    * @param appUrn - The app id
@@ -49,23 +75,7 @@ export class AppStoreFilesManager {
     try {
       const { appRepoDir } = this.getAppPaths(appUrn);
 
-      if (await this.filesystem.pathExists(path.join(appRepoDir, 'config.json'))) {
-        const configFile = await this.filesystem.readTextFile(path.join(appRepoDir, 'config.json'));
-
-        const config = JSON.parse(configFile ?? '{}');
-        const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
-
-        if (parsedConfig instanceof type.errors) {
-          this.logger.debug(`App ${appUrn} config error:`);
-          this.logger.debug(parsedConfig.summary);
-          return null;
-        }
-
-        if (parsedConfig.available) {
-          const description = (await this.filesystem.readTextFile(path.join(appRepoDir, 'metadata', 'description.md'))) ?? '';
-          return { ...parsedConfig, description };
-        }
-      }
+      return await this.getAppInfoFromDirectory(appUrn, appRepoDir);
     } catch (error) {
       this.logger.error(`Error getting app info from app store for ${appUrn}:`, error);
     }
@@ -79,23 +89,7 @@ export class AppStoreFilesManager {
 
     const { appInstalledDir } = this.getAppPaths(appUrn);
 
-    if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
-      const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
-
-      const config = JSON.parse(configFile ?? '{}');
-      const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
-
-      if (parsedConfig instanceof type.errors) {
-        this.logger.debug(`App ${appUrn} installed config error:`);
-        this.logger.debug(parsedConfig.summary);
-        return null;
-      }
-
-      if (parsedConfig.available) {
-        const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
-        return { ...parsedConfig, description };
-      }
-    }
+    return await this.getAppInfoFromDirectory(appUrn, appInstalledDir);
   }
 
   public async getSourceDockerComposeYaml(appUrn: AppUrn) {

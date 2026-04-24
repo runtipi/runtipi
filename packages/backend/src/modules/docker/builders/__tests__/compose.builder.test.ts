@@ -429,6 +429,23 @@ services:
       // Check root x-runtipi removed
       expect(resultParsed['x-runtipi']).toBeUndefined();
     });
+
+    it('should preserve empty named volumes without rendering null', () => {
+      const doc = `services:
+  web:
+    image: nginx:alpine
+volumes:
+  nginx_logs:
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      expect(result).toContain(`volumes:
+  nginx_logs:
+`);
+      expect(result).not.toContain('nginx_logs: null');
+    });
   });
 
   describe('Network mode exclusivity', () => {

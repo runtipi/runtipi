@@ -118,7 +118,7 @@ export class QueueFactory {
       timeout,
       confirm: true,
       maxAttempts: 3,
-      queues: [{ autoDelete: false, durable: false, queue: queueName }],
+      queues: [{ autoDelete: false, durable: true, queue: queueName }],
     });
 
     return new Queue(this.rabbit, rpcClient, publisher, queueName, workers, eventSchema, resultSchema, this.logger);

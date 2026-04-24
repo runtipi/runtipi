@@ -14,6 +14,9 @@ import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
 
+const TOTP_SESSION_EXPIRATION = 60 * 5;
+const MAX_TOTP_ATTEMPTS = 5;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -63,7 +66,7 @@ export class AuthService {
 
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
-      this.cache.set(totpSessionId, user.id.toString());
+      this.cache.set(totpSessionId, user.id.toString(), TOTP_SESSION_EXPIRATION);
       return { totpSessionId };
     }
 
@@ -84,6 +87,7 @@ export class AuthService {
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
     const userId = this.cache.get(totpSessionId);
+    const attemptKey = `totp-attempts:${totpSessionId}`;
 
     if (!userId) {
       throw new TranslatableError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -103,11 +107,21 @@ export class AuthService {
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
+      const attempts = Number(this.cache.get(attemptKey) ?? 0) + 1;
+
+      if (attempts >= MAX_TOTP_ATTEMPTS) {
+        this.cache.del(attemptKey);
+        this.cache.del(totpSessionId);
+        throw new TranslatableError('AUTH_ERROR_TOTP_TOO_MANY_ATTEMPTS', {}, HttpStatus.TOO_MANY_REQUESTS);
+      }
+
+      this.cache.set(attemptKey, attempts.toString(), TOTP_SESSION_EXPIRATION);
       throw new TranslatableError('AUTH_ERROR_TOTP_INVALID_CODE');
     }
 
     const sessionId = await this.sessionManager.createSession(user.id);
 
+    this.cache.del(attemptKey);
     this.cache.del(totpSessionId);
 
     return {

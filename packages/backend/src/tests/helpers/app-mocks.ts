@@ -1,5 +1,5 @@
 import { createAppUrn } from '@/common/helpers/app-helpers';
-import type { App } from '@/core/database/drizzle/types';
+import type { App, AppStore } from '@/core/database/drizzle/types';
 import { faker } from '@faker-js/faker';
 import { APP_CATEGORIES, type AppCategory, type AppInfo } from '@runtipi/common/schemas';
 
@@ -35,7 +35,21 @@ export const createMockAppInfo = (data: Partial<AppInfo> = {}): AppInfo => {
   };
 };
 
-export const createMockApp = (data: Partial<App>): App => ({
+export const createMockAppStore = (data: Partial<AppStore> = {}): AppStore => ({
+  slug: faker.lorem.slug(),
+  hash: faker.string.alphanumeric(40),
+  name: faker.lorem.words(2).slice(0, 16),
+  enabled: true,
+  url: faker.internet.url(),
+  branch: 'main',
+  createdAt: faker.date.past().getTime() / 1000,
+  updatedAt: faker.date.recent().getTime() / 1000,
+  ...data,
+});
+
+type AppWithStore = App & { appStore: AppStore };
+
+export const createMockApp = (data: Partial<AppWithStore> = {}): AppWithStore => ({
   id: faker.number.int(),
   appName: faker.lorem.words(2),
   appStoreSlug: faker.lorem.slug(),
@@ -60,5 +74,6 @@ export const createMockApp = (data: Partial<App>): App => ({
   templateUrn: null,
   templateVersion: null,
   lastTemplateSyncAt: null,
+  appStore: createMockAppStore(),
   ...data,
 });

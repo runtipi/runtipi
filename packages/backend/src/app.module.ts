@@ -5,8 +5,9 @@ import { DatabaseModule } from '@/core/database/database.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { I18nModule } from '@/modules/i18n/i18n.module';
 import { type DynamicModule, type MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -37,8 +38,12 @@ import { ArkValidationPipe } from 'nestjs-arktype';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CustomAppsModule } from './modules/custom-apps/custom-apps.module';
 
+const DEFAULT_THROTTLE_TTL = 60_000;
+const DEFAULT_THROTTLE_LIMIT = 300;
+
 const imports: (DynamicModule | typeof I18nModule)[] = [
   SentryModule.forRoot(),
+  ThrottlerModule.forRoot([{ ttl: DEFAULT_THROTTLE_TTL, limit: DEFAULT_THROTTLE_LIMIT }]),
   SystemModule,
   I18nModule,
   AuthModule,
@@ -90,6 +95,10 @@ if (NODE_ENV === 'production') {
       provide: APP_FILTER,
       useFactory: (logger: LoggerService) => new MainExceptionFilter(logger),
       inject: [LoggerService],
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
   controllers: [AppController],

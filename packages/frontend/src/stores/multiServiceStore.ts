@@ -14,6 +14,7 @@ interface ServiceWithId extends ServiceFormData {
 interface MultiServiceState {
   // State
   services: ServiceWithId[];
+  composeExtras: Record<string, unknown>;
   activeService: number | 'json';
   isDirty: boolean;
   error: string;
@@ -29,6 +30,7 @@ interface MultiServiceState {
   resetToDefaults: () => void;
   setIsDirty: (dirty: boolean) => void;
   setServices: (services: ServiceWithId[]) => void;
+  setComposeExtras: (composeExtras: Record<string, unknown>) => void;
 }
 
 const defaultService: ServiceFormData = {
@@ -57,10 +59,12 @@ function generateId(): string {
 
 export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   services: defaultServices,
+  composeExtras: {},
   activeService: 0,
   isDirty: false,
   error: '',
   setServices: (services: ServiceWithId[]) => set({ services: deepClean(services) as ServiceWithId[] }),
+  setComposeExtras: (composeExtras: Record<string, unknown>) => set({ composeExtras }),
   validate: (values: typeof dynamicComposeSchemaArk.infer) => {
     const res = dynamicComposeSchemaArk.omit('schemaVersion')(values);
 
@@ -186,6 +190,10 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
   updateFromYaml: (yamlData: unknown) => {
     try {
       const legacy = convertYamlToLegacy(yamlData);
+      const composeExtras =
+        yamlData && typeof yamlData === 'object'
+          ? Object.fromEntries(Object.entries(yamlData).filter(([key]) => key !== 'services' && key !== 'x-runtipi'))
+          : {};
       const servicesWithIds = deepClean(
         legacy.services.map((service, index) => ({
           ...service,
@@ -201,7 +209,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
         return;
       }
 
-      set({ services: servicesWithIds, isDirty: false });
+      set({ services: servicesWithIds, composeExtras, isDirty: false });
       toast.success('Services updated from YAML');
     } catch (err) {
       console.error(err);
@@ -215,6 +223,7 @@ export const useMultiServiceStore = create<MultiServiceState>()((set, get) => ({
       activeService: 0,
       error: '',
       isDirty: false,
+      composeExtras: {},
     }),
 
   setIsDirty: (dirty: boolean) => set({ isDirty: dirty }),

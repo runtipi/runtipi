@@ -282,9 +282,6 @@ export type GuestAppsDto = {
             templateUrn: string | null;
             updatedAt: number;
             version: number;
-            config?: {
-                [key: string]: unknown;
-            };
             enableAuth?: boolean;
             localSubdomain?: string | null;
         };

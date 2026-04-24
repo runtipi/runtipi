@@ -208,6 +208,6 @@ export class DockerComposeBuilder {
       '\n',
     );
 
-    return header + yaml.stringify(inputCopy);
+    return header + yaml.stringify(inputCopy, { nullStr: '' });
   };
 }

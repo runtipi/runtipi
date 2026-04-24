@@ -3507,10 +3507,6 @@
                     "version": {
                       "type": "number"
                     },
-                    "config": {
-                      "type": "object",
-                      "additionalProperties": {}
-                    },
                     "enableAuth": {
                       "type": "boolean"
                     },
@@ -3540,7 +3536,8 @@
                     "templateUrn",
                     "updatedAt",
                     "version"
-                  ]
+                  ],
+                  "additionalProperties": false
                 },
                 "info": {
                   "type": "object",
