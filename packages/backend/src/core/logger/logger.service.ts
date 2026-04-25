@@ -20,6 +20,9 @@ const printConsole = printf((info) => `${info.timestamp} - ${info.level} > ${inf
 const fileFormat = combine(format.uncolorize(), timestamp(), align(), printFile);
 const consoleFormat = combine(colorize(), timestamp({ format: 'HH:mm:ss' }), align(), printConsole);
 
+const REDACTED = '[REDACTED]';
+const SENSITIVE_KEY_PATTERN = /authorization|cookie|password|secret|token|private.?key|api.?key|dsn/i;
+
 type Transports = transports.ConsoleTransportInstance | transports.FileTransportInstance;
 
 /**
@@ -59,6 +62,33 @@ export const newLogger = (_: string, logsFolder: string, logLevel: LogLevel = LO
     exceptionHandlers,
     exitOnError: false,
   });
+};
+
+const redactSensitiveData: (value: unknown, visited?: WeakSet<object>) => unknown = (value, visited = new WeakSet<object>()) => {
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => redactSensitiveData(item, visited));
+  }
+
+  if ((value as object).constructor !== Object) {
+    return value;
+  }
+
+  if (visited.has(value)) {
+    return value;
+  }
+
+  visited.add(value);
+
+  const redacted: Record<string, unknown> = {};
+  for (const [key, nestedValue] of Object.entries(value)) {
+    redacted[key] = SENSITIVE_KEY_PATTERN.test(key) ? REDACTED : redactSensitiveData(nestedValue, visited);
+  }
+
+  return redacted;
 };
 
 @Injectable()
@@ -151,7 +181,7 @@ export class LoggerService {
       }
 
       if (typeof m === 'object') {
-        return JSON.stringify(m, null, 2);
+        return JSON.stringify(redactSensitiveData(m), null, 2);
       }
 
       return m;
