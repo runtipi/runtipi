@@ -13,6 +13,11 @@ import { APP_DIR } from './common/constants';
 import { generateSystemEnvFile } from './common/helpers/env-helpers';
 
 async function setupSwagger(app: INestApplication) {
+  const { NODE_ENV } = process.env;
+  if (NODE_ENV === 'production') {
+    return;
+  }
+
   const config = new DocumentBuilder()
     .setTitle('Runtipi API')
     .setDescription('API specs for Runtipi')
@@ -25,11 +30,8 @@ async function setupSwagger(app: INestApplication) {
   });
   SwaggerModule.setup('api/docs', app, document);
 
-  const { NODE_ENV } = process.env;
   // write the swagger.json file to the assets folder
-  if (NODE_ENV !== 'production') {
-    await fs.promises.writeFile(path.join(APP_DIR, 'packages', 'backend', 'src', 'swagger.json'), JSON.stringify(document, null, 2));
-  }
+  await fs.promises.writeFile(path.join(APP_DIR, 'packages', 'backend', 'src', 'swagger.json'), JSON.stringify(document, null, 2));
 }
 
 async function bootstrap() {
