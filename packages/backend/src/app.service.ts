@@ -15,6 +15,7 @@ import { SystemEventsQueue } from './modules/queue/entities/system-events';
 import { DOCKERODE } from './modules/docker/docker.module';
 import Dockerode from 'dockerode';
 import { GithubService } from './utils/github/github.service';
+import YAML from 'yaml';
 
 @Injectable()
 export class AppService {
@@ -114,7 +115,7 @@ export class AppService {
       this.logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
     } else {
       this.logger.info('Copying traefik files');
-      await this.filesystem.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(dataDir, 'traefik', 'traefik.yml'));
+      await this.writeTraefikConfig(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(dataDir, 'traefik', 'traefik.yml'));
       await this.filesystem.copyFile(
         path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'),
         path.join(dataDir, 'traefik', 'dynamic', 'dynamic.yml'),
@@ -152,6 +153,37 @@ export class AppService {
       path.join(dataDir, 'media', 'data', 'images'),
       path.join(dataDir, 'media', 'data', 'roms'),
     ]);
+  }
+
+  private async writeTraefikConfig(src: string, dest: string) {
+    const config = await this.filesystem.readTextFile(src);
+    if (!config) {
+      await this.filesystem.copyFile(src, dest);
+      return;
+    }
+
+    const parsed = YAML.parse(config) as {
+      entryPoints?: Record<string, { forwardedHeaders?: unknown }>;
+    };
+    const { trustedProxyIps } = this.configuration.get('traefik');
+
+    for (const entrypoint of ['web', 'websecure']) {
+      parsed.entryPoints ??= {};
+      parsed.entryPoints[entrypoint] ??= {};
+
+      const currentForwardedHeaders = parsed.entryPoints[entrypoint].forwardedHeaders;
+      if (!currentForwardedHeaders || typeof currentForwardedHeaders !== 'object' || Array.isArray(currentForwardedHeaders)) {
+        parsed.entryPoints[entrypoint].forwardedHeaders = {};
+      }
+
+      const forwardedHeaders = parsed.entryPoints[entrypoint].forwardedHeaders as { trustedIPs?: string[] } & Record<string, unknown>;
+      const currentTrustedIps = forwardedHeaders.trustedIPs ?? [];
+      const trustedIPs = [...new Set([...currentTrustedIps, ...trustedProxyIps])];
+
+      forwardedHeaders.trustedIPs = trustedIPs;
+    }
+
+    await this.filesystem.writeTextFile(dest, YAML.stringify(parsed));
   }
 
   /**

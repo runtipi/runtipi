@@ -135,6 +135,10 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     typeof settings.persistTraefikConfig === 'boolean' ? String(settings.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
   );
   envMap.set(
+    'RUNTIPI_TRUSTED_PROXY_IPS',
+    typeof settings.trustedProxyIps === 'string' ? settings.trustedProxyIps : envMap.get('RUNTIPI_TRUSTED_PROXY_IPS') || '',
+  );
+  envMap.set(
     'QUEUE_TIMEOUT_IN_MINUTES',
     typeof settings.eventsTimeout === 'number' ? String(settings.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );

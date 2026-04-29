@@ -8,6 +8,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { type } from 'arktype';
 import dotenv from 'dotenv';
+import validator from 'validator';
 import { LOG_LEVEL_ENUM, type LogLevel, LoggerService } from '../logger/logger.service';
 
 const envSchema = type({
@@ -35,6 +36,7 @@ const envSchema = type({
   ALLOW_ERROR_MONITORING: 'string',
   ALLOW_AUTO_THEMES: 'string',
   PERSIST_TRAEFIK_CONFIG: 'string',
+  RUNTIPI_TRUSTED_PROXY_IPS: 'string = ""',
   QUEUE_TIMEOUT_IN_MINUTES: type('number | string.numeric.parse').default(5),
   LOG_LEVEL: 'string = "info"',
   TZ: 'string',
@@ -48,6 +50,30 @@ const envSchema = type({
   // Experimental flags
   EXPERIMENTAL_INSECURE_COOKIE: 'string',
 });
+
+export const isValidIpOrCidr = (value: string) => {
+  return validator.isIP(value) || validator.isIPRange(value);
+};
+
+export const parseTrustedProxyIps = (value: string) => {
+  const trustedProxyIps: string[] = [];
+  const invalidProxyIps: string[] = [];
+
+  for (const token of value.split(',')) {
+    const trimmedToken = token.trim();
+    if (!trimmedToken) {
+      continue;
+    }
+
+    if (isValidIpOrCidr(trimmedToken)) {
+      trustedProxyIps.push(trimmedToken);
+    } else {
+      invalidProxyIps.push(trimmedToken);
+    }
+  }
+
+  return { trustedProxyIps, invalidProxyIps };
+};
 
 @Injectable()
 export class ConfigurationService {
@@ -87,6 +113,10 @@ export class ConfigurationService {
     this.logger = new LoggerService('backend', path.join(DATA_DIR, 'logs'), logLevel);
 
     const { NODE_ENV } = process.env;
+    const { trustedProxyIps, invalidProxyIps } = parseTrustedProxyIps(env.RUNTIPI_TRUSTED_PROXY_IPS);
+    if (invalidProxyIps.length) {
+      this.logger.warn('Dropped invalid RUNTIPI_TRUSTED_PROXY_IPS entries', invalidProxyIps);
+    }
 
     return {
       database: {
@@ -136,6 +166,9 @@ export class ConfigurationService {
         experimental: {
           insecureCookie: env.EXPERIMENTAL_INSECURE_COOKIE.toLowerCase() === 'true',
         },
+      },
+      traefik: {
+        trustedProxyIps,
       },
       deprecatedAppsRepoId: env.APPS_REPO_ID, // @deprecated
       deprecatedAppsRepoUrl: env.APPS_REPO_URL, // @deprecated

@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { AppService } from '@/app.service';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
 import { ConfigurationService } from '@/core/config/configuration.service';
@@ -11,6 +12,28 @@ import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { DOCKERODE } from '@/modules/docker/docker.module';
+import YAML from 'yaml';
+
+const TRAEFIK_CONFIG = `api:
+  dashboard: true
+  insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+    forwardedHeaders:
+      insecure: true
+      trustedIPs:
+        - "127.0.0.1/32"
+  websecure:
+    address: ":443"
+    forwardedHeaders:
+      trustedIPs:
+        - "127.0.0.1/32"
+    http:
+      tls:
+        certResolver: myresolver
+`;
 
 describe('AppService', () => {
   let appService: AppService;
@@ -142,6 +165,30 @@ describe('AppService', () => {
 
       // assert
       expect((fs as unknown as FsMock).tree()).toMatchSnapshot();
+    });
+
+    it('should append extra trusted proxy IPs to traefik config', async () => {
+      const appDir = APP_DIR;
+      const dataDir = DATA_DIR;
+      const appDataDir = APP_DATA_DIR;
+      const directories = { appDir, dataDir, appDataDir };
+      const fsMock = fs as unknown as FsMock;
+      fsMock.__applyMockFiles({
+        [path.join(APP_DIR, 'assets', 'traefik', 'traefik.yml')]: TRAEFIK_CONFIG,
+        [path.join(APP_DIR, 'assets', 'traefik', 'dynamic', 'dynamic.yml')]: '',
+      });
+      configurationService.getConfig.mockReturnValueOnce(fromPartial({ directories, userSettings: { persistTraefikConfig: false } }));
+      configurationService.get.calledWith('traefik').mockReturnValueOnce({
+        trustedProxyIps: ['203.0.113.10/32', '2001:db8::/32', '203.0.113.10/32'],
+      });
+
+      await appService.copyAssets();
+
+      const output = await fs.promises.readFile(path.join(DATA_DIR, 'traefik', 'traefik.yml'), 'utf8');
+      const parsed = YAML.parse(output);
+      expect(parsed.entryPoints.web.forwardedHeaders.insecure).toBe(true);
+      expect(parsed.entryPoints.web.forwardedHeaders.trustedIPs).toEqual(['127.0.0.1/32', '203.0.113.10/32', '2001:db8::/32']);
+      expect(parsed.entryPoints.websecure.forwardedHeaders.trustedIPs).toEqual(['127.0.0.1/32', '203.0.113.10/32', '2001:db8::/32']);
     });
   });
 });
