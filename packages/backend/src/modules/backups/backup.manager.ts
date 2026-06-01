@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { sanitizeFilename } from '@/common/helpers/file-helpers';
@@ -124,34 +125,114 @@ export class BackupManager {
     // Unzip the archive
     await this.filesystem.createDirectory(restoreDir);
 
-    this.logger.info('Extracting archive...');
-    const { stderr, stdout } = await this.archiveManager.extractTarGz(archive, restoreDir);
-    this.logger.debug('--- archiveManager.extractTarGz ---');
-    this.logger.debug('stderr:', stderr);
-    this.logger.debug('stdout:', stdout);
+    try {
+      this.logger.info('Extracting archive...');
+      const { stderr, stdout } = await this.archiveManager.extractTarGz(archive, restoreDir);
+      this.logger.debug('--- archiveManager.extractTarGz ---');
+      this.logger.debug('stderr:', stderr);
+      this.logger.debug('stdout:', stdout);
 
-    const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
+      await this.validateRestoreDirectory(path.join(restoreDir, 'app-data'), { allowSymlinks: true });
+      await this.validateRestoreDirectory(path.join(restoreDir, 'app'), { allowSymlinks: true, rejectHardLinks: true });
+      await this.validateRestoreDirectory(path.join(restoreDir, 'user-config'), {
+        allowSymlinks: false,
+        optional: true,
+        rejectHardLinks: true,
+      });
 
-    // Remove old data directories
-    await this.filesystem.removeDirectory(appDataDir);
-    await this.filesystem.removeDirectory(appInstalledDir);
-    await this.filesystem.removeDirectory(userConfigDir);
+      const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
 
-    await this.filesystem.createDirectory(appDataDir);
-    await this.filesystem.createDirectory(appInstalledDir);
-    await this.filesystem.createDirectory(userConfigDir);
+      // Remove old data directories
+      await this.filesystem.removeDirectory(appDataDir);
+      await this.filesystem.removeDirectory(appInstalledDir);
+      await this.filesystem.removeDirectory(userConfigDir);
 
-    // Copy data from the backup folder
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDir);
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appInstalledDir);
+      await this.filesystem.createDirectory(appDataDir);
+      await this.filesystem.createDirectory(appInstalledDir);
+      await this.filesystem.createDirectory(userConfigDir);
 
-    if (await this.filesystem.isDirectory(path.join(restoreDir, 'user-config'))) {
-      await this.filesystem.copyDirectory(path.join(restoreDir, 'user-config'), userConfigDir);
+      // Copy data from the backup folder
+      await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDir);
+      await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appInstalledDir);
+
+      if (await this.filesystem.isDirectory(path.join(restoreDir, 'user-config'))) {
+        await this.filesystem.copyDirectory(path.join(restoreDir, 'user-config'), userConfigDir);
+      }
+    } finally {
+      await this.filesystem.removeDirectory(restoreDir);
+    }
+  };
+
+  private async validateRestoreDirectory(
+    directory: string,
+    options: { allowSymlinks: boolean; optional?: boolean; rejectHardLinks?: boolean },
+    rootDirectory = directory,
+  ): Promise<void> {
+    const directoryStats = await fs.promises.lstat(directory).catch((error: NodeJS.ErrnoException) => {
+      if (options.optional && error.code === 'ENOENT') {
+        return null;
+      }
+
+      throw error;
+    });
+
+    if (!directoryStats) {
+      return;
     }
 
-    // Delete restore folder
-    await this.filesystem.removeDirectory(restoreDir);
-  };
+    if (!directoryStats.isDirectory()) {
+      throw new Error('Backup contains unsupported file types');
+    }
+
+    const entries = await fs.promises.readdir(directory, { withFileTypes: true });
+    const rootPath = path.resolve(rootDirectory);
+
+    await Promise.all(
+      entries.map(async (entry) => {
+        const entryPath = path.join(directory, entry.name);
+
+        if (entry.isSymbolicLink()) {
+          if (!options.allowSymlinks) {
+            throw new Error('Backup contains unsupported file types');
+          }
+
+          const linkTarget = await fs.promises.readlink(entryPath);
+          const resolvedTarget = path.resolve(path.dirname(entryPath), linkTarget);
+
+          if (!this.isPathInsideOrEqual(rootPath, resolvedTarget)) {
+            throw new Error('Backup contains unsupported file types');
+          }
+
+          return;
+        }
+
+        if (entry.isDirectory()) {
+          await this.validateRestoreDirectory(entryPath, options, rootDirectory);
+          return;
+        }
+
+        if (entry.isFile()) {
+          if (options.rejectHardLinks) {
+            const stats = await fs.promises.lstat(entryPath);
+
+            if (stats.nlink > 1) {
+              throw new Error('Backup contains unsupported file types');
+            }
+          }
+
+          return;
+        }
+
+        throw new Error('Backup contains unsupported file types');
+      }),
+    );
+  }
+
+  private isPathInsideOrEqual(parentPath: string, childPath: string): boolean {
+    const relativePath = path.relative(parentPath, childPath);
+
+    return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+  }
 
   /**
    * Delete a backup file
