@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { sanitizeFilename } from '@/common/helpers/file-helpers';
+import { pLimit, sanitizeFilename } from '@/common/helpers/file-helpers';
 import { ArchiveService } from '@/core/archive/archive.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -132,13 +132,25 @@ export class BackupManager {
       this.logger.debug('stderr:', stderr);
       this.logger.debug('stdout:', stdout);
 
-      await this.validateRestoreDirectory(path.join(restoreDir, 'app-data'), { allowSymlinks: true });
-      await this.validateRestoreDirectory(path.join(restoreDir, 'app'), { allowSymlinks: true, rejectHardLinks: true });
-      await this.validateRestoreDirectory(path.join(restoreDir, 'user-config'), {
-        allowSymlinks: false,
-        optional: true,
-        rejectHardLinks: true,
-      });
+      const runValidationFsOperation = pLimit(16);
+
+      await this.validateRestoreDirectory(path.join(restoreDir, 'app-data'), { allowSymlinks: true }, undefined, runValidationFsOperation);
+      await this.validateRestoreDirectory(
+        path.join(restoreDir, 'app'),
+        { allowSymlinks: true, rejectHardLinks: true },
+        undefined,
+        runValidationFsOperation,
+      );
+      await this.validateRestoreDirectory(
+        path.join(restoreDir, 'user-config'),
+        {
+          allowSymlinks: false,
+          optional: true,
+          rejectHardLinks: true,
+        },
+        undefined,
+        runValidationFsOperation,
+      );
 
       const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
 
@@ -167,8 +179,9 @@ export class BackupManager {
     directory: string,
     options: { allowSymlinks: boolean; optional?: boolean; rejectHardLinks?: boolean },
     rootDirectory = directory,
-  ): Promise<void> {
-    const directoryStats = await fs.promises.lstat(directory).catch((error: NodeJS.ErrnoException) => {
+    runFsOperation = pLimit(16),
+  ) {
+    const directoryStats = await runFsOperation(() => fs.promises.lstat(directory)).catch((error: NodeJS.ErrnoException) => {
       if (options.optional && error.code === 'ENOENT') {
         return null;
       }
@@ -184,11 +197,19 @@ export class BackupManager {
       throw new Error('Backup contains unsupported file types');
     }
 
-    const entries = await fs.promises.readdir(directory, { withFileTypes: true });
+    const entries = await runFsOperation(() => fs.promises.readdir(directory, { withFileTypes: true }));
     const rootPath = path.resolve(rootDirectory);
+    let nextEntryIndex = 0;
 
-    await Promise.all(
-      entries.map(async (entry) => {
+    const workers = Array.from({ length: Math.min(16, entries.length) }, async () => {
+      while (nextEntryIndex < entries.length) {
+        const entry = entries[nextEntryIndex];
+        nextEntryIndex += 1;
+
+        if (!entry) {
+          continue;
+        }
+
         const entryPath = path.join(directory, entry.name);
 
         if (entry.isSymbolicLink()) {
@@ -196,36 +217,38 @@ export class BackupManager {
             throw new Error('Backup contains unsupported file types');
           }
 
-          const linkTarget = await fs.promises.readlink(entryPath);
+          const linkTarget = await runFsOperation(() => fs.promises.readlink(entryPath));
           const resolvedTarget = path.resolve(path.dirname(entryPath), linkTarget);
 
           if (!this.isPathInsideOrEqual(rootPath, resolvedTarget)) {
             throw new Error('Backup contains unsupported file types');
           }
 
-          return;
+          continue;
         }
 
         if (entry.isDirectory()) {
-          await this.validateRestoreDirectory(entryPath, options, rootDirectory);
-          return;
+          await this.validateRestoreDirectory(entryPath, options, rootDirectory, runFsOperation);
+          continue;
         }
 
         if (entry.isFile()) {
           if (options.rejectHardLinks) {
-            const stats = await fs.promises.lstat(entryPath);
+            const stats = await runFsOperation(() => fs.promises.lstat(entryPath));
 
             if (stats.nlink > 1) {
               throw new Error('Backup contains unsupported file types');
             }
           }
 
-          return;
+          continue;
         }
 
         throw new Error('Backup contains unsupported file types');
-      }),
-    );
+      }
+    });
+
+    await Promise.all(workers);
   }
 
   private isPathInsideOrEqual(parentPath: string, childPath: string): boolean {
