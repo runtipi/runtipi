@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "A beállítások frissítve. Indítsa újra az példányát az új beállítások alkalmazásához.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "A beállítások frissültek.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Alkalmazásadatok elérési útja",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "A hely, ahol az alkalmazásadatok tárolva vannak.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "A Traefik konfiguráció megőrzése",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Tartsa meg a Traefik konfigurációs mappát a újraindítások során. Ez lehetővé teszi a Traefik konfiguráció testreszabását.",
   "SETTINGS_GENERAL_DOMAIN": "Domain név",
