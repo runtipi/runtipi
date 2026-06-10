@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "设置已更新。重新启动您的实例以应用新设置。",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "设置已更新。",
   "SETTINGS_GENERAL_APP_DATA_PATH": "应用数据路径",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "应用程序数据存储的位置。",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "保持 Traefik 配置",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "在重新启动后保留Traefik配置文件夹。这将允许您自定义Traefik配置。",
   "SETTINGS_GENERAL_DOMAIN": "域名",
