@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Impostazioni aggiornate. Riavvia la tua istanza per applicare le nuove impostazioni.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Le impostazioni sono state aggiornate con successo.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Percorso dati dell'app",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "La posizione in cui vengono memorizzati i dati dell'app.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Mantieni configurazioni Traefik",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Mantieni la cartella di configurazione Traefik anche dopo il riavvio. Questo ti permetterà di personalizzare la configurazione Traefik.",
   "SETTINGS_GENERAL_DOMAIN": "Nome dominio",
