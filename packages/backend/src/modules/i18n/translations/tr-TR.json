@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Ayarlar güncellendi. Yeni ayarları uygulamak için sisteminizi yeniden başlatın.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Ayarlar güncellendi.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Uygulama veri yolu",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "Uygulama verilerinin depolandığı konum.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Traefik yapılandırmasını kalıcı yap",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Yeniden başlatmalar sırasında Traefik yapılandırma klasörünü kalıcı tutun. Bu, Traefik yapılandırmasını özelleştirmenize olanak tanır.",
   "SETTINGS_GENERAL_DOMAIN": "Alan adı",
