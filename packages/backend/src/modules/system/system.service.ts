@@ -27,6 +27,24 @@ export class SystemService {
       this.logger.error(`Unable to read /host/proc/meminfo: ${e}`);
     }
 
+    // Fallback to systeminformation's mem() when the bind-mount read fails or
+    // returns no data (e.g. Proxmox LXC without the /proc/meminfo bind mount,
+    // see runtipi/runtipi#2445). Without this, memoryTotal stays 0 and the
+    // dashboard shows a flat 0% memory usage.
+    if (memResult.total === 0) {
+      try {
+        const mem = await si.mem();
+        if (mem.total > 0) {
+          memResult.total = mem.total;
+          memResult.available = mem.available ?? mem.free ?? 0;
+          memResult.used = mem.used ?? mem.total - memResult.available;
+          this.logger.info('Using systeminformation.mem() fallback for memory stats (no /host/proc/meminfo).');
+        }
+      } catch (e) {
+        this.logger.error(`Unable to read memory via systeminformation: ${e}`);
+      }
+    }
+
     const [disk0] = await si.fsSize();
 
     const disk = disk0 ?? { available: 0, size: 0 };
