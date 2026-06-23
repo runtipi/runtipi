@@ -437,5 +437,55 @@ describe('AppHelpers', () => {
       // Assert - should use false, not the default
       expect(envMap.get('BOOLEAN_WITH_DEFAULT')).toBe('false');
     });
+
+    it('should propagate RUNTIPI_* host env vars into the app env file', async () => {
+      // Arrange — base env file has nothing, but process.env has RUNTIPI_* vars
+      // (https://github.com/runtipi/runtipi/issues/2382)
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValue(envMap);
+      const originalEnv = process.env;
+      process.env = {
+        ...originalEnv,
+        RUNTIPI_MEDIA_PATH: '/mnt/media',
+        RUNTIPI_BACKUPS_PATH: '/mnt/backups',
+        NOT_RUNTIPI_FOO: 'should-not-be-propagated',
+      };
+
+      try {
+        // Act
+        await appHelpers.generateEnvFile(testAppUrn, {});
+
+        // Assert
+        expect(envMap.get('RUNTIPI_MEDIA_PATH')).toBe('/mnt/media');
+        expect(envMap.get('RUNTIPI_BACKUPS_PATH')).toBe('/mnt/backups');
+        expect(envMap.has('NOT_RUNTIPI_FOO')).toBe(false);
+      } finally {
+        process.env = originalEnv;
+      }
+    });
+
+    it('should not overwrite RUNTIPI_* vars already set in the base env file', async () => {
+      // Arrange — base env file already has RUNTIPI_APP_DATA_PATH; process.env has a
+      // different value (e.g. a stale export from the shell). The .env is authoritative.
+      const envMap = new Map<string, string>([['RUNTIPI_APP_DATA_PATH', '/data/from-env-file']]);
+      envUtils.envStringToMap.mockReturnValue(envMap);
+      const originalEnv = process.env;
+      process.env = {
+        ...originalEnv,
+        RUNTIPI_APP_DATA_PATH: '/data/from-process-env',
+        RUNTIPI_NEW_VAR: '/data/new',
+      };
+
+      try {
+        // Act
+        await appHelpers.generateEnvFile(testAppUrn, {});
+
+        // Assert — the value from the .env file wins; the new var is still added
+        expect(envMap.get('RUNTIPI_APP_DATA_PATH')).toBe('/data/from-env-file');
+        expect(envMap.get('RUNTIPI_NEW_VAR')).toBe('/data/new');
+      } finally {
+        process.env = originalEnv;
+      }
+    });
   });
 });

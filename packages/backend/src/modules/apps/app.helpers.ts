@@ -41,6 +41,23 @@ export class AppHelpers {
     const baseEnvFile = await this.filesytem.readTextFile(envFilePath);
     const envMap = this.envUtils.envStringToMap(baseEnvFile?.toString() ?? '');
 
+    // Propagate RUNTIPI_* host env vars into the app's env file so apps can
+    // reference them via ${VAR} interpolation in their compose/env files.
+    // Without this, vars like RUNTIPI_MEDIA_PATH were documented as available
+    // to apps but were never actually written to the per-app env file.
+    // See https://github.com/runtipi/runtipi/issues/2382
+    for (const [key, value] of Object.entries(process.env)) {
+      if (!key.startsWith('RUNTIPI_')) continue;
+      if (value === undefined) continue;
+      // Don't clobber a value that was set explicitly above (e.g. RUNTIPI_APP_DATA_PATH
+      // coming from the runtipi .env, which is already in envMap via baseEnvFile).
+      // The first pass wins — the .env file is the source of truth for the runtipi
+      // host, and we're just filling in any RUNTIPI_* vars that aren't already there.
+      if (!envMap.has(key)) {
+        envMap.set(key, value);
+      }
+    }
+
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
     // Default always present env variables
