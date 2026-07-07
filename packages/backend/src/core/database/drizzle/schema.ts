@@ -100,19 +100,19 @@ export const appStore = pgTable('app_store', {
 });
 
 export const oidc = pgTable('oidc', {
-  id: serial().primaryKey().notNull(),
+  id: serial().primaryKey().notNull().unique(),
   name: varchar().notNull(),
   clientId: varchar().notNull(),
   clientSecret: varchar().notNull(),
   authorizeUri: varchar().notNull(),
   tokenUri: varchar().notNull(),
   userinfoUri: varchar().notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at').notNull().default(sql`now()`),
+  updatedAt: integer('updated_at').notNull().default(sql`now()`),
 });
 
 export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
-  id: serial().primaryKey().notNull(),
+  id: serial().primaryKey().notNull().unique(),
   userId: integer()
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
@@ -120,6 +120,6 @@ export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
     .notNull()
     .references(() => oidc.id, { onDelete: 'cascade' }),
   sub: varchar().notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at').notNull().default(sql`now()`),
+  updatedAt: integer('updated_at').notNull().default(sql`now()`),
 });

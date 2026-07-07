@@ -2,7 +2,7 @@ import { DATABASE, type Database } from '@/core/database/database.module';
 import { Inject, Injectable } from '@nestjs/common';
 import type { OidcProviderDto } from './dto/oidc.dto';
 import { oidc as oidcTable, oidcTrustedSubs } from '@/core/database/drizzle/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 @Injectable()
 export class OidcRepository {
@@ -79,8 +79,11 @@ export class OidcRepository {
    * @param {string} sub - The sub of the trusted entry to be retrieved.
    * @returns The trusted sub entry.
    */
-  public async getTrustedSub(sub: string) {
-    const trustedSub = await this.db.select().from(oidcTrustedSubs).where(eq(oidcTrustedSubs.sub, sub));
+  public async getTrustedSub(sub: string, providerId: number) {
+    const trustedSub = await this.db
+      .select()
+      .from(oidcTrustedSubs)
+      .where(and(eq(oidcTrustedSubs.sub, sub), eq(oidcTrustedSubs.providerId, providerId)));
     return trustedSub[0];
   }
 
