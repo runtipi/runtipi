@@ -36,11 +36,14 @@ export class OidcRepository {
   }
 
   /**
-   * Deletes an OIDC provider from the database.
+   * Deletes an OIDC provider from the database alongside the trusted subs.
    * @param {number} providerId - The id of the provider to be deleted.
    */
   public async deleteProvider(providerId: number) {
-    await this.db.delete(oidcTable).where(eq(oidcTable.id, providerId));
+    await this.db.transaction(async (tx) => {
+      await tx.delete(oidcTrustedSubs).where(eq(oidcTrustedSubs.providerId, providerId));
+      await tx.delete(oidcTrustedSubs).where(eq(oidcTable.id, providerId));
+    });
   }
 
   /**

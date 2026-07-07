@@ -5,12 +5,12 @@ import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { Input } from '@/components/ui/Input';
 
 const schema = type({
-  name: 'string',
-  clientId: 'string',
-  clientSecret: 'string',
-  authorizeUri: 'string',
-  tokenUri: 'string',
-  userinfoUri: 'string',
+  name: 'string >= 1',
+  clientId: 'string >=1',
+  clientSecret: 'string >=1',
+  authorizeUri: 'string.url',
+  tokenUri: 'string.url',
+  userinfoUri: 'string.url',
 });
 
 export type FormValues = typeof schema.infer;
