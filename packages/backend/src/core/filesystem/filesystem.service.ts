@@ -204,7 +204,19 @@ export class FilesystemService {
   }
 
   async isDirectory(dirPath: string): Promise<boolean> {
-    return (await fs.promises.lstat(this.getSafeFilePath(dirPath))).isDirectory();
+    try {
+      return (await fs.promises.lstat(this.getSafeFilePath(dirPath))).isDirectory();
+    } catch {
+      return false;
+    }
+  }
+
+  async isFile(filePath: string): Promise<boolean> {
+    try {
+      return (await fs.promises.lstat(this.getSafeFilePath(filePath))).isFile();
+    } catch {
+      return false;
+    }
   }
 
   async createTempDirectory(prefix: string): Promise<string | null> {

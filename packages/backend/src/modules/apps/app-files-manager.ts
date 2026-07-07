@@ -42,9 +42,10 @@ export class AppFilesManager {
   public async getInstalledAppInfo(appUrn: AppUrn) {
     try {
       const { appInstalledDir } = this.getAppPaths(appUrn);
+      const configPath = path.join(appInstalledDir, 'config.json');
 
-      if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
-        const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
+      if (await this.filesystem.isFile(configPath)) {
+        const configFile = await this.filesystem.readTextFile(configPath);
 
         const config = JSON.parse(configFile ?? '{}');
         const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
@@ -56,7 +57,8 @@ export class AppFilesManager {
         }
 
         if (parsedConfig.available) {
-          const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
+          const descriptionPath = path.join(appInstalledDir, 'metadata', 'description.md');
+          const description = (await this.filesystem.isFile(descriptionPath)) ? ((await this.filesystem.readTextFile(descriptionPath)) ?? '') : '';
 
           return { ...parsedConfig, description };
         }
@@ -78,14 +80,14 @@ export class AppFilesManager {
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
     try {
-      if (await this.filesystem.pathExists(dockerComposePath)) {
+      if (await this.filesystem.isFile(dockerComposePath)) {
         const content = await this.filesystem.readTextFile(dockerComposePath);
         return { path: dockerComposePath, content };
       }
 
       // Check for legacy generated file (docker-compose.yml without x-runtipi)
       const legacyPath = path.join(appInstalledDir, APP_REL_COMPOSE_FILENAME);
-      if (await this.filesystem.pathExists(legacyPath)) {
+      if (await this.filesystem.isFile(legacyPath)) {
         const legacyContent = await this.filesystem.readYamlFile(legacyPath);
         // If it DOES NOT have x-runtipi, it is the old generated file
         if (legacyContent && typeof legacyContent === 'object' && !('x-runtipi' in legacyContent)) {
@@ -114,7 +116,7 @@ export class AppFilesManager {
     let content = null;
 
     try {
-      if (await this.filesystem.pathExists(appYamlPath)) {
+      if (await this.filesystem.isFile(appYamlPath)) {
         content = await this.filesystem.readYamlFile(appYamlPath);
       }
     } catch (error) {
@@ -136,7 +138,7 @@ export class AppFilesManager {
     const dockerComposeLegacyPath = path.join(appInstalledDir, 'docker-compose.json');
 
     try {
-      if (await this.filesystem.pathExists(dockerComposeLegacyPath)) {
+      if (await this.filesystem.isFile(dockerComposeLegacyPath)) {
         const jsonContent = await this.filesystem.readJsonFile(dockerComposeLegacyPath);
 
         const compose = dynamicComposeSchemaYaml(convertLegacyToYaml(jsonContent));
@@ -200,7 +202,7 @@ export class AppFilesManager {
     const envPath = path.join(appDataDir, 'app.env');
 
     let env = '';
-    if (await this.filesystem.pathExists(envPath)) {
+    if (await this.filesystem.isFile(envPath)) {
       env = (await this.filesystem.readTextFile(envPath)) ?? '';
     }
 
@@ -227,7 +229,7 @@ export class AppFilesManager {
     const userEnvFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'app.env');
     let content = null;
 
-    if (await this.filesystem.pathExists(userEnvFile)) {
+    if (await this.filesystem.isFile(userEnvFile)) {
       content = await this.filesystem.readTextFile(userEnvFile);
     }
 
@@ -246,7 +248,7 @@ export class AppFilesManager {
     const userComposeFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'docker-compose.yml');
     let content = null;
 
-    if (await this.filesystem.pathExists(userComposeFile)) {
+    if (await this.filesystem.isFile(userComposeFile)) {
       content = await this.filesystem.readTextFile(userComposeFile);
     }
 
@@ -264,7 +266,7 @@ export class AppFilesManager {
 
     let content = null;
     try {
-      if (await this.filesystem.pathExists(configPath)) {
+      if (await this.filesystem.isFile(configPath)) {
         content = await this.filesystem.readJsonFile(configPath);
       }
     } catch (error) {

@@ -407,8 +407,35 @@ describe('AppConfigService', () => {
       await service.syncWithTemplate(mockAppUrn);
 
       // Assert
-      const expectedYaml = yaml.stringify(templateConfig);
+      const expectedYaml = yaml.stringify(templateConfig, { nullStr: '' });
       expect(mockFilesystem.writeTextFile).toHaveBeenCalledWith(mockConfigPath, expectedYaml);
+    });
+
+    it('should preserve empty named volumes without writing null when syncing object template content', async () => {
+      // Arrange
+      const templateConfig = { volumes: { nginx_logs: null }, services: { app: { image: 'test-image' } } };
+      const mockApp = fromPartial({
+        id: faker.number.int(),
+        templateUrn: 'template:test-store',
+        templateVersion: 1,
+      });
+      mockAppsRepository.getAppByUrn.mockResolvedValue(fromAny(mockApp));
+      mockMarketplaceService.getSourceDockerComposeYaml.mockResolvedValue(fromAny({ content: templateConfig }));
+      mockFilesystem.readTextFile.mockResolvedValue('old-config');
+      mockFilesystem.writeTextFile.mockResolvedValue(true);
+      mockAppsRepository.updateAppById.mockResolvedValue(fromAny(mockApp));
+
+      // Act
+      await service.syncWithTemplate(mockAppUrn);
+
+      // Assert
+      expect(mockFilesystem.writeTextFile).toHaveBeenCalledWith(
+        mockConfigPath,
+        expect.stringContaining(`volumes:
+  nginx_logs:
+`),
+      );
+      expect(mockFilesystem.writeTextFile).not.toHaveBeenCalledWith(mockConfigPath, expect.stringContaining('nginx_logs: null'));
     });
 
     it('should extract template version from x-runtipi schema_version when syncing', async () => {

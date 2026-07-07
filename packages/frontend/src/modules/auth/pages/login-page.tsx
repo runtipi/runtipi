@@ -3,7 +3,7 @@ import { getProviderAuthUrlMutation, getProvidersPublicOptions, loginMutation, v
 import { useUserContext } from '@/context/user-context';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Navigate, redirect, useNavigate, useSearchParams } from 'react-router';
@@ -11,7 +11,33 @@ import { LoginForm } from '../components/login-form';
 import { TotpForm } from '../components/totp-form/totp-form';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const isSafeRedirect = (url: string) => new URL(url).host.endsWith(`.${window.location.host}`);
+const isSafeRedirect = (url: string) => {
+  try {
+    const redirectUrl = new URL(url);
+    return ['http:', 'https:'].includes(redirectUrl.protocol) && redirectUrl.hostname.endsWith(`.${window.location.hostname}`);
+  } catch {
+    return false;
+  }
+};
+
+const createForwardAuthSession = async (redirectUrl: string) => {
+  const response = await fetch('/api/auth/forward-auth', {
+    body: JSON.stringify({ redirectUrl }),
+    headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+  });
+
+  if (!response.ok) {
+    throw new Error('Unable to create forward-auth session');
+  }
+
+  const body = (await response.json()) as { redirectUrl?: string };
+  if (!body.redirectUrl) {
+    throw new Error('Unable to create forward-auth redirect');
+  }
+
+  return body.redirectUrl;
+};
 
 export async function clientLoader() {
   const user = await userContext();
@@ -21,6 +47,11 @@ export async function clientLoader() {
   }
 
   if (user.data?.isLoggedIn) {
+    const redirectUrl = new URL(window.location.href).searchParams.get('redirect_url');
+    if (redirectUrl && isSafeRedirect(redirectUrl)) {
+      return;
+    }
+
     return redirect('/dashboard');
   }
 }
@@ -41,6 +72,30 @@ export default () => {
     ...getProvidersPublicOptions(),
   });
 
+  useEffect(() => {
+    if (!isLoggedIn || !redirect_url || !isSafeRedirect(redirect_url)) {
+      return;
+    }
+
+    let cancelled = false;
+
+    createForwardAuthSession(redirect_url)
+      .then((authRedirectUrl) => {
+        if (!cancelled) {
+          window.location.href = authRedirectUrl;
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          navigate('/dashboard');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn, navigate, redirect_url]);
+
   const login = useMutation({
     ...loginMutation(),
     onSuccess: async (data) => {
@@ -50,8 +105,8 @@ export default () => {
         setUserContext({ isLoggedIn: true });
         refreshUserContext();
 
-        if (redirect_url && isSafeRedirect(redirect_url)) {
-          window.location.href = redirect_url;
+        if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
+          window.location.href = data.redirectUrl;
           return;
         }
         navigate('/dashboard');
@@ -67,12 +122,12 @@ export default () => {
     onError: (e: TranslatableError) => {
       toast.error(t(e.message, e.intlParams));
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setUserContext({ isLoggedIn: true });
       refreshUserContext();
 
-      if (redirect_url && isSafeRedirect(redirect_url)) {
-        window.location.href = redirect_url;
+      if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
         return;
       }
       navigate('/dashboard');
@@ -94,8 +149,7 @@ export default () => {
 
   if (isLoggedIn) {
     if (redirect_url && isSafeRedirect(redirect_url)) {
-      window.location.href = redirect_url;
-      return;
+      return null;
     }
     return <Navigate to="/dashboard" />;
   }
@@ -105,12 +159,17 @@ export default () => {
   }
 
   if (totpSessionId) {
-    return <TotpForm loading={verifyTotp.isPending} onSubmit={(totpCode) => verifyTotp.mutate({ body: { totpCode, totpSessionId } })} />;
+    return (
+      <TotpForm
+        loading={verifyTotp.isPending}
+        onSubmit={(totpCode) => verifyTotp.mutate({ body: { redirectUrl: redirect_url ?? undefined, totpCode, totpSessionId } })}
+      />
+    );
   }
 
   return (
     <LoginForm
-      onSubmit={(values) => login.mutate({ body: { password: values.password, username: values.email } })}
+      onSubmit={(values) => login.mutate({ body: { password: values.password, redirectUrl: redirect_url ?? undefined, username: values.email } })}
       loading={login.isPending}
       loginType={loginType}
       oauthProviders={oauthProviders.providers}

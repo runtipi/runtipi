@@ -20,7 +20,11 @@ type AppEventType =
   | 'reset_success'
   | 'reset_error'
   | 'update_success'
-  | 'update_error';
+  | 'update_error'
+  | 'backup_success'
+  | 'backup_error'
+  | 'restore_success'
+  | 'restore_error';
 
 type SSEAppEvent = {
   event: AppEventType;

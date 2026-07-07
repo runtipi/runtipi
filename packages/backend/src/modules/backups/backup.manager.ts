@@ -1,7 +1,8 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { sanitizeFilename } from '@/common/helpers/file-helpers';
-import { ArchiveService } from '@/core/archive/archive.service';
+import { pLimit, sanitizeFilename } from '@/common/helpers/file-helpers';
+import { ArchiveService, type ArchiveEntry } from '@/core/archive/archive.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -19,12 +20,42 @@ export class BackupManager {
     private readonly appFilesManager: AppFilesManager,
   ) {}
 
-  public backupApp = async (appUrn: AppUrn) => {
+  private getBackupPaths(appUrn: AppUrn) {
     const { dataDir } = this.config.get('directories');
     const { appStoreId, appName } = extractAppUrn(appUrn);
-    const backupName = `${appName}-${appStoreId}-${Date.now()}`;
 
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+    return {
+      appName,
+      appStoreId,
+      backupDir: path.join(dataDir, 'backups', appStoreId, appName),
+      userConfigDir: path.join(dataDir, 'user-config', appStoreId, appName),
+    };
+  }
+
+  private getValidatedBackupFilename(filename: string) {
+    const sanitizedFilename = sanitizeFilename(filename);
+
+    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
+      throw new Error('Invalid backup filename');
+    }
+
+    return sanitizedFilename;
+  }
+
+  private getBackupFilePath(appUrn: AppUrn, filename: string) {
+    const { backupDir } = this.getBackupPaths(appUrn);
+    const sanitizedFilename = this.getValidatedBackupFilename(filename);
+
+    return {
+      backupDir,
+      sanitizedFilename,
+      backupPath: this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename)),
+    };
+  }
+
+  public backupApp = async (appUrn: AppUrn) => {
+    const { appName, appStoreId, backupDir, userConfigDir } = this.getBackupPaths(appUrn);
+    const backupName = `${appName}-${appStoreId}-${Date.now()}`;
 
     const tempDir = await this.filesystem.createTempDirectory(appUrn);
 
@@ -37,7 +68,6 @@ export class BackupManager {
     await this.filesystem.createDirectory(tempDir);
 
     const { appDataDir, appInstalledDir } = this.appFilesManager.getAppPaths(appUrn);
-    const userConfigDir = path.join(dataDir, 'user-config', appStoreId, appName);
 
     await this.filesystem.copyDirectory(appDataDir, path.join(tempDir, 'app-data'), {
       recursive: true,
@@ -46,7 +76,7 @@ export class BackupManager {
 
     await this.filesystem.copyDirectory(appInstalledDir, path.join(tempDir, 'app'));
 
-    if (await this.filesystem.pathExists(userConfigDir)) {
+    if (await this.filesystem.isDirectory(userConfigDir)) {
       this.logger.info('Including user configuration in backup...');
       await this.filesystem.copyDirectory(userConfigDir, path.join(tempDir, 'user-config'));
     }
@@ -72,23 +102,14 @@ export class BackupManager {
   };
 
   public restoreApp = async (appUrn: AppUrn, filename: string) => {
-    const { dataDir } = this.config.get('directories');
     const restoreDir = await this.filesystem.createTempDirectory(appUrn);
 
     if (!restoreDir) {
       throw new Error('Failed to create temp directory');
     }
 
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const { appStoreId, appName } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-
-    const archive = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupDir, backupPath: archive } = this.getBackupFilePath(appUrn, filename);
+    const { userConfigDir } = this.getBackupPaths(appUrn);
 
     if (!archive.startsWith(backupDir)) {
       throw new Error('Invalid backup file path');
@@ -97,42 +118,180 @@ export class BackupManager {
     this.logger.info('Restoring app from backup...');
 
     // Verify the app has a backup
-    if (!(await this.filesystem.pathExists(archive))) {
+    if (!(await this.filesystem.isFile(archive))) {
       throw new Error('The backup file does not exist');
     }
 
     // Unzip the archive
     await this.filesystem.createDirectory(restoreDir);
 
-    this.logger.info('Extracting archive...');
-    const { stderr, stdout } = await this.archiveManager.extractTarGz(archive, restoreDir);
-    this.logger.debug('--- archiveManager.extractTarGz ---');
-    this.logger.debug('stderr:', stderr);
-    this.logger.debug('stdout:', stdout);
+    try {
+      this.validateRestoreArchiveEntries(await this.archiveManager.listTarGz(archive));
 
-    const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
-    const userConfigDir = path.join(dataDir, 'user-config', appStoreId, appName);
+      this.logger.info('Extracting archive...');
+      const { stderr, stdout } = await this.archiveManager.extractTarGz(archive, restoreDir);
+      this.logger.debug('--- archiveManager.extractTarGz ---');
+      this.logger.debug('stderr:', stderr);
+      this.logger.debug('stdout:', stdout);
 
-    // Remove old data directories
-    await this.filesystem.removeDirectory(appDataDir);
-    await this.filesystem.removeDirectory(appInstalledDir);
-    await this.filesystem.removeDirectory(userConfigDir);
+      const runValidationFsOperation = pLimit(16);
 
-    await this.filesystem.createDirectory(appDataDir);
-    await this.filesystem.createDirectory(appInstalledDir);
-    await this.filesystem.createDirectory(userConfigDir);
+      await this.validateRestoreDirectory(path.join(restoreDir, 'app-data'), { allowSymlinks: true }, undefined, runValidationFsOperation);
+      await this.validateRestoreDirectory(
+        path.join(restoreDir, 'app'),
+        { allowSymlinks: true, rejectHardLinks: true },
+        undefined,
+        runValidationFsOperation,
+      );
+      await this.validateRestoreDirectory(
+        path.join(restoreDir, 'user-config'),
+        {
+          allowSymlinks: false,
+          optional: true,
+          rejectHardLinks: true,
+        },
+        undefined,
+        runValidationFsOperation,
+      );
 
-    // Copy data from the backup folder
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDir);
-    await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appInstalledDir);
+      const { appInstalledDir, appDataDir } = this.appFilesManager.getAppPaths(appUrn);
 
-    if (await this.filesystem.pathExists(path.join(restoreDir, 'user-config'))) {
-      await this.filesystem.copyDirectory(path.join(restoreDir, 'user-config'), userConfigDir);
+      // Remove old data directories
+      await this.filesystem.removeDirectory(appDataDir);
+      await this.filesystem.removeDirectory(appInstalledDir);
+      await this.filesystem.removeDirectory(userConfigDir);
+
+      await this.filesystem.createDirectory(appDataDir);
+      await this.filesystem.createDirectory(appInstalledDir);
+      await this.filesystem.createDirectory(userConfigDir);
+
+      // Copy data from the backup folder
+      await this.filesystem.copyDirectory(path.join(restoreDir, 'app-data'), appDataDir);
+      await this.filesystem.copyDirectory(path.join(restoreDir, 'app'), appInstalledDir);
+
+      if (await this.filesystem.isDirectory(path.join(restoreDir, 'user-config'))) {
+        await this.filesystem.copyDirectory(path.join(restoreDir, 'user-config'), userConfigDir);
+      }
+    } finally {
+      await this.filesystem.removeDirectory(restoreDir);
+    }
+  };
+
+  private validateRestoreArchiveEntries(entries: ArchiveEntry[]) {
+    for (const entry of entries) {
+      if (entry.type !== '-' && entry.type !== 'd') {
+        throw new Error('Backup contains unsupported file types');
+      }
+
+      const entryPath = this.normalizeArchiveEntryPath(entry.path);
+
+      if (entryPath === '.') {
+        continue;
+      }
+
+      const rootName = entryPath.split('/')[0];
+
+      if (!rootName) {
+        throw new Error('Backup contains unsupported file types');
+      }
+    }
+  }
+
+  private normalizeArchiveEntryPath(entryPath: string) {
+    if (path.posix.isAbsolute(entryPath)) {
+      throw new Error('Backup contains unsupported file types');
     }
 
-    // Delete restore folder
-    await this.filesystem.removeDirectory(restoreDir);
-  };
+    const normalizedPath = path.posix.normalize(entryPath.replace(/^(\.\/)+/, ''));
+
+    if (normalizedPath === '..' || normalizedPath.startsWith('../')) {
+      throw new Error('Backup contains unsupported file types');
+    }
+
+    return normalizedPath;
+  }
+
+  private async validateRestoreDirectory(
+    directory: string,
+    options: { allowSymlinks: boolean; optional?: boolean; rejectHardLinks?: boolean },
+    rootDirectory = directory,
+    runFsOperation = pLimit(16),
+  ) {
+    const directoryStats = await runFsOperation(() => fs.promises.lstat(directory)).catch((error: NodeJS.ErrnoException) => {
+      if (options.optional && error.code === 'ENOENT') {
+        return null;
+      }
+
+      throw error;
+    });
+
+    if (!directoryStats) {
+      return;
+    }
+
+    if (!directoryStats.isDirectory()) {
+      throw new Error('Backup contains unsupported file types');
+    }
+
+    const entries = await runFsOperation(() => fs.promises.readdir(directory, { withFileTypes: true }));
+    const rootPath = path.resolve(rootDirectory);
+    let nextEntryIndex = 0;
+
+    const workers = Array.from({ length: Math.min(16, entries.length) }, async () => {
+      while (nextEntryIndex < entries.length) {
+        const entry = entries[nextEntryIndex];
+        nextEntryIndex += 1;
+
+        if (!entry) {
+          continue;
+        }
+
+        const entryPath = path.join(directory, entry.name);
+
+        if (entry.isSymbolicLink()) {
+          if (!options.allowSymlinks) {
+            throw new Error('Backup contains unsupported file types');
+          }
+
+          const linkTarget = await runFsOperation(() => fs.promises.readlink(entryPath));
+          const resolvedTarget = path.resolve(path.dirname(entryPath), linkTarget);
+
+          if (!this.isPathInsideOrEqual(rootPath, resolvedTarget)) {
+            throw new Error('Backup contains unsupported file types');
+          }
+
+          continue;
+        }
+
+        if (entry.isDirectory()) {
+          await this.validateRestoreDirectory(entryPath, options, rootDirectory, runFsOperation);
+          continue;
+        }
+
+        if (entry.isFile()) {
+          if (options.rejectHardLinks) {
+            const stats = await runFsOperation(() => fs.promises.lstat(entryPath));
+
+            if (stats.nlink > 1) {
+              throw new Error('Backup contains unsupported file types');
+            }
+          }
+
+          continue;
+        }
+
+        throw new Error('Backup contains unsupported file types');
+      }
+    });
+
+    await Promise.all(workers);
+  }
+
+  private isPathInsideOrEqual(parentPath: string, childPath: string): boolean {
+    const relativePath = path.relative(parentPath, childPath);
+
+    return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+  }
 
   /**
    * Delete a backup file
@@ -140,17 +299,7 @@ export class BackupManager {
    * @param filename - The filename of the backup
    */
   public async deleteBackup(appUrn: AppUrn, filename: string) {
-    const { dataDir } = this.config.get('directories');
-
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupPath } = this.getBackupFilePath(appUrn, filename);
 
     if (await this.filesystem.pathExists(backupPath)) {
       await this.filesystem.removeFile(backupPath);
@@ -198,12 +347,9 @@ export class BackupManager {
    * @returns The list of backups
    */
   public async listBackupsByAppId(appUrn: AppUrn) {
-    const { dataDir } = this.config.get('directories');
+    const { backupDir: backupsDir } = this.getBackupPaths(appUrn);
 
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupsDir = path.join(dataDir, 'backups', appStoreId, appName);
-
-    if (!(await this.filesystem.pathExists(backupsDir))) {
+    if (!(await this.filesystem.isDirectory(backupsDir))) {
       return [];
     }
 
@@ -212,12 +358,18 @@ export class BackupManager {
 
       const backups = await Promise.all(
         list.map(async (backup) => {
-          const stats = await this.filesystem.getStats(path.join(backupsDir, backup));
+          const backupPath = path.join(backupsDir, backup);
+
+          if (!(await this.filesystem.isFile(backupPath))) {
+            return null;
+          }
+
+          const stats = await this.filesystem.getStats(backupPath);
           return { id: backup, size: stats.size, date: stats.mtime.getTime() };
         }),
       );
 
-      return backups;
+      return backups.filter((backup) => backup !== null);
     } catch (error) {
       this.logger.error(`Error listing backups for app ${appUrn}:`, error);
       return [];
@@ -231,19 +383,9 @@ export class BackupManager {
    * @returns The backup file path
    */
   public async getBackupPath(appUrn: AppUrn, filename: string): Promise<string> {
-    const { dataDir } = this.config.get('directories');
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
+    const { backupPath } = this.getBackupFilePath(appUrn, filename);
 
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
-
-    if (!(await this.filesystem.pathExists(backupPath))) {
+    if (!(await this.filesystem.isFile(backupPath))) {
       throw new Error('The backup file does not exist');
     }
 
@@ -257,17 +399,7 @@ export class BackupManager {
    * @param fileBuffer - The file buffer
    */
   public async uploadBackup(appUrn: AppUrn, filename: string, fileBuffer: Buffer): Promise<void> {
-    const { dataDir } = this.config.get('directories');
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const backupDir = path.join(dataDir, 'backups', appStoreId, appName);
-
-    const sanitizedFilename = sanitizeFilename(filename);
-
-    if (sanitizedFilename !== filename || !sanitizedFilename.endsWith('.tar.gz')) {
-      throw new Error('Invalid backup filename');
-    }
-
-    const backupPath = this.filesystem.getSafeFilePath(path.join(backupDir, sanitizedFilename));
+    const { backupDir, backupPath, sanitizedFilename } = this.getBackupFilePath(appUrn, filename);
 
     // Create backup directory if it doesn't exist
     await this.filesystem.createDirectory(backupDir);

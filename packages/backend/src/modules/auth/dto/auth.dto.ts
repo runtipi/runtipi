@@ -4,11 +4,13 @@ import { createArkDto } from 'nestjs-arktype';
 const credentialsSchema = type({
   username: 'string',
   password: 'string',
+  redirectUrl: 'string.url?',
 });
 
 const verifyTotpSchema = type({
   totpCode: 'string',
   totpSessionId: 'string',
+  redirectUrl: 'string.url?',
 });
 
 const changeUsernameSchema = type({
@@ -37,9 +39,14 @@ const resetPasswordSchema = type({
   newPassword: 'string',
 });
 
+const forwardAuthSchema = type({
+  redirectUrl: 'string.url',
+});
+
 const loginResponseSchema = type({
   success: 'boolean',
   totpSessionId: 'string?',
+  redirectUrl: 'string.url?',
 });
 
 const registerResponseSchema = type({
@@ -85,3 +92,4 @@ export class DisableTotpBody extends createArkDto(disableTotpSchema, { name: 'Di
 export class ResetPasswordBody extends createArkDto(resetPasswordSchema, { name: 'ResetPasswordBody', input: true }) {}
 export class ResetPasswordDto extends createArkDto(resetPasswordResponseSchema, { name: 'ResetPasswordDto' }) {}
 export class CheckResetPasswordRequestDto extends createArkDto(checkResetPasswordRequestSchema, { name: 'CheckResetPasswordRequestDto' }) {}
+export class ForwardAuthBody extends createArkDto(forwardAuthSchema, { name: 'ForwardAuthBody', input: true }) {}

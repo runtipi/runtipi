@@ -53,7 +53,7 @@ export class SystemService {
     const { dataDir } = this.config.get('directories');
     const filePath = `${dataDir}/traefik/tls/cert.pem`;
 
-    if (await this.filesystem.pathExists(filePath)) {
+    if (await this.filesystem.isFile(filePath)) {
       const file = await this.filesystem.readTextFile(filePath);
       return file;
     }

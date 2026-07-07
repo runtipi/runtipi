@@ -1,8 +1,8 @@
 import type { LoggerService } from '@/core/logger/logger.service';
 import * as Sentry from '@sentry/nestjs';
-import cron from 'node-cron';
 import { AMQPConnectionError, AMQPError, type Connection, type RPCClient } from 'rabbitmq-client';
 import { type } from 'arktype';
+import { scheduleCron, validateCronPattern } from './cron-scheduler';
 import type { EventPublisher } from './event.publisher';
 
 export type ArkTypeSchema<TOut = unknown, TIn = unknown> = {
@@ -28,33 +28,40 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
 
   public onEvent(callback: (data: Infer<T> & { eventId: string }, reply: (response: InferIn<R>) => Promise<void>) => Promise<void>) {
     try {
-      this.rabbit.createConsumer({ queue: this.queueName, concurrency: this.workers }, async (req, reply) => {
-        let rpcSuccess = false;
-        let rpcResultMessage = '';
+      this.rabbit.createConsumer(
+        {
+          queue: this.queueName,
+          concurrency: this.workers,
+          queueOptions: { autoDelete: false, durable: true },
+        },
+        async (req, reply) => {
+          let rpcSuccess = false;
+          let rpcResultMessage = '';
 
-        try {
-          await callback(req.body, reply);
-          rpcSuccess = true;
-          rpcResultMessage = 'RPC processed successfully.';
-        } catch (error) {
-          this.logger.error('Error in consumer callback:', error);
-          await reply({ success: false, message: (error as Error)?.message } as InferIn<R>);
-          rpcSuccess = false;
-          rpcResultMessage = error instanceof Error ? error.message : String(error);
-        } finally {
-          const eventToPublish = {
-            queueName: this.queueName,
-            requestData: req.body,
-            rpcStatus: rpcSuccess ? 'success' : 'failure',
-            rpcMessage: rpcResultMessage,
-            requestId: req.body.requestId,
-            timestamp: new Date().toISOString(),
-          };
+          try {
+            await callback(req.body, reply);
+            rpcSuccess = true;
+            rpcResultMessage = 'RPC processed successfully.';
+          } catch (error) {
+            this.logger.error('Error in consumer callback:', error);
+            await reply({ success: false, message: (error as Error)?.message } as InferIn<R>);
+            rpcSuccess = false;
+            rpcResultMessage = error instanceof Error ? error.message : String(error);
+          } finally {
+            const eventToPublish = {
+              queueName: this.queueName,
+              requestData: req.body,
+              rpcStatus: rpcSuccess ? 'success' : 'failure',
+              rpcMessage: rpcResultMessage,
+              requestId: req.body.requestId,
+              timestamp: new Date().toISOString(),
+            };
 
-          const routingKey = `rpc.${rpcSuccess ? 'processed' : 'error'}.${this.queueName}`;
-          await this.publisher.publish(routingKey, eventToPublish);
-        }
-      });
+            const routingKey = `rpc.${rpcSuccess ? 'processed' : 'error'}.${this.queueName}`;
+            await this.publisher.publish(routingKey, eventToPublish);
+          }
+        },
+      );
     } catch (error) {
       this.logger.error(`Failed to create consumer for queue ${this.queueName}:`, error);
       Sentry.captureException(error, { tags: { queueName: this.queueName, action: 'onEvent' } });
@@ -94,7 +101,7 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
   }
 
   public publishRepeatable(data: unknown, cronPattern: string) {
-    if (!cron.validate(cronPattern)) {
+    if (!validateCronPattern(cronPattern)) {
       throw new Error('Invalid cron pattern');
     }
 
@@ -103,7 +110,7 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
       throw new Error(`Invalid event data: ${eventData.summary}`);
     }
 
-    cron.schedule(cronPattern, async () => {
+    scheduleCron(cronPattern, async () => {
       try {
         await this.rpcClient.send(this.queueName, eventData);
       } catch (e) {

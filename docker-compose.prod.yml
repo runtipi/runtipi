@@ -4,7 +4,7 @@ services:
     depends_on:
       runtipi:
         condition: service_healthy
-    image: traefik:v3.5
+    image: traefik:v3.6.12
     restart: unless-stopped
     ports:
       - 80:80
@@ -135,6 +135,8 @@ services:
       traefik.http.routers.dashboard-local.service: dashboard
       # Middlewares
       traefik.http.middlewares.runtipi.forwardauth.address: ${RUNTIPI_FORWARD_AUTH_URL:-http://runtipi:3000/api/auth/traefik}
+      traefik.http.middlewares.runtipi.forwardauth.authRequestHeaders: Cookie
+      traefik.http.middlewares.runtipi.forwardauth.maxResponseBodySize: "8192"
 
 networks:
   tipi_main_network:

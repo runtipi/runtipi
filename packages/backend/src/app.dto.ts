@@ -31,6 +31,7 @@ export const settingsSchema = type({
   experimental_insecureCookie: 'boolean?',
   themeBase: 'string?',
   themeColor: 'string?',
+  trustedProxyIps: 'string.trim?',
 });
 
 const versionSchema = type({

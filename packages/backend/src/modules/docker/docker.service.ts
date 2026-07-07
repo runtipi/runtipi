@@ -65,7 +65,7 @@ export class DockerService {
 
     // User defined overrides
     const userComposeFile = path.join(dataDir, 'user-config', 'tipi-compose.yml');
-    if (await this.filesystem.pathExists(userComposeFile)) {
+    if (await this.filesystem.isFile(userComposeFile)) {
       args.push('--file', userComposeFile);
     }
 

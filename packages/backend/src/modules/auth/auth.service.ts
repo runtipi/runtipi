@@ -17,6 +17,9 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { type Request as ExpressRequest, type Response as ExpressResponse } from 'express';
 import { SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from '@/common/constants';
 
+const TOTP_SESSION_EXPIRATION = 60 * 5;
+const MAX_TOTP_ATTEMPTS = 5;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -90,7 +93,7 @@ export class AuthService {
 
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
-      this.cache.set(totpSessionId, user.id.toString());
+      this.cache.set(totpSessionId, user.id.toString(), TOTP_SESSION_EXPIRATION);
       return { totpSessionId };
     }
 
@@ -111,6 +114,7 @@ export class AuthService {
   public verifyTotp = async (params: { totpSessionId: string; totpCode: string }) => {
     const { totpSessionId, totpCode } = params;
     const userId = this.cache.get(totpSessionId);
+    const attemptKey = `totp-attempts:${totpSessionId}`;
 
     if (!userId) {
       throw new TranslatableError('AUTH_ERROR_TOTP_SESSION_NOT_FOUND');
@@ -130,11 +134,21 @@ export class AuthService {
     const isValid = TotpAuthenticator.check(totpCode, totpSecret);
 
     if (!isValid) {
+      const attempts = Number(this.cache.get(attemptKey) ?? 0) + 1;
+
+      if (attempts >= MAX_TOTP_ATTEMPTS) {
+        this.cache.del(attemptKey);
+        this.cache.del(totpSessionId);
+        throw new TranslatableError('AUTH_ERROR_TOTP_TOO_MANY_ATTEMPTS', {}, HttpStatus.TOO_MANY_REQUESTS);
+      }
+
+      this.cache.set(attemptKey, attempts.toString(), TOTP_SESSION_EXPIRATION);
       throw new TranslatableError('AUTH_ERROR_TOTP_INVALID_CODE');
     }
 
     const sessionId = await this.sessionManager.createSession(user.id);
 
+    this.cache.del(attemptKey);
     this.cache.del(totpSessionId);
 
     return {
@@ -148,12 +162,6 @@ export class AuthService {
    * @param {LoginBody} input - An object containing the email and password fields
    */
   public register = async (input: RegisterBody) => {
-    const operators = await this.userRepository.getOperators();
-
-    if (operators.length > 0) {
-      throw new TranslatableError('AUTH_ERROR_ADMIN_ALREADY_EXISTS', {}, HttpStatus.FORBIDDEN);
-    }
-
     const { password, username } = input;
     const email = username.trim().toLowerCase();
 
@@ -172,10 +180,10 @@ export class AuthService {
     }
 
     const hash = await this.passwordService.hash(password);
-    const newUser = await this.userRepository.createUser({ username: email, password: hash, operator: true });
+    const newUser = await this.userRepository.createFirstOperator({ username: email, password: hash });
 
     if (!newUser) {
-      throw new TranslatableError('AUTH_ERROR_ERROR_CREATING_USER', {}, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new TranslatableError('AUTH_ERROR_ADMIN_ALREADY_EXISTS', {}, HttpStatus.FORBIDDEN);
     }
 
     const sessionId = await this.sessionManager.createSession(newUser.id);

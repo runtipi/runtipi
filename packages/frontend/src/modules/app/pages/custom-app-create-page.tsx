@@ -7,8 +7,9 @@ import { MultiServiceForm } from '@/components/multi-service-form/multi-service-
 import { createCustomAppMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Input } from '@/components/ui/Input/Input';
 import type { TranslatableError } from '@/types/error.types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type } from 'arktype';
+import { useMultiServiceStore } from '@/stores/multiServiceStore';
 
 const RESERVED_APP_NAMES = ['create'];
 
@@ -17,6 +18,7 @@ export default () => {
   const navigate = useNavigate();
   const [appName, setAppName] = useState('');
   const [appNameError, setAppNameError] = useState<string>();
+  const { composeExtras, setComposeExtras } = useMultiServiceStore();
 
   const appNameSchema = type('string').narrow((name, ctx) => {
     if (name.length < 1) ctx.reject({ message: t('CUSTOM_APP_NAME_REQUIRED') });
@@ -37,6 +39,10 @@ export default () => {
       toast.error(t(error.message || 'CUSTOM_APP_CREATE_ERROR', { ...error.intlParams }));
     },
   });
+
+  useEffect(() => {
+    setComposeExtras({});
+  }, [setComposeExtras]);
 
   const onSubmit = (data: typeof dynamicComposeSchemaYaml.infer) => {
     const validation = appNameSchema(appName);
@@ -71,7 +77,7 @@ export default () => {
           </div>
         </div>
       </div>
-      <MultiServiceForm onSubmit={(d) => onSubmit(convertLegacyToYaml(d))} />
+      <MultiServiceForm onSubmit={(d) => onSubmit({ ...convertLegacyToYaml(d), ...composeExtras })} />
     </>
   );
 };

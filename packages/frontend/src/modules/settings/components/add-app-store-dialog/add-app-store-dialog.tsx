@@ -48,7 +48,7 @@ export const AddAppStoreDialog = () => {
   return (
     <div className="mt-3 align-self-end">
       <Button onClick={() => addAppStoreDisclosure.open()} intent="primary">
-        Add App Store
+        {t('APP_STORE_ADD_BUTTON')}
       </Button>
       <Dialog open={addAppStoreDisclosure.isOpen} onOpenChange={addAppStoreDisclosure.toggle}>
         <DialogContent>

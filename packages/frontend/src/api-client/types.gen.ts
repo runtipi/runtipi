@@ -126,25 +126,33 @@ export type LoadDto = {
 export type LoginBody = {
     password: string;
     username: string;
+    redirectUrl?: string;
 };
 
 export type LoginDto = {
     success: boolean;
+    redirectUrl?: string;
     totpSessionId?: string;
 };
 
 export type VerifyTotpBody = {
     totpCode: string;
     totpSessionId: string;
+    redirectUrl?: string;
 };
 
 export type RegisterBody = {
     password: string;
     username: string;
+    redirectUrl?: string;
 };
 
 export type RegisterDto = {
     success: boolean;
+};
+
+export type ForwardAuthBody = {
+    redirectUrl: string;
 };
 
 export type ChangeUsernameBody = {
@@ -282,9 +290,6 @@ export type GuestAppsDto = {
             templateUrn: string | null;
             updatedAt: number;
             version: number;
-            config?: {
-                [key: string]: unknown;
-            };
             enableAuth?: boolean;
             localSubdomain?: string | null;
         };
@@ -1044,6 +1049,17 @@ export type LogoutData = {
 };
 
 export type LogoutResponses = {
+    201: unknown;
+};
+
+export type ForwardAuthData = {
+    body: ForwardAuthBody;
+    path?: never;
+    query?: never;
+    url: '/api/auth/forward-auth';
+};
+
+export type ForwardAuthResponses = {
     201: unknown;
 };
 

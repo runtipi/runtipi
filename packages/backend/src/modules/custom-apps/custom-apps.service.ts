@@ -25,6 +25,25 @@ export class CustomAppService {
     private readonly appsRepository: AppsRepository,
   ) {}
 
+  private getCustomAppPaths(appUrn: AppUrn) {
+    const { appName, appStoreId } = extractAppUrn(appUrn);
+    const { dataDir } = this.configService.get('directories');
+    const appPath = path.join(dataDir, 'apps', appStoreId, appName);
+    const metadataDir = path.join(appPath, 'metadata');
+
+    return {
+      appName,
+      appStoreId,
+      appPath,
+      dataPath: path.join(dataDir, 'app-data', appStoreId, appName),
+      configPath: path.join(appPath, 'config.json'),
+      composePath: path.join(appPath, APP_REL_COMPOSE_FILENAME),
+      descriptionPath: path.join(metadataDir, 'description.md'),
+      logoPath: path.join(metadataDir, 'logo.jpg'),
+      metadataDir,
+    };
+  }
+
   async createCustomApp(dto: CreateCustomAppDto): Promise<{ appUrn: AppUrn; appName: string; storeId: string }> {
     if (this.configService.get('demoMode')) {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
@@ -88,11 +107,7 @@ export class CustomAppService {
   }
 
   private async createAppDirectories(appUrn: AppUrn): Promise<void> {
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const { dataDir } = this.configService.get('directories');
-
-    const appPath = path.join(dataDir, 'apps', appStoreId, appName);
-    const dataPath = path.join(dataDir, 'app-data', appStoreId, appName);
+    const { appPath, dataPath } = this.getCustomAppPaths(appUrn);
 
     const ok = await this.filesystem.createDirectories([appPath, dataPath]);
     if (!ok) {
@@ -101,23 +116,17 @@ export class CustomAppService {
   }
 
   private async writeDockerComposeConfig(appUrn: AppUrn, config: CreateCustomAppDto['config']): Promise<void> {
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const { dataDir } = this.configService.get('directories');
+    const { composePath } = this.getCustomAppPaths(appUrn);
+    const configContent = yaml.stringify(config, { nullStr: '' });
 
-    const configPath = path.join(dataDir, 'apps', appStoreId, appName, APP_REL_COMPOSE_FILENAME);
-    const configContent = yaml.stringify(config);
-
-    const ok = await this.filesystem.writeTextFile(configPath, configContent);
+    const ok = await this.filesystem.writeTextFile(composePath, configContent);
     if (!ok) {
-      throw new Error(`Failed to write docker-compose config at ${configPath}`);
+      throw new Error(`Failed to write docker-compose config at ${composePath}`);
     }
   }
 
   private async createAppInfo(appUrn: AppUrn, name: string, config: CreateCustomAppDto['config']): Promise<void> {
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const { dataDir } = this.configService.get('directories');
-
-    const infoPath = path.join(dataDir, 'apps', appStoreId, appName, 'config.json');
+    const { appName, configPath, descriptionPath, metadataDir } = this.getCustomAppPaths(appUrn);
 
     const services = Object.values(config.services);
     const main = services.find((s) => s['x-runtipi']?.is_main) ?? services[0];
@@ -152,15 +161,13 @@ export class CustomAppService {
       force_pull: false,
     } satisfies AppInfo;
 
-    const descriptionPath = path.join(dataDir, 'apps', appStoreId, appName, 'metadata', 'description.md');
     const descriptionContent = `---\nname: ${name}\nshort_desc: User-created custom app\nversion: 1.0.0\n---\n\n# ${name}\n\nThis is a user-created custom application.\n`;
 
-    const ok = await this.filesystem.writeJsonFile(infoPath, appInfo);
+    const ok = await this.filesystem.writeJsonFile(configPath, appInfo);
     if (!ok) {
-      throw new Error(`Failed to write app info at ${infoPath}`);
+      throw new Error(`Failed to write app info at ${configPath}`);
     }
 
-    const metadataDir = path.join(dataDir, 'apps', appStoreId, appName, 'metadata');
     await this.filesystem.createDirectory(metadataDir);
 
     const okDesc = await this.filesystem.writeTextFile(descriptionPath, descriptionContent);
@@ -174,17 +181,13 @@ export class CustomAppService {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-
     const existingApp = await this.appsRepository.getAppByUrn(appUrn);
     if (!existingApp) {
       throw new TranslatableError('CUSTOM_APP_ERROR_NOT_FOUND', { urn: appUrn }, HttpStatus.NOT_FOUND);
     }
 
     try {
-      const { dataDir } = this.configService.get('directories');
-      const metadataDir = path.join(dataDir, 'apps', appStoreId, appName, 'metadata');
-      const logoPath = path.join(metadataDir, 'logo.jpg');
+      const { metadataDir, logoPath } = this.getCustomAppPaths(appUrn);
 
       await this.filesystem.createDirectory(metadataDir);
 
@@ -201,11 +204,7 @@ export class CustomAppService {
   }
 
   private async cleanupAppDirectories(appUrn: AppUrn): Promise<void> {
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const { dataDir } = this.configService.get('directories');
-
-    const appPath = path.join(dataDir, 'apps', appStoreId, appName);
-    const dataPath = path.join(dataDir, 'app-data', appStoreId, appName);
+    const { appPath, dataPath } = this.getCustomAppPaths(appUrn);
 
     await Promise.all([this.filesystem.removeDirectory(appPath), this.filesystem.removeDirectory(dataPath)]);
   }
@@ -215,12 +214,7 @@ export class CustomAppService {
       throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
     }
 
-    const { appName, appStoreId } = extractAppUrn(appUrn);
-    const { dataDir } = this.configService.get('directories');
-
-    const descriptionPath = path.join(dataDir, 'apps', appStoreId, appName, 'metadata', 'description.md');
-
-    const configPath = path.join(dataDir, 'apps', appStoreId, appName, 'config.json');
+    const { descriptionPath, configPath } = this.getCustomAppPaths(appUrn);
 
     const frontmatterYml = getFrontmatter(description) || {};
 

@@ -96,9 +96,11 @@ export class AppConfigService {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
     }
 
-    const localContentStr = localResult.content ? yaml.stringify(localResult.content) : '';
+    const localContentStr = localResult.content ? yaml.stringify(localResult.content, { nullStr: '' }) : '';
     const templateContentStr =
-      typeof templateConfig.content === 'string' ? yaml.stringify(yaml.parse(templateConfig.content)) : yaml.stringify(templateConfig.content);
+      typeof templateConfig.content === 'string'
+        ? yaml.stringify(yaml.parse(templateConfig.content), { nullStr: '' })
+        : yaml.stringify(templateConfig.content, { nullStr: '' });
 
     const hasChanges = localContentStr !== templateContentStr;
 
@@ -136,7 +138,8 @@ export class AppConfigService {
 
     await this.backupConfig(appUrn);
 
-    const templateContentStr = typeof templateConfig.content === 'string' ? templateConfig.content : yaml.stringify(templateConfig.content);
+    const templateContentStr =
+      typeof templateConfig.content === 'string' ? templateConfig.content : yaml.stringify(templateConfig.content, { nullStr: '' });
 
     await this.updateAppConfig(appUrn, { config: templateContentStr });
 

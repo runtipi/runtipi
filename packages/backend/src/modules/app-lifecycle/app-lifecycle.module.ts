@@ -1,7 +1,7 @@
 import { SSEModule } from '@/core/sse/sse.module';
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppsModule } from '../apps/apps.module';
-import { BackupsModule } from '../backups/backups.module';
+import { BackupManagerModule } from '../backups/backup-manager.module';
 import { DockerModule } from '../docker/docker.module';
 import { EnvModule } from '../env/env.module';
 import { MarketplaceModule } from '../marketplace/marketplace.module';
@@ -20,9 +20,11 @@ import { UninstallAppHandler } from './handlers/uninstall-app.handler';
 import { ResetAppHandler } from './handlers/reset-app.handler';
 import { UpdateConfigHandler } from './handlers/update-config.handler';
 import { UpdateAppHandler } from './handlers/update-app.handler';
+import { BackupAppHandler } from './handlers/backup-app.handler';
+import { RestoreAppHandler } from './handlers/restore-app.handler';
 
 @Module({
-  imports: [QueueModule, AppsModule, EnvModule, DockerModule, MarketplaceModule, forwardRef(() => BackupsModule), SSEModule],
+  imports: [QueueModule, AppsModule, EnvModule, DockerModule, MarketplaceModule, BackupManagerModule, SSEModule],
   providers: [
     AppLifecycleService,
     AppLifecycleCommandFactory,
@@ -37,6 +39,8 @@ import { UpdateAppHandler } from './handlers/update-app.handler';
     ResetAppHandler,
     UpdateConfigHandler,
     UpdateAppHandler,
+    BackupAppHandler,
+    RestoreAppHandler,
   ],
   controllers: [AppLifecycleController],
   exports: [AppLifecycleService, AppStatusSyncService],

@@ -15,6 +15,7 @@ import { SystemEventsQueue } from './modules/queue/entities/system-events';
 import { DOCKERODE } from './modules/docker/docker.module';
 import Dockerode from 'dockerode';
 import { GithubService } from './utils/github/github.service';
+import YAML from 'yaml';
 
 @Injectable()
 export class AppService {
@@ -114,7 +115,7 @@ export class AppService {
       this.logger.warn('Skipping the copy of traefik files because persistTraefikConfig is set to true');
     } else {
       this.logger.info('Copying traefik files');
-      await this.filesystem.copyFile(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(dataDir, 'traefik', 'traefik.yml'));
+      await this.writeTraefikConfig(path.join(assetsFolder, 'traefik', 'traefik.yml'), path.join(dataDir, 'traefik', 'traefik.yml'));
       await this.filesystem.copyFile(
         path.join(assetsFolder, 'traefik', 'dynamic', 'dynamic.yml'),
         path.join(dataDir, 'traefik', 'dynamic', 'dynamic.yml'),
@@ -154,6 +155,45 @@ export class AppService {
     ]);
   }
 
+  private async writeTraefikConfig(src: string, dest: string) {
+    const config = await this.filesystem.readTextFile(src);
+    if (!config) {
+      await this.filesystem.copyFile(src, dest);
+      return;
+    }
+
+    const parsed = YAML.parse(config) as {
+      entryPoints?: Record<string, { forwardedHeaders?: unknown }>;
+    };
+    const { trustedProxyIps } = this.configuration.get('traefik');
+
+    for (const entrypoint of ['web', 'websecure']) {
+      parsed.entryPoints ??= {};
+      parsed.entryPoints[entrypoint] ??= {};
+      const entryPoint = parsed.entryPoints[entrypoint];
+
+      const currentForwardedHeaders = entryPoint.forwardedHeaders;
+      if (!trustedProxyIps.length) {
+        if (currentForwardedHeaders && typeof currentForwardedHeaders === 'object' && !Array.isArray(currentForwardedHeaders)) {
+          delete (currentForwardedHeaders as { trustedIPs?: string[] }).trustedIPs;
+          if (Object.keys(currentForwardedHeaders).length === 0) {
+            delete entryPoint.forwardedHeaders;
+          }
+        }
+        continue;
+      }
+
+      if (!currentForwardedHeaders || typeof currentForwardedHeaders !== 'object' || Array.isArray(currentForwardedHeaders)) {
+        entryPoint.forwardedHeaders = {};
+      }
+
+      const forwardedHeaders = entryPoint.forwardedHeaders as { trustedIPs?: string[] } & Record<string, unknown>;
+      forwardedHeaders.trustedIPs = [...new Set(trustedProxyIps)];
+    }
+
+    await this.filesystem.writeTextFile(dest, YAML.stringify(parsed));
+  }
+
   /**
    * Given a domain, generates the TLS certificates for it to be used with Traefik
    *
@@ -170,9 +210,9 @@ export class AppService {
 
     // If the certificate already exists, don't generate it again
     if (
-      (await this.filesystem.pathExists(path.join(tlsFolder, `${data.localDomain}.txt`))) &&
-      (await this.filesystem.pathExists(path.join(tlsFolder, 'cert.pem'))) &&
-      (await this.filesystem.pathExists(path.join(tlsFolder, 'key.pem')))
+      (await this.filesystem.isFile(path.join(tlsFolder, `${data.localDomain}.txt`))) &&
+      (await this.filesystem.isFile(path.join(tlsFolder, 'cert.pem'))) &&
+      (await this.filesystem.isFile(path.join(tlsFolder, 'key.pem')))
     ) {
       // Check if the certificate is still valid
       const { stdout } = await execFileAsync('openssl', ['x509', '-checkend', '86400', '-noout', '-in', `${tlsFolder}/cert.pem`]);
@@ -215,10 +255,7 @@ export class AppService {
         `subjectAltName = ${subjectAltName}`,
         '-nodes',
       ]);
-      if (
-        !(await this.filesystem.pathExists(path.join(tlsFolder, 'cert.pem'))) ||
-        !(await this.filesystem.pathExists(path.join(tlsFolder, 'key.pem')))
-      ) {
+      if (!(await this.filesystem.isFile(path.join(tlsFolder, 'cert.pem'))) || !(await this.filesystem.isFile(path.join(tlsFolder, 'key.pem')))) {
         this.logger.error(`Failed to generate TLS certificate for ${data.localDomain}`);
         this.logger.error(stderr);
       } else {

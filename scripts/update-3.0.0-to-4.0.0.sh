@@ -10,8 +10,29 @@ Green='\e[32m'
 Yellow='\e[33m'
 ColorOff='\e[0m'
 
+TARGET_VERSION="v4.9.1"
+
 # Welcome message
-echo -e "Welcome to the Runtipi migration script! It will automatically update everything to work with version ${Green}4.0.0${ColorOff}\n"
+echo -e "Welcome to the Runtipi migration script! It will automatically update everything to work with version ${Green}${TARGET_VERSION}${ColorOff}\n"
+
+validate_dynamic_compose_source() {
+  local app_dir="$1"
+  local app_label="$2"
+  local update_hint="$3"
+  local compose_json_file="$app_dir/docker-compose.json"
+  local compose_yaml_file="$app_dir/docker-compose.yml"
+
+  if [ -f "$compose_json_file" ]; then
+    return 0
+  fi
+
+  if [ -f "$compose_yaml_file" ] && grep -Eq '^x-runtipi:[[:space:]]*' "$compose_yaml_file"; then
+    return 0
+  fi
+
+  echo -e "\n${Red}Error: $app_label is missing a dynamic compose source. Make sure it has docker-compose.json or a docker-compose.yml file with top-level x-runtipi. $update_hint${ColorOff}"
+  exit 1
+}
 
 # Check if running as root
 if [[ "$EUID" -ne 0 ]]; then
@@ -124,12 +145,7 @@ if [ -d "$repo_dir" ]; then
         exit 1
       fi
 
-      # Check docker-compose.json exists
-      compose_file="$app_dir/docker-compose.json"
-      if [ ! -f "$compose_file" ]; then
-        echo -e "\n${Red}Error: $app_name in repository is missing docker-compose.json file. Make sure you have correctly migrated and tested your custom apps with the dynamic config.${ColorOff}"
-        exit 1
-      fi
+      validate_dynamic_compose_source "$app_dir" "$app_name in repository" "Make sure you have correctly migrated and tested your custom apps with the dynamic config."
     fi
   done
 else
@@ -157,12 +173,7 @@ for app_dir in apps/*; do
       exit 1
     fi
 
-    # Check docker-compose.json exists
-    compose_file="$app_dir/docker-compose.json"
-    if [ ! -f "$compose_file" ]; then
-      echo -e "\n${Red}Error: installed app $app_name is missing docker-compose.json file. Make sure you have updated it to the latest version from the Runtipi dashboard.${ColorOff}"
-      exit 1
-    fi
+    validate_dynamic_compose_source "$app_dir" "installed app $app_name" "Make sure you have updated it to the latest version from the Runtipi dashboard."
   fi
 done
 
@@ -232,7 +243,7 @@ if [[ -f "migration-backups/user-config/tipi-compose.yml" ]]; then
 fi
 
 # Start runtipi
-echo -e "\nMigration complete! Updating Runtipi to v4.0.3...\n"
+echo -e "\nMigration complete! Updating Runtipi to ${TARGET_VERSION}...\n"
 
 ARCHITECTURE="$(uname -m)"
 
@@ -241,7 +252,7 @@ if [[ "$ARCHITECTURE" == "arm64" || "$ARCHITECTURE" == "aarch64" ]]; then
   ASSET="runtipi-cli-linux-aarch64.tar.gz"
 fi
 
-URL="https://github.com/runtipi/runtipi/releases/download/v4.0.3/$ASSET"
+URL="https://github.com/runtipi/runtipi/releases/download/${TARGET_VERSION}/$ASSET"
 
 rm -f ./runtipi-cli
 
@@ -259,4 +270,4 @@ fi
 chmod +x ./runtipi-cli
 sudo ./runtipi-cli start
 
-echo -e "🎉 Runtipi has been updated to v4.0.3! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"
+echo -e "🎉 Runtipi has been updated to ${TARGET_VERSION}! 🎉\nOnce you have confirmed everything is working, you can delete the migration-backups folder.\n"

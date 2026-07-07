@@ -16,15 +16,24 @@ export const PageTitle = ({ apps }: Props) => {
   const path = window.location.pathname;
   // biome-ignore lint/correctness/useExhaustiveDependencies: Explicitly ignore this rule to re-render the component when the activeRoute changes
   const pathArray = useMemo(() => path?.substring(1).split('/') || [], [activeRoute]);
+  const installedAppRoute =
+    pathArray[0] === 'apps' &&
+    pathArray[1] &&
+    pathArray[2] &&
+    apps.some((app) => app.id === pathArray[2] && app.urn === `${pathArray[2]}:${pathArray[1]}`);
 
   const renderBreadcrumbs = () => {
     return (
       <ol className="breadcrumb" aria-label="breadcrumbs">
-        {pathArray.map((breadcrumb, index) => (
-          <li key={breadcrumb} className={clsx('breadcrumb-item', { active: index === pathArray.length - 1 })}>
-            <Link to={`/${pathArray.slice(0, index + 1).join('/')}`}>{breadcrumb}</Link>
-          </li>
-        ))}
+        {pathArray.map((breadcrumb, index) => {
+          const to = installedAppRoute && index === 1 ? `/app-store/${pathArray[1]}` : `/${pathArray.slice(0, index + 1).join('/')}`;
+
+          return (
+            <li key={breadcrumb} className={clsx('breadcrumb-item', { active: index === pathArray.length - 1 })}>
+              <Link to={to}>{breadcrumb}</Link>
+            </li>
+          );
+        })}
       </ol>
     );
   };

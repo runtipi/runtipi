@@ -264,6 +264,30 @@
         ]
       }
     },
+    "/api/auth/forward-auth": {
+      "post": {
+        "operationId": "forwardAuth",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForwardAuthBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/api/auth/username": {
       "patch": {
         "operationId": "changeUsername",
@@ -3076,6 +3100,10 @@
           },
           "username": {
             "type": "string"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
@@ -3088,6 +3116,10 @@
         "properties": {
           "success": {
             "type": "boolean"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
           },
           "totpSessionId": {
             "type": "string"
@@ -3105,6 +3137,10 @@
           },
           "totpSessionId": {
             "type": "string"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
@@ -3120,6 +3156,10 @@
           },
           "username": {
             "type": "string"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
@@ -3136,6 +3176,18 @@
         },
         "required": [
           "success"
+        ]
+      },
+      "ForwardAuthBody": {
+        "type": "object",
+        "properties": {
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "redirectUrl"
         ]
       },
       "ChangeUsernameBody": {
@@ -3747,10 +3799,6 @@
                     "version": {
                       "type": "number"
                     },
-                    "config": {
-                      "type": "object",
-                      "additionalProperties": {}
-                    },
                     "enableAuth": {
                       "type": "boolean"
                     },
@@ -3780,7 +3828,8 @@
                     "templateUrn",
                     "updatedAt",
                     "version"
-                  ]
+                  ],
+                  "additionalProperties": false
                 },
                 "info": {
                   "type": "object",

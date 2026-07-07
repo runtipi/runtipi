@@ -37,7 +37,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const params = useParams<{ appId: string; storeId: string }>();
-  const { setServices } = useMultiServiceStore();
+  const { composeExtras, setComposeExtras, setServices } = useMultiServiceStore();
   const id = useId();
 
   const appName = params.appId ?? '';
@@ -47,11 +47,13 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   useEffect(() => {
     if (loaderData?.config) {
       try {
-        const parsed = convertYamlToLegacy(JSON.parse(loaderData.config));
+        const yamlConfig = JSON.parse(loaderData.config) as Record<string, unknown>;
+        const parsed = convertYamlToLegacy(yamlConfig);
         const servicesWithId = parsed.services.map((service) => ({
           _id: id + Math.random().toString(36).substring(2, 9),
           ...service,
         }));
+        setComposeExtras(Object.fromEntries(Object.entries(yamlConfig).filter(([key]) => key !== 'services' && key !== 'x-runtipi')));
         setServices(servicesWithId);
         setReady(true);
       } catch (_e) {
@@ -59,7 +61,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
         navigate('/apps');
       }
     }
-  }, [loaderData, setServices, id, navigate, t]);
+  }, [loaderData, setComposeExtras, setServices, id, navigate, t]);
 
   const updateApp = useMutation({
     ...updateEditableAppConfigMutation(),
@@ -73,7 +75,7 @@ export default function AppEditPage({ loaderData }: Route.ComponentProps) {
   });
 
   const onSubmit = (data: ReturnType<typeof convertYamlToLegacy>) => {
-    updateApp.mutate({ path: { urn }, body: { config: yaml.stringify(convertLegacyToYaml(data)) } });
+    updateApp.mutate({ path: { urn }, body: { config: yaml.stringify({ ...convertLegacyToYaml(data), ...composeExtras }, { nullStr: '' }) } });
   };
 
   if (!ready) {

@@ -18,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { BackupsService } from './backups.service';
 import { BackupRequestDto, DeleteAppBackupBodyDto, GetAppBackupsDto, GetAppBackupsQueryDto, RestoreAppBackupDto } from './dto/backups.dto';
@@ -26,12 +27,15 @@ import { BackupRequestDto, DeleteAppBackupBodyDto, GetAppBackupsDto, GetAppBacku
 @UseGuards(AuthGuard)
 @Controller('backups')
 export class BackupsController {
-  constructor(private readonly backupsService: BackupsService) {}
+  constructor(
+    private readonly backupsService: BackupsService,
+    private readonly appLifecycleService: AppLifecycleService,
+  ) {}
 
   @Post(':urn/backup')
   @ApiResponse({ type: BackupRequestDto })
   async backupApp(@Param('urn') urn: string) {
-    const res = await this.backupsService.backupApp({ appUrn: castAppUrn(urn) });
+    const res = await this.appLifecycleService.backupApp({ appUrn: castAppUrn(urn) });
     return BackupRequestDto.parse(res, { reportOnly: true });
   }
 
@@ -44,7 +48,7 @@ export class BackupsController {
       throw new BadRequestException('Invalid backup filename');
     }
 
-    const res = await this.backupsService.restoreApp({ appUrn: castAppUrn(urn), filename: sanitizedFilename });
+    const res = await this.appLifecycleService.restoreApp({ appUrn: castAppUrn(urn), filename: sanitizedFilename });
     return BackupRequestDto.parse(res, { reportOnly: true });
   }
 

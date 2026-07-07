@@ -16,6 +16,8 @@ import { StopAppHandler } from './handlers/stop-app.handler';
 import { UninstallAppHandler } from './handlers/uninstall-app.handler';
 import { UpdateAppHandler } from './handlers/update-app.handler';
 import { UpdateConfigHandler } from './handlers/update-config.handler';
+import { BackupAppHandler } from './handlers/backup-app.handler';
+import { RestoreAppHandler } from './handlers/restore-app.handler';
 
 @Injectable()
 export class AppLifecycleService {
@@ -34,6 +36,8 @@ export class AppLifecycleService {
     private readonly resetAppHandler: ResetAppHandler,
     private readonly updateConfigHandler: UpdateConfigHandler,
     private readonly updateAppHandler: UpdateAppHandler,
+    private readonly backupAppHandler: BackupAppHandler,
+    private readonly restoreAppHandler: RestoreAppHandler,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
@@ -84,6 +88,14 @@ export class AppLifecycleService {
 
   public async updateApp(params: { appUrn: AppUrn; performBackup: boolean }) {
     return this.updateAppHandler.execute(params.appUrn, { performBackup: params.performBackup });
+  }
+
+  public async backupApp(params: { appUrn: AppUrn }) {
+    return this.backupAppHandler.execute(params.appUrn);
+  }
+
+  public async restoreApp(params: { appUrn: AppUrn; filename: string }) {
+    return this.restoreAppHandler.execute(params.appUrn, { filename: params.filename });
   }
 
   async updateAllApps() {
@@ -145,6 +157,22 @@ export class AppLifecycleService {
           await this.stopApp({ appUrn });
         } catch (e) {
           this.logger.error(`Failed to stop app ${app.id}`, e);
+        }
+      }
+    })();
+  }
+
+  async backupAllApps() {
+    const apps = await this.appRepository.getApps();
+    const runningApps = apps.filter((app) => app.status === 'running');
+
+    (async () => {
+      for (const app of runningApps) {
+        try {
+          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
+          await this.backupApp({ appUrn });
+        } catch (e) {
+          this.logger.error(`Failed to backup app ${app.id}`, e);
         }
       }
     })();

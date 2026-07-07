@@ -12,11 +12,10 @@
 [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Tipi%20Guru-006BFF)](https://gurubase.io/g/tipi)
 
 > [!NOTE]
-> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion in the forums or on Discord!
+> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion in our Discord!
 
 #### Join the community
 
-[![Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fforums.runtipi.io)](https://forums.runtipi.io/)
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
@@ -30,15 +29,14 @@ Runtipi is a personal homeserver orchestrator that makes it easy to manage and r
 
 Thanks to our generous sponsors for supporting the development of Runtipi:
 
-| CodeRabbit       | TestMu AI        |
-|------------------| ------------------|
-| <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png" alt="CodeRabbit logo" width="200"/> | <img src="https://assets.testmu.ai/resources/images/logos/logo.svg" style="vertical-align: middle;" width="250" height="45" />
-| [coderabbit.ai](https://coderabbit.ai?utm_source=runtipi&utm_campaign=readme) | Browser testing via [testmu.ai](https://www.testmu.ai/?utm_source=runtipi&utm_medium=sponsor)
+| CodeRabbit       |
+|------------------|
+| <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png" alt="CodeRabbit logo" width="200"/> |
+| [coderabbit.ai](https://coderabbit.ai?utm_source=runtipi&utm_campaign=readme) |
 
 ## Getting started
 
 Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_campaign=readme) for installation instructions, documentation and guides.
-If you need more personalized help, visit our [Forums](https://forums.runtipi.io/) to get help from the community.
 
 ## Demo
 
@@ -72,6 +70,7 @@ Runtipi is licensed under the GNU General Public License v3.0. TL;DR — You may
 ## 🙏 Acknowledgements
 
 - [GitHub](https://github.com) - Thanks for generously giving us access to your full product suite
+- [OpenAI](https://openai.com) - Thanks for providing free access to codex and security tools for the project
 - [Freepik](https://www.flaticon.com/free-icons/tipi?utm_source=runtipi&utm_campaign=readme) - Thanks for providing a free logo for the project
 - [Sentry](https://sentry.io?utm_source=runtipi&utm_campaign=readme) - Thanks for providing error tracking for the project
 - [Crowdin](https://crowdin.com?utm_source=runtipi&utm_campaign=readme) - Thanks for providing localization management for the project
