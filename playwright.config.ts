@@ -3,8 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-
-// biome-ignore lint/style/noDefaultExport: needed for Playwright to work
 export default defineConfig({
   globalSetup: './e2e/helpers/global-setup',
   testDir: './e2e',

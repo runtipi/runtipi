@@ -42,7 +42,7 @@ const Tile = ({ data, localDomain, sslPort }: { data: GuestAppsDto['installed'][
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        {/* biome-ignore lint/a11y/noNoninteractiveTabindex: works fine */}
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- works fine */}
         <div tabIndex={0} className="col-sm-6 col-lg-4 app-link p-2 pt-0 pb-0 mb-0">
           <AppTile key={info.urn} info={info} status={app.status} updateAvailable={false} />
         </div>

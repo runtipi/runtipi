@@ -2,7 +2,9 @@
   "name": "runtipi",
   "version": "4.1.0",
   "description": "",
-  "packageManager": "bun@1.3.0",
+  "keywords": [],
+  "license": "GNU General Public License v3.0",
+  "author": "",
   "workspaces": {
     "catalog": {
       "arktype": "^2.1.29"
@@ -25,27 +27,27 @@
     "test:e2e": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test",
     "test:e2e:ui": "NODE_ENV=test dotenv -e .env -e .env.e2e -- playwright test --ui",
     "gen:api-client": "openapi-ts",
-    "lint:ci": "biome ci . --changed --error-on-warnings --no-errors-on-unmatched",
-    "lint": "biome check",
+    "lint:ci": "oxlint . --quiet --no-error-on-unmatched-pattern && oxfmt --check \"**/*.{js,jsx,ts,tsx,json,jsonc,css}\" --no-error-on-unmatched-pattern",
+    "lint": "oxlint . --quiet && oxfmt --check \"**/*.{js,jsx,ts,tsx,json,jsonc,css}\"",
+    "lint:fix": "oxlint . --fix && oxfmt --write \"**/*.{js,jsx,ts,tsx,json,jsonc,css}\"",
     "version": "echo $npm_package_version"
   },
-  "keywords": [],
-  "author": "",
-  "license": "GNU General Public License v3.0",
+  "dependencies": {
+    "drizzle-orm": "^0.44.7"
+  },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.4",
-    "@hey-api/openapi-ts": "^0.87.1",
+    "@hey-api/openapi-ts": "^0.99.0",
     "@playwright/test": "^1.52.0",
     "@types/bun": "^1.2.22",
     "@types/pg": "^8.15.1",
     "dotenv-cli": "^11.0.0",
     "lefthook": "^2.0.3",
+    "oxfmt": "^0.57.0",
+    "oxlint": "^1.72.0",
     "turbo": "^2.5.6"
-  },
-  "dependencies": {
-    "drizzle-orm": "^0.44.7"
   },
   "overrides": {
     "arktype": "^2.1.29"
-  }
+  },
+  "packageManager": "bun@1.3.0"
 }

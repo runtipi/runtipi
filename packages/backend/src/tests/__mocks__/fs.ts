@@ -48,7 +48,7 @@ export const fsMock = {
       vol.fromJSON(newMockFiles, 'utf8');
     },
     __printVol: () => {
-      // biome-ignore lint/suspicious/noConsole: needed for debugging
+      // oxlint-disable-next-line no-console -- needed for debugging
       console.log(vol.toTree());
     },
     tree: () => {

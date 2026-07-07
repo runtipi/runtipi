@@ -63,9 +63,9 @@ type RegularPropDef<T> =
   | (EnumPropDef<T> & NonStylingPropDef)
   | (EnumOrStringPropDef<T> & ArbitraryStylingPropDef)
   | (EnumOrStringPropDef<T> & NonStylingPropDef);
-// biome-ignore lint/suspicious/noExplicitAny: Reasoning: This is a utility type that is used to infer the `as` prop of a component.
+// oxlint-disable-next-line typescript/no-explicit-any -- This utility type infers the `as` prop of a component.
 type ResponsivePropDef<T = any> = RegularPropDef<T> & { responsive: true };
-// biome-ignore lint/suspicious/noExplicitAny: Reasoning: This is a utility type that is used to infer the `as` prop of a component.
+// oxlint-disable-next-line typescript/no-explicit-any -- This utility type infers the `as` prop of a component.
 type PropDef<T = any> = RegularPropDef<T> | ResponsivePropDef<T>;
 
 // prettier-ignore

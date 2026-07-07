@@ -5,13 +5,13 @@ import { dynamicComposeSchemaArk } from '../src/schemas/dynamic-compose-ark.js';
 import { dynamicComposeSchemaV1 } from '../src/schemas/utils/converters/v1.js';
 
 const omitProperty = (schema: unknown, key: string): unknown => {
-  // biome-ignore lint/suspicious/noExplicitAny: JSON schema post-processing
+  // oxlint-disable-next-line typescript/no-explicit-any -- JSON schema post-processing
   const s: any = structuredClone(schema as any);
 
   if (!s || typeof s !== 'object') return schema;
 
   if (s.properties && typeof s.properties === 'object') {
-    // biome-ignore lint/suspicious/noExplicitAny: JSON schema post-processing
+    // oxlint-disable-next-line typescript/no-explicit-any -- JSON schema post-processing
     delete (s.properties as any)[key];
   }
 

@@ -7,9 +7,8 @@ import { mergeStyles } from './merge-styles.js';
 import type * as React from 'react';
 import type { PropDef } from '../props/prop-def.js';
 
-type PropDefsWithClassName<T> = T extends Record<string, PropDef>
-  ? { [K in keyof T]: T[K] extends { className: string } ? K : never }[keyof T]
-  : never;
+type PropDefsWithClassName<T> =
+  T extends Record<string, PropDef> ? { [K in keyof T]: T[K] extends { className: string } ? K : never }[keyof T] : never;
 
 function mergePropDefs<T extends Record<string, PropDef>[]>(...args: T): Record<string, PropDef> {
   return Object.assign({}, ...args);
@@ -22,7 +21,7 @@ function mergePropDefs<T extends Record<string, PropDef>[]>(...args: T): Record<
  * and `style` values. Also applies prop def defaults to every prop.
  */
 
-// biome-ignore lint/suspicious/noExplicitAny: Reasoning: This function is a utility function that is used to extract props from a component.
+// oxlint-disable-next-line typescript/no-explicit-any -- This utility extracts props from a component with arbitrary prop keys.
 function extractProps<P extends { className?: string; style?: React.CSSProperties; [key: string]: any }, T extends Record<string, PropDef>[]>(
   props: P,
   ...propDefs: T
@@ -51,7 +50,7 @@ function extractProps<P extends { className?: string; style?: React.CSSPropertie
     }
 
     // Apply the value with defaults
-    // biome-ignore lint/suspicious/noExplicitAny: Reasoning: This is a utility function that is used to extract props from a component.
+    // oxlint-disable-next-line typescript/no-explicit-any -- This utility extracts props from a component with arbitrary prop keys.
     (extractedProps as Record<string, any>)[key] = value;
 
     if (propDef && 'className' in propDef && propDef.className) {

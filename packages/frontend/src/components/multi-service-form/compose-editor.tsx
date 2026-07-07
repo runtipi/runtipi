@@ -134,7 +134,6 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     [checkDirty, onChange, setIsDirty, t],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on mount
   useEffect(() => {
     if (format === 'yaml') {
       validateInput(yamlValue, 'yaml');

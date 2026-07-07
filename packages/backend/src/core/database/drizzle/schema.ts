@@ -22,8 +22,12 @@ export const link = pgTable('link', {
   title: varchar({ length: 20 }).notNull(),
   url: varchar().notNull(),
   iconUrl: varchar('icon_url'),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
   userId: integer('user_id')
     .notNull()
     .references(() => user.id),
@@ -44,8 +48,12 @@ export const app = pgTable('app', {
   id: serial().primaryKey().notNull(),
   status: appStatusEnum().default('stopped').notNull(),
   config: appConfig('config').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
   version: integer().default(1).notNull(),
   ignoredVersion: integer('ignored_version'),
   exposed: boolean().default(false).notNull(),
@@ -78,8 +86,12 @@ export const user = pgTable('user', {
   id: serial().primaryKey().notNull(),
   username: varchar().notNull(),
   password: varchar().notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
   operator: boolean().default(false).notNull(),
   totpSecret: text('totp_secret'),
   totpEnabled: boolean('totp_enabled').default(false).notNull(),
@@ -95,6 +107,10 @@ export const appStore = pgTable('app_store', {
   enabled: boolean().default(true).notNull(),
   url: varchar().notNull(),
   branch: varchar().default('main').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
 });
