@@ -15,7 +15,6 @@ interface DeleteProviderDialogProps {
 
 export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeleteProviderDialogProps) => {
   const { t } = useTranslation();
-
   const deleteProviderDialogDisclosure = useDisclosure();
 
   const deleteMutation = useMutation({
@@ -46,7 +45,7 @@ export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeletePr
             <Button onClick={() => deleteProviderDialogDisclosure.close()} variant="outline" intent="dark">
               {t('ACTIONS_CANCEL')}
             </Button>
-            <Button onClick={() => deleteMutation.mutate({ path: { id: providerId } })} intent="danger">
+            <Button onClick={() => deleteMutation.mutate({ path: { id: providerId } })} loading={deleteMutation.isPending} intent="danger">
               {t('DELETE')}
             </Button>
           </DialogFooter>

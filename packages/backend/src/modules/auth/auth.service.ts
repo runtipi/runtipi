@@ -39,7 +39,6 @@ export class AuthService {
     const domain = this.getCookieDomain(host);
     const secure = Boolean(domain) && proto === 'https';
 
-    this.logger.debug('Request headers', req.headers);
     this.logger.debug('Setting session cookie', { host, domain, proto, secure });
 
     if (this.config.get('userSettings').experimental.insecureCookie) {

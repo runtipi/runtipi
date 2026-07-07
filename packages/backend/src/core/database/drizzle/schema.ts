@@ -113,8 +113,12 @@ export const oidc = pgTable('oidc', {
 
 export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
   id: serial().primaryKey().notNull(),
-  userId: integer().notNull(),
-  providerId: integer().notNull(),
+  userId: integer()
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  providerId: integer()
+    .notNull()
+    .references(() => oidc.id, { onDelete: 'cascade' }),
   sub: varchar().notNull(),
   createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
   updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),

@@ -95,9 +95,11 @@ export const OAuthActions = () => {
                       <strong>{safeProvider.name}</strong>
                     </p>
                     <div className="text-muted">
-                      {providerSubs.length > 1
-                        ? t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_MANY', { count: providerSubs.length })
-                        : t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_ONE')}
+                      {providerSubs.length === 0
+                        ? t('SETTINGS_SECURITY_OAUTH_NO_TRUSTED_USERS')
+                        : providerSubs.length === 1
+                          ? t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_ONE')
+                          : t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_MANY', { count: providerSubs.length })}
                     </div>
                   </div>
                 </div>
@@ -133,7 +135,7 @@ export const OAuthActions = () => {
                   <dl className="row mb-3 small">
                     <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">{t('SETTINGS_SECURITY_OAUTH_FORM_CLIENT_ID')}</dt>
                     <dd className="col-sm-10 mb-3 mb-md-1">
-                      <code>{safeProvider.clientId}</code>
+                      <code className="oauth-actions-code">{safeProvider.clientId}</code>
                     </dd>
                     <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">{t('SETTINGS_SECURITY_OAUTH_CALLBACK_URL')}</dt>
                     <dd className="col-sm-10 mb-0">
@@ -142,6 +144,7 @@ export const OAuthActions = () => {
                         onClick={() => copyToClipboard(callbackUrl)}
                         onKeyDown={(e) => e.key === 'Enter' && copyToClipboard(callbackUrl)}
                         style={{ cursor: 'pointer' }}
+                        className="oauth-actions-code"
                       >
                         {callbackUrl}
                       </code>
@@ -156,7 +159,7 @@ export const OAuthActions = () => {
                       {providerSubs.map((sub) => (
                         <div key={sub.sub} className="d-flex justify-content-between align-items-center py-2 border-bottom">
                           <div className="small">
-                            <code>{sub.sub}</code>
+                            <code className="oauth-actions-code">{sub.sub}</code>
                             <span className="ms-1 text-muted">
                               {t('SETTINGS_SECURITY_OAUTH_SUB_ENTRY_ADDED')}&nbsp;
                               <DateFormat date={new Date(sub.createdAt * 1000)} />

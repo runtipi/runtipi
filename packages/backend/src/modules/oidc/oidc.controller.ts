@@ -1,4 +1,19 @@
-import { Controller, Get, Injectable, Post, UseGuards, Body, Patch, Param, Delete, Req, Query, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Injectable,
+  Post,
+  UseGuards,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  Query,
+  Res,
+  ParseIntPipe,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { OidcService } from './oidc.service';
 import { ApiResponse } from '@nestjs/swagger';
 import { OidcProviderAuthResDto, OidcProviderDto, OidcProvidersDto, PublicOidcProvidersDto, TrustedSubsDto } from './dto/oidc.dto';
@@ -51,21 +66,20 @@ export class OidcController {
   @Patch('providers/:id/edit')
   @ApiResponse({ type: OidcProvidersDto })
   @UseGuards(AuthGuard)
-  async editProvider(@Param('id') id: number, @Body() provider: OidcProviderDto) {
+  async editProvider(@Param('id', ParseIntPipe) id: number, @Body() provider: OidcProviderDto) {
     return await this.oidcService.editOidcProvider(id, provider);
   }
 
   @Delete('providers/:id/delete')
   @ApiResponse({ type: OidcProvidersDto })
   @UseGuards(AuthGuard)
-  async deleteProvider(@Param('id') id: number) {
-    await this.oidcService.deleteTrustedSubsByProviderId(id);
+  async deleteProvider(@Param('id', ParseIntPipe) id: number) {
     return await this.oidcService.deleteOidcProvider(id);
   }
 
   @Post('providers/:id/url')
   @ApiResponse({ type: OidcProviderAuthResDto })
-  async getProviderAuthUrl(@Param('id') id: number, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
+  async getProviderAuthUrl(@Param('id', ParseIntPipe) id: number, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const reqUrl = new URL(`${req.protocol}://${req.host}${req.url}`);
     const authUrl = await this.oidcService.getProviderAuthUrl(id, reqUrl);
 
@@ -74,11 +88,16 @@ export class OidcController {
       return res.redirect(`${reqUrl.origin}/error?${params}`);
     }
 
-    return OidcProviderAuthResDto.parse({ url: authUrl });
+    return res.json(OidcProviderAuthResDto.parse({ url: authUrl }));
   }
 
   @Get('providers/:id/callback')
-  async handleCallback(@Param('id') id: number, @Query() query: { state: string }, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
+  async handleCallback(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() query: { state: string },
+    @Req() req: ExpressRequest,
+    @Res() res: ExpressResponse,
+  ) {
     const reqUrl = new URL(`${req.protocol}://${req.host}${req.url}`);
 
     const provider = await this.oidcService.getOidcProviderById(id);
@@ -138,7 +157,7 @@ export class OidcController {
   @UseGuards(AuthGuard)
   async getTrustedSubs(@Req() req: ExpressRequest) {
     if (!req.user) {
-      return 401;
+      throw new UnauthorizedException();
     }
 
     const trustedSubs = await this.oidcService.getTrustedSubsByUserId(req.user.id);
@@ -149,7 +168,7 @@ export class OidcController {
 
   @Delete('/subs/:id/delete')
   @UseGuards(AuthGuard)
-  async deleteTrustedSub(@Param('id') id: number) {
+  async deleteTrustedSub(@Param('id', ParseIntPipe) id: number) {
     return await this.oidcService.deleteTrustedSub(id);
   }
 }
