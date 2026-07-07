@@ -81,7 +81,7 @@ export class OidcController {
   @ApiResponse({ type: OidcProviderAuthResDto })
   async getProviderAuthUrl(@Param('id', ParseIntPipe) id: number, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const reqUrl = new URL(`${req.protocol}://${req.host}${req.url}`);
-    const authUrl = await this.oidcService.getProviderAuthUrl(id, reqUrl);
+    const authUrl = await this.oidcService.getProviderAuthUrl(id, reqUrl, typeof req.user !== 'undefined');
 
     if (!authUrl) {
       const params = new URLSearchParams({ error: 'Failed to get auth url', redirect_to: '/login' });
@@ -107,7 +107,7 @@ export class OidcController {
       return res.redirect(`${reqUrl.origin}/error?${params}`);
     }
 
-    const tokenRes = await this.oidcService.getTokenFromCallback(query.state, reqUrl);
+    const tokenRes = await this.oidcService.getTokenFromCallback(query.state, reqUrl, typeof req.user !== 'undefined');
 
     if (!tokenRes) {
       const params = new URLSearchParams({ error: 'Failed to get token', redirect_to: '/login' });
@@ -122,18 +122,17 @@ export class OidcController {
     }
 
     if (!req.user) {
-      const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub);
+      const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub, provider.id);
 
       if (!trustedSubEntry) {
         const params = new URLSearchParams({ error: 'Unauthorized', redirect_to: '/login' });
         return res.redirect(`${reqUrl.origin}/error?${params}`);
       }
 
-      const user = await this.userRepository.getFirstOperator();
+      const user = await this.userRepository.getUserById(trustedSubEntry.userId);
 
       if (!user) {
-        const params = new URLSearchParams({ error: 'Failed to find operator', redirect_to: '/login' });
-        return res.redirect(`${reqUrl.origin}/error?${params}`);
+        throw new UnauthorizedException();
       }
 
       const sessionId = await this.sessionManager.createSession(user.id);
@@ -143,7 +142,7 @@ export class OidcController {
       return res.redirect(`${reqUrl.origin}/dashboard`);
     }
 
-    const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub);
+    const trustedSubEntry = await this.oidcService.getTrustedSub(userInfo.sub, provider.id);
 
     if (!trustedSubEntry) {
       await this.oidcService.storeTrustedSub(userInfo.sub, req.user.id, provider.id);

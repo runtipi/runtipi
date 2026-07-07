@@ -7,6 +7,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 type TrustedState = {
   clientId: string;
   expiresAt: number;
+  flowType: 'sub_register' | 'login';
   url: string;
 };
 
@@ -34,7 +35,7 @@ export class OidcService {
     return config;
   }
 
-  public async getProviderAuthUrl(id: number, reqUrl: URL): Promise<string | null> {
+  public async getProviderAuthUrl(id: number, reqUrl: URL, hasUser: boolean): Promise<string | null> {
     try {
       const provider = await this.oidcRepository.getProviderById(id);
 
@@ -46,7 +47,15 @@ export class OidcService {
       const state = client.randomState();
       const expiresAt = Date.now() + 3600000;
 
-      this.trustedStatesStore.set(state, { clientId: provider.clientId, expiresAt, url: reqUrl.origin });
+      let flowType: 'sub_register' | 'login';
+
+      if (hasUser) {
+        flowType = 'sub_register';
+      } else {
+        flowType = 'login';
+      }
+
+      this.trustedStatesStore.set(state, { clientId: provider.clientId, expiresAt, url: reqUrl.origin, flowType: flowType });
 
       const redirectUri = `${reqUrl.origin}/api/oidc/providers/${provider.id}/callback`;
       const authUrl = client.buildAuthorizationUrl(config, { state, redirect_uri: redirectUri, scope: 'openid' });
@@ -58,7 +67,7 @@ export class OidcService {
     }
   }
 
-  public async getTokenFromCallback(state: string, reqUrl: URL): Promise<client.TokenEndpointResponse | null> {
+  public async getTokenFromCallback(state: string, reqUrl: URL, hasUser: boolean): Promise<client.TokenEndpointResponse | null> {
     try {
       const trustedState = this.trustedStatesStore.get(state);
 
@@ -81,6 +90,11 @@ export class OidcService {
       if (!provider) {
         this.trustedStatesStore.delete(state);
         throw new Error('Invalid provider');
+      }
+
+      if (!hasUser && trustedState.flowType === 'sub_register') {
+        this.trustedStatesStore.delete(state);
+        throw new Error('Sub register requested but no user was found');
       }
 
       const config = this.buildClientConfig(provider);
@@ -136,8 +150,8 @@ export class OidcService {
     return await this.oidcRepository.deleteTrustedSub(id);
   }
 
-  public async getTrustedSub(sub: string) {
-    return await this.oidcRepository.getTrustedSub(sub);
+  public async getTrustedSub(sub: string, providerId: number) {
+    return await this.oidcRepository.getTrustedSub(sub, providerId);
   }
 
   public async createOidcProvider(provider: OidcProviderDto) {
