@@ -96,3 +96,6 @@ docs/jira/
 .internal/media/*
 .internal/traefik/*
 !.internal/cache/.gitkeep
+
+# jetbrains
+/.idea/

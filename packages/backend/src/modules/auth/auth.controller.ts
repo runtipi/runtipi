@@ -25,6 +25,7 @@ import {
   VerifyTotpBody,
 } from './dto/auth.dto';
 import { ApiResponse } from '@nestjs/swagger';
+import { SESSION_COOKIE_MAX_AGE, FORWARD_AUTH_COOKIE_NAME } from '@/common/constants';
 
 const AUTH_THROTTLE_TTL = 60_000;
 const AUTH_THROTTLE_LIMIT = 20;
