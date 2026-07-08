@@ -2279,9 +2279,9 @@
         ]
       }
     },
-    "/api/oidc/providers/public": {
+    "/api/oidc/providers/login": {
       "get": {
-        "operationId": "getProvidersPublic",
+        "operationId": "getLoginProviders",
         "parameters": [],
         "responses": {
           "default": {
@@ -2289,18 +2289,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PublicOidcProvidersDto"
+                  "$ref": "#/components/schemas/OIDCProvidersLoginDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
         ]
       }
     },
-    "/api/oidc/providers/private": {
+    "/api/oidc/providers/user": {
       "get": {
         "operationId": "getProvidersPrivate",
         "parameters": [],
@@ -2310,14 +2310,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OidcProvidersDto"
+                  "$ref": "#/components/schemas/GetOIDCProvidersDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
         ]
       }
     },
@@ -2330,7 +2330,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OidcProviderDto"
+                "$ref": "#/components/schemas/CreateOIDCProviderDto"
               }
             }
           }
@@ -2341,27 +2341,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OidcProviderDto"
+                  "$ref": "#/components/schemas/GetOIDCProviderDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
         ]
       }
     },
-    "/api/oidc/providers/{id}/edit": {
+    "/api/oidc/providers/{slug}/edit": {
       "patch": {
         "operationId": "editProvider",
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "required": true,
             "in": "path",
             "schema": {
-              "type": "number"
+              "type": "string"
             }
           }
         ],
@@ -2370,7 +2370,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OidcProviderDto"
+                "$ref": "#/components/schemas/EditOIDCProviderDto"
               }
             }
           }
@@ -2381,14 +2381,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OidcProvidersDto"
+                  "$ref": "#/components/schemas/GetOIDCProviderDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
         ]
       }
     },
@@ -2397,71 +2397,11 @@
         "operationId": "deleteProvider",
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "required": true,
             "in": "path",
             "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OidcProvidersDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Oidc"
-        ]
-      }
-    },
-    "/api/oidc/providers/{id}/url": {
-      "post": {
-        "operationId": "getProviderAuthUrl",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OidcProviderAuthResDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Oidc"
-        ]
-      }
-    },
-    "/api/oidc/providers/{id}/callback": {
-      "get": {
-        "operationId": "handleCallback",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
+              "type": "string"
             }
           }
         ],
@@ -2471,7 +2411,60 @@
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{id}/slug": {
+      "post": {
+        "operationId": "getProviderAuthURL",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOIDCProviderURLDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{slug}/callback": {
+      "get": {
+        "operationId": "handleProviderCallback",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "OIDC"
         ]
       }
     },
@@ -2492,20 +2485,20 @@
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
         ]
       }
     },
-    "/api/oidc/subs/{id}/delete": {
+    "/api/oidc/subs/{slug}/delete": {
       "delete": {
         "operationId": "deleteTrustedSub",
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "required": true,
             "in": "path",
             "schema": {
-              "type": "number"
+              "type": "string"
             }
           }
         ],
@@ -2515,7 +2508,7 @@
           }
         },
         "tags": [
-          "Oidc"
+          "OIDC"
         ]
       }
     },
@@ -5904,7 +5897,7 @@
           "templateVersion"
         ]
       },
-      "PublicOidcProvidersDto": {
+      "OIDCProvidersLoginDto": {
         "type": "object",
         "properties": {
           "providers": {
@@ -5912,16 +5905,18 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": {
-                  "type": "number"
+                "displayName": {
+                  "type": "string",
+                  "minLength": 1
                 },
-                "name": {
-                  "type": "string"
+                "slug": {
+                  "type": "string",
+                  "minLength": 1
                 }
               },
               "required": [
-                "id",
-                "name"
+                "displayName",
+                "slug"
               ]
             }
           }
@@ -5930,7 +5925,7 @@
           "providers"
         ]
       },
-      "OidcProvidersDto": {
+      "GetOIDCProvidersDto": {
         "type": "object",
         "properties": {
           "providers": {
@@ -5938,35 +5933,43 @@
             "items": {
               "type": "object",
               "properties": {
-                "authorizeUri": {
-                  "type": "string"
+                "authorizeUrl": {
+                  "type": "string",
+                  "format": "uri"
                 },
                 "clientId": {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 1
                 },
                 "clientSecret": {
-                  "type": "string"
+                  "type": "string",
+                  "minLength": 1
                 },
-                "name": {
-                  "type": "string"
+                "displayName": {
+                  "type": "string",
+                  "minLength": 1
                 },
-                "tokenUri": {
-                  "type": "string"
+                "slug": {
+                  "type": "string",
+                  "minLength": 1
                 },
-                "userinfoUri": {
-                  "type": "string"
+                "tokenUrl": {
+                  "type": "string",
+                  "format": "uri"
                 },
-                "id": {
-                  "type": "number"
+                "userInfoUrl": {
+                  "type": "string",
+                  "format": "uri"
                 }
               },
               "required": [
-                "authorizeUri",
+                "authorizeUrl",
                 "clientId",
                 "clientSecret",
-                "name",
-                "tokenUri",
-                "userinfoUri"
+                "displayName",
+                "slug",
+                "tokenUrl",
+                "userInfoUrl"
               ]
             }
           }
@@ -5975,48 +5978,144 @@
           "providers"
         ]
       },
-      "OidcProviderDto": {
+      "CreateOIDCProviderDto": {
         "type": "object",
         "properties": {
-          "authorizeUri": {
-            "type": "string"
+          "authorizeUrl": {
+            "type": "string",
+            "format": "uri"
           },
           "clientId": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "clientSecret": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
-          "name": {
-            "type": "string"
+          "displayName": {
+            "type": "string",
+            "minLength": 1
           },
-          "tokenUri": {
-            "type": "string"
+          "slug": {
+            "type": "string",
+            "minLength": 1
           },
-          "userinfoUri": {
-            "type": "string"
+          "tokenUrl": {
+            "type": "string",
+            "format": "uri"
           },
-          "id": {
+          "userId": {
             "type": "number"
+          },
+          "userInfoUrl": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
-          "authorizeUri",
+          "authorizeUrl",
           "clientId",
           "clientSecret",
-          "name",
-          "tokenUri",
-          "userinfoUri"
+          "displayName",
+          "slug",
+          "tokenUrl",
+          "userId",
+          "userInfoUrl"
         ]
       },
-      "OidcProviderAuthResDto": {
+      "GetOIDCProviderDto": {
         "type": "object",
         "properties": {
-          "url": {
-            "type": "string"
+          "authorizeUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "clientId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tokenUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "userInfoUrl": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
+          "authorizeUrl",
+          "clientId",
+          "clientSecret",
+          "displayName",
+          "slug",
+          "tokenUrl",
+          "userInfoUrl"
+        ]
+      },
+      "EditOIDCProviderDto": {
+        "type": "object",
+        "properties": {
+          "authorizeUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "clientId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tokenUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "userInfoUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "authorizeUrl",
+          "clientId",
+          "clientSecret",
+          "displayName",
+          "tokenUrl",
+          "userInfoUrl"
+        ]
+      },
+      "GetOIDCProviderURLDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "slug",
           "url"
         ]
       },
@@ -6031,11 +6130,11 @@
                 "createdAt": {
                   "type": "number"
                 },
-                "id": {
-                  "type": "number"
+                "providerDisplayName": {
+                  "type": "string"
                 },
-                "providerId": {
-                  "type": "number"
+                "slug": {
+                  "type": "string"
                 },
                 "sub": {
                   "type": "string"
@@ -6043,8 +6142,8 @@
               },
               "required": [
                 "createdAt",
-                "id",
-                "providerId",
+                "providerDisplayName",
+                "slug",
                 "sub"
               ]
             }

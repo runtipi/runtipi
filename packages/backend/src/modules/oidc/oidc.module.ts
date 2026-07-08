@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { OidcController } from './oidc.controller';
-import { OidcService } from './oidc.service';
-import { OidcRepository } from './oidc.repository';
 import { AuthModule } from '@/modules/auth/auth.module';
+import { UserRepository } from '@/modules/user/user.repository';
+import { OIDCController } from '@/modules/oidc/oidc.controller';
+import { OIDCRepository } from '@/modules/oidc/oidc.repository';
+import { OIDCService } from '@/modules/oidc/oidc.service';
 
 @Module({
   imports: [AuthModule],
-  controllers: [OidcController],
-  providers: [OidcService, OidcRepository],
+  controllers: [OIDCController],
+  providers: [OIDCService, UserRepository, OIDCRepository],
 })
-export class OidcModule {}
+export class OIDCModule {}
