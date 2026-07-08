@@ -11,10 +11,24 @@ export class OIDCRepository {
   /**
    * Adds a new OIDC provider to the database.
    * @param {CreateOIDCProviderDto} provider - The provider information to be added.
+   * @param {number} userId - The user ID to assign the provider to.
    * @returns The newly added provider.
    */
-  public async createOIDCProvider(provider: CreateOIDCProviderDto) {
-    const providers = await this.db.insert(oidcProviders).values(provider).returning();
+  public async createOIDCProvider(provider: CreateOIDCProviderDto, userId: number): Promise<CreateOIDCProviderDto | undefined> {
+    const { slug, displayName, clientId, clientSecret, authorizeUrl, tokenUrl, userInfoUrl } = provider;
+    const providers = await this.db
+      .insert(oidcProviders)
+      .values({
+        slug,
+        displayName,
+        clientId,
+        clientSecret,
+        authorizeUrl,
+        tokenUrl,
+        userInfoUrl,
+        userId,
+      })
+      .returning();
     return providers[0];
   }
 

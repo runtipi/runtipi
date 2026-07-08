@@ -19,7 +19,6 @@ export class OIDCProviderDto extends createArkDto(OIDCProviderSchema, { name: 'O
 
 export const CreateOIDCProviderSchema = type({
   slug: 'string >= 1',
-  userId: 'number',
   displayName: 'string >= 1',
   clientId: 'string >= 1',
   clientSecret: 'string >= 1',

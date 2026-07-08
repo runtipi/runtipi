@@ -9,11 +9,11 @@ import { useTranslation } from 'react-i18next';
 import { DropdownMenuItem } from '@/components/ui/DropdownMenu';
 
 interface DeleteProviderDialogProps {
-  providerId: number;
-  providerName: string;
+  providerSlug: string;
+  providerDisplayName: string;
 }
 
-export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeleteProviderDialogProps) => {
+export const DeleteOAuthProviderDialog = ({ providerSlug, providerDisplayName }: DeleteProviderDialogProps) => {
   const { t } = useTranslation();
   const deleteProviderDialogDisclosure = useDisclosure();
 
@@ -36,7 +36,7 @@ export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeletePr
       <Dialog open={deleteProviderDialogDisclosure.isOpen} onOpenChange={deleteProviderDialogDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>{t('SETTINGS_SECURITY_OAUTH_DELETE_TITLE', { provider: providerName })}</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_OAUTH_DELETE_TITLE', { provider: providerDisplayName })}</DialogTitle>
           </DialogHeader>
           <DialogDescription>
             <p className="text-muted">{t('SETTINGS_SECURITY_OAUTH_DELETE_SUBTITLE')}</p>
@@ -45,7 +45,7 @@ export const DeleteOAuthProviderDialog = ({ providerId, providerName }: DeletePr
             <Button onClick={() => deleteProviderDialogDisclosure.close()} variant="outline" intent="dark">
               {t('ACTIONS_CANCEL')}
             </Button>
-            <Button onClick={() => deleteMutation.mutate({ path: { id: providerId } })} loading={deleteMutation.isPending} intent="danger">
+            <Button onClick={() => deleteMutation.mutate({ path: { slug: providerSlug } })} loading={deleteMutation.isPending} intent="danger">
               {t('DELETE')}
             </Button>
           </DialogFooter>

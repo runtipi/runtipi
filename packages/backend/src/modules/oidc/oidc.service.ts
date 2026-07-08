@@ -35,7 +35,7 @@ export class OIDCService {
 
   private buildClientConfig(provider: OIDCProviderDto) {
     const providerURL = new URL(provider.authorizeUrl);
-    const issuer = providerURL.href;
+    const issuer = providerURL.href.substring(0, providerURL.href.lastIndexOf('/'));
 
     const server: client.ServerMetadata = {
       issuer: issuer,
@@ -73,7 +73,7 @@ export class OIDCService {
 
       this.cacheService.set(state, JSON.stringify(trustedState), Date.now() + 3600000);
 
-      const redirectURL = `${reqURL.origin}/api/oidc/providers/${provider.id}/callback`;
+      const redirectURL = `${reqURL.origin}/api/oidc/providers/${provider.slug}/callback`;
       const authURL = client.buildAuthorizationUrl(config, { state, redirect_uri: redirectURL, scope: 'openid' });
 
       return authURL.href;
@@ -99,7 +99,9 @@ export class OIDCService {
         throw new Error('Got errors parsing trusted state cache');
       }
 
-      if (out.url !== reqURL.origin) {
+      const outURLObj = new URL(out.url);
+
+      if (outURLObj.protocol !== reqURL.protocol && outURLObj.host !== reqURL.host) {
         throw new Error('Invalid redirect URI');
       }
 
@@ -155,7 +157,7 @@ export class OIDCService {
   }
 
   public async createOIDCProvider(input: CreateOIDCProviderDto, userId: number): Promise<CreateOIDCProviderDto | undefined> {
-    return await this.oidcRepository.createOIDCProvider({ ...input, userId: userId });
+    return await this.oidcRepository.createOIDCProvider(input, userId);
   }
 
   public async createOIDCTrustedSub(sub: string, userId: number, providerId: number) {
