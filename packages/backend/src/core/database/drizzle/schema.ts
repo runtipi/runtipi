@@ -108,9 +108,8 @@ export const oidcProviders = pgTable('oidc_providers', {
   displayName: varchar().notNull(),
   clientId: varchar().notNull(),
   clientSecret: varchar().notNull(),
-  authorizeUrl: varchar().notNull(),
-  tokenUrl: varchar().notNull(),
-  userInfoUrl: varchar().notNull(),
+  issuer: varchar().notNull(),
+  discovery: varchar().notNull(),
   createdAt: integer('created_at').notNull().default(sql`now()`),
   updatedAt: integer('updated_at').notNull().default(sql`now()`),
 });

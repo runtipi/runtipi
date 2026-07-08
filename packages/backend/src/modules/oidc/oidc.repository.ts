@@ -15,7 +15,7 @@ export class OIDCRepository {
    * @returns The newly added provider.
    */
   public async createOIDCProvider(provider: CreateOIDCProviderDto, userId: number): Promise<CreateOIDCProviderDto | undefined> {
-    const { slug, displayName, clientId, clientSecret, authorizeUrl, tokenUrl, userInfoUrl } = provider;
+    const { slug, displayName, clientId, clientSecret, issuer, discovery } = provider;
     const providers = await this.db
       .insert(oidcProviders)
       .values({
@@ -23,9 +23,8 @@ export class OIDCRepository {
         displayName,
         clientId,
         clientSecret,
-        authorizeUrl,
-        tokenUrl,
-        userInfoUrl,
+        issuer,
+        discovery,
         userId,
       })
       .returning();

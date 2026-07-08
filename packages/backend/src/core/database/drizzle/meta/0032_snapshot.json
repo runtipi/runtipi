@@ -1,5 +1,5 @@
 {
-  "id": "d02ff9da-cf53-4461-b0ae-75361976ffde",
+  "id": "3076cb04-554c-4076-99d8-6c6aca2d9630",
   "prevId": "d4ef54f9-1df7-4b5c-ab4d-f5ef53758e2b",
   "version": "7",
   "dialect": "postgresql",
@@ -378,20 +378,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "authorizeUrl": {
-          "name": "authorizeUrl",
+        "issuer": {
+          "name": "issuer",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "tokenUrl": {
-          "name": "tokenUrl",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "userInfoUrl": {
-          "name": "userInfoUrl",
+        "discovery": {
+          "name": "discovery",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true

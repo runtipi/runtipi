@@ -25,6 +25,15 @@ const trustedStateSchema = type({
 
 type TrustedStateSchema = typeof trustedStateSchema.infer;
 
+const discoverySchema = type({
+  issuer: 'string.url',
+  authorization_endpoint: 'string.url',
+  token_endpoint: 'string.url',
+  userinfo_endpoint: 'string.url',
+});
+
+type DiscoverySchema = typeof discoverySchema.infer;
+
 @Injectable()
 export class OIDCService {
   constructor(
@@ -33,15 +42,33 @@ export class OIDCService {
     private readonly cacheService: CacheService,
   ) {}
 
-  private buildClientConfig(provider: OIDCProviderDto) {
-    const providerURL = new URL(provider.authorizeUrl);
-    const issuer = providerURL.href.substring(0, providerURL.href.lastIndexOf('/'));
+  private async discoverEndpoints(issuer: string, discovery: string): Promise<DiscoverySchema | undefined> {
+    try {
+      const doc = await fetch(discovery);
+      const docJSON = await doc.json();
+      const out = discoverySchema(docJSON);
 
+      if (out instanceof type.errors) {
+        throw out.toString();
+      }
+
+      if (out.issuer !== issuer) {
+        throw new Error('Provider issuer mismatch');
+      }
+
+      return out;
+    } catch (error) {
+      this.logger.error('Failed to get OIDC endpoints', error);
+      return undefined;
+    }
+  }
+
+  private buildClientConfig(provider: OIDCProviderDto, endpoints: DiscoverySchema) {
     const server: client.ServerMetadata = {
-      issuer: issuer,
-      authorization_endpoint: provider.authorizeUrl,
-      token_endpoint: provider.tokenUrl,
-      userinfo_endpoint: provider.userInfoUrl,
+      issuer: endpoints.issuer,
+      authorization_endpoint: endpoints.authorization_endpoint,
+      token_endpoint: endpoints.token_endpoint,
+      userinfo_endpoint: endpoints.userinfo_endpoint,
     };
 
     return new client.Configuration(server, provider.clientId, provider.clientSecret);
@@ -55,7 +82,13 @@ export class OIDCService {
         throw new Error('Provider not found');
       }
 
-      const config = this.buildClientConfig(provider);
+      const endpoints = await this.discoverEndpoints(provider.issuer, provider.discovery);
+
+      if (typeof endpoints === 'undefined') {
+        throw new Error('Failed to get OIDC endpoints');
+      }
+
+      const config = this.buildClientConfig(provider, endpoints);
       const state = client.randomState();
 
       let flowType: 'sub_register' | 'login' = 'login';
@@ -119,7 +152,13 @@ export class OIDCService {
         throw new Error('Sub register requested but no user was found');
       }
 
-      const config = this.buildClientConfig(provider);
+      const endpoints = await this.discoverEndpoints(provider.issuer, provider.discovery);
+
+      if (typeof endpoints === 'undefined') {
+        throw new Error('Failed to get OIDC endpoints');
+      }
+
+      const config = this.buildClientConfig(provider, endpoints);
 
       return await client.authorizationCodeGrant(config, reqURL, {
         expectedState: state,
@@ -139,8 +178,14 @@ export class OIDCService {
         throw new Error('Provider not found');
       }
 
-      const config = this.buildClientConfig(provider);
-      const userInfoResponse = await client.fetchProtectedResource(config, access_token, new URL(provider.userInfoUrl), 'GET');
+      const endpoints = await this.discoverEndpoints(provider.issuer, provider.discovery);
+
+      if (typeof endpoints === 'undefined') {
+        throw new Error('Failed to discover endpoints');
+      }
+
+      const config = this.buildClientConfig(provider, endpoints);
+      const userInfoResponse = await client.fetchProtectedResource(config, access_token, new URL(endpoints.userinfo_endpoint), 'GET');
       const bodyJSON = (await userInfoResponse.json()) as { sub?: string };
 
       if (!bodyJSON?.sub) {
@@ -270,9 +315,8 @@ export class OIDCService {
             displayName: provider.displayName,
             clientId: provider.clientId,
             clientSecret: provider.clientSecret,
-            authorizeUrl: provider.authorizeUrl,
-            tokenUrl: provider.tokenUrl,
-            userInfoUrl: provider.userInfoUrl,
+            issuer: provider.issuer,
+            discovery: provider.discovery,
           }),
         );
       }
