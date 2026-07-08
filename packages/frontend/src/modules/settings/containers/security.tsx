@@ -1,8 +1,10 @@
-import { IconKey, IconLock, IconUser } from '@tabler/icons-react';
+import { IconBrandOauth, IconKey, IconLock, IconUser } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ChangePasswordForm } from '../components/change-password-form/change-password-form';
 import { ChangeUsernameForm } from '../components/change-username-form/change-username-form';
 import { OtpForm } from '../components/otp-form/otp-form';
+import { OAuthActions } from '../components/oauth-actions/oauth-actions';
+import { AddOAuthProviderDialog } from '../components/add-oauth-provider-dialog/add-oauth-provider-dialog';
 
 export const SecurityContainer = (props: { totpEnabled: boolean; username?: string }) => {
   const { totpEnabled, username } = props;
@@ -32,6 +34,17 @@ export const SecurityContainer = (props: { totpEnabled: boolean; username?: stri
         {t('SETTINGS_SECURITY_2FA_SUBTITLE_2')}
       </p>
       <OtpForm totpEnabled={totpEnabled} />
+      <div className="d-flex justify-content-between align-items-center w-full">
+        <div>
+          <div className="d-flex mb-2">
+            <IconBrandOauth className="me-2" />
+            <h2 className="mb-0">OAuth</h2>
+          </div>
+          <p className="text-muted">{t('SETTINGS_SECURITY_OAUTH_DESCRIPTION')}</p>
+        </div>
+        <AddOAuthProviderDialog />
+      </div>
+      <OAuthActions />
     </div>
   );
 };

@@ -1261,6 +1261,166 @@
         ]
       }
     },
+    "/api/sse/app": {
+      "get": {
+        "operationId": "appEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/sse/app-logs": {
+      "get": {
+        "operationId": "appLogsEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/sse/runtipi-logs": {
+      "get": {
+        "operationId": "runtipiLogsEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/links/guest": {
+      "get": {
+        "operationId": "getGuestLinks",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/api/links": {
+      "get": {
+        "operationId": "getLinks",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "post": {
+        "operationId": "createLink",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/api/links/{id}": {
+      "patch": {
+        "operationId": "editLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditLinkBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
     "/api/backups/{urn}/backup": {
       "post": {
         "operationId": "backupApp",
@@ -1493,166 +1653,6 @@
         },
         "tags": [
           "Backups"
-        ]
-      }
-    },
-    "/api/sse/app": {
-      "get": {
-        "operationId": "appEvents",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "SSE"
-        ]
-      }
-    },
-    "/api/sse/app-logs": {
-      "get": {
-        "operationId": "appLogsEvents",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "SSE"
-        ]
-      }
-    },
-    "/api/sse/runtipi-logs": {
-      "get": {
-        "operationId": "runtipiLogsEvents",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "SSE"
-        ]
-      }
-    },
-    "/api/links/guest": {
-      "get": {
-        "operationId": "getGuestLinks",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinksDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      }
-    },
-    "/api/links": {
-      "get": {
-        "operationId": "getLinks",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinksDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      },
-      "post": {
-        "operationId": "createLink",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LinkBodyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      }
-    },
-    "/api/links/{id}": {
-      "patch": {
-        "operationId": "editLink",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditLinkBodyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      },
-      "delete": {
-        "operationId": "deleteLink",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Links"
         ]
       }
     },
@@ -2203,6 +2203,239 @@
         ]
       }
     },
+    "/api/oidc/providers/login": {
+      "get": {
+        "operationId": "getLoginProviders",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OIDCProvidersLoginDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/user": {
+      "get": {
+        "operationId": "getUserProviders",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOIDCProvidersDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/new": {
+      "post": {
+        "operationId": "createProvider",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOIDCProviderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOIDCProviderDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{slug}/edit": {
+      "patch": {
+        "operationId": "editProvider",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditOIDCProviderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOIDCProviderDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{slug}/delete": {
+      "delete": {
+        "operationId": "deleteProvider",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{slug}/url": {
+      "post": {
+        "operationId": "getProviderAuthURL",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOIDCProviderURLDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{slug}/callback": {
+      "get": {
+        "operationId": "handleProviderCallback",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/subs/trusted": {
+      "get": {
+        "operationId": "getTrustedSubs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustedSubsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/subs/{slug}/delete": {
+      "delete": {
+        "operationId": "deleteTrustedSub",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
     "/api/debug/seed": {
       "post": {
         "operationId": "seedDatabase",
@@ -2606,6 +2839,10 @@
               },
               "themeColor": {
                 "type": "string"
+              },
+              "trustedProxyIps": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
               }
             },
             "required": [
@@ -2806,6 +3043,9 @@
             "type": "string"
           },
           "timeZone": {
+            "type": "string"
+          },
+          "trustedProxyIps": {
             "type": "string"
           }
         }
@@ -4655,100 +4895,6 @@
           "performBackup"
         ]
       },
-      "BackupRequestDto": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "anyOf": [
-              {
-                "type": "string",
-                "description": "a UUID",
-                "format": "uuid",
-                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
-              },
-              {
-                "const": "00000000-0000-0000-0000-000000000000",
-                "description": "a UUID",
-                "format": "uuid"
-              },
-              {
-                "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
-                "description": "a UUID",
-                "format": "uuid"
-              }
-            ],
-            "description": "a UUID",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "requestId"
-        ]
-      },
-      "RestoreAppBackupDto": {
-        "type": "object",
-        "properties": {
-          "filename": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "filename"
-        ]
-      },
-      "GetAppBackupsDto": {
-        "type": "object",
-        "properties": {
-          "currentPage": {
-            "type": "number"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "date": {
-                  "type": "number"
-                },
-                "id": {
-                  "type": "string"
-                },
-                "size": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "date",
-                "id",
-                "size"
-              ]
-            }
-          },
-          "lastPage": {
-            "type": "number"
-          },
-          "total": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "currentPage",
-          "data",
-          "lastPage",
-          "total"
-        ]
-      },
-      "DeleteAppBackupBodyDto": {
-        "type": "object",
-        "properties": {
-          "filename": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "filename"
-        ]
-      },
       "LinksDto": {
         "type": "object",
         "properties": {
@@ -4887,6 +5033,100 @@
         "required": [
           "title",
           "url"
+        ]
+      },
+      "BackupRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "a UUID",
+                "format": "uuid",
+                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+              },
+              {
+                "const": "00000000-0000-0000-0000-000000000000",
+                "description": "a UUID",
+                "format": "uuid"
+              },
+              {
+                "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                "description": "a UUID",
+                "format": "uuid"
+              }
+            ],
+            "description": "a UUID",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "requestId"
+        ]
+      },
+      "RestoreAppBackupDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename"
+        ]
+      },
+      "GetAppBackupsDto": {
+        "type": "object",
+        "properties": {
+          "currentPage": {
+            "type": "number"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "size": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "id",
+                "size"
+              ]
+            }
+          },
+          "lastPage": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "currentPage",
+          "data",
+          "lastPage",
+          "total"
+        ]
+      },
+      "DeleteAppBackupBodyDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename"
         ]
       },
       "GetUserConfigDto": {
@@ -5472,6 +5712,238 @@
           "hasChanges",
           "localVersion",
           "templateVersion"
+        ]
+      },
+      "OIDCProvidersLoginDto": {
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "displayName": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "slug": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "displayName",
+                "slug"
+              ]
+            }
+          }
+        },
+        "required": [
+          "providers"
+        ]
+      },
+      "GetOIDCProvidersDto": {
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "clientId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "clientSecret": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "discovery": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "displayName": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "issuer": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "slug": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "clientId",
+                "clientSecret",
+                "discovery",
+                "displayName",
+                "issuer",
+                "slug"
+              ]
+            }
+          }
+        },
+        "required": [
+          "providers"
+        ]
+      },
+      "CreateOIDCProviderDto": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1
+          },
+          "discovery": {
+            "type": "string",
+            "format": "uri"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "clientId",
+          "clientSecret",
+          "discovery",
+          "displayName",
+          "issuer",
+          "slug"
+        ]
+      },
+      "GetOIDCProviderDto": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1
+          },
+          "discovery": {
+            "type": "string",
+            "format": "uri"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "clientId",
+          "clientSecret",
+          "discovery",
+          "displayName",
+          "issuer",
+          "slug"
+        ]
+      },
+      "EditOIDCProviderDto": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1
+          },
+          "discovery": {
+            "type": "string",
+            "format": "uri"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "clientId",
+          "clientSecret",
+          "discovery",
+          "displayName",
+          "issuer"
+        ]
+      },
+      "GetOIDCProviderURLDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "slug",
+          "url"
+        ]
+      },
+      "TrustedSubsDto": {
+        "type": "object",
+        "properties": {
+          "subs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "type": "number"
+                },
+                "providerDisplayName": {
+                  "type": "string"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "sub": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "createdAt",
+                "providerDisplayName",
+                "slug",
+                "sub"
+              ]
+            }
+          }
+        },
+        "required": [
+          "subs"
         ]
       }
     }

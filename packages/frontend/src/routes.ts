@@ -35,4 +35,5 @@ export default [
     ...prefix('settings', [index('./modules/settings/pages/settings-page.tsx', { id: 'settings' })]),
   ]),
   route('*', './routes/not-found.tsx'),
+  route('error', './routes/error.tsx'),
 ] satisfies RouteConfig;

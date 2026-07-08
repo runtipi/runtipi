@@ -1,5 +1,4 @@
-import crypto from 'node:crypto';
-import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_MAX_AGE, SESSION_COOKIE_NAME } from '@/common/constants';
+import { SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
@@ -26,6 +25,7 @@ import {
   VerifyTotpBody,
 } from './dto/auth.dto';
 import { ApiResponse } from '@nestjs/swagger';
+import { SESSION_COOKIE_MAX_AGE, FORWARD_AUTH_COOKIE_NAME } from '@/common/constants';
 
 const AUTH_THROTTLE_TTL = 60_000;
 const AUTH_THROTTLE_LIMIT = 20;
@@ -47,7 +47,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly logger: LoggerService,
-    private readonly config: ConfigurationService,
+    readonly _config: ConfigurationService,
     private readonly cache: CacheService,
   ) {}
 
@@ -116,32 +116,6 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: SESSION_COOKIE_MAX_AGE,
     });
-  }
-
-  private async setSessionCookie(res: Response, sessionId: string, req: Request) {
-    const host = this.getRequestHost(req);
-    const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    const secure = proto === 'https';
-
-    this.logger.debug('Request headers', req.headers);
-    this.logger.debug('Setting session cookie', { host, proto, secure });
-
-    if (this.config.get('userSettings').experimental.insecureCookie) {
-      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
-      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
-    } else {
-      const legacyDomain = this.authService.getCookieDomain(host);
-      if (legacyDomain) {
-        res.clearCookie(SESSION_COOKIE_NAME, { domain: legacyDomain });
-      }
-
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        secure,
-        sameSite: 'lax',
-        maxAge: SESSION_COOKIE_MAX_AGE,
-      });
-    }
   }
 
   private consumeForwardAuthGrant(req: Request, res: Response) {
@@ -216,7 +190,7 @@ export class AuthController {
       return { success: true, totpSessionId };
     }
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     const redirectUrl = body.redirectUrl ? (this.createForwardAuthRedirectUrl(sessionId, req, body.redirectUrl) ?? undefined) : undefined;
 
@@ -229,7 +203,7 @@ export class AuthController {
   async verifyTotp(@Body() body: VerifyTotpBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.verifyTotp(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     const redirectUrl = body.redirectUrl ? (this.createForwardAuthRedirectUrl(sessionId, req, body.redirectUrl) ?? undefined) : undefined;
 
@@ -241,7 +215,7 @@ export class AuthController {
   async register(@Body() body: RegisterBody, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
     const { sessionId } = await this.authService.register(body);
 
-    await this.setSessionCookie(res, sessionId, req);
+    await this.authService.setSessionCookie(res, sessionId, req);
 
     return RegisterDto.parse({ success: true }, { reportOnly: true });
   }

@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { acknowledgeWelcome, appContext, appEvents, appLogsEvents, backupAllApps, backupApp, changePassword, changeUsername, check, createAppStore, createCustomApp, createLink, deleteAppBackup, deleteAppStore, deleteLink, disableTotp, disableUserConfig, downloadBackup, downloadLocalCertificate, editLink, enableUserConfig, forwardAuth, getAllAppStores, getApp, getAppBackups, getAppComposeDiff, getAppConfigDiff, getEditableAppConfig, getEnabledAppStores, getGuestApps, getGuestLinks, getImage, getInstalledApps, getLinks, getRandomPort, getTemplateDiff, getTotpUri, getTranslation, getUserConfig, ignoreAppVersion, incrementAllAppVersions, installApp, login, logout, type Options, pullAppStores, register, resetApp, resetPassword, restartAllApps, restartApp, restoreAppBackup, runtipiLogsEvents, searchApps, seedDatabase, setAllAppSubnetToNull, setAllAppUpdateAvailable, setupTotp, startAllApps, startAllApps2, startApp, stopAllApps, stopApp, syncWithTemplate, systemLoad, traefik, unignoreAppVersion, uninstallAllApps, uninstallApp, updateAllApps, updateApp, updateAppMetadata, updateAppSettings, updateAppStore, updateCustomApp, updateEditableAppConfig, updateUserConfig, updateUserSettings, uploadAppImage, uploadBackup, userContext, verifyTotp } from '../sdk.gen';
-import type { AcknowledgeWelcomeData, AppContextData, AppEventsData, AppLogsEventsData, BackupAllAppsData, BackupAppData, BackupAppResponse, ChangePasswordData, ChangeUsernameData, CheckData, CreateAppStoreData, CreateAppStoreResponse, CreateCustomAppData, CreateCustomAppResponse, CreateLinkData, DeleteAppBackupData, DeleteAppStoreData, DeleteLinkData, DisableTotpData, DisableUserConfigData, DownloadBackupData, DownloadLocalCertificateData, EditLinkData, EnableUserConfigData, ForwardAuthData, GetAllAppStoresData, GetAppBackupsData, GetAppBackupsResponse, GetAppComposeDiffData, GetAppConfigDiffData, GetAppData, GetEditableAppConfigData, GetEnabledAppStoresData, GetGuestAppsData, GetGuestLinksData, GetImageData, GetInstalledAppsData, GetLinksData, GetRandomPortData, GetRandomPortResponse, GetTemplateDiffData, GetTotpUriData, GetTotpUriResponse, GetTranslationData, GetUserConfigData, IgnoreAppVersionData, IncrementAllAppVersionsData, InstallAppData, InstallAppResponse, LoginData, LoginResponse, LogoutData, PullAppStoresData, PullAppStoresResponse, RegisterData, RegisterResponse, ResetAppData, ResetAppResponse, ResetPasswordData, ResetPasswordResponse, RestartAllAppsData, RestartAppData, RestartAppResponse, RestoreAppBackupData, RestoreAppBackupResponse, RuntipiLogsEventsData, SearchAppsData, SearchAppsResponse, SeedDatabaseData, SetAllAppSubnetToNullData, SetAllAppUpdateAvailableData, SetupTotpData, StartAllApps2Data, StartAllAppsData, StartAppData, StartAppResponse, StopAllAppsData, StopAppData, StopAppResponse, SyncWithTemplateData, SyncWithTemplateResponse, SystemLoadData, TraefikData, UnignoreAppVersionData, UninstallAllAppsData, UninstallAppData, UninstallAppResponse, UpdateAllAppsData, UpdateAppData, UpdateAppMetadataData, UpdateAppResponse, UpdateAppSettingsData, UpdateAppSettingsResponse, UpdateAppStoreData, UpdateAppStoreResponse, UpdateCustomAppData, UpdateEditableAppConfigData, UpdateEditableAppConfigResponse, UpdateUserConfigData, UpdateUserSettingsData, UploadAppImageData, UploadBackupData, UserContextData, VerifyTotpData, VerifyTotpResponse } from '../types.gen';
+import { acknowledgeWelcome, appContext, appEvents, appLogsEvents, backupAllApps, backupApp, changePassword, changeUsername, check, createAppStore, createCustomApp, createLink, createProvider, deleteAppBackup, deleteAppStore, deleteLink, deleteProvider, deleteTrustedSub, disableTotp, disableUserConfig, downloadBackup, downloadLocalCertificate, editLink, editProvider, enableUserConfig, forwardAuth, getAllAppStores, getApp, getAppBackups, getAppComposeDiff, getAppConfigDiff, getEditableAppConfig, getEnabledAppStores, getGuestApps, getGuestLinks, getImage, getInstalledApps, getLinks, getLoginProviders, getProviderAuthUrl, getRandomPort, getTemplateDiff, getTotpUri, getTranslation, getTrustedSubs, getUserConfig, getUserProviders, handleProviderCallback, ignoreAppVersion, incrementAllAppVersions, installApp, login, logout, type Options, pullAppStores, register, resetApp, resetPassword, restartAllApps, restartApp, restoreAppBackup, runtipiLogsEvents, searchApps, seedDatabase, setAllAppSubnetToNull, setAllAppUpdateAvailable, setupTotp, startAllApps, startAllApps2, startApp, stopAllApps, stopApp, syncWithTemplate, systemLoad, traefik, unignoreAppVersion, uninstallAllApps, uninstallApp, updateAllApps, updateApp, updateAppMetadata, updateAppSettings, updateAppStore, updateCustomApp, updateEditableAppConfig, updateUserConfig, updateUserSettings, uploadAppImage, uploadBackup, userContext, verifyTotp } from '../sdk.gen';
+import type { AcknowledgeWelcomeData, AppContextData, AppEventsData, AppLogsEventsData, BackupAllAppsData, BackupAppData, BackupAppResponse, ChangePasswordData, ChangeUsernameData, CheckData, CreateAppStoreData, CreateAppStoreResponse, CreateCustomAppData, CreateCustomAppResponse, CreateLinkData, CreateProviderData, CreateProviderResponse, DeleteAppBackupData, DeleteAppStoreData, DeleteLinkData, DeleteProviderData, DeleteTrustedSubData, DisableTotpData, DisableUserConfigData, DownloadBackupData, DownloadLocalCertificateData, EditLinkData, EditProviderData, EditProviderResponse, EnableUserConfigData, ForwardAuthData, GetAllAppStoresData, GetAppBackupsData, GetAppBackupsResponse, GetAppComposeDiffData, GetAppConfigDiffData, GetAppData, GetEditableAppConfigData, GetEnabledAppStoresData, GetGuestAppsData, GetGuestLinksData, GetImageData, GetInstalledAppsData, GetLinksData, GetLoginProvidersData, GetProviderAuthUrlData, GetProviderAuthUrlResponse, GetRandomPortData, GetRandomPortResponse, GetTemplateDiffData, GetTotpUriData, GetTotpUriResponse, GetTranslationData, GetTrustedSubsData, GetUserConfigData, GetUserProvidersData, HandleProviderCallbackData, IgnoreAppVersionData, IncrementAllAppVersionsData, InstallAppData, InstallAppResponse, LoginData, LoginResponse, LogoutData, PullAppStoresData, PullAppStoresResponse, RegisterData, RegisterResponse, ResetAppData, ResetAppResponse, ResetPasswordData, ResetPasswordResponse, RestartAllAppsData, RestartAppData, RestartAppResponse, RestoreAppBackupData, RestoreAppBackupResponse, RuntipiLogsEventsData, SearchAppsData, SearchAppsResponse, SeedDatabaseData, SetAllAppSubnetToNullData, SetAllAppUpdateAvailableData, SetupTotpData, StartAllApps2Data, StartAllAppsData, StartAppData, StartAppResponse, StopAllAppsData, StopAppData, StopAppResponse, SyncWithTemplateData, SyncWithTemplateResponse, SystemLoadData, TraefikData, UnignoreAppVersionData, UninstallAllAppsData, UninstallAppData, UninstallAppResponse, UpdateAllAppsData, UpdateAppData, UpdateAppMetadataData, UpdateAppResponse, UpdateAppSettingsData, UpdateAppSettingsResponse, UpdateAppStoreData, UpdateAppStoreResponse, UpdateCustomAppData, UpdateEditableAppConfigData, UpdateEditableAppConfigResponse, UpdateUserConfigData, UpdateUserSettingsData, UploadAppImageData, UploadBackupData, UserContextData, VerifyTotpData, VerifyTotpResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -801,122 +801,6 @@ export const restartAllAppsMutation = (options?: Partial<Options<RestartAllAppsD
     return mutationOptions;
 };
 
-export const backupAppMutation = (options?: Partial<Options<BackupAppData>>): UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> => {
-    const mutationOptions: UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await backupApp({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        }
-    };
-    return mutationOptions;
-};
-
-export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBackupData>>): UseMutationOptions<RestoreAppBackupResponse, DefaultError, Options<RestoreAppBackupData>> => {
-    const mutationOptions: UseMutationOptions<RestoreAppBackupResponse, DefaultError, Options<RestoreAppBackupData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await restoreAppBackup({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        }
-    };
-    return mutationOptions;
-};
-
-export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBackupData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> => {
-    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await deleteAppBackup({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        }
-    };
-    return mutationOptions;
-};
-
-export const getAppBackupsQueryKey = (options: Options<GetAppBackupsData>) => createQueryKey('getAppBackups', options);
-
-export const getAppBackupsOptions = (options: Options<GetAppBackupsData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getAppBackups({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getAppBackupsQueryKey(options)
-    });
-};
-
-export const getAppBackupsInfiniteQueryKey = (options: Options<GetAppBackupsData>): QueryKey<Options<GetAppBackupsData>> => createQueryKey('getAppBackups', options, true);
-
-export const getAppBackupsInfiniteOptions = (options: Options<GetAppBackupsData>) => {
-    return infiniteQueryOptions<GetAppBackupsResponse, DefaultError, InfiniteData<GetAppBackupsResponse>, QueryKey<Options<GetAppBackupsData>>, number | string | Pick<QueryKey<Options<GetAppBackupsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
-    // @ts-ignore
-    {
-        queryFn: async ({ pageParam, queryKey, signal }) => {
-            // @ts-ignore
-            const page: Pick<QueryKey<Options<GetAppBackupsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
-                query: {
-                    page: pageParam
-                }
-            };
-            const params = createInfiniteParams(queryKey, page);
-            const { data } = await getAppBackups({
-                ...options,
-                ...params,
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getAppBackupsInfiniteQueryKey(options)
-    });
-};
-
-export const downloadBackupQueryKey = (options: Options<DownloadBackupData>) => createQueryKey('downloadBackup', options);
-
-export const downloadBackupOptions = (options: Options<DownloadBackupData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await downloadBackup({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: downloadBackupQueryKey(options)
-    });
-};
-
-export const uploadBackupMutation = (options?: Partial<Options<UploadBackupData>>): UseMutationOptions<unknown, DefaultError, Options<UploadBackupData>> => {
-    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UploadBackupData>> = {
-        mutationFn: async (fnOptions) => {
-            const { data } = await uploadBackup({
-                ...options,
-                ...fnOptions,
-                throwOnError: true
-            });
-            return data;
-        }
-    };
-    return mutationOptions;
-};
-
 export const appEventsQueryKey = (options?: Options<AppEventsData>) => createQueryKey('appEvents', options);
 
 export const appEventsOptions = (options?: Options<AppEventsData>) => {
@@ -1034,6 +918,122 @@ export const editLinkMutation = (options?: Partial<Options<EditLinkData>>): UseM
     const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<EditLinkData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await editLink({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const backupAppMutation = (options?: Partial<Options<BackupAppData>>): UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> => {
+    const mutationOptions: UseMutationOptions<BackupAppResponse, DefaultError, Options<BackupAppData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await backupApp({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const restoreAppBackupMutation = (options?: Partial<Options<RestoreAppBackupData>>): UseMutationOptions<RestoreAppBackupResponse, DefaultError, Options<RestoreAppBackupData>> => {
+    const mutationOptions: UseMutationOptions<RestoreAppBackupResponse, DefaultError, Options<RestoreAppBackupData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await restoreAppBackup({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const deleteAppBackupMutation = (options?: Partial<Options<DeleteAppBackupData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteAppBackupData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteAppBackup({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getAppBackupsQueryKey = (options: Options<GetAppBackupsData>) => createQueryKey('getAppBackups', options);
+
+export const getAppBackupsOptions = (options: Options<GetAppBackupsData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getAppBackups({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getAppBackupsQueryKey(options)
+    });
+};
+
+export const getAppBackupsInfiniteQueryKey = (options: Options<GetAppBackupsData>): QueryKey<Options<GetAppBackupsData>> => createQueryKey('getAppBackups', options, true);
+
+export const getAppBackupsInfiniteOptions = (options: Options<GetAppBackupsData>) => {
+    return infiniteQueryOptions<GetAppBackupsResponse, DefaultError, InfiniteData<GetAppBackupsResponse>, QueryKey<Options<GetAppBackupsData>>, number | string | Pick<QueryKey<Options<GetAppBackupsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+    // @ts-ignore
+    {
+        queryFn: async ({ pageParam, queryKey, signal }) => {
+            // @ts-ignore
+            const page: Pick<QueryKey<Options<GetAppBackupsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+                query: {
+                    page: pageParam
+                }
+            };
+            const params = createInfiniteParams(queryKey, page);
+            const { data } = await getAppBackups({
+                ...options,
+                ...params,
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getAppBackupsInfiniteQueryKey(options)
+    });
+};
+
+export const downloadBackupQueryKey = (options: Options<DownloadBackupData>) => createQueryKey('downloadBackup', options);
+
+export const downloadBackupOptions = (options: Options<DownloadBackupData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await downloadBackup({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: downloadBackupQueryKey(options)
+    });
+};
+
+export const uploadBackupMutation = (options?: Partial<Options<UploadBackupData>>): UseMutationOptions<unknown, DefaultError, Options<UploadBackupData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<UploadBackupData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await uploadBackup({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -1240,6 +1240,144 @@ export const syncWithTemplateMutation = (options?: Partial<Options<SyncWithTempl
     const mutationOptions: UseMutationOptions<SyncWithTemplateResponse, DefaultError, Options<SyncWithTemplateData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await syncWithTemplate({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getLoginProvidersQueryKey = (options?: Options<GetLoginProvidersData>) => createQueryKey('getLoginProviders', options);
+
+export const getLoginProvidersOptions = (options?: Options<GetLoginProvidersData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getLoginProviders({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getLoginProvidersQueryKey(options)
+    });
+};
+
+export const getUserProvidersQueryKey = (options?: Options<GetUserProvidersData>) => createQueryKey('getUserProviders', options);
+
+export const getUserProvidersOptions = (options?: Options<GetUserProvidersData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getUserProviders({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getUserProvidersQueryKey(options)
+    });
+};
+
+export const createProviderMutation = (options?: Partial<Options<CreateProviderData>>): UseMutationOptions<CreateProviderResponse, DefaultError, Options<CreateProviderData>> => {
+    const mutationOptions: UseMutationOptions<CreateProviderResponse, DefaultError, Options<CreateProviderData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createProvider({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const editProviderMutation = (options?: Partial<Options<EditProviderData>>): UseMutationOptions<EditProviderResponse, DefaultError, Options<EditProviderData>> => {
+    const mutationOptions: UseMutationOptions<EditProviderResponse, DefaultError, Options<EditProviderData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await editProvider({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const deleteProviderMutation = (options?: Partial<Options<DeleteProviderData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteProviderData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteProviderData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteProvider({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const getProviderAuthUrlMutation = (options?: Partial<Options<GetProviderAuthUrlData>>): UseMutationOptions<GetProviderAuthUrlResponse, DefaultError, Options<GetProviderAuthUrlData>> => {
+    const mutationOptions: UseMutationOptions<GetProviderAuthUrlResponse, DefaultError, Options<GetProviderAuthUrlData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await getProviderAuthUrl({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const handleProviderCallbackQueryKey = (options: Options<HandleProviderCallbackData>) => createQueryKey('handleProviderCallback', options);
+
+export const handleProviderCallbackOptions = (options: Options<HandleProviderCallbackData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await handleProviderCallback({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: handleProviderCallbackQueryKey(options)
+    });
+};
+
+export const getTrustedSubsQueryKey = (options?: Options<GetTrustedSubsData>) => createQueryKey('getTrustedSubs', options);
+
+export const getTrustedSubsOptions = (options?: Options<GetTrustedSubsData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getTrustedSubs({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getTrustedSubsQueryKey(options)
+    });
+};
+
+export const deleteTrustedSubMutation = (options?: Partial<Options<DeleteTrustedSubData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteTrustedSubData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteTrustedSubData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteTrustedSub({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

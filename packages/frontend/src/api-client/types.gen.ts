@@ -71,6 +71,7 @@ export type AppContextDto = {
         experimental_insecureCookie?: boolean;
         themeBase?: string;
         themeColor?: string;
+        trustedProxyIps?: string;
     };
     version: {
         body: string;
@@ -108,6 +109,7 @@ export type UserSettingsBody = {
     themeBase?: string;
     themeColor?: string;
     timeZone?: string;
+    trustedProxyIps?: string;
 };
 
 export type AcknowledgeWelcomeBody = {
@@ -527,32 +529,6 @@ export type UpdateAppBody = {
     performBackup: boolean;
 };
 
-export type BackupRequestDto = {
-    /**
-     * a UUID
-     */
-    requestId: string | '00000000-0000-0000-0000-000000000000' | 'ffffffff-ffff-ffff-ffff-ffffffffffff';
-};
-
-export type RestoreAppBackupDto = {
-    filename: string;
-};
-
-export type GetAppBackupsDto = {
-    currentPage: number;
-    data: Array<{
-        date: number;
-        id: string;
-        size: number;
-    }>;
-    lastPage: number;
-    total: number;
-};
-
-export type DeleteAppBackupBodyDto = {
-    filename: string;
-};
-
 export type LinksDto = {
     links: Array<{
         description: string | null;
@@ -579,6 +555,32 @@ export type EditLinkBodyDto = {
     description?: string;
     iconUrl?: string | '';
     isVisibleOnGuestDashboard?: boolean;
+};
+
+export type BackupRequestDto = {
+    /**
+     * a UUID
+     */
+    requestId: string | '00000000-0000-0000-0000-000000000000' | 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+};
+
+export type RestoreAppBackupDto = {
+    filename: string;
+};
+
+export type GetAppBackupsDto = {
+    currentPage: number;
+    data: Array<{
+        date: number;
+        id: string;
+        size: number;
+    }>;
+    lastPage: number;
+    total: number;
+};
+
+export type DeleteAppBackupBodyDto = {
+    filename: string;
 };
 
 export type GetUserConfigDto = {
@@ -872,6 +874,64 @@ export type TemplateDiffDto = {
     templateVersion: number;
     current?: string;
     template?: string;
+};
+
+export type OidcProvidersLoginDto = {
+    providers: Array<{
+        displayName: string;
+        slug: string;
+    }>;
+};
+
+export type GetOidcProvidersDto = {
+    providers: Array<{
+        clientId: string;
+        clientSecret: string;
+        discovery: string;
+        displayName: string;
+        issuer: string;
+        slug: string;
+    }>;
+};
+
+export type CreateOidcProviderDto = {
+    clientId: string;
+    clientSecret: string;
+    discovery: string;
+    displayName: string;
+    issuer: string;
+    slug: string;
+};
+
+export type GetOidcProviderDto = {
+    clientId: string;
+    clientSecret: string;
+    discovery: string;
+    displayName: string;
+    issuer: string;
+    slug: string;
+};
+
+export type EditOidcProviderDto = {
+    clientId: string;
+    clientSecret: string;
+    discovery: string;
+    displayName: string;
+    issuer: string;
+};
+
+export type GetOidcProviderUrlDto = {
+    slug: string;
+    url: string;
+};
+
+export type TrustedSubsDto = {
+    subs: Array<{
+        createdAt: number;
+        providerDisplayName: string;
+        slug: string;
+        sub: string;
+    }>;
 };
 
 export type UserContextData = {
@@ -1488,102 +1548,6 @@ export type RestartAllAppsResponses = {
     201: unknown;
 };
 
-export type BackupAppData = {
-    body?: never;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/backup';
-};
-
-export type BackupAppResponses = {
-    default: BackupRequestDto;
-};
-
-export type BackupAppResponse = BackupAppResponses[keyof BackupAppResponses];
-
-export type RestoreAppBackupData = {
-    body: RestoreAppBackupDto;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/restore';
-};
-
-export type RestoreAppBackupResponses = {
-    default: BackupRequestDto;
-};
-
-export type RestoreAppBackupResponse = RestoreAppBackupResponses[keyof RestoreAppBackupResponses];
-
-export type DeleteAppBackupData = {
-    body: DeleteAppBackupBodyDto;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}';
-};
-
-export type DeleteAppBackupResponses = {
-    200: unknown;
-};
-
-export type GetAppBackupsData = {
-    body?: never;
-    path: {
-        urn: string;
-    };
-    query?: {
-        page?: number | string;
-        pageSize?: number | string;
-    };
-    url: '/api/backups/{urn}';
-};
-
-export type GetAppBackupsResponses = {
-    default: GetAppBackupsDto;
-};
-
-export type GetAppBackupsResponse = GetAppBackupsResponses[keyof GetAppBackupsResponses];
-
-export type DownloadBackupData = {
-    body?: never;
-    path: {
-        urn: string;
-        filename: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/{filename}/download';
-};
-
-export type DownloadBackupResponses = {
-    /**
-     * Backup file download
-     */
-    200: unknown;
-};
-
-export type UploadBackupData = {
-    body: {
-        file?: Blob | File;
-    };
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/upload';
-};
-
-export type UploadBackupResponses = {
-    /**
-     * Backup uploaded successfully
-     */
-    201: unknown;
-};
-
 export type AppEventsData = {
     body?: never;
     path?: never;
@@ -1678,6 +1642,102 @@ export type EditLinkData = {
 
 export type EditLinkResponses = {
     200: unknown;
+};
+
+export type BackupAppData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/backup';
+};
+
+export type BackupAppResponses = {
+    default: BackupRequestDto;
+};
+
+export type BackupAppResponse = BackupAppResponses[keyof BackupAppResponses];
+
+export type RestoreAppBackupData = {
+    body: RestoreAppBackupDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/restore';
+};
+
+export type RestoreAppBackupResponses = {
+    default: BackupRequestDto;
+};
+
+export type RestoreAppBackupResponse = RestoreAppBackupResponses[keyof RestoreAppBackupResponses];
+
+export type DeleteAppBackupData = {
+    body: DeleteAppBackupBodyDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}';
+};
+
+export type DeleteAppBackupResponses = {
+    200: unknown;
+};
+
+export type GetAppBackupsData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: {
+        page?: number | string;
+        pageSize?: number | string;
+    };
+    url: '/api/backups/{urn}';
+};
+
+export type GetAppBackupsResponses = {
+    default: GetAppBackupsDto;
+};
+
+export type GetAppBackupsResponse = GetAppBackupsResponses[keyof GetAppBackupsResponses];
+
+export type DownloadBackupData = {
+    body?: never;
+    path: {
+        urn: string;
+        filename: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/{filename}/download';
+};
+
+export type DownloadBackupResponses = {
+    /**
+     * Backup file download
+     */
+    200: unknown;
+};
+
+export type UploadBackupData = {
+    body: {
+        file?: Blob | File;
+    };
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/upload';
+};
+
+export type UploadBackupResponses = {
+    /**
+     * Backup uploaded successfully
+     */
+    201: unknown;
 };
 
 export type CheckData = {
@@ -1915,6 +1975,127 @@ export type SyncWithTemplateResponses = {
 };
 
 export type SyncWithTemplateResponse = SyncWithTemplateResponses[keyof SyncWithTemplateResponses];
+
+export type GetLoginProvidersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/providers/login';
+};
+
+export type GetLoginProvidersResponses = {
+    default: OidcProvidersLoginDto;
+};
+
+export type GetLoginProvidersResponse = GetLoginProvidersResponses[keyof GetLoginProvidersResponses];
+
+export type GetUserProvidersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/providers/user';
+};
+
+export type GetUserProvidersResponses = {
+    default: GetOidcProvidersDto;
+};
+
+export type GetUserProvidersResponse = GetUserProvidersResponses[keyof GetUserProvidersResponses];
+
+export type CreateProviderData = {
+    body: CreateOidcProviderDto;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/providers/new';
+};
+
+export type CreateProviderResponses = {
+    default: GetOidcProviderDto;
+};
+
+export type CreateProviderResponse = CreateProviderResponses[keyof CreateProviderResponses];
+
+export type EditProviderData = {
+    body: EditOidcProviderDto;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/edit';
+};
+
+export type EditProviderResponses = {
+    default: GetOidcProviderDto;
+};
+
+export type EditProviderResponse = EditProviderResponses[keyof EditProviderResponses];
+
+export type DeleteProviderData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/delete';
+};
+
+export type DeleteProviderResponses = {
+    200: unknown;
+};
+
+export type GetProviderAuthUrlData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/url';
+};
+
+export type GetProviderAuthUrlResponses = {
+    default: GetOidcProviderUrlDto;
+};
+
+export type GetProviderAuthUrlResponse = GetProviderAuthUrlResponses[keyof GetProviderAuthUrlResponses];
+
+export type HandleProviderCallbackData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/callback';
+};
+
+export type HandleProviderCallbackResponses = {
+    200: unknown;
+};
+
+export type GetTrustedSubsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/subs/trusted';
+};
+
+export type GetTrustedSubsResponses = {
+    200: TrustedSubsDto;
+};
+
+export type GetTrustedSubsResponse = GetTrustedSubsResponses[keyof GetTrustedSubsResponses];
+
+export type DeleteTrustedSubData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/subs/{slug}/delete';
+};
+
+export type DeleteTrustedSubResponses = {
+    200: unknown;
+};
 
 export type SeedDatabaseData = {
     body?: never;

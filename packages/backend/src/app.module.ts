@@ -37,6 +37,7 @@ import { GithubModule } from './utils/github/github.module';
 import { ArkValidationPipe } from 'nestjs-arktype';
 import { AppConfigModule } from './modules/app-config/app-config.module';
 import { CustomAppsModule } from './modules/custom-apps/custom-apps.module';
+import { OIDCModule } from './modules/oidc/oidc.module';
 
 const DEFAULT_THROTTLE_TTL = 60_000;
 const DEFAULT_THROTTLE_LIMIT = 300;
@@ -69,6 +70,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   GithubModule,
   CustomAppsModule,
   AppConfigModule,
+  OIDCModule,
 ];
 
 const { NODE_ENV } = process.env;

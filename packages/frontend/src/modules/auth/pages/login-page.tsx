@@ -1,8 +1,8 @@
-import { userContext } from '@/api-client';
-import { loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
+import { type GetProviderAuthUrlResponse, userContext } from '@/api-client';
+import { getLoginProvidersOptions, getProviderAuthUrlMutation, loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useUserContext } from '@/context/user-context';
 import type { TranslatableError } from '@/types/error.types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -68,6 +68,9 @@ export default () => {
   const navigate = useNavigate();
 
   const loginType = capitalize(app ?? '') || t('AUTH_LOGIN_TYPE_ACCOUNT');
+  const { data: oauthProviders } = useSuspenseQuery({
+    ...getLoginProvidersOptions(),
+  });
 
   useEffect(() => {
     if (!isLoggedIn || !redirect_url || !isSafeRedirect(redirect_url)) {
@@ -131,6 +134,19 @@ export default () => {
     },
   });
 
+  const getOAuthURL = useMutation({
+    ...getProviderAuthUrlMutation(),
+    onSuccess: (res: GetProviderAuthUrlResponse) => {
+      toast.success(t('SETTINGS_SECURITY_OAUTH_AUTHORIZE_REDIRECT'));
+      setTimeout(() => {
+        window.location.href = res.url;
+      }, 500);
+    },
+    onError: (e: TranslatableError) => {
+      toast.error(t(e.message, e.intlParams));
+    },
+  });
+
   if (isLoggedIn) {
     if (redirect_url && isSafeRedirect(redirect_url)) {
       return null;
@@ -156,6 +172,8 @@ export default () => {
       onSubmit={(values) => login.mutate({ body: { password: values.password, redirectUrl: redirect_url ?? undefined, username: values.email } })}
       loading={login.isPending}
       loginType={loginType}
+      oauthProviders={oauthProviders.providers}
+      onOAuthClick={(provider) => getOAuthURL.mutate({ path: { slug: provider.slug } })}
     />
   );
 };

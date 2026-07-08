@@ -6,6 +6,8 @@ import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import './login-form.css';
+import { IconBrandOauth } from '@tabler/icons-react';
 
 type FormValues = { email: string; password: string };
 
@@ -18,10 +20,13 @@ interface IProps {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
   loginType: string;
+  oauthProviders: { slug: string; displayName: string }[];
+  onOAuthClick: (provider: { slug: string }) => void;
 }
 
-export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) => {
+export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oauthProviders, onOAuthClick }) => {
   const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -50,25 +55,39 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
           className="mb-3"
           placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
         />
-        <Input
-          {...register('password')}
-          name="password"
-          label={t('AUTH_FORM_PASSWORD')}
-          error={errors.password?.message}
-          disabled={loading}
-          type="password"
-          className="mb-3 password-input"
-          placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
-        />
+        <div>
+          <Input
+            {...register('password')}
+            name="password"
+            label={t('AUTH_FORM_PASSWORD')}
+            error={errors.password?.message}
+            disabled={loading}
+            type="password"
+            placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
+          />
+          <div className="form-text forgot-password-link">
+            <Link to="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
+          </div>
+        </div>
         <div className="form-footer">
           <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
             {t('AUTH_LOGIN_SUBMIT')}
           </Button>
         </div>
-        <div className="form-text text-center">
-          <Link to="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
-        </div>
       </form>
+      {oauthProviders.length > 0 && (
+        <div className="mt-3">
+          <div className="hr-text">{t('AUTH_FORM_OAUTH_DIVIDER')}</div>
+          <div className="d-flex gap-3 flex-column">
+            {oauthProviders.map((provider) => (
+              <Button key={provider.slug} onClick={() => onOAuthClick(provider)} intent="dark" variant="outline" className="w-100">
+                <IconBrandOauth size={16} className="me-2" />
+                <span>{provider.displayName}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };
