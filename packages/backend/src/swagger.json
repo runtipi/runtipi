@@ -5933,10 +5933,6 @@
             "items": {
               "type": "object",
               "properties": {
-                "authorizeUrl": {
-                  "type": "string",
-                  "format": "uri"
-                },
                 "clientId": {
                   "type": "string",
                   "minLength": 1
@@ -5945,31 +5941,30 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "discovery": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "displayName": {
                   "type": "string",
                   "minLength": 1
                 },
+                "issuer": {
+                  "type": "string",
+                  "format": "uri"
+                },
                 "slug": {
                   "type": "string",
                   "minLength": 1
-                },
-                "tokenUrl": {
-                  "type": "string",
-                  "format": "uri"
-                },
-                "userInfoUrl": {
-                  "type": "string",
-                  "format": "uri"
                 }
               },
               "required": [
-                "authorizeUrl",
                 "clientId",
                 "clientSecret",
+                "discovery",
                 "displayName",
-                "slug",
-                "tokenUrl",
-                "userInfoUrl"
+                "issuer",
+                "slug"
               ]
             }
           }
@@ -5981,10 +5976,6 @@
       "CreateOIDCProviderDto": {
         "type": "object",
         "properties": {
-          "authorizeUrl": {
-            "type": "string",
-            "format": "uri"
-          },
           "clientId": {
             "type": "string",
             "minLength": 1
@@ -5993,40 +5984,35 @@
             "type": "string",
             "minLength": 1
           },
+          "discovery": {
+            "type": "string",
+            "format": "uri"
+          },
           "displayName": {
             "type": "string",
             "minLength": 1
           },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
           "slug": {
             "type": "string",
             "minLength": 1
-          },
-          "tokenUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "userInfoUrl": {
-            "type": "string",
-            "format": "uri"
           }
         },
         "required": [
-          "authorizeUrl",
           "clientId",
           "clientSecret",
+          "discovery",
           "displayName",
-          "slug",
-          "tokenUrl",
-          "userInfoUrl"
+          "issuer",
+          "slug"
         ]
       },
       "GetOIDCProviderDto": {
         "type": "object",
         "properties": {
-          "authorizeUrl": {
-            "type": "string",
-            "format": "uri"
-          },
           "clientId": {
             "type": "string",
             "minLength": 1
@@ -6035,40 +6021,35 @@
             "type": "string",
             "minLength": 1
           },
+          "discovery": {
+            "type": "string",
+            "format": "uri"
+          },
           "displayName": {
             "type": "string",
             "minLength": 1
           },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
           "slug": {
             "type": "string",
             "minLength": 1
-          },
-          "tokenUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "userInfoUrl": {
-            "type": "string",
-            "format": "uri"
           }
         },
         "required": [
-          "authorizeUrl",
           "clientId",
           "clientSecret",
+          "discovery",
           "displayName",
-          "slug",
-          "tokenUrl",
-          "userInfoUrl"
+          "issuer",
+          "slug"
         ]
       },
       "EditOIDCProviderDto": {
         "type": "object",
         "properties": {
-          "authorizeUrl": {
-            "type": "string",
-            "format": "uri"
-          },
           "clientId": {
             "type": "string",
             "minLength": 1
@@ -6077,26 +6058,25 @@
             "type": "string",
             "minLength": 1
           },
+          "discovery": {
+            "type": "string",
+            "format": "uri"
+          },
           "displayName": {
             "type": "string",
             "minLength": 1
           },
-          "tokenUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "userInfoUrl": {
+          "issuer": {
             "type": "string",
             "format": "uri"
           }
         },
         "required": [
-          "authorizeUrl",
           "clientId",
           "clientSecret",
+          "discovery",
           "displayName",
-          "tokenUrl",
-          "userInfoUrl"
+          "issuer"
         ]
       },
       "GetOIDCProviderURLDto": {

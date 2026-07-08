@@ -158,7 +158,7 @@ export const OAuthActions = () => {
                             <code className="oauth-actions-code">{sub.sub}</code>
                             <span className="ms-1 text-muted">
                               - {t('SETTINGS_SECURITY_OAUTH_SUB_ENTRY_ADDED')}&nbsp;
-                              <DateFormat date={new Date(sub.createdAt * 1000)} />
+                              <DateFormat date={new Date(sub.createdAt)} />
                             </span>
                           </div>
                           <Button

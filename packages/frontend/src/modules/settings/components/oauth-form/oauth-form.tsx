@@ -9,9 +9,8 @@ const schema = type({
   displayName: 'string >= 1',
   clientId: 'string >=1',
   clientSecret: 'string >=1',
-  authorizeUrl: 'string.url',
-  tokenUrl: 'string.url',
-  userInfoUrl: 'string.url',
+  issuer: 'string.url',
+  discovery: 'string.url',
 });
 
 export type FormValues = typeof schema.infer;
@@ -38,7 +37,7 @@ export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues, slugDisa
         error={formState.errors.slug?.message}
         disabled={isLoading || slugDisabled}
         type="text"
-        label="Provider Slug"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_SLUG')}
         placeholder="my-provider"
         className="mb-3"
         required
@@ -75,34 +74,24 @@ export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues, slugDisa
         {...register('clientSecret')}
       />
       <Input
-        error={formState.errors.authorizeUrl?.message}
+        error={formState.errors.issuer?.message}
         disabled={isLoading}
         type="text"
-        label={t('SETTINGS_SECURITY_OAUTH_FORM_AUTHORIZE_URL')}
-        placeholder="https://example.com/authorize"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_ISSUER')}
+        placeholder="https://idp.example.com"
         className="mb-3"
         required
-        {...register('authorizeUrl')}
+        {...register('issuer')}
       />
       <Input
-        error={formState.errors.tokenUrl?.message}
+        error={formState.errors.discovery?.message}
         disabled={isLoading}
         type="text"
-        label={t('SETTINGS_SECURITY_OAUTH_FORM_TOKEN_URL')}
-        placeholder="https://example.com/token"
+        label={t('SETTINGS_SECURITY_OAUTH_FORM_DISCOVERY')}
+        placeholder="https://idp.example.com/.well-known/openid-configuration"
         className="mb-3"
         required
-        {...register('tokenUrl')}
-      />
-      <Input
-        error={formState.errors.userInfoUrl?.message}
-        disabled={isLoading}
-        type="text"
-        label={t('SETTINGS_SECURITY_OAUTH_FORM_USER_INFO_URL')}
-        placeholder="https://example.com/userinfo"
-        className="mb-3"
-        required
-        {...register('userInfoUrl')}
+        {...register('discovery')}
       />
     </form>
   );
