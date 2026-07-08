@@ -8,9 +8,8 @@ export const OIDCProviderSchema = type({
   displayName: 'string >= 1',
   clientId: 'string >= 1',
   clientSecret: 'string >= 1',
-  authorizeUrl: 'string.url',
-  tokenUrl: 'string.url',
-  userInfoUrl: 'string.url',
+  issuer: 'string.url',
+  discovery: 'string.url',
   createdAt: 'number',
   updatedAt: 'number',
 });
@@ -22,9 +21,8 @@ export const CreateOIDCProviderSchema = type({
   displayName: 'string >= 1',
   clientId: 'string >= 1',
   clientSecret: 'string >= 1',
-  authorizeUrl: 'string.url',
-  tokenUrl: 'string.url',
-  userInfoUrl: 'string.url',
+  issuer: 'string.url',
+  discovery: 'string.url',
 });
 
 export class CreateOIDCProviderDto extends createArkDto(CreateOIDCProviderSchema, { name: 'CreateOIDCProviderDto' }) {}
@@ -33,9 +31,8 @@ export const EditOIDCProviderSchema = type({
   displayName: 'string >= 1',
   clientId: 'string >= 1',
   clientSecret: 'string >= 1',
-  authorizeUrl: 'string.url',
-  tokenUrl: 'string.url',
-  userInfoUrl: 'string.url',
+  issuer: 'string.url',
+  discovery: 'string.url',
 });
 
 export class EditOIDCProviderDto extends createArkDto(EditOIDCProviderSchema, { name: 'EditOIDCProviderDto' }) {}
@@ -60,9 +57,8 @@ export const GetOIDCProviderSchema = type({
   displayName: 'string >= 1',
   clientId: 'string >= 1',
   clientSecret: 'string >= 1',
-  authorizeUrl: 'string.url',
-  tokenUrl: 'string.url',
-  userInfoUrl: 'string.url',
+  issuer: 'string.url',
+  discovery: 'string.url',
 });
 
 export class GetOIDCProviderDto extends createArkDto(GetOIDCProviderSchema, { name: 'GetOIDCProviderDto' }) {}

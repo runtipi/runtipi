@@ -5,9 +5,8 @@ CREATE TABLE "oidc_providers" (
 	"displayName" varchar NOT NULL,
 	"clientId" varchar NOT NULL,
 	"clientSecret" varchar NOT NULL,
-	"authorizeUrl" varchar NOT NULL,
-	"tokenUrl" varchar NOT NULL,
-	"userInfoUrl" varchar NOT NULL,
+	"issuer" varchar NOT NULL,
+    "discovery" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
