@@ -876,44 +876,64 @@ export type TemplateDiffDto = {
     template?: string;
 };
 
-export type PublicOidcProvidersDto = {
+export type OidcProvidersLoginDto = {
     providers: Array<{
-        id: number;
-        name: string;
+        displayName: string;
+        slug: string;
     }>;
 };
 
-export type OidcProvidersDto = {
+export type GetOidcProvidersDto = {
     providers: Array<{
-        authorizeUri: string;
+        authorizeUrl: string;
         clientId: string;
         clientSecret: string;
-        name: string;
-        tokenUri: string;
-        userinfoUri: string;
-        id?: number;
+        displayName: string;
+        slug: string;
+        tokenUrl: string;
+        userInfoUrl: string;
     }>;
 };
 
-export type OidcProviderDto = {
-    authorizeUri: string;
+export type CreateOidcProviderDto = {
+    authorizeUrl: string;
     clientId: string;
     clientSecret: string;
-    name: string;
-    tokenUri: string;
-    userinfoUri: string;
-    id?: number;
+    displayName: string;
+    slug: string;
+    tokenUrl: string;
+    userInfoUrl: string;
 };
 
-export type OidcProviderAuthResDto = {
+export type GetOidcProviderDto = {
+    authorizeUrl: string;
+    clientId: string;
+    clientSecret: string;
+    displayName: string;
+    slug: string;
+    tokenUrl: string;
+    userInfoUrl: string;
+};
+
+export type EditOidcProviderDto = {
+    authorizeUrl: string;
+    clientId: string;
+    clientSecret: string;
+    displayName: string;
+    tokenUrl: string;
+    userInfoUrl: string;
+};
+
+export type GetOidcProviderUrlDto = {
+    slug: string;
     url: string;
 };
 
 export type TrustedSubsDto = {
     subs: Array<{
         createdAt: number;
-        id: number;
-        providerId: number;
+        providerDisplayName: string;
+        slug: string;
         sub: string;
     }>;
 };
@@ -1960,56 +1980,56 @@ export type SyncWithTemplateResponses = {
 
 export type SyncWithTemplateResponse = SyncWithTemplateResponses[keyof SyncWithTemplateResponses];
 
-export type GetProvidersPublicData = {
+export type GetLoginProvidersData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/oidc/providers/public';
+    url: '/api/oidc/providers/login';
 };
 
-export type GetProvidersPublicResponses = {
-    default: PublicOidcProvidersDto;
+export type GetLoginProvidersResponses = {
+    default: OidcProvidersLoginDto;
 };
 
-export type GetProvidersPublicResponse = GetProvidersPublicResponses[keyof GetProvidersPublicResponses];
+export type GetLoginProvidersResponse = GetLoginProvidersResponses[keyof GetLoginProvidersResponses];
 
-export type GetProvidersPrivateData = {
+export type GetUserProvidersData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/oidc/providers/private';
+    url: '/api/oidc/providers/user';
 };
 
-export type GetProvidersPrivateResponses = {
-    default: OidcProvidersDto;
+export type GetUserProvidersResponses = {
+    default: GetOidcProvidersDto;
 };
 
-export type GetProvidersPrivateResponse = GetProvidersPrivateResponses[keyof GetProvidersPrivateResponses];
+export type GetUserProvidersResponse = GetUserProvidersResponses[keyof GetUserProvidersResponses];
 
 export type CreateProviderData = {
-    body: OidcProviderDto;
+    body: CreateOidcProviderDto;
     path?: never;
     query?: never;
     url: '/api/oidc/providers/new';
 };
 
 export type CreateProviderResponses = {
-    default: OidcProviderDto;
+    default: GetOidcProviderDto;
 };
 
 export type CreateProviderResponse = CreateProviderResponses[keyof CreateProviderResponses];
 
 export type EditProviderData = {
-    body: OidcProviderDto;
+    body: EditOidcProviderDto;
     path: {
-        id: number;
+        slug: string;
     };
     query?: never;
-    url: '/api/oidc/providers/{id}/edit';
+    url: '/api/oidc/providers/{slug}/edit';
 };
 
 export type EditProviderResponses = {
-    default: OidcProvidersDto;
+    default: GetOidcProviderDto;
 };
 
 export type EditProviderResponse = EditProviderResponses[keyof EditProviderResponses];
@@ -2017,43 +2037,41 @@ export type EditProviderResponse = EditProviderResponses[keyof EditProviderRespo
 export type DeleteProviderData = {
     body?: never;
     path: {
-        id: number;
+        slug: string;
     };
     query?: never;
-    url: '/api/oidc/providers/{id}/delete';
+    url: '/api/oidc/providers/{slug}/delete';
 };
 
 export type DeleteProviderResponses = {
-    default: OidcProvidersDto;
+    200: unknown;
 };
-
-export type DeleteProviderResponse = DeleteProviderResponses[keyof DeleteProviderResponses];
 
 export type GetProviderAuthUrlData = {
     body?: never;
     path: {
-        id: number;
+        slug: string;
     };
     query?: never;
-    url: '/api/oidc/providers/{id}/url';
+    url: '/api/oidc/providers/{slug}/url';
 };
 
 export type GetProviderAuthUrlResponses = {
-    default: OidcProviderAuthResDto;
+    default: GetOidcProviderUrlDto;
 };
 
 export type GetProviderAuthUrlResponse = GetProviderAuthUrlResponses[keyof GetProviderAuthUrlResponses];
 
-export type HandleCallbackData = {
+export type HandleProviderCallbackData = {
     body?: never;
     path: {
-        id: number;
+        slug: string;
     };
     query?: never;
-    url: '/api/oidc/providers/{id}/callback';
+    url: '/api/oidc/providers/{slug}/callback';
 };
 
-export type HandleCallbackResponses = {
+export type HandleProviderCallbackResponses = {
     200: unknown;
 };
 
@@ -2073,10 +2091,10 @@ export type GetTrustedSubsResponse = GetTrustedSubsResponses[keyof GetTrustedSub
 export type DeleteTrustedSubData = {
     body?: never;
     path: {
-        id: number;
+        slug: string;
     };
     query?: never;
-    url: '/api/oidc/subs/{id}/delete';
+    url: '/api/oidc/subs/{slug}/delete';
 };
 
 export type DeleteTrustedSubResponses = {

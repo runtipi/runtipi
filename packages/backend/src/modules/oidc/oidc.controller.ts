@@ -57,7 +57,7 @@ export class OIDCController {
   @Get('providers/user')
   @ApiResponse({ type: GetOIDCProvidersDto })
   @UseGuards(AuthGuard)
-  async getProvidersPrivate(@Req() req: ExpressRequest) {
+  async getUserProviders(@Req() req: ExpressRequest) {
     if (!req.user) {
       throw new UnauthorizedException();
     }
@@ -96,13 +96,13 @@ export class OIDCController {
     return GetOIDCProviderDto.parse(res);
   }
 
-  @Delete('providers/:id/delete')
+  @Delete('providers/:slug/delete')
   @UseGuards(AuthGuard)
   async deleteProvider(@Param('slug') slug: string) {
     return await this.oidcService.deleteOIDCProvider(slug);
   }
 
-  @Post('providers/:id/slug')
+  @Post('providers/:slug/url')
   @ApiResponse({ type: GetOIDCProviderURLDto })
   async getProviderAuthURL(@Param('slug') slug: string, @Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     const reqURL = new URL(`${req.protocol}://${req.host}${req.url}`);

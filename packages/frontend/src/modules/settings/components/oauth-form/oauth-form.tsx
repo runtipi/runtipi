@@ -5,12 +5,13 @@ import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { Input } from '@/components/ui/Input';
 
 const schema = type({
-  name: 'string >= 1',
+  slug: 'string >= 1',
+  displayName: 'string >= 1',
   clientId: 'string >=1',
   clientSecret: 'string >=1',
-  authorizeUri: 'string.url',
-  tokenUri: 'string.url',
-  userinfoUri: 'string.url',
+  authorizeUrl: 'string.url',
+  tokenUrl: 'string.url',
+  userInfoUrl: 'string.url',
 });
 
 export type FormValues = typeof schema.infer;
@@ -20,9 +21,10 @@ interface OAuthFormProps {
   initialValues?: FormValues;
   formId?: string;
   isLoading?: boolean;
+  slugDisabled?: boolean;
 }
 
-export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues }: OAuthFormProps) => {
+export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues, slugDisabled }: OAuthFormProps) => {
   const { t } = useTranslation();
 
   const { register, handleSubmit, formState } = useForm<FormValues>({
@@ -33,14 +35,24 @@ export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues }: OAuthF
   return (
     <form id={formId} onSubmit={handleSubmit((values) => onSubmit(values))}>
       <Input
-        error={formState.errors.name?.message}
+        error={formState.errors.slug?.message}
+        disabled={isLoading || slugDisabled}
+        type="text"
+        label="Provider Slug"
+        placeholder="my-provider"
+        className="mb-3"
+        required
+        {...register('slug')}
+      />
+      <Input
+        error={formState.errors.displayName?.message}
         disabled={isLoading}
         type="text"
         label={t('SETTINGS_SECURITY_OAUTH_FORM_NAME')}
         placeholder="My Provider"
         className="mb-3"
         required
-        {...register('name')}
+        {...register('displayName')}
       />
       <Input
         error={formState.errors.clientId?.message}
@@ -63,34 +75,34 @@ export const OAuthForm = ({ onSubmit, formId, isLoading, initialValues }: OAuthF
         {...register('clientSecret')}
       />
       <Input
-        error={formState.errors.authorizeUri?.message}
+        error={formState.errors.authorizeUrl?.message}
         disabled={isLoading}
         type="text"
         label={t('SETTINGS_SECURITY_OAUTH_FORM_AUTHORIZE_URL')}
         placeholder="https://example.com/authorize"
         className="mb-3"
         required
-        {...register('authorizeUri')}
+        {...register('authorizeUrl')}
       />
       <Input
-        error={formState.errors.tokenUri?.message}
+        error={formState.errors.tokenUrl?.message}
         disabled={isLoading}
         type="text"
         label={t('SETTINGS_SECURITY_OAUTH_FORM_TOKEN_URL')}
         placeholder="https://example.com/token"
         className="mb-3"
         required
-        {...register('tokenUri')}
+        {...register('tokenUrl')}
       />
       <Input
-        error={formState.errors.userinfoUri?.message}
+        error={formState.errors.userInfoUrl?.message}
         disabled={isLoading}
         type="text"
         label={t('SETTINGS_SECURITY_OAUTH_FORM_USER_INFO_URL')}
         placeholder="https://example.com/userinfo"
         className="mb-3"
         required
-        {...register('userinfoUri')}
+        {...register('userInfoUrl')}
       />
     </form>
   );

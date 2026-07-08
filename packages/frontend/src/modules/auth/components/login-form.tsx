@@ -20,8 +20,8 @@ interface IProps {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
   loginType: string;
-  oauthProviders: { id: number; name: string }[];
-  onOAuthClick: (provider: { id: number }) => void;
+  oauthProviders: { slug: string; displayName: string }[];
+  onOAuthClick: (provider: { slug: string }) => void;
 }
 
 export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oauthProviders, onOAuthClick }) => {
@@ -80,9 +80,9 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oaut
           <div className="hr-text">{t('AUTH_FORM_OAUTH_DIVIDER')}</div>
           <div className="d-flex gap-3 flex-column">
             {oauthProviders.map((provider) => (
-              <Button key={provider.id} onClick={() => onOAuthClick(provider)} intent="dark" variant="outline" className="w-100">
+              <Button key={provider.slug} onClick={() => onOAuthClick(provider)} intent="dark" variant="outline" className="w-100">
                 <IconBrandOauth size={16} className="me-2" />
-                <span>{provider.name}</span>
+                <span>{provider.displayName}</span>
               </Button>
             ))}
           </div>

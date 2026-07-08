@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { acknowledgeWelcome, appContext, appEvents, appLogsEvents, backupAllApps, backupApp, changePassword, changeUsername, check, createAppStore, createCustomApp, createLink, createProvider, deleteAppBackup, deleteAppStore, deleteLink, deleteProvider, deleteTrustedSub, disableTotp, disableUserConfig, downloadBackup, downloadLocalCertificate, editLink, editProvider, enableUserConfig, forwardAuth, getAllAppStores, getApp, getAppBackups, getAppComposeDiff, getAppConfigDiff, getEditableAppConfig, getEnabledAppStores, getGuestApps, getGuestLinks, getImage, getInstalledApps, getLinks, getProviderAuthUrl, getProvidersPrivate, getProvidersPublic, getRandomPort, getTemplateDiff, getTotpUri, getTranslation, getTrustedSubs, getUserConfig, handleCallback, ignoreAppVersion, incrementAllAppVersions, installApp, login, logout, type Options, pullAppStores, register, resetApp, resetPassword, restartAllApps, restartApp, restoreAppBackup, runtipiLogsEvents, searchApps, seedDatabase, setAllAppSubnetToNull, setAllAppUpdateAvailable, setupTotp, startAllApps, startAllApps2, startApp, stopAllApps, stopApp, syncWithTemplate, systemLoad, traefik, unignoreAppVersion, uninstallAllApps, uninstallApp, updateAllApps, updateApp, updateAppMetadata, updateAppSettings, updateAppStore, updateCustomApp, updateEditableAppConfig, updateUserConfig, updateUserSettings, uploadAppImage, uploadBackup, userContext, verifyTotp } from '../sdk.gen';
-import type { AcknowledgeWelcomeData, AppContextData, AppEventsData, AppLogsEventsData, BackupAllAppsData, BackupAppData, BackupAppResponse, ChangePasswordData, ChangeUsernameData, CheckData, CreateAppStoreData, CreateAppStoreResponse, CreateCustomAppData, CreateCustomAppResponse, CreateLinkData, CreateProviderData, CreateProviderResponse, DeleteAppBackupData, DeleteAppStoreData, DeleteLinkData, DeleteProviderData, DeleteProviderResponse, DeleteTrustedSubData, DisableTotpData, DisableUserConfigData, DownloadBackupData, DownloadLocalCertificateData, EditLinkData, EditProviderData, EditProviderResponse, EnableUserConfigData, ForwardAuthData, GetAllAppStoresData, GetAppBackupsData, GetAppBackupsResponse, GetAppComposeDiffData, GetAppConfigDiffData, GetAppData, GetEditableAppConfigData, GetEnabledAppStoresData, GetGuestAppsData, GetGuestLinksData, GetImageData, GetInstalledAppsData, GetLinksData, GetProviderAuthUrlData, GetProviderAuthUrlResponse, GetProvidersPrivateData, GetProvidersPublicData, GetRandomPortData, GetRandomPortResponse, GetTemplateDiffData, GetTotpUriData, GetTotpUriResponse, GetTranslationData, GetTrustedSubsData, GetUserConfigData, HandleCallbackData, IgnoreAppVersionData, IncrementAllAppVersionsData, InstallAppData, InstallAppResponse, LoginData, LoginResponse, LogoutData, PullAppStoresData, PullAppStoresResponse, RegisterData, RegisterResponse, ResetAppData, ResetAppResponse, ResetPasswordData, ResetPasswordResponse, RestartAllAppsData, RestartAppData, RestartAppResponse, RestoreAppBackupData, RestoreAppBackupResponse, RuntipiLogsEventsData, SearchAppsData, SearchAppsResponse, SeedDatabaseData, SetAllAppSubnetToNullData, SetAllAppUpdateAvailableData, SetupTotpData, StartAllApps2Data, StartAllAppsData, StartAppData, StartAppResponse, StopAllAppsData, StopAppData, StopAppResponse, SyncWithTemplateData, SyncWithTemplateResponse, SystemLoadData, TraefikData, UnignoreAppVersionData, UninstallAllAppsData, UninstallAppData, UninstallAppResponse, UpdateAllAppsData, UpdateAppData, UpdateAppMetadataData, UpdateAppResponse, UpdateAppSettingsData, UpdateAppSettingsResponse, UpdateAppStoreData, UpdateAppStoreResponse, UpdateCustomAppData, UpdateEditableAppConfigData, UpdateEditableAppConfigResponse, UpdateUserConfigData, UpdateUserSettingsData, UploadAppImageData, UploadBackupData, UserContextData, VerifyTotpData, VerifyTotpResponse } from '../types.gen';
+import { acknowledgeWelcome, appContext, appEvents, appLogsEvents, backupAllApps, backupApp, changePassword, changeUsername, check, createAppStore, createCustomApp, createLink, createProvider, deleteAppBackup, deleteAppStore, deleteLink, deleteProvider, deleteTrustedSub, disableTotp, disableUserConfig, downloadBackup, downloadLocalCertificate, editLink, editProvider, enableUserConfig, forwardAuth, getAllAppStores, getApp, getAppBackups, getAppComposeDiff, getAppConfigDiff, getEditableAppConfig, getEnabledAppStores, getGuestApps, getGuestLinks, getImage, getInstalledApps, getLinks, getLoginProviders, getProviderAuthUrl, getRandomPort, getTemplateDiff, getTotpUri, getTranslation, getTrustedSubs, getUserConfig, getUserProviders, handleProviderCallback, ignoreAppVersion, incrementAllAppVersions, installApp, login, logout, type Options, pullAppStores, register, resetApp, resetPassword, restartAllApps, restartApp, restoreAppBackup, runtipiLogsEvents, searchApps, seedDatabase, setAllAppSubnetToNull, setAllAppUpdateAvailable, setupTotp, startAllApps, startAllApps2, startApp, stopAllApps, stopApp, syncWithTemplate, systemLoad, traefik, unignoreAppVersion, uninstallAllApps, uninstallApp, updateAllApps, updateApp, updateAppMetadata, updateAppSettings, updateAppStore, updateCustomApp, updateEditableAppConfig, updateUserConfig, updateUserSettings, uploadAppImage, uploadBackup, userContext, verifyTotp } from '../sdk.gen';
+import type { AcknowledgeWelcomeData, AppContextData, AppEventsData, AppLogsEventsData, BackupAllAppsData, BackupAppData, BackupAppResponse, ChangePasswordData, ChangeUsernameData, CheckData, CreateAppStoreData, CreateAppStoreResponse, CreateCustomAppData, CreateCustomAppResponse, CreateLinkData, CreateProviderData, CreateProviderResponse, DeleteAppBackupData, DeleteAppStoreData, DeleteLinkData, DeleteProviderData, DeleteTrustedSubData, DisableTotpData, DisableUserConfigData, DownloadBackupData, DownloadLocalCertificateData, EditLinkData, EditProviderData, EditProviderResponse, EnableUserConfigData, ForwardAuthData, GetAllAppStoresData, GetAppBackupsData, GetAppBackupsResponse, GetAppComposeDiffData, GetAppConfigDiffData, GetAppData, GetEditableAppConfigData, GetEnabledAppStoresData, GetGuestAppsData, GetGuestLinksData, GetImageData, GetInstalledAppsData, GetLinksData, GetLoginProvidersData, GetProviderAuthUrlData, GetProviderAuthUrlResponse, GetRandomPortData, GetRandomPortResponse, GetTemplateDiffData, GetTotpUriData, GetTotpUriResponse, GetTranslationData, GetTrustedSubsData, GetUserConfigData, GetUserProvidersData, HandleProviderCallbackData, IgnoreAppVersionData, IncrementAllAppVersionsData, InstallAppData, InstallAppResponse, LoginData, LoginResponse, LogoutData, PullAppStoresData, PullAppStoresResponse, RegisterData, RegisterResponse, ResetAppData, ResetAppResponse, ResetPasswordData, ResetPasswordResponse, RestartAllAppsData, RestartAppData, RestartAppResponse, RestoreAppBackupData, RestoreAppBackupResponse, RuntipiLogsEventsData, SearchAppsData, SearchAppsResponse, SeedDatabaseData, SetAllAppSubnetToNullData, SetAllAppUpdateAvailableData, SetupTotpData, StartAllApps2Data, StartAllAppsData, StartAppData, StartAppResponse, StopAllAppsData, StopAppData, StopAppResponse, SyncWithTemplateData, SyncWithTemplateResponse, SystemLoadData, TraefikData, UnignoreAppVersionData, UninstallAllAppsData, UninstallAppData, UninstallAppResponse, UpdateAllAppsData, UpdateAppData, UpdateAppMetadataData, UpdateAppResponse, UpdateAppSettingsData, UpdateAppSettingsResponse, UpdateAppStoreData, UpdateAppStoreResponse, UpdateCustomAppData, UpdateEditableAppConfigData, UpdateEditableAppConfigResponse, UpdateUserConfigData, UpdateUserSettingsData, UploadAppImageData, UploadBackupData, UserContextData, VerifyTotpData, VerifyTotpResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -1250,12 +1250,12 @@ export const syncWithTemplateMutation = (options?: Partial<Options<SyncWithTempl
     return mutationOptions;
 };
 
-export const getProvidersPublicQueryKey = (options?: Options<GetProvidersPublicData>) => createQueryKey('getProvidersPublic', options);
+export const getLoginProvidersQueryKey = (options?: Options<GetLoginProvidersData>) => createQueryKey('getLoginProviders', options);
 
-export const getProvidersPublicOptions = (options?: Options<GetProvidersPublicData>) => {
+export const getLoginProvidersOptions = (options?: Options<GetLoginProvidersData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getProvidersPublic({
+            const { data } = await getLoginProviders({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -1263,16 +1263,16 @@ export const getProvidersPublicOptions = (options?: Options<GetProvidersPublicDa
             });
             return data;
         },
-        queryKey: getProvidersPublicQueryKey(options)
+        queryKey: getLoginProvidersQueryKey(options)
     });
 };
 
-export const getProvidersPrivateQueryKey = (options?: Options<GetProvidersPrivateData>) => createQueryKey('getProvidersPrivate', options);
+export const getUserProvidersQueryKey = (options?: Options<GetUserProvidersData>) => createQueryKey('getUserProviders', options);
 
-export const getProvidersPrivateOptions = (options?: Options<GetProvidersPrivateData>) => {
+export const getUserProvidersOptions = (options?: Options<GetUserProvidersData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getProvidersPrivate({
+            const { data } = await getUserProviders({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -1280,7 +1280,7 @@ export const getProvidersPrivateOptions = (options?: Options<GetProvidersPrivate
             });
             return data;
         },
-        queryKey: getProvidersPrivateQueryKey(options)
+        queryKey: getUserProvidersQueryKey(options)
     });
 };
 
@@ -1312,8 +1312,8 @@ export const editProviderMutation = (options?: Partial<Options<EditProviderData>
     return mutationOptions;
 };
 
-export const deleteProviderMutation = (options?: Partial<Options<DeleteProviderData>>): UseMutationOptions<DeleteProviderResponse, DefaultError, Options<DeleteProviderData>> => {
-    const mutationOptions: UseMutationOptions<DeleteProviderResponse, DefaultError, Options<DeleteProviderData>> = {
+export const deleteProviderMutation = (options?: Partial<Options<DeleteProviderData>>): UseMutationOptions<unknown, DefaultError, Options<DeleteProviderData>> => {
+    const mutationOptions: UseMutationOptions<unknown, DefaultError, Options<DeleteProviderData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await deleteProvider({
                 ...options,
@@ -1340,12 +1340,12 @@ export const getProviderAuthUrlMutation = (options?: Partial<Options<GetProvider
     return mutationOptions;
 };
 
-export const handleCallbackQueryKey = (options: Options<HandleCallbackData>) => createQueryKey('handleCallback', options);
+export const handleProviderCallbackQueryKey = (options: Options<HandleProviderCallbackData>) => createQueryKey('handleProviderCallback', options);
 
-export const handleCallbackOptions = (options: Options<HandleCallbackData>) => {
+export const handleProviderCallbackOptions = (options: Options<HandleProviderCallbackData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await handleCallback({
+            const { data } = await handleProviderCallback({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -1353,7 +1353,7 @@ export const handleCallbackOptions = (options: Options<HandleCallbackData>) => {
             });
             return data;
         },
-        queryKey: handleCallbackQueryKey(options)
+        queryKey: handleProviderCallbackQueryKey(options)
     });
 };
 

@@ -1,9 +1,9 @@
-import { userContext, type GetProviderAuthUrlResponse } from '@/api-client';
-import { getProviderAuthUrlMutation, getProvidersPublicOptions, loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
+import { type GetProviderAuthUrlResponse, userContext } from '@/api-client';
+import { getLoginProvidersOptions, getProviderAuthUrlMutation, loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useUserContext } from '@/context/user-context';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Navigate, redirect, useNavigate, useSearchParams } from 'react-router';
@@ -69,7 +69,7 @@ export default () => {
 
   const loginType = capitalize(app ?? '') || t('AUTH_LOGIN_TYPE_ACCOUNT');
   const { data: oauthProviders } = useSuspenseQuery({
-    ...getProvidersPublicOptions(),
+    ...getLoginProvidersOptions(),
   });
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export default () => {
     },
   });
 
-  const getOAuthUrl = useMutation({
+  const getOAuthURL = useMutation({
     ...getProviderAuthUrlMutation(),
     onSuccess: (res: GetProviderAuthUrlResponse) => {
       toast.success(t('SETTINGS_SECURITY_OAUTH_AUTHORIZE_REDIRECT'));
@@ -173,7 +173,7 @@ export default () => {
       loading={login.isPending}
       loginType={loginType}
       oauthProviders={oauthProviders.providers}
-      onOAuthClick={(provider) => getOAuthUrl.mutate({ path: { id: provider.id } })}
+      onOAuthClick={(provider) => getOAuthURL.mutate({ path: { slug: provider.slug } })}
     />
   );
 };

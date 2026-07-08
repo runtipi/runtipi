@@ -2226,7 +2226,7 @@
     },
     "/api/oidc/providers/user": {
       "get": {
-        "operationId": "getProvidersPrivate",
+        "operationId": "getUserProviders",
         "parameters": [],
         "responses": {
           "default": {
@@ -2316,7 +2316,7 @@
         ]
       }
     },
-    "/api/oidc/providers/{id}/delete": {
+    "/api/oidc/providers/{slug}/delete": {
       "delete": {
         "operationId": "deleteProvider",
         "parameters": [
@@ -2339,7 +2339,7 @@
         ]
       }
     },
-    "/api/oidc/providers/{id}/slug": {
+    "/api/oidc/providers/{slug}/url": {
       "post": {
         "operationId": "getProviderAuthURL",
         "parameters": [
@@ -5822,9 +5822,6 @@
             "type": "string",
             "format": "uri"
           },
-          "userId": {
-            "type": "number"
-          },
           "userInfoUrl": {
             "type": "string",
             "format": "uri"
@@ -5837,7 +5834,6 @@
           "displayName",
           "slug",
           "tokenUrl",
-          "userId",
           "userInfoUrl"
         ]
       },

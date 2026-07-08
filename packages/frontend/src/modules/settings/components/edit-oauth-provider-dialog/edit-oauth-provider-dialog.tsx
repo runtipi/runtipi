@@ -12,10 +12,17 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { OAuthForm } from '../oauth-form/oauth-form';
 import { DropdownMenuItem } from '@/components/ui/DropdownMenu';
 import { useEffect } from 'react';
-import type { Provider } from '@/types/oidc.types';
 
 export interface EditOAuthProviderDialogProps {
-  provider: Provider;
+  provider: {
+    authorizeUrl: string;
+    clientId: string;
+    clientSecret: string;
+    displayName: string;
+    slug: string;
+    tokenUrl: string;
+    userInfoUrl: string;
+  };
 }
 
 export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogProps) => {
@@ -63,7 +70,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
       <Dialog open={editProviderDialogDisclosure.isOpen} onOpenChange={editProviderDialogDisclosure.toggle}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('SETTINGS_SECURITY_OAUTH_EDIT_MODAL_TITLE', { provider: provider.name })}</DialogTitle>
+            <DialogTitle>{t('SETTINGS_SECURITY_OAUTH_EDIT_MODAL_TITLE', { provider: provider.displayName })}</DialogTitle>
           </DialogHeader>
           <DialogDescription>
             <ScrollArea maxheight={500}>
@@ -73,7 +80,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
                 <>
                   <p className="text-muted mb-3">{t('SETTINGS_SECURITY_OAUTH_EDIT_SUBTITLE')}</p>
                   <OAuthForm
-                    onSubmit={(values) => editProvider.mutate({ path: { id: provider.id }, body: values })}
+                    onSubmit={(values) => editProvider.mutate({ path: { slug: provider.slug }, body: values })}
                     formId={formId}
                     isLoading={editProvider.isPending}
                     initialValues={provider}
@@ -92,7 +99,7 @@ export const EditOAuthProviderDialog = ({ provider }: EditOAuthProviderDialogPro
               {edited ? t('CLOSE') : t('ACTIONS_CANCEL')}
             </Button>
             {edited ? (
-              <Button intent="primary" onClick={() => getProviderUrl.mutate({ path: { id: provider.id } })} disabled={getProviderUrl.isPending}>
+              <Button intent="primary" onClick={() => getProviderUrl.mutate({ path: { slug: provider.slug } })} disabled={getProviderUrl.isPending}>
                 {t('SETTINGS_SECURITY_OAUTH_AUTHORIZE')}
               </Button>
             ) : (
