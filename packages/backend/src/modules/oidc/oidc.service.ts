@@ -34,6 +34,19 @@ const discoverySchema = type({
 
 type DiscoverySchema = typeof discoverySchema.infer;
 
+type OIDCProviderDB = {
+  id: number;
+  userId: number;
+  slug: string;
+  displayName: string;
+  clientId: string;
+  clientSecret: string;
+  issuer: string;
+  discovery: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 @Injectable()
 export class OIDCService {
   constructor(
@@ -41,6 +54,21 @@ export class OIDCService {
     private readonly logger: LoggerService,
     private readonly cacheService: CacheService,
   ) {}
+
+  private providerToDto(provider: OIDCProviderDB): OIDCProviderDto {
+    return OIDCProviderDto.parse({
+      id: provider.id,
+      userId: provider.userId,
+      slug: provider.slug,
+      displayName: provider.displayName,
+      clientId: provider.clientId,
+      clientSecret: provider.clientSecret,
+      issuer: provider.issuer,
+      discovery: provider.discovery,
+      createdAt: provider.createdAt.getTime(),
+      updatedAt: provider.updatedAt.getTime(),
+    });
+  }
 
   private async discoverEndpoints(issuer: string, discovery: string): Promise<DiscoverySchema | undefined> {
     try {
@@ -88,7 +116,7 @@ export class OIDCService {
         throw new Error('Failed to get OIDC endpoints');
       }
 
-      const config = this.buildClientConfig(provider, endpoints);
+      const config = this.buildClientConfig(this.providerToDto(provider), endpoints);
       const state = client.randomState();
 
       let flowType: 'sub_register' | 'login' = 'login';
@@ -158,7 +186,7 @@ export class OIDCService {
         throw new Error('Failed to get OIDC endpoints');
       }
 
-      const config = this.buildClientConfig(provider, endpoints);
+      const config = this.buildClientConfig(this.providerToDto(provider), endpoints);
 
       return await client.authorizationCodeGrant(config, reqURL, {
         expectedState: state,
@@ -184,7 +212,7 @@ export class OIDCService {
         throw new Error('Failed to discover endpoints');
       }
 
-      const config = this.buildClientConfig(provider, endpoints);
+      const config = this.buildClientConfig(this.providerToDto(provider), endpoints);
       const userInfoResponse = await client.fetchProtectedResource(config, access_token, new URL(endpoints.userinfo_endpoint), 'GET');
       const bodyJSON = (await userInfoResponse.json()) as { sub?: string };
 
@@ -243,7 +271,13 @@ export class OIDCService {
         throw new Error('Provider not found');
       }
 
-      return await this.oidcRepository.editOIDCProvider(provider.id, input);
+      const res = await this.oidcRepository.editOIDCProvider(provider.id, { ...input });
+
+      if (typeof res === 'undefined') {
+        throw new Error('Failed to edit OIDC provider', res);
+      }
+
+      return OIDCProviderDto.parse(this.providerToDto(provider));
     } catch (error) {
       this.logger.error('Failed to edit OIDC provider', error);
       return undefined;
@@ -286,7 +320,7 @@ export class OIDCService {
             slug: trustedSub.slug,
             sub: trustedSub.sub,
             providerDisplayName: provider.displayName,
-            createdAt: trustedSub.createdAt,
+            createdAt: trustedSub.createdAt.getTime(),
           });
         }
       }

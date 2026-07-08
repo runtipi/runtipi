@@ -1,5 +1,5 @@
 {
-  "id": "3076cb04-554c-4076-99d8-6c6aca2d9630",
+  "id": "b34db164-dfe8-4336-b6c3-c9ccc683d8af",
   "prevId": "d4ef54f9-1df7-4b5c-ab4d-f5ef53758e2b",
   "version": "7",
   "dialect": "postgresql",
@@ -392,14 +392,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
@@ -471,14 +471,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "integer",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"

@@ -593,7 +593,7 @@
   "SETTINGS_SECURITY_OAUTH_CALLBACK_URL_HINT": "Copy callback URL to clipboard",
   "SETTINGS_SECURITY_OAUTH_NO_TRUSTED_USERS": "No trusted users configured, add one to enable OAuth authentication.",
   "SETTINGS_SECURITY_OAUTH_TRUSTED_USERS_DESCRIPTION": "The accounts below (identified by their subject IDs) are allowed to sign in via {{provider}}.",
-  "SETTINGS_SECURITY_OAUTH_SUB_ENTRY_ADDED": "Sub entry added successfully!",
+  "SETTINGS_SECURITY_OAUTH_SUB_ENTRY_ADDED": "added on",
   "SETTINGS_SECURITY_OAUTH_DETAILS_SHOW": "Details",
   "SETTINGS_SECURITY_OAUTH_DETAILS_HIDE": "Hide",
   "SETTINGS_SECURITY_OAUTH_PROVIDER_EDIT_SUCCESS": "Provider updated successfully!",

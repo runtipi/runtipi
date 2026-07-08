@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import { boolean, customType, integer, pgEnum, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
+import { boolean, customType, integer, pgEnum, pgTable, serial, text, varchar, timestamp } from 'drizzle-orm/pg-core';
 
 export const appStatusEnum = pgEnum('app_status_enum', [
   'running',
@@ -110,8 +110,8 @@ export const oidcProviders = pgTable('oidc_providers', {
   clientSecret: varchar().notNull(),
   issuer: varchar().notNull(),
   discovery: varchar().notNull(),
-  createdAt: integer('created_at').notNull().default(sql`now()`),
-  updatedAt: integer('updated_at').notNull().default(sql`now()`),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
 });
 
 export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
@@ -124,6 +124,6 @@ export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
     .notNull()
     .references(() => oidcProviders.id, { onDelete: 'cascade' }),
   sub: varchar().notNull(),
-  createdAt: integer('created_at').notNull().default(sql`now()`),
-  updatedAt: integer('updated_at').notNull().default(sql`now()`),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
 });

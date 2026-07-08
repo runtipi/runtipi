@@ -885,43 +885,39 @@ export type OidcProvidersLoginDto = {
 
 export type GetOidcProvidersDto = {
     providers: Array<{
-        authorizeUrl: string;
         clientId: string;
         clientSecret: string;
+        discovery: string;
         displayName: string;
+        issuer: string;
         slug: string;
-        tokenUrl: string;
-        userInfoUrl: string;
     }>;
 };
 
 export type CreateOidcProviderDto = {
-    authorizeUrl: string;
     clientId: string;
     clientSecret: string;
+    discovery: string;
     displayName: string;
+    issuer: string;
     slug: string;
-    tokenUrl: string;
-    userInfoUrl: string;
 };
 
 export type GetOidcProviderDto = {
-    authorizeUrl: string;
     clientId: string;
     clientSecret: string;
+    discovery: string;
     displayName: string;
+    issuer: string;
     slug: string;
-    tokenUrl: string;
-    userInfoUrl: string;
 };
 
 export type EditOidcProviderDto = {
-    authorizeUrl: string;
     clientId: string;
     clientSecret: string;
+    discovery: string;
     displayName: string;
-    tokenUrl: string;
-    userInfoUrl: string;
+    issuer: string;
 };
 
 export type GetOidcProviderUrlDto = {

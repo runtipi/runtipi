@@ -15,13 +15,12 @@ import { useEffect } from 'react';
 
 export interface EditOAuthProviderDialogProps {
   provider: {
-    authorizeUrl: string;
     clientId: string;
     clientSecret: string;
     displayName: string;
     slug: string;
-    tokenUrl: string;
-    userInfoUrl: string;
+    discovery: string;
+    issuer: string;
   };
 }
 
