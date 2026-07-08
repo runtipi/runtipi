@@ -1,5 +1,5 @@
 {
-  "id": "0c033298-acc0-4416-a6f9-3d0c0c2a9b37",
+  "id": "d02ff9da-cf53-4461-b0ae-75361976ffde",
   "prevId": "d4ef54f9-1df7-4b5c-ab4d-f5ef53758e2b",
   "version": "7",
   "dialect": "postgresql",
@@ -338,18 +338,30 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.oidc": {
-      "name": "oidc",
+    "public.oidc_providers": {
+      "name": "oidc_providers",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
+        "displayName": {
+          "name": "displayName",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -366,20 +378,20 @@
           "primaryKey": false,
           "notNull": true
         },
-        "authorizeUri": {
-          "name": "authorizeUri",
+        "authorizeUrl": {
+          "name": "authorizeUrl",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "tokenUri": {
-          "name": "tokenUri",
+        "tokenUrl": {
+          "name": "tokenUrl",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "userinfoUri": {
-          "name": "userinfoUri",
+        "userInfoUrl": {
+          "name": "userInfoUrl",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -389,20 +401,42 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "extract(epoch from now())"
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "extract(epoch from now())"
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "oidc_providers_user_id_user_id_fk": {
+          "name": "oidc_providers_user_id_user_id_fk",
+          "tableFrom": "oidc_providers",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "oidc_providers_id_unique": {
+          "name": "oidc_providers_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -414,17 +448,23 @@
         "id": {
           "name": "id",
           "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
           "primaryKey": true,
           "notNull": true
         },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "providerId": {
-          "name": "providerId",
+        "provider_id": {
+          "name": "provider_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -440,18 +480,45 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "extract(epoch from now())"
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "extract(epoch from now())"
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "oidc_trusted_subs_user_id_user_id_fk": {
+          "name": "oidc_trusted_subs_user_id_user_id_fk",
+          "tableFrom": "oidc_trusted_subs",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "oidc_trusted_subs_provider_id_oidc_providers_id_fk": {
+          "name": "oidc_trusted_subs_provider_id_oidc_providers_id_fk",
+          "tableFrom": "oidc_trusted_subs",
+          "tableTo": "oidc_providers",
+          "columnsFrom": [
+            "provider_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

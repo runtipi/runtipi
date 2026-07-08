@@ -1,48 +1,95 @@
 import { type } from 'arktype';
 import { createArkDto } from 'nestjs-arktype';
 
-export const oidcProviderSchema = type({
-  'id?': 'number',
-  name: 'string >= 1',
-  clientId: 'string >=1',
-  clientSecret: 'string >=1',
-  authorizeUri: 'string.url',
-  tokenUri: 'string.url',
-  userinfoUri: 'string.url',
-});
-
-export const oidcProviderPublicSchema = type({
+export const OIDCProviderSchema = type({
   id: 'number',
-  name: 'string',
+  userId: 'number',
+  slug: 'string >= 1',
+  displayName: 'string >= 1',
+  clientId: 'string >= 1',
+  clientSecret: 'string >= 1',
+  authorizeUrl: 'string.url',
+  tokenUrl: 'string.url',
+  userInfoUrl: 'string.url',
+  createdAt: 'number',
+  updatedAt: 'number',
 });
 
-export const oidcProviderAuthRes = type({
-  url: 'string',
+export class OIDCProviderDto extends createArkDto(OIDCProviderSchema, { name: 'OIDCProviderDto' }) {}
+
+export const CreateOIDCProviderSchema = type({
+  slug: 'string >= 1',
+  userId: 'number',
+  displayName: 'string >= 1',
+  clientId: 'string >= 1',
+  clientSecret: 'string >= 1',
+  authorizeUrl: 'string.url',
+  tokenUrl: 'string.url',
+  userInfoUrl: 'string.url',
 });
 
-export const trustedSubSchema = type({
-  id: 'number',
+export class CreateOIDCProviderDto extends createArkDto(CreateOIDCProviderSchema, { name: 'CreateOIDCProviderDto' }) {}
+
+export const EditOIDCProviderSchema = type({
+  displayName: 'string >= 1',
+  clientId: 'string >= 1',
+  clientSecret: 'string >= 1',
+  authorizeUrl: 'string.url',
+  tokenUrl: 'string.url',
+  userInfoUrl: 'string.url',
+});
+
+export class EditOIDCProviderDto extends createArkDto(EditOIDCProviderSchema, { name: 'EditOIDCProviderDto' }) {}
+
+export const TrustedSubSchema = type({
+  slug: 'string',
   sub: 'string',
-  providerId: 'number',
+  providerDisplayName: 'string',
   createdAt: 'number',
 });
 
-export const oidcProvidersSchema = type({
-  providers: oidcProviderSchema.array(),
+export class TrustedSubDto extends createArkDto(TrustedSubSchema, { name: 'TrustedSubDto' }) {}
+
+export const TrustedSubsSchema = type({
+  subs: TrustedSubSchema.array(),
 });
 
-export const publicOidcProvidersSchema = type({
-  providers: oidcProviderPublicSchema.array(),
+export class TrustedSubsDto extends createArkDto(TrustedSubsSchema, { name: 'TrustedSubsDto' }) {}
+
+export const GetOIDCProviderSchema = type({
+  slug: 'string >= 1',
+  displayName: 'string >= 1',
+  clientId: 'string >= 1',
+  clientSecret: 'string >= 1',
+  authorizeUrl: 'string.url',
+  tokenUrl: 'string.url',
+  userInfoUrl: 'string.url',
 });
 
-export const trustedSubsSchema = type({
-  subs: trustedSubSchema.array(),
+export class GetOIDCProviderDto extends createArkDto(GetOIDCProviderSchema, { name: 'GetOIDCProviderDto' }) {}
+
+export const GetOIDCProvidersSchema = type({
+  providers: GetOIDCProviderSchema.array(),
 });
 
-export class OidcProviderDto extends createArkDto(oidcProviderSchema, { name: 'OidcProviderDto', input: true }) {}
-export class OidcProvidersDto extends createArkDto(oidcProvidersSchema, { name: 'OidcProvidersDto' }) {}
-export class PublicOidcProviderDto extends createArkDto(oidcProviderPublicSchema, { name: 'PublicOidcProviderDto' }) {}
-export class PublicOidcProvidersDto extends createArkDto(publicOidcProvidersSchema, { name: 'PublicOidcProvidersDto' }) {}
-export class OidcProviderAuthResDto extends createArkDto(oidcProviderAuthRes, { name: 'OidcProviderAuthResDto' }) {}
-export class TrustedSubDto extends createArkDto(trustedSubSchema, { name: 'TrustedSubDto' }) {}
-export class TrustedSubsDto extends createArkDto(trustedSubsSchema, { name: 'TrustedSubsDto' }) {}
+export class GetOIDCProvidersDto extends createArkDto(GetOIDCProvidersSchema, { name: 'GetOIDCProvidersDto' }) {}
+
+export const OIDCProviderLoginSchema = type({
+  slug: 'string >= 1',
+  displayName: 'string >= 1',
+});
+
+export class OIDCProviderLoginDto extends createArkDto(OIDCProviderLoginSchema, { name: 'OIDCProviderLoginDto' }) {}
+
+export const OIDCProvidersLoginSchema = type({
+  providers: OIDCProviderLoginSchema.array(),
+});
+
+export class OIDCProvidersLoginDto extends createArkDto(OIDCProvidersLoginSchema, { name: 'OIDCProvidersLoginDto' }) {}
+
+export const GetOIDCProviderURLSchema = type({
+  slug: 'string',
+  url: 'string.url',
+});
+
+export class GetOIDCProviderURLDto extends createArkDto(GetOIDCProviderURLSchema, { name: 'GetOIDCProviderURLDto' }) {}

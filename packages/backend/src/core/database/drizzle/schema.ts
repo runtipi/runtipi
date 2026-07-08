@@ -99,26 +99,31 @@ export const appStore = pgTable('app_store', {
   updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
 });
 
-export const oidc = pgTable('oidc', {
-  id: serial().primaryKey().notNull().unique(),
-  name: varchar().notNull(),
+export const oidcProviders = pgTable('oidc_providers', {
+  id: serial().notNull().unique(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  slug: varchar().notNull().primaryKey(),
+  displayName: varchar().notNull(),
   clientId: varchar().notNull(),
   clientSecret: varchar().notNull(),
-  authorizeUri: varchar().notNull(),
-  tokenUri: varchar().notNull(),
-  userinfoUri: varchar().notNull(),
+  authorizeUrl: varchar().notNull(),
+  tokenUrl: varchar().notNull(),
+  userInfoUrl: varchar().notNull(),
   createdAt: integer('created_at').notNull().default(sql`now()`),
   updatedAt: integer('updated_at').notNull().default(sql`now()`),
 });
 
 export const oidcTrustedSubs = pgTable('oidc_trusted_subs', {
-  id: serial().primaryKey().notNull().unique(),
-  userId: integer()
+  id: serial().notNull(),
+  slug: varchar().notNull().primaryKey(),
+  userId: integer('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  providerId: integer()
+  providerId: integer('provider_id')
     .notNull()
-    .references(() => oidc.id, { onDelete: 'cascade' }),
+    .references(() => oidcProviders.id, { onDelete: 'cascade' }),
   sub: varchar().notNull(),
   createdAt: integer('created_at').notNull().default(sql`now()`),
   updatedAt: integer('updated_at').notNull().default(sql`now()`),
