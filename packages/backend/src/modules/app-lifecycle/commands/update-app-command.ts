@@ -18,7 +18,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
     moduleRef: ModuleRef,
     docker: Dockerode,
-    private readonly performBackup: boolean = true,
+    private readonly performBackup = true,
   ) {
     super(moduleRef, docker);
   }

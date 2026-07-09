@@ -1,10 +1,10 @@
 {
   "name": "backend",
   "version": "0.0.6",
-  "description": "",
-  "author": "",
   "private": true,
+  "description": "",
   "license": "UNLICENSED",
+  "author": "",
   "scripts": {
     "dev": "nest start --watch --preserveWatchOutput",
     "bundle": "rm -rf dist && bun build.ts",

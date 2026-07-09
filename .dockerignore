@@ -10,7 +10,7 @@
 !turbo.json
 !patches/**
 
-!**/package.json
+!packages/*/package.json
 !**/tsconfig.json
 !**/vite.config.ts
 !**/index.html

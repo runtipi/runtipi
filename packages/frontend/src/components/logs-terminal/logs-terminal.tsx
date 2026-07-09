@@ -21,7 +21,6 @@ export const LogsTerminal = (props: Props) => {
 
   const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: necessary to update the scroll when a new log is added
   useEffect(() => {
     if (ref.current && follow) {
       ref.current.scrollTop = ref.current.scrollHeight;
@@ -67,7 +66,7 @@ export const LogsTerminal = (props: Props) => {
           'wrap-lines': wrapLines,
         })}
         ref={ref}
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: safe to use because the content is sanitized
+        // oxlint-disable-next-line react/no-danger -- safe to use because the content is sanitized
         dangerouslySetInnerHTML={{ __html: logs.map((log) => DOMPurify.sanitize(log.text)).join('<br />') }}
       />
     </div>

@@ -4,7 +4,7 @@ export default defineConfig({
   input: './packages/backend/src/swagger.json',
   output: {
     path: './packages/frontend/src/api-client',
-    format: 'biome',
+    postProcess: ['oxfmt'],
   },
   plugins: [...defaultPlugins, '@tanstack/react-query', '@hey-api/client-fetch'],
 });

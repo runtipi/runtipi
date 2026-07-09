@@ -18,12 +18,12 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
-      - name: Run biome tests
+      - name: Run lint checks
         run: bun run lint:ci
 
       - name: Run tests
@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
       - name: Build client
         run: bun run bundle

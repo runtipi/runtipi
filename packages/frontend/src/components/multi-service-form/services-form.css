@@ -18,7 +18,7 @@
   margin-bottom: 0.3rem;
 }
 
-[data-bs-theme="dark"] .nav-link-title-c {
+[data-bs-theme='dark'] .nav-link-title-c {
   color: var(--tblr-gray-300);
 }
 
@@ -26,7 +26,7 @@
   margin-bottom: 0.3rem;
 }
 
-[data-bs-theme="dark"] .nav-link-icon-c {
+[data-bs-theme='dark'] .nav-link-icon-c {
   color: var(--tblr-gray-300);
 }
 

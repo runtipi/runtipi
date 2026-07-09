@@ -1,6 +1,6 @@
 import type React from 'react';
 
-// biome-ignore lint/suspicious/noExplicitAny: Reasoning: This is a utility type that is used to infer the `as` prop of a component.
+// oxlint-disable-next-line typescript/no-explicit-any -- This utility type infers the `as` prop of a component.
 type ComponentPropsAs<C extends React.ElementType<any>, T extends React.ComponentPropsWithoutRef<C>['as']> = Omit<
   Extract<React.ComponentPropsWithoutRef<C>, { as: T }>,
   'as' | 'asChild'

@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation>SVG is decorative</explanation> */
 import type React from 'react';
 import { createContext, useContext } from 'react';
 

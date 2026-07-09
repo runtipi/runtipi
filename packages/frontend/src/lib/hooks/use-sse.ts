@@ -66,7 +66,6 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
     eventSourceRef.current = eventSource;
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This hook should only run once on mount
   useEffect(() => {
     initializeSSE();
 
@@ -85,5 +84,6 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
         eventSourceRef.current.close();
       }
     };
+    // oxlint-disable-next-line react/exhaustive-deps -- The SSE connection is initialized once; focus and retry handlers manage reconnects.
   }, []);
 };
