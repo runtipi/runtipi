@@ -1,3 +1,6 @@
 [submodule "cli"]
 	path = cli
 	url = git@github.com:runtipi/cli.git
+[submodule "docs"]
+	path = docs
+	url = git@github.com:runtipi/runtipi-docs.git
