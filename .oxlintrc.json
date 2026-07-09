@@ -9,7 +9,9 @@
     "**/metadata.ts",
     "**/api-client/**",
     "**/swagger.json",
-    "**/packages/backend/src/core/database/drizzle/meta/**"
+    "**/packages/backend/src/core/database/drizzle/meta/**",
+    "docs/**",
+    "cli/**"
   ],
   "rules": {
     "default-param-last": "error",
@@ -22,6 +24,7 @@
     "oxc/no-barrel-file": "warn",
     "react/no-array-index-key": "error",
     "react/no-danger": "error",
+    "react/exhaustive-deps": "error",
     "react/rules-of-hooks": "error",
     "react/self-closing-comp": "error",
     "typescript/no-explicit-any": "error",

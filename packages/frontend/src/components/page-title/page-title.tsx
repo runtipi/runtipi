@@ -11,10 +11,10 @@ type Props = {
 
 export const PageTitle = ({ apps }: Props) => {
   const { t } = useTranslation();
-  const activeRoute = useUIStore((state) => state.activeRoute);
+  useUIStore((state) => state.activeRoute);
 
   const path = window.location.pathname;
-  const pathArray = useMemo(() => path?.substring(1).split('/') || [], [activeRoute]);
+  const pathArray = useMemo(() => path.substring(1).split('/'), [path]);
   const installedAppRoute =
     pathArray[0] === 'apps' &&
     pathArray[1] &&

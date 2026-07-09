@@ -19,6 +19,8 @@
     "**/.internal/**",
     "**/metadata.ts",
     "**/swagger.json",
-    "**/packages/backend/src/core/database/drizzle/meta/**"
+    "**/packages/backend/src/core/database/drizzle/meta/**",
+    "docs/**",
+    "cli/**"
   ]
 }

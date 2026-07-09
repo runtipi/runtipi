@@ -84,5 +84,6 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
         eventSourceRef.current.close();
       }
     };
+    // oxlint-disable-next-line react/exhaustive-deps -- The SSE connection is initialized once; focus and retry handlers manage reconnects.
   }, []);
 };

@@ -81,7 +81,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
         const isDirty = JSON.stringify(deepClean(editorObj)) !== JSON.stringify(deepClean(storeObj));
 
         setIsDirty(isDirty);
-      } catch (_e) {
+      } catch {
         setIsDirty(true);
       }
     },
@@ -140,6 +140,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     } else {
       validateInput(jsonValue, 'json');
     }
+    // oxlint-disable-next-line react/exhaustive-deps -- This validates the editor's initial value only; later edits validate in change handlers.
   }, []);
 
   useEffect(() => {
