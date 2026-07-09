@@ -96,3 +96,5 @@ docs/jira/
 .internal/media/*
 .internal/traefik/*
 !.internal/cache/.gitkeep
+
+.codex
