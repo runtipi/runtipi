@@ -1,15 +1,14 @@
 services:
   runtipi-reverse-proxy:
-    container_name: runtipi-reverse-proxy
     depends_on:
       runtipi:
         condition: service_healthy
     image: traefik:v3.6.5
     restart: unless-stopped
     ports:
-      - 80:80
-      - 443:443
-      - 8080:8080
+      - ${RUNTIPI_HTTP_PORT:-80}:80
+      - ${RUNTIPI_HTTPS_PORT:-443}:443
+      - ${RUNTIPI_TRAEFIK_DASHBOARD_PORT:-8080}:8080
     command: --providers.docker --log.level=DEBUG --log.filePath=/dev/null
     volumes:
       - ./.internal/traefik:/etc/traefik
@@ -19,14 +18,13 @@ services:
       - tipi_main_network
 
   runtipi-db:
-    container_name: runtipi-db
     image: postgres:14
     restart: unless-stopped
     stop_grace_period: 1m
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - ${RUNTIPI_DB_PORT:-5432}:5432
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: tipi
@@ -40,7 +38,6 @@ services:
       - tipi_main_network
 
   runtipi-queue:
-    container_name: runtipi-queue
     image: rabbitmq:4-alpine
     restart: unless-stopped
     environment:
@@ -58,7 +55,6 @@ services:
         condition: service_healthy
       runtipi-queue:
         condition: service_started
-    container_name: runtipi
     restart: unless-stopped
     healthcheck:
       start_period: 10s
@@ -67,7 +63,7 @@ services:
       timeout: 3s
       retries: 20
     ports:
-      - 3000:8080
+      - ${RUNTIPI_DEV_PORT:-3000}:8080
     volumes:
       # Hot reload
       - ./packages/backend/src:/app/packages/backend/src
@@ -101,6 +97,7 @@ services:
       RABBITMQ_USERNAME: tipi
       RABBITMQ_PASSWORD: tipi
       RABBITMQ_HOST: runtipi-queue
+      RUNTIPI_DOCKER_NETWORK: ${RUNTIPI_DOCKER_NETWORK:-runtipi_tipi_main_network}
       INTERNAL_IP: 127.0.0.1
       TIPI_VERSION: 4.5.0
       LOG_LEVEL: debug
@@ -145,7 +142,7 @@ services:
 networks:
   tipi_main_network:
     driver: bridge
-    name: runtipi_tipi_main_network
+    name: ${RUNTIPI_DOCKER_NETWORK:-runtipi_tipi_main_network}
 
 volumes:
   pgdata:

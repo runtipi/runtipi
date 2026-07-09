@@ -1261,6 +1261,166 @@
         ]
       }
     },
+    "/api/sse/app": {
+      "get": {
+        "operationId": "appEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/sse/app-logs": {
+      "get": {
+        "operationId": "appLogsEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/sse/runtipi-logs": {
+      "get": {
+        "operationId": "runtipiLogsEvents",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "SSE"
+        ]
+      }
+    },
+    "/api/links/guest": {
+      "get": {
+        "operationId": "getGuestLinks",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/api/links": {
+      "get": {
+        "operationId": "getLinks",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "post": {
+        "operationId": "createLink",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
+    "/api/links/{id}": {
+      "patch": {
+        "operationId": "editLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditLinkBodyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Links"
+        ]
+      }
+    },
     "/api/backups/{urn}/backup": {
       "post": {
         "operationId": "backupApp",
@@ -1493,166 +1653,6 @@
         },
         "tags": [
           "Backups"
-        ]
-      }
-    },
-    "/api/sse/app": {
-      "get": {
-        "operationId": "appEvents",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "SSE"
-        ]
-      }
-    },
-    "/api/sse/app-logs": {
-      "get": {
-        "operationId": "appLogsEvents",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "SSE"
-        ]
-      }
-    },
-    "/api/sse/runtipi-logs": {
-      "get": {
-        "operationId": "runtipiLogsEvents",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "SSE"
-        ]
-      }
-    },
-    "/api/links/guest": {
-      "get": {
-        "operationId": "getGuestLinks",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinksDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      }
-    },
-    "/api/links": {
-      "get": {
-        "operationId": "getLinks",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LinksDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      },
-      "post": {
-        "operationId": "createLink",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LinkBodyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      }
-    },
-    "/api/links/{id}": {
-      "patch": {
-        "operationId": "editLink",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditLinkBodyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Links"
-        ]
-      },
-      "delete": {
-        "operationId": "deleteLink",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Links"
         ]
       }
     },
@@ -2606,6 +2606,10 @@
               },
               "themeColor": {
                 "type": "string"
+              },
+              "trustedProxyIps": {
+                "type": "string",
+                "pattern": "^\\S.*\\S$|^\\S?$"
               }
             },
             "required": [
@@ -2806,6 +2810,9 @@
             "type": "string"
           },
           "timeZone": {
+            "type": "string"
+          },
+          "trustedProxyIps": {
             "type": "string"
           }
         }
@@ -4655,100 +4662,6 @@
           "performBackup"
         ]
       },
-      "BackupRequestDto": {
-        "type": "object",
-        "properties": {
-          "requestId": {
-            "anyOf": [
-              {
-                "type": "string",
-                "description": "a UUID",
-                "format": "uuid",
-                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
-              },
-              {
-                "const": "00000000-0000-0000-0000-000000000000",
-                "description": "a UUID",
-                "format": "uuid"
-              },
-              {
-                "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
-                "description": "a UUID",
-                "format": "uuid"
-              }
-            ],
-            "description": "a UUID",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "requestId"
-        ]
-      },
-      "RestoreAppBackupDto": {
-        "type": "object",
-        "properties": {
-          "filename": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "filename"
-        ]
-      },
-      "GetAppBackupsDto": {
-        "type": "object",
-        "properties": {
-          "currentPage": {
-            "type": "number"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "date": {
-                  "type": "number"
-                },
-                "id": {
-                  "type": "string"
-                },
-                "size": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "date",
-                "id",
-                "size"
-              ]
-            }
-          },
-          "lastPage": {
-            "type": "number"
-          },
-          "total": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "currentPage",
-          "data",
-          "lastPage",
-          "total"
-        ]
-      },
-      "DeleteAppBackupBodyDto": {
-        "type": "object",
-        "properties": {
-          "filename": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "filename"
-        ]
-      },
       "LinksDto": {
         "type": "object",
         "properties": {
@@ -4887,6 +4800,100 @@
         "required": [
           "title",
           "url"
+        ]
+      },
+      "BackupRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "a UUID",
+                "format": "uuid",
+                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+              },
+              {
+                "const": "00000000-0000-0000-0000-000000000000",
+                "description": "a UUID",
+                "format": "uuid"
+              },
+              {
+                "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                "description": "a UUID",
+                "format": "uuid"
+              }
+            ],
+            "description": "a UUID",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "requestId"
+        ]
+      },
+      "RestoreAppBackupDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename"
+        ]
+      },
+      "GetAppBackupsDto": {
+        "type": "object",
+        "properties": {
+          "currentPage": {
+            "type": "number"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "size": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "date",
+                "id",
+                "size"
+              ]
+            }
+          },
+          "lastPage": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "currentPage",
+          "data",
+          "lastPage",
+          "total"
+        ]
+      },
+      "DeleteAppBackupBodyDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "filename"
         ]
       },
       "GetUserConfigDto": {

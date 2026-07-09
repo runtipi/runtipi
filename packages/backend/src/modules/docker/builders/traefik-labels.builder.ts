@@ -12,10 +12,12 @@ export class TraefikLabelsBuilder {
   private labels: Record<string, string | boolean> = {};
 
   constructor(private params: TraefikLabelsArgs) {
+    const dockerNetworkName = process.env.RUNTIPI_DOCKER_NETWORK || 'runtipi_tipi_main_network';
+
     this.labels = {
       generated: true,
       'traefik.enable': false,
-      'traefik.docker.network': 'runtipi_tipi_main_network',
+      'traefik.docker.network': dockerNetworkName,
       [`traefik.http.middlewares.${params.appId}-${params.storeId}-web-redirect.redirectscheme.scheme`]: 'https',
       [`traefik.http.services.${params.appId}-${params.storeId}.loadbalancer.server.port`]: `${params.internalPort}`,
     };

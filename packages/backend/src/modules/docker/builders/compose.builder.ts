@@ -190,9 +190,11 @@ export class DockerComposeBuilder {
     // @ts-expect-error - not needed in the generated compose file
     delete inputCopy['x-runtipi'];
 
+    const dockerNetworkName = process.env.RUNTIPI_DOCKER_NETWORK || 'runtipi_tipi_main_network';
+
     inputCopy.networks = inputCopy.networks || {};
     inputCopy.networks.tipi_main_network = {
-      name: 'runtipi_tipi_main_network',
+      name: dockerNetworkName,
       external: true,
     };
 
