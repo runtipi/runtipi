@@ -13,9 +13,12 @@ import { UpdateConfigHandler } from './update-config.handler';
 
 const appUrn = 'app:test' as AppUrn;
 
+type StoredApp = NonNullable<Awaited<ReturnType<AppsRepository['getAppByUrn']>>>;
+type PublishResult = Awaited<ReturnType<AppEventsQueue['publish']>>;
+
 const waitForQueueResult = async () => new Promise((resolve) => setTimeout(resolve, 0));
 
-test('preserves the previous running status when the update command fails', async () => {
+const createHandler = (options: { initialStatus?: StoredApp['status']; publishResult?: PublishResult } = {}) => {
   const logger = mock<LoggerService>();
   const appRepository = mock<AppsRepository>();
   const appEventsQueue = mock<AppEventsQueue>();
@@ -24,11 +27,15 @@ test('preserves the previous running status when the update command fails', asyn
   const marketplaceService = mock<MarketplaceService>();
   const appFilesManager = mock<AppFilesManager>();
   const updateConfigHandler = mock<UpdateConfigHandler>();
+  const initialStatus = options.initialStatus ?? 'running';
+  const publishResult = options.publishResult ?? { success: true, message: 'updated' };
+  const app = { id: 1, status: initialStatus, config: {}, version: 1 } as StoredApp;
 
-  appRepository.getAppByUrn.mockResolvedValue({ id: 1, status: 'running', config: {} } as Awaited<ReturnType<AppsRepository['getAppByUrn']>>);
+  appRepository.getAppByUrn.mockResolvedValue(app);
   config.get.calledWith('version').mockReturnValue('3.0.0' as never);
   marketplaceService.getAppUpdateInfo.mockResolvedValue({ minTipiVersion: null } as Awaited<ReturnType<MarketplaceService['getAppUpdateInfo']>>);
-  appEventsQueue.publish.mockResolvedValue({ success: false, message: 'registry unavailable', rollbackSucceeded: true });
+  appEventsQueue.publish.mockResolvedValue(publishResult);
+  updateConfigHandler.execute.mockResolvedValue({ requestId: 'request-id' });
 
   const handler = new UpdateAppHandler(
     logger,
@@ -40,6 +47,13 @@ test('preserves the previous running status when the update command fails', asyn
     appFilesManager,
     updateConfigHandler,
   );
+
+  return { handler, logger, appRepository, appEventsQueue, statusManager, appFilesManager, updateConfigHandler };
+};
+
+test('preserves the previous running status when the update command fails', async () => {
+  const publishResult = { success: false, message: 'registry unavailable', rollbackSucceeded: true } as const;
+  const { handler, appEventsQueue, appRepository } = createHandler({ publishResult });
 
   await handler.execute(appUrn, { performBackup: true });
   await waitForQueueResult();
@@ -54,30 +68,8 @@ test('preserves the previous running status when the update command fails', asyn
 test.each(['app.env could not be read', 'staging directory could not be created'])(
   'keeps a running app running when update setup fails: %s',
   async (message) => {
-    const logger = mock<LoggerService>();
-    const appRepository = mock<AppsRepository>();
-    const appEventsQueue = mock<AppEventsQueue>();
-    const statusManager = mock<StatusManagerService>();
-    const config = mock<ConfigurationService>();
-    const marketplaceService = mock<MarketplaceService>();
-    const appFilesManager = mock<AppFilesManager>();
-    const updateConfigHandler = mock<UpdateConfigHandler>();
-
-    appRepository.getAppByUrn.mockResolvedValue({ id: 1, status: 'running', config: {} } as Awaited<ReturnType<AppsRepository['getAppByUrn']>>);
-    config.get.calledWith('version').mockReturnValue('3.0.0' as never);
-    marketplaceService.getAppUpdateInfo.mockResolvedValue({ minTipiVersion: null } as Awaited<ReturnType<MarketplaceService['getAppUpdateInfo']>>);
-    appEventsQueue.publish.mockResolvedValue({ success: false, message, rollbackSucceeded: true });
-
-    const handler = new UpdateAppHandler(
-      logger,
-      appRepository,
-      appEventsQueue,
-      statusManager,
-      config,
-      marketplaceService,
-      appFilesManager,
-      updateConfigHandler,
-    );
+    const publishResult = { success: false, message, rollbackSucceeded: true } as const;
+    const { handler, appRepository } = createHandler({ publishResult });
 
     await handler.execute(appUrn, { performBackup: true });
     await waitForQueueResult();
@@ -87,35 +79,13 @@ test.each(['app.env could not be read', 'staging directory could not be created'
 );
 
 test('keeps the app stopped when rollback did not restore the previous deployment', async () => {
-  const logger = mock<LoggerService>();
-  const appRepository = mock<AppsRepository>();
-  const appEventsQueue = mock<AppEventsQueue>();
-  const statusManager = mock<StatusManagerService>();
-  const config = mock<ConfigurationService>();
-  const marketplaceService = mock<MarketplaceService>();
-  const appFilesManager = mock<AppFilesManager>();
-  const updateConfigHandler = mock<UpdateConfigHandler>();
-
-  appRepository.getAppByUrn.mockResolvedValue({ id: 1, status: 'running', config: {} } as Awaited<ReturnType<AppsRepository['getAppByUrn']>>);
-  config.get.calledWith('version').mockReturnValue('3.0.0' as never);
-  marketplaceService.getAppUpdateInfo.mockResolvedValue({ minTipiVersion: null } as Awaited<ReturnType<MarketplaceService['getAppUpdateInfo']>>);
-  appEventsQueue.publish.mockResolvedValue({
+  const publishResult = {
     success: false,
     message: 'target failed. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc.',
     rollbackSucceeded: false,
     recoverySnapshotPath: '/tmp/runtipi-update-abc',
-  });
-
-  const handler = new UpdateAppHandler(
-    logger,
-    appRepository,
-    appEventsQueue,
-    statusManager,
-    config,
-    marketplaceService,
-    appFilesManager,
-    updateConfigHandler,
-  );
+  } as const;
+  const { handler, statusManager, appRepository } = createHandler({ publishResult });
 
   await handler.execute(appUrn, { performBackup: true });
   await waitForQueueResult();
@@ -126,36 +96,45 @@ test('keeps the app stopped when rollback did not restore the previous deploymen
   expect(appRepository.updateAppById).toHaveBeenLastCalledWith(1, { status: 'stopped' });
 });
 
+test('restores the previous status when publishing the update fails', async () => {
+  const { handler, logger, appRepository, appEventsQueue, statusManager } = createHandler();
+  appEventsQueue.publish.mockRejectedValue(new Error('queue unavailable'));
+
+  await handler.execute(appUrn, { performBackup: true });
+  await waitForQueueResult();
+
+  expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('queue unavailable'));
+  expect(statusManager.emitEvent).toHaveBeenCalledWith(expect.objectContaining({ event: 'update_error', error: 'queue unavailable' }));
+  expect(appRepository.updateAppById).toHaveBeenLastCalledWith(1, { status: 'running' });
+});
+
+test('preserves the rollback status when processing a failed update result rejects', async () => {
+  const publishResult = { success: false, message: 'deployment failed', rollbackSucceeded: false } as const;
+  const { handler, appRepository } = createHandler({ publishResult });
+  appRepository.updateAppById.mockRejectedValueOnce(new Error('database unavailable')).mockResolvedValue({} as StoredApp);
+
+  await handler.execute(appUrn, { performBackup: true });
+  await waitForQueueResult();
+
+  expect(appRepository.updateAppById).toHaveBeenLastCalledWith(1, { status: 'stopped' });
+});
+
 test('starts a successful update without pulling the same images again', async () => {
-  const logger = mock<LoggerService>();
-  const appRepository = mock<AppsRepository>();
-  const appEventsQueue = mock<AppEventsQueue>();
-  const statusManager = mock<StatusManagerService>();
-  const config = mock<ConfigurationService>();
-  const marketplaceService = mock<MarketplaceService>();
-  const appFilesManager = mock<AppFilesManager>();
-  const updateConfigHandler = mock<UpdateConfigHandler>();
-
-  appRepository.getAppByUrn.mockResolvedValue({ id: 1, status: 'running', config: {} } as Awaited<ReturnType<AppsRepository['getAppByUrn']>>);
-  config.get.calledWith('version').mockReturnValue('3.0.0' as never);
-  marketplaceService.getAppUpdateInfo.mockResolvedValue({ minTipiVersion: null } as Awaited<ReturnType<MarketplaceService['getAppUpdateInfo']>>);
-  appEventsQueue.publish.mockResolvedValue({ success: true, message: 'updated' });
+  const { handler, statusManager, appFilesManager } = createHandler();
   appFilesManager.getInstalledAppInfo.mockResolvedValue({ tipi_version: 2 } as Awaited<ReturnType<AppFilesManager['getInstalledAppInfo']>>);
-  updateConfigHandler.execute.mockResolvedValue({ requestId: 'request-id' });
-
-  const handler = new UpdateAppHandler(
-    logger,
-    appRepository,
-    appEventsQueue,
-    statusManager,
-    config,
-    marketplaceService,
-    appFilesManager,
-    updateConfigHandler,
-  );
 
   await handler.execute(appUrn, { performBackup: false });
   await waitForQueueResult();
 
   expect(statusManager.emitSuccess).toHaveBeenCalledWith(expect.objectContaining({ appId: 1, appUrn, event: 'update_success', status: 'running' }));
+});
+
+test('preserves the stored version when installed app info is unavailable', async () => {
+  const { handler, appRepository, appFilesManager } = createHandler();
+  appFilesManager.getInstalledAppInfo.mockResolvedValue(null);
+
+  await handler.execute(appUrn, { performBackup: false });
+  await waitForQueueResult();
+
+  expect(appRepository.updateAppById).toHaveBeenCalledWith(1, { version: 1 });
 });

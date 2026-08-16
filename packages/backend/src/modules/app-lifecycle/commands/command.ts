@@ -17,11 +17,7 @@ export class AppLifecycleCommand {
     protected docker: Dockerode,
   ) {}
 
-  protected async ensureAppDir(
-    appUrn: AppUrn,
-    form: AppEventFormInput,
-    options: { pruneContainers?: boolean; persistSubnet?: boolean } = {},
-  ): Promise<void> {
+  protected async ensureAppDir(appUrn: AppUrn, form: AppEventFormInput, options: { pruneContainers?: boolean; persistSubnet?: boolean } = {}) {
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
     const logger = this.moduleRef.get(LoggerService, { strict: false });

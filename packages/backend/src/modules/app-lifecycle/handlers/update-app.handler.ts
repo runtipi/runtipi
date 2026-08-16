@@ -46,27 +46,38 @@ export class UpdateAppHandler implements ILifecycleHandler<UpdateAppParams> {
 
     await this.statusManager.transitionTo(app.id, appUrn, 'updating');
     const appStatusBeforeUpdate = app.status;
+    const wasRunningBeforeUpdate = appStatusBeforeUpdate === 'running';
 
     const requestId = generateRequestId();
+    const updateEvent = { command: 'update' as const, appUrn, requestId, form: app.config, performBackup, wasRunningBeforeUpdate };
+    let terminalStatus = appStatusBeforeUpdate;
 
     this.appEventsQueue
-      .publish({ command: 'update', appUrn, requestId, form: app.config, performBackup, wasRunningBeforeUpdate: appStatusBeforeUpdate === 'running' })
+      .publish(updateEvent)
       .then(async (result) => {
         const { success, message } = result;
         const rollbackSucceeded = 'rollbackSucceeded' in result ? result.rollbackSucceeded : undefined;
 
         if (success) {
           const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
+          const updatedVersion = appInfo?.tipi_version ?? app.version;
 
           await this.updateConfigHandler.execute(appUrn, { form: app.config });
-          await this.appRepository.updateAppById(app.id, { version: appInfo?.tipi_version });
+          await this.appRepository.updateAppById(app.id, { version: updatedVersion });
           await this.statusManager.emitSuccess({ appId: app.id, appUrn, event: 'update_success', status: appStatusBeforeUpdate });
         } else {
           this.logger.error(`Failed to update app ${appUrn}: ${message}`);
           this.statusManager.emitEvent({ appUrn, event: 'update_error', error: message });
 
-          await this.appRepository.updateAppById(app.id, { status: rollbackSucceeded === true ? appStatusBeforeUpdate : 'stopped' });
+          terminalStatus = rollbackSucceeded === true ? appStatusBeforeUpdate : 'stopped';
+          await this.appRepository.updateAppById(app.id, { status: terminalStatus });
         }
+      })
+      .catch(async (error) => {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.error(`Failed to process update result for app ${appUrn}: ${errorMessage}`);
+        this.statusManager.emitEvent({ appUrn, event: 'update_error', error: errorMessage });
+        await this.appRepository.updateAppById(app.id, { status: terminalStatus });
       });
 
     return { requestId };

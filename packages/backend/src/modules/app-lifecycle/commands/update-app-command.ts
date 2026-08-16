@@ -126,7 +126,8 @@ export class UpdateAppCommand extends AppLifecycleCommand {
         throw new Error(`Failed to stage the previous environment for app ${appUrn}`);
       }
 
-      // Pull from an isolated copy
+      // Stage the target files in the installed directory while the existing containers keep running.
+      // The previous files and compose are restored immediately after the target images are pulled.
       deploymentMayHaveChanged = true;
       await marketplaceService.copyAppFromRepoToInstalled(appUrn);
       await this.ensureAppDir(appUrn, form, { pruneContainers: false, persistSubnet: false });
@@ -181,16 +182,32 @@ export class UpdateAppCommand extends AppLifecycleCommand {
         }
       } catch (rollbackError) {
         recoverySucceeded = false;
-        logger.error(`Failed to restore app ${appUrn} after an update error. Recovery snapshot retained at ${temporaryDirectory}:`, rollbackError);
+        if (temporaryDirectory) {
+          logger.error(
+            `Failed to restore app ${appUrn} after an update error. Recovery snapshot retained at ${temporaryDirectory}. After recovering the app, remove this directory manually:`,
+            rollbackError,
+          );
+        } else {
+          logger.error(`Failed to restore app ${appUrn} after an update error. No recovery snapshot was retained:`, rollbackError);
+        }
       }
 
       const updateError = await this.handleAppError(err, appUrn, 'update_error');
       if (!recoverySucceeded) {
+        if (!temporaryDirectory) {
+          return {
+            success: false,
+            rollbackSucceeded: false,
+            message: `${updateError.message}. Recovery failed before a recovery snapshot could be retained.`,
+          };
+        }
+
+        const cleanupInstruction = 'After recovering the app, remove this directory manually.';
         return {
           success: false,
           rollbackSucceeded: false,
           recoverySnapshotPath: temporaryDirectory,
-          message: `${updateError.message}. Recovery failed; the previous app files are retained at ${temporaryDirectory}.`,
+          message: `${updateError.message}. Recovery failed; the previous app files are retained at ${temporaryDirectory}. ${cleanupInstruction}`,
         };
       }
 

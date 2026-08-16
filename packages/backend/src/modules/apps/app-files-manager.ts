@@ -162,7 +162,7 @@ export class AppFilesManager {
    * @param appUrn - The app id
    * @param composeFile - The content of the docker-compose.yml file
    */
-  public async writeDockerComposeYml(appUrn: AppUrn, composeFile: string): Promise<void> {
+  public async writeDockerComposeYml(appUrn: AppUrn, composeFile: string) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
@@ -214,7 +214,7 @@ export class AppFilesManager {
     return { path: envPath, content: env };
   }
 
-  public async writeAppEnv(appUrn: AppUrn, env: string): Promise<boolean> {
+  public async writeAppEnv(appUrn: AppUrn, env: string) {
     const { appDataDir } = this.getAppPaths(appUrn);
 
     const envPath = path.join(appDataDir, 'app.env');

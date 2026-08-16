@@ -117,7 +117,7 @@ export class FilesystemService {
     }
   }
 
-  async writePrivateTextFile(filePath: string, content: string): Promise<boolean> {
+  async writePrivateTextFile(filePath: string, content: string) {
     try {
       await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
       const safeFilePath = this.getSafeFilePath(filePath);

@@ -272,7 +272,8 @@ test('retains the recovery snapshot when restoring the previous environment fail
 
   expect(result).toEqual({
     success: false,
-    message: 'registry unavailable. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc.',
+    message:
+      'registry unavailable. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc. After recovering the app, remove this directory manually.',
     rollbackSucceeded: false,
     recoverySnapshotPath: '/tmp/runtipi-update-abc',
   });
@@ -311,10 +312,26 @@ test.each([
   expect(setup.dockerService.composeApp).not.toHaveBeenCalled();
 });
 
+test('does not report a null recovery path when recovery fails before staging', async () => {
+  const setup = createCommand();
+  setup.filesystem.createTempDirectory.mockRejectedValue(new Error('temp unavailable'));
+  setup.appsRepository.getAppByUrn.mockResolvedValueOnce(setup.appState as Awaited<ReturnType<AppsRepository['getAppByUrn']>>);
+  setup.appsRepository.getAppByUrn.mockRejectedValueOnce(new Error('subnet unavailable'));
+
+  const result = await setup.command.execute(appUrn, {});
+
+  expect(result).toEqual({
+    success: false,
+    message: 'temp unavailable. Recovery failed before a recovery snapshot could be retained.',
+    rollbackSucceeded: false,
+  });
+  expect(result).not.toHaveProperty('recoverySnapshotPath');
+});
+
 test('starts the restored deployment when an update fails after a backup stopped a running app', async () => {
   const { command, dockerService } = createCommand({ wasRunningBeforeUpdate: true });
-  dockerService.composeApp.mockImplementation(async (_appUrn, command) => {
-    if (command === 'down --remove-orphans') {
+  dockerService.composeApp.mockImplementation(async (_appUrn, composeCommand) => {
+    if (composeCommand === 'down --remove-orphans') {
       throw new Error('failed to stop old deployment');
     }
     return { success: true, stdout: '', stderr: '' };
@@ -374,7 +391,8 @@ test('retains the recovery snapshot when rollback startup fails', async () => {
 
   expect(result).toEqual({
     success: false,
-    message: 'unable to start deployment. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc.',
+    message:
+      'unable to start deployment. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc. After recovering the app, remove this directory manually.',
     rollbackSucceeded: false,
     recoverySnapshotPath: '/tmp/runtipi-update-abc',
   });
@@ -393,7 +411,8 @@ test('retains the recovery snapshot when previous files cannot be restored', asy
 
   expect(result).toEqual({
     success: false,
-    message: 'registry unavailable. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc.',
+    message:
+      'registry unavailable. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc. After recovering the app, remove this directory manually.',
     rollbackSucceeded: false,
     recoverySnapshotPath: '/tmp/runtipi-update-abc',
   });
@@ -409,7 +428,8 @@ test('retains the recovery snapshot when the current app folder cannot be remove
 
   expect(result).toEqual({
     success: false,
-    message: 'registry unavailable. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc.',
+    message:
+      'registry unavailable. Recovery failed; the previous app files are retained at /tmp/runtipi-update-abc. After recovering the app, remove this directory manually.',
     rollbackSucceeded: false,
     recoverySnapshotPath: '/tmp/runtipi-update-abc',
   });

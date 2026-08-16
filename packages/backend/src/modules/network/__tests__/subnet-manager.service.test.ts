@@ -67,6 +67,20 @@ describe('SubnetManagerService', () => {
       expect(appsRepository.updateAppById).toHaveBeenCalledWith(1, { subnet: newSubnet });
     });
 
+    it('should allocate a subnet without persisting it when persistence is disabled', async () => {
+      // arrange
+      const appUrn = 'app:test/app' as AppUrn;
+      const newSubnet = '10.128.10.0/24';
+      appsRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 1, subnet: null }));
+
+      // act
+      const result = await service.allocateSubnet(appUrn, { persist: false });
+
+      // assert
+      expect(result).toBe(newSubnet);
+      expect(appsRepository.updateAppById).not.toHaveBeenCalled();
+    });
+
     it('should reuse an existing subnet without writing it again', async () => {
       // arrange
       const appUrn = 'app:test/app' as AppUrn;
