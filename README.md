@@ -29,10 +29,10 @@ Runtipi is a personal homeserver orchestrator that makes it easy to manage and r
 
 Thanks to our generous sponsors for supporting the development of Runtipi:
 
-| CodeRabbit       |
-|------------------|
-| <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png" alt="CodeRabbit logo" width="200"/> |
-| [coderabbit.ai](https://coderabbit.ai?utm_source=runtipi&utm_campaign=readme) |
+| CodeRabbit       | TestMu AI        |
+|------------------| ------------------|
+| <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/sponsors/coderabbit.png" alt="CodeRabbit logo" width="200"/> | <img src="https://assets.testmu.ai/resources/images/logos/logo.svg" style="vertical-align: middle;" width="250" height="45" />
+| [coderabbit.ai](https://coderabbit.ai?utm_source=runtipi&utm_campaign=readme) | Browser testing via [testmu.ai](https://www.testmu.ai/?utm_source=runtipi&utm_medium=sponsor)
 
 ## Getting started
 
