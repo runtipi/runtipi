@@ -42,7 +42,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
 
       // Copy data dir
       const appEnv = await appFilesManager.getAppEnv(appUrn);
-      const envMap = envUtils.envStringToMap(appEnv.content);
+      const envMap = envUtils.envStringToMap(appEnv.content ?? '');
 
       logger.info(`Copying data dir for app ${appUrn}`);
       await marketplaceService.copyDataDir(appUrn, envMap);

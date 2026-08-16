@@ -48,8 +48,7 @@ export class AppLifecycleService {
 
     try {
       const command = this.commandFactory.createCommand(data);
-      const { success, message } = await command.execute(data.appUrn, data.form);
-      await reply({ success, message });
+      await reply(await command.execute(data.appUrn, data.form));
     } catch (err) {
       this.logger.error('Error invoking command:', err);
       await reply({ success: false, message: String(err) });

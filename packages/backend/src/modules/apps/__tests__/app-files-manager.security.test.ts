@@ -31,6 +31,7 @@ const writeFile = async (filePath: string, content: string) => {
 
 describe('AppFilesManager file security', () => {
   let manager: AppFilesManager;
+  let filesystem: FilesystemService;
 
   beforeEach(() => {
     const logger = {
@@ -43,7 +44,8 @@ describe('AppFilesManager file security', () => {
       getConfig: vi.fn().mockReturnValue({ directories }),
     } as unknown as ConfigurationService;
 
-    manager = new AppFilesManager(configuration, new FilesystemService(logger), logger);
+    filesystem = new FilesystemService(logger);
+    manager = new AppFilesManager(configuration, filesystem, logger);
   });
 
   it('does not expose installed app description symlink targets', async () => {
@@ -65,7 +67,32 @@ describe('AppFilesManager file security', () => {
 
     const appEnv = await manager.getAppEnv('demo:evil' as AppUrn);
 
-    expect(appEnv.content).toBe('');
+    expect(appEnv.content).toBeNull();
+  });
+
+  it('exposes a failed installed app folder deletion', async () => {
+    vi.spyOn(filesystem, 'removeDirectory').mockResolvedValue(false);
+
+    await expect(manager.deleteAppFolder('demo:evil' as AppUrn)).resolves.toBe(false);
+  });
+
+  it('fails when writing the generated compose file fails', async () => {
+    vi.spyOn(filesystem, 'writeTextFile').mockResolvedValue(false);
+
+    await expect(manager.writeDockerComposeYml('demo:evil' as AppUrn, 'services: {}')).rejects.toThrow(
+      'Failed to write generated docker compose file for app demo:evil',
+    );
+  });
+
+  it('writes recovery snapshots with owner-only permissions', async () => {
+    const snapshotPath = path.join(DATA_DIR, 'private-recovery-snapshot');
+
+    try {
+      expect(await filesystem.writePrivateTextFile(snapshotPath, 'secret')).toBe(true);
+      expect((await fs.promises.stat(snapshotPath)).mode & 0o777).toBe(0o600);
+    } finally {
+      await fs.promises.rm(snapshotPath, { force: true });
+    }
   });
 
   it('does not read user config symlink targets', async () => {

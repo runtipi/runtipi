@@ -32,11 +32,13 @@ const validAppConfig = {
 
 describe('AppStoreFilesManager file security', () => {
   let manager: AppStoreFilesManager;
+  let filesystem: FilesystemService;
 
   beforeEach(async () => {
     const logger = {
       debug: vi.fn(),
       error: vi.fn(),
+      info: vi.fn(),
       warn: vi.fn(),
     } as unknown as LoggerService;
 
@@ -45,7 +47,8 @@ describe('AppStoreFilesManager file security', () => {
       getConfig: vi.fn().mockReturnValue({ directories }),
     } as unknown as ConfigurationService;
 
-    manager = new AppStoreFilesManager(configuration, new FilesystemService(logger), logger, { slug: 'evil' } as AppStore);
+    filesystem = new FilesystemService(logger);
+    manager = new AppStoreFilesManager(configuration, filesystem, logger, { slug: 'evil' } as AppStore);
 
     await writeFile(path.join(APP_DIR, 'assets', 'default-app-logo.jpg'), 'default-logo');
   });
@@ -108,5 +111,45 @@ describe('AppStoreFilesManager file security', () => {
     const { content } = await manager.getSourceDockerComposeYaml('demo:evil' as AppUrn);
 
     expect(JSON.stringify(content)).not.toContain('leak');
+  });
+
+  it('fails when removing the existing installed app files fails', async () => {
+    vi.spyOn(filesystem, 'isDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'removeDirectory').mockResolvedValue(false);
+    const createDirectory = vi.spyOn(filesystem, 'createDirectory');
+
+    await expect(manager.copyAppFromRepoToInstalled('demo:evil' as AppUrn)).rejects.toThrow('Failed to remove installed files for app demo:evil');
+    expect(createDirectory).not.toHaveBeenCalled();
+  });
+
+  it('fails when creating the installed app directory fails', async () => {
+    vi.spyOn(filesystem, 'isDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'removeDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'createDirectory').mockResolvedValue(false);
+    const copyDirectory = vi.spyOn(filesystem, 'copyDirectory');
+
+    await expect(manager.copyAppFromRepoToInstalled('demo:evil' as AppUrn)).rejects.toThrow(
+      'Failed to create installed files directory for app demo:evil',
+    );
+    expect(copyDirectory).not.toHaveBeenCalled();
+  });
+
+  it('fails when creating the app data directory fails', async () => {
+    vi.spyOn(filesystem, 'isDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'removeDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'createDirectory').mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+    const copyDirectory = vi.spyOn(filesystem, 'copyDirectory');
+
+    await expect(manager.copyAppFromRepoToInstalled('demo:evil' as AppUrn)).rejects.toThrow('Failed to create data directory for app demo:evil');
+    expect(copyDirectory).not.toHaveBeenCalled();
+  });
+
+  it('fails when copying the repository app files fails', async () => {
+    vi.spyOn(filesystem, 'isDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'removeDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'createDirectory').mockResolvedValue(true);
+    vi.spyOn(filesystem, 'copyDirectory').mockResolvedValue(false);
+
+    await expect(manager.copyAppFromRepoToInstalled('demo:evil' as AppUrn)).rejects.toThrow('Failed to copy app demo:evil from repo evil');
   });
 });

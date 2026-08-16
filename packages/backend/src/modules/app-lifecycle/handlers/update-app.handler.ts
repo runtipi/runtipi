@@ -9,7 +9,6 @@ import { AppsRepository } from '../../apps/apps.repository';
 import { MarketplaceService } from '../../marketplace/marketplace.service';
 import { AppEventsQueue } from '../../queue/entities/app-events';
 import { StatusManagerService } from '../services/status-manager.service';
-import { StartAppHandler } from './start-app.handler';
 import { UpdateConfigHandler } from './update-config.handler';
 import { type HandlerResult, type ILifecycleHandler, generateRequestId } from './base-handler';
 
@@ -27,7 +26,6 @@ export class UpdateAppHandler implements ILifecycleHandler<UpdateAppParams> {
     private readonly config: ConfigurationService,
     private readonly marketplaceService: MarketplaceService,
     private readonly appFilesManager: AppFilesManager,
-    private readonly startAppHandler: StartAppHandler,
     private readonly updateConfigHandler: UpdateConfigHandler,
   ) {}
 
@@ -48,28 +46,39 @@ export class UpdateAppHandler implements ILifecycleHandler<UpdateAppParams> {
 
     await this.statusManager.transitionTo(app.id, appUrn, 'updating');
     const appStatusBeforeUpdate = app.status;
+    const wasRunningBeforeUpdate = appStatusBeforeUpdate === 'running';
 
     const requestId = generateRequestId();
+    const updateEvent = { command: 'update' as const, appUrn, requestId, form: app.config, performBackup, wasRunningBeforeUpdate };
+    let terminalStatus = appStatusBeforeUpdate;
 
-    this.appEventsQueue.publish({ command: 'update', appUrn, requestId, form: app.config, performBackup }).then(async ({ success, message }) => {
-      if (success) {
-        const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
+    this.appEventsQueue
+      .publish(updateEvent)
+      .then(async (result) => {
+        const { success, message } = result;
+        const rollbackSucceeded = 'rollbackSucceeded' in result ? result.rollbackSucceeded : undefined;
 
-        await this.updateConfigHandler.execute(appUrn, { form: app.config });
-        await this.appRepository.updateAppById(app.id, { version: appInfo?.tipi_version });
-        this.statusManager.emitEvent({ appUrn, event: 'update_success' });
+        if (success) {
+          const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
+          const updatedVersion = appInfo?.tipi_version ?? app.version;
 
-        if (appStatusBeforeUpdate === 'running') {
-          await this.startAppHandler.execute(appUrn);
+          await this.updateConfigHandler.execute(appUrn, { form: app.config });
+          await this.appRepository.updateAppById(app.id, { version: updatedVersion });
+          await this.statusManager.emitSuccess({ appId: app.id, appUrn, event: 'update_success', status: appStatusBeforeUpdate });
         } else {
-          await this.appRepository.updateAppById(app.id, { status: appStatusBeforeUpdate });
+          this.logger.error(`Failed to update app ${appUrn}: ${message}`);
+          this.statusManager.emitEvent({ appUrn, event: 'update_error', error: message });
+
+          terminalStatus = rollbackSucceeded === true ? appStatusBeforeUpdate : 'stopped';
+          await this.appRepository.updateAppById(app.id, { status: terminalStatus });
         }
-      } else {
-        this.logger.error(`Failed to update app ${appUrn}: ${message}`);
-        this.statusManager.emitEvent({ appUrn, event: 'update_error', error: message });
-        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
-      }
-    });
+      })
+      .catch(async (error) => {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.error(`Failed to process update result for app ${appUrn}: ${errorMessage}`);
+        this.statusManager.emitEvent({ appUrn, event: 'update_error', error: errorMessage });
+        await this.appRepository.updateAppById(app.id, { status: terminalStatus });
+      });
 
     return { requestId };
   }

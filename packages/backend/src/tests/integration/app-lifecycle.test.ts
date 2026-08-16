@@ -181,7 +181,13 @@ describe('App lifecycle', () => {
     });
     archiveService.extractTarGz.mockResolvedValue({ stdout: '', stderr: '' });
     vi.spyOn(filesystemService, 'createTempDirectory').mockImplementation(async (prefix) => {
-      const tempDir = path.join('/tmp', `${prefix}-${Date.now()}`);
+      const timestampedPrefix = `${prefix}-${Date.now()}`;
+      let tempDir = timestampedPrefix;
+
+      if (!path.isAbsolute(prefix)) {
+        tempDir = path.join('/tmp', timestampedPrefix);
+      }
+
       await fs.promises.mkdir(tempDir, { recursive: true });
       return tempDir;
     });

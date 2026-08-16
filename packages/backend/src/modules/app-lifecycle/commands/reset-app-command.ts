@@ -45,7 +45,7 @@ export class ResetAppCommand extends AppLifecycleCommand {
       // Copy data dir
       logger.info(`Copying data dir for app ${appUrn}`);
       const env = await appFilesManager.getAppEnv(appUrn);
-      const envMap = envUtils.envStringToMap(env.content);
+      const envMap = envUtils.envStringToMap(env.content ?? '');
 
       await marketplaceService.copyDataDir(appUrn, envMap);
       await this.ensureAppDir(appUrn, form);
