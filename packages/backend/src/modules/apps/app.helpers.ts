@@ -56,7 +56,7 @@ export class AppHelpers {
     envMap.set('APP_IMAGE_TAG', config.version);
 
     const appEnv = await this.appFilesManager.getAppEnv(appUrn);
-    const existingAppEnvMap = this.envUtils.envStringToMap(appEnv.content);
+    const existingAppEnvMap = this.envUtils.envStringToMap(appEnv.content ?? '');
 
     if (config.generate_vapid_keys) {
       if (existingAppEnvMap.has('VAPID_PUBLIC_KEY') && existingAppEnvMap.has('VAPID_PRIVATE_KEY')) {
@@ -129,6 +129,8 @@ export class AppHelpers {
       envMap.set('APP_PROTOCOL', 'https');
     }
 
-    await this.appFilesManager.writeAppEnv(appUrn, this.envUtils.envMapToString(envMap));
+    if (!(await this.appFilesManager.writeAppEnv(appUrn, this.envUtils.envMapToString(envMap)))) {
+      throw new Error(`Failed to write app environment for ${appUrn}`);
+    }
   };
 }

@@ -78,6 +78,7 @@ describe('AppHelpers', () => {
       envUtils.envMapToString.mockReturnValue('');
       appFilesManager.getInstalledAppInfo.mockResolvedValue(mockAppInfo);
       appFilesManager.getAppEnv.mockResolvedValue({ path: '/data/.env', content: '' });
+      appFilesManager.writeAppEnv.mockResolvedValue(true);
       filesystem.readTextFile.mockResolvedValue('');
     });
 
@@ -279,6 +280,12 @@ describe('AppHelpers', () => {
 
       // Assert
       expect(appFilesManager.writeAppEnv).toHaveBeenCalledWith(testAppUrn, transformedEnv);
+    });
+
+    it('should throw if writing the environment file fails', async () => {
+      appFilesManager.writeAppEnv.mockResolvedValue(false);
+
+      await expect(appHelpers.generateEnvFile(testAppUrn, {})).rejects.toThrow(`Failed to write app environment for ${testAppUrn}`);
     });
 
     it('should use default value when form field is not provided', async () => {

@@ -117,6 +117,19 @@ export class FilesystemService {
     }
   }
 
+  async writePrivateTextFile(filePath: string, content: string): Promise<boolean> {
+    try {
+      await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
+      const safeFilePath = this.getSafeFilePath(filePath);
+      await fs.promises.writeFile(safeFilePath, content, { encoding: 'utf8', mode: 0o600 });
+      await fs.promises.chmod(safeFilePath, 0o600);
+      return true;
+    } catch (error) {
+      this.logger.error(`Error writing private file ${filePath}:`, error);
+      return false;
+    }
+  }
+
   async writeBinaryFile(filePath: string, data: Buffer): Promise<boolean> {
     try {
       await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });

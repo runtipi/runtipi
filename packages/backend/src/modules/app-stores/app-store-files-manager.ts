@@ -147,19 +147,27 @@ export class AppStoreFilesManager {
 
     // delete eventual app folder if exists
     this.logger.info(`Deleting app ${appUrn} folder if exists`);
-    await this.filesystem.removeDirectory(appInstalledDir);
+    if (!(await this.filesystem.removeDirectory(appInstalledDir))) {
+      throw new Error(`Failed to remove installed files for app ${appUrn}`);
+    }
 
     // Create app folder
     this.logger.info(`Creating app ${appUrn} folder`);
-    await this.filesystem.createDirectory(appInstalledDir);
+    if (!(await this.filesystem.createDirectory(appInstalledDir))) {
+      throw new Error(`Failed to create installed files directory for app ${appUrn}`);
+    }
 
     // Create app data folder
     this.logger.info(`Creating app ${appUrn} data folder`);
-    await this.filesystem.createDirectory(appDataDir);
+    if (!(await this.filesystem.createDirectory(appDataDir))) {
+      throw new Error(`Failed to create data directory for app ${appUrn}`);
+    }
 
     // Copy app folder from repo
     this.logger.info(`Copying app ${appUrn} from repo ${this.storeConfig.slug}`);
-    await this.filesystem.copyDirectory(appRepoDir, appInstalledDir);
+    if (!(await this.filesystem.copyDirectory(appRepoDir, appInstalledDir))) {
+      throw new Error(`Failed to copy app ${appUrn} from repo ${this.storeConfig.slug}`);
+    }
   }
 
   /**

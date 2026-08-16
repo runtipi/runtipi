@@ -162,16 +162,18 @@ export class AppFilesManager {
    * @param appUrn - The app id
    * @param composeFile - The content of the docker-compose.yml file
    */
-  public async writeDockerComposeYml(appUrn: AppUrn, composeFile: string) {
+  public async writeDockerComposeYml(appUrn: AppUrn, composeFile: string): Promise<void> {
     const { appInstalledDir } = this.getAppPaths(appUrn);
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
-    await this.filesystem.writeTextFile(dockerComposePath, composeFile);
+    if (!(await this.filesystem.writeTextFile(dockerComposePath, composeFile))) {
+      throw new Error(`Failed to write generated docker compose file for app ${appUrn}`);
+    }
   }
 
   public async deleteAppFolder(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    await this.filesystem.removeDirectory(appInstalledDir);
+    return this.filesystem.removeDirectory(appInstalledDir);
   }
 
   public async deleteAppDataDir(appUrn: AppUrn) {
@@ -201,20 +203,23 @@ export class AppFilesManager {
 
     const envPath = path.join(appDataDir, 'app.env');
 
-    let env = '';
+    let env: string | null = null;
     if (await this.filesystem.isFile(envPath)) {
-      env = (await this.filesystem.readTextFile(envPath)) ?? '';
+      env = await this.filesystem.readTextFile(envPath);
+      if (env === null) {
+        throw new Error(`Failed to read app environment for ${appUrn}`);
+      }
     }
 
     return { path: envPath, content: env };
   }
 
-  public async writeAppEnv(appUrn: AppUrn, env: string) {
+  public async writeAppEnv(appUrn: AppUrn, env: string): Promise<boolean> {
     const { appDataDir } = this.getAppPaths(appUrn);
 
     const envPath = path.join(appDataDir, 'app.env');
 
-    await this.filesystem.writeTextFile(envPath, env);
+    return this.filesystem.writeTextFile(envPath, env);
   }
 
   /**

@@ -67,6 +67,21 @@ describe('SubnetManagerService', () => {
       expect(appsRepository.updateAppById).toHaveBeenCalledWith(1, { subnet: newSubnet });
     });
 
+    it('should reuse an existing subnet without writing it again', async () => {
+      // arrange
+      const appUrn = 'app:test/app' as AppUrn;
+      const existingSubnet = '10.128.10.0/24';
+      appsRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 1, subnet: existingSubnet }));
+
+      // act
+      const result = await service.allocateSubnet(appUrn);
+
+      // assert
+      expect(result).toBe(existingSubnet);
+      expect(appsRepository.updateAppById).not.toHaveBeenCalled();
+      expect(dockerMock.listNetworks).not.toHaveBeenCalled();
+    });
+
     it('should skip already allocated subnets when allocating a new one', async () => {
       // arrange
       const appUrn = 'app:test/app' as AppUrn;

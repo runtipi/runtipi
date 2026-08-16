@@ -17,18 +17,24 @@ export class AppLifecycleCommand {
     protected docker: Dockerode,
   ) {}
 
-  protected async ensureAppDir(appUrn: AppUrn, form: AppEventFormInput): Promise<void> {
+  protected async ensureAppDir(
+    appUrn: AppUrn,
+    form: AppEventFormInput,
+    options: { pruneContainers?: boolean; persistSubnet?: boolean } = {},
+  ): Promise<void> {
     const appFilesManager = this.moduleRef.get(AppFilesManager, { strict: false });
     const marketplaceService = this.moduleRef.get(MarketplaceService, { strict: false });
     const logger = this.moduleRef.get(LoggerService, { strict: false });
     const subnetManager = this.moduleRef.get(SubnetManagerService, { strict: false });
     const configService = this.moduleRef.get(ConfigurationService, { strict: false });
 
-    const pruned = await this.docker
-      .pruneContainers({ filters: { label: [`runtipi.appurn=${appUrn}`] } })
-      .catch(() => ({ ContainersDeleted: [], SpaceReclaimed: 0 }));
+    if (options.pruneContainers !== false) {
+      const pruned = await this.docker
+        .pruneContainers({ filters: { label: [`runtipi.appurn=${appUrn}`] } })
+        .catch(() => ({ ContainersDeleted: [], SpaceReclaimed: 0 }));
 
-    logger.info('Pruned containers:', pruned.ContainersDeleted, 'Space reclaimed:', pruned.SpaceReclaimed / 1024 / 1024, 'MB');
+      logger.info('Pruned containers:', pruned.ContainersDeleted, 'Space reclaimed:', pruned.SpaceReclaimed / 1024 / 1024, 'MB');
+    }
 
     let composeJson = await appFilesManager.getSourceDockerComposeYaml(appUrn);
 
@@ -44,7 +50,7 @@ export class AppLifecycleCommand {
       const architecture = configService.get('architecture');
 
       const dockerComposeBuilder = new DockerComposeBuilder();
-      const subnet = await subnetManager.allocateSubnet(appUrn);
+      const subnet = await subnetManager.allocateSubnet(appUrn, { persist: options.persistSubnet });
       const composeFile = dockerComposeBuilder.getDockerCompose(composeJson.content, form, appUrn, subnet, architecture);
 
       await appFilesManager.writeDockerComposeYml(appUrn, composeFile);

@@ -9,7 +9,6 @@ import { AppsRepository } from '../../apps/apps.repository';
 import { MarketplaceService } from '../../marketplace/marketplace.service';
 import { AppEventsQueue } from '../../queue/entities/app-events';
 import { StatusManagerService } from '../services/status-manager.service';
-import { StartAppHandler } from './start-app.handler';
 import { UpdateConfigHandler } from './update-config.handler';
 import { type HandlerResult, type ILifecycleHandler, generateRequestId } from './base-handler';
 
@@ -27,7 +26,6 @@ export class UpdateAppHandler implements ILifecycleHandler<UpdateAppParams> {
     private readonly config: ConfigurationService,
     private readonly marketplaceService: MarketplaceService,
     private readonly appFilesManager: AppFilesManager,
-    private readonly startAppHandler: StartAppHandler,
     private readonly updateConfigHandler: UpdateConfigHandler,
   ) {}
 
@@ -51,25 +49,25 @@ export class UpdateAppHandler implements ILifecycleHandler<UpdateAppParams> {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ command: 'update', appUrn, requestId, form: app.config, performBackup }).then(async ({ success, message }) => {
-      if (success) {
-        const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
+    this.appEventsQueue
+      .publish({ command: 'update', appUrn, requestId, form: app.config, performBackup, wasRunningBeforeUpdate: appStatusBeforeUpdate === 'running' })
+      .then(async (result) => {
+        const { success, message } = result;
+        const rollbackSucceeded = 'rollbackSucceeded' in result ? result.rollbackSucceeded : undefined;
 
-        await this.updateConfigHandler.execute(appUrn, { form: app.config });
-        await this.appRepository.updateAppById(app.id, { version: appInfo?.tipi_version });
-        this.statusManager.emitEvent({ appUrn, event: 'update_success' });
+        if (success) {
+          const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
-        if (appStatusBeforeUpdate === 'running') {
-          await this.startAppHandler.execute(appUrn);
+          await this.updateConfigHandler.execute(appUrn, { form: app.config });
+          await this.appRepository.updateAppById(app.id, { version: appInfo?.tipi_version });
+          await this.statusManager.emitSuccess({ appId: app.id, appUrn, event: 'update_success', status: appStatusBeforeUpdate });
         } else {
-          await this.appRepository.updateAppById(app.id, { status: appStatusBeforeUpdate });
+          this.logger.error(`Failed to update app ${appUrn}: ${message}`);
+          this.statusManager.emitEvent({ appUrn, event: 'update_error', error: message });
+
+          await this.appRepository.updateAppById(app.id, { status: rollbackSucceeded === true ? appStatusBeforeUpdate : 'stopped' });
         }
-      } else {
-        this.logger.error(`Failed to update app ${appUrn}: ${message}`);
-        this.statusManager.emitEvent({ appUrn, event: 'update_error', error: message });
-        await this.appRepository.updateAppById(app.id, { status: 'stopped' });
-      }
-    });
+      });
 
     return { requestId };
   }

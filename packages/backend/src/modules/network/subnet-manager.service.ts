@@ -12,6 +12,10 @@ const STARTING_OCTET_2 = 128;
 const MAX_OCTET_VALUE = 254;
 const RESERVED_SUBNET_MAX_OCTET_3 = 9;
 
+type AllocateSubnetOptions = {
+  persist?: boolean;
+};
+
 @Injectable()
 export class SubnetManagerService {
   constructor(
@@ -25,11 +29,15 @@ export class SubnetManagerService {
    * @param appUrn The URN of the app to allocate a subnet for
    * @returns The allocated subnet with mask (e.g., 10.128.10.0/24)
    */
-  public async allocateSubnet(appUrn: AppUrn, retryCount = 0): Promise<string> {
+  public async allocateSubnet(appUrn: AppUrn, options: AllocateSubnetOptions = {}, retryCount = 0): Promise<string> {
     const existingApp = await this.appsRepository.getAppByUrn(appUrn);
 
     if (!existingApp) {
       throw new TranslatableError('APP_ERROR_APP_NOT_FOUND');
+    }
+
+    if (existingApp.subnet) {
+      return existingApp.subnet;
     }
 
     const allocatedSubnets = await this.getAllocatedSubnets();
@@ -39,12 +47,16 @@ export class SubnetManagerService {
       throw new TranslatableError('NETWORK_ERROR_NO_AVAILABLE_SUBNETS');
     }
 
+    if (options.persist === false) {
+      return nextSubnet;
+    }
+
     try {
       await this.appsRepository.updateAppById(existingApp.id, { subnet: nextSubnet });
     } catch (error) {
       if (error instanceof Error && retryCount < MAX_RETRIES) {
         this.logger.error(`Subnet ${nextSubnet} failed to be allocated, retrying...`);
-        return this.allocateSubnet(appUrn, retryCount + 1);
+        return this.allocateSubnet(appUrn, options, retryCount + 1);
       }
       throw error;
     }

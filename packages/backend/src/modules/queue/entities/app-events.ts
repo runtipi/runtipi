@@ -40,6 +40,7 @@ const updateAppCommandSchema = type({
   appUrn: arkAppUrn,
   form: queueAppFormSchema,
   performBackup: type('boolean').default(true),
+  wasRunningBeforeUpdate: type('boolean').default(false),
   requestId: 'string.uuid',
 });
 
@@ -49,6 +50,8 @@ export type AppEvent = typeof appEventSchema.infer;
 export const appEventResultSchema = type({
   success: 'boolean',
   message: 'string',
+  rollbackSucceeded: type('boolean | undefined').optional(),
+  recoverySnapshotPath: type('string | undefined').optional(),
 });
 
 export type AppEventFormInput = typeof queueAppFormSchema.inferIn;
