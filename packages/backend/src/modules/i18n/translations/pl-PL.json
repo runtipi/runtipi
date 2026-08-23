@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Ustawienia zaktualizowane. Uruchom ponownie swoją instancję, aby zastosować nowe ustawienia.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Ustawienia zaktualizowane.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Ścieżka danych aplikacji",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "Miejsce, w którym dane aplikacji będą przechowywane.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "Lokalizacja, w której przechowywane są dane aplikacji.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Utrzymaj konfigurację Traefik",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Utrzymaj konfigurację Traefik w folderze przy restarcie. Pozwala to zmienić konfigurację Traefik.",
   "SETTINGS_GENERAL_DOMAIN": "Nazwa domeny",

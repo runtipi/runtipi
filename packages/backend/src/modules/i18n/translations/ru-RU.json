@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Настройки обновлены. Перезапустите сервер Tipi для применения новых настроек.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Настройки обновлены.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Путь к данным приложения",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "Расположение, в котором хранятся данные приложения.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Сохранять конфигурацию Traefik",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Сохранять папку конфигурации Traefik между перезагрузками. Это позволит вам настроить конфигурацию Traefik.",
   "SETTINGS_GENERAL_DOMAIN": "Доменное имя",

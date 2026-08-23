@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Οι ρυθμίσεις ενημερώθηκαν. Επανεκκινήστε για να εφαρμόσετε τις νέες ρυθμίσεις.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Οι ρυθμίσεις ενημερώθηκαν.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Path δεδομένων εφαρμογής",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "Η τοποθεσία στην οποία αποθηκεύονται δεδομένα εφαρμογών.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Μη επαναφορά των ρυθμίσεων του Traefik",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Διατηρήστε φάκελο ρύθμισης του Traefik κατά τη διάρκεια των επανεκκινήσεων. Αυτό θα σας επιτρέψει να προσαρμόσετε τις ρυθμίσεις του Traefik.",
   "SETTINGS_GENERAL_DOMAIN": "Όνομα domain",
