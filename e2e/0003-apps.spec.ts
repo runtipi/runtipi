@@ -31,7 +31,8 @@ test('user can install and uninstall app', async ({ page, context }) => {
   await expect(page.getByText('Running')).toBeVisible({ timeout: 60000 });
 
   await page.getByTestId('app-details').getByRole('button', { name: 'Open' }).press('ArrowDown');
-  const [newPage] = await Promise.all([context.waitForEvent('page'), await page.getByRole('menuitem', { name: process.env.SERVER_IP }).click()]);
+  const advertisedServerIp = process.env.RUNTIPI_IP ?? process.env.SERVER_IP ?? '127.0.0.1';
+  const [newPage] = await Promise.all([context.waitForEvent('page'), await page.getByRole('menuitem', { name: advertisedServerIp }).click()]);
 
   await newPage.waitForLoadState();
   await expect(newPage.getByText('Welcome to nginx!')).toBeVisible();

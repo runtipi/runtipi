@@ -112,7 +112,9 @@ jobs:
 
       - name: Create .env.e2e file
         run: |
-          echo "SERVER_IP=$(hostname -I | awk '{print $1}')" > .env.e2e
+          runtipi_ip=$(hostname -I | awk '{print $1}')
+          echo "SERVER_IP=127.0.0.1" > .env.e2e
+          echo "RUNTIPI_IP=$runtipi_ip" >> .env.e2e
           echo "POSTGRES_PASSWORD=$(grep POSTGRES_PASSWORD runtipi/.env | cut -d '=' -f2)" >> .env.e2e
           echo "BASE_PATH=./runtipi" >> .env.e2e
           echo "HOME=/root" >> .env.e2e
