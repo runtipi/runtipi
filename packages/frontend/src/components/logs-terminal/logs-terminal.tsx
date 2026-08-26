@@ -28,8 +28,8 @@ export const LogsTerminal = (props: Props) => {
     }
   }, [lastLogId, follow]);
 
-    const updateMaxLines = (lines: number) => {
-    const linesToKeep = Math.max(1, lines);
+  const updateMaxLines = (lines: number) => {
+    const linesToKeep = Number.isFinite(lines) ? Math.max(1, Math.trunc(lines)) : 1;
     onMaxLinesChange(linesToKeep);
   };
 
@@ -50,12 +50,17 @@ export const LogsTerminal = (props: Props) => {
         </div>
         <div className="col-12 col-md-auto ms-md-auto">
           <div className="input-group">
-            <span className="input-group-text">{t('APP_LOGS_TAB_MAX_LINES')}</span>
+            <label htmlFor="max-lines" className="input-group-text mb-0">
+              {t('APP_LOGS_TAB_MAX_LINES')}
+            </label>
             <input
+              id="max-lines"
               type="number"
               className="form-control"
-              defaultValue={maxLines}
+              aria-label={t('APP_LOGS_TAB_MAX_LINES')}
+              value={maxLines}
               min={1}
+              step={1}
               onChange={(e) => updateMaxLines(Number(e.target.value))}
             />
           </div>
