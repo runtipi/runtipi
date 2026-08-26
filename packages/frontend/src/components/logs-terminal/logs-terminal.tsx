@@ -19,7 +19,7 @@ export const LogsTerminal = (props: Props) => {
   const [wrapLines, setWrapLines] = useLocalStorage<boolean>('logs-wraplines', false);
   const ref = useRef<HTMLPreElement>(null);
 
-  const lastLogId = logs.length > 0 ? logs.at(-1)?.id : null;
+  const lastLogId = logs.at(-1)?.id;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: necessary to update the scroll when a new log is added
   useEffect(() => {
@@ -35,28 +35,28 @@ export const LogsTerminal = (props: Props) => {
 
   return (
     <div>
-      <div className="row d-flex align-items-center ps-1">
-        <div className="col">
-          <label className="form-check form-switch mt-1" htmlFor="follow-logs">
+      <div className="row d-flex flex-wrap align-items-center ps-1 gy-2">
+        <div className="col-12 col-md-auto">
+          <label className="form-check form-switch" htmlFor="follow-logs">
             <input id="follow-logs" className="form-check-input" type="checkbox" checked={follow} onChange={() => setFollow(!follow)} />
             <span className="form-check-label">{t('APP_LOGS_TAB_FOLLOW')}</span>
           </label>
         </div>
-        <div className="col">
-          <label className="form-check form-switch mt-1" htmlFor="follow-logs">
-            <input id="follow-logs" className="form-check-input" type="checkbox" checked={wrapLines} onChange={() => setWrapLines(!wrapLines)} />
+        <div className="col-12 col-md-auto">
+          <label className="form-check form-switch" htmlFor="wrap-lines">
+            <input id="wrap-lines" className="form-check-input" type="checkbox" checked={wrapLines} onChange={() => setWrapLines(!wrapLines)} />
             <span className="form-check-label">{t('APP_LOGS_TAB_WRAP_LINES')}</span>
           </label>
         </div>
-        <div className="col">
-          <div className="input-group mb-2">
+        <div className="col-12 col-md-auto">
+          <div className="input-group">
             <span className="input-group-text">{t('APP_LOGS_TAB_MAX_LINES')}</span>
             <input
-              id="max-lines"
               type="number"
               className="form-control"
-              value={maxLines}
-              onChange={(e) => updateMaxLines(Number.parseInt(e.target.value, 10))}
+              defaultValue={maxLines}
+              min={1}
+              onChange={(e) => updateMaxLines(Number(e.target.value))}
             />
           </div>
         </div>
