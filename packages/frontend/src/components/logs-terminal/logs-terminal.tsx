@@ -28,7 +28,7 @@ export const LogsTerminal = (props: Props) => {
     }
   }, [lastLogId, follow]);
 
-  const updateMaxLines = (lines: number) => {
+    const updateMaxLines = (lines: number) => {
     const linesToKeep = Math.max(1, lines);
     onMaxLinesChange(linesToKeep);
   };
@@ -36,19 +36,19 @@ export const LogsTerminal = (props: Props) => {
   return (
     <div>
       <div className="row d-flex flex-wrap align-items-center ps-1 gy-2">
-        <div className="col-12 col-md-auto">
-          <label className="form-check form-switch" htmlFor="follow-logs">
+        <div className="col-6 col-md-auto">
+          <label className="form-check form-switch mb-0" htmlFor="follow-logs">
             <input id="follow-logs" className="form-check-input" type="checkbox" checked={follow} onChange={() => setFollow(!follow)} />
             <span className="form-check-label">{t('APP_LOGS_TAB_FOLLOW')}</span>
           </label>
         </div>
-        <div className="col-12 col-md-auto">
-          <label className="form-check form-switch" htmlFor="wrap-lines">
+        <div className="col-6 col-md-auto">
+          <label className="form-check form-switch mb-0" htmlFor="wrap-lines">
             <input id="wrap-lines" className="form-check-input" type="checkbox" checked={wrapLines} onChange={() => setWrapLines(!wrapLines)} />
             <span className="form-check-label">{t('APP_LOGS_TAB_WRAP_LINES')}</span>
           </label>
         </div>
-        <div className="col-12 col-md-auto">
+        <div className="col-12 col-md-auto ms-md-auto">
           <div className="input-group">
             <span className="input-group-text">{t('APP_LOGS_TAB_MAX_LINES')}</span>
             <input
