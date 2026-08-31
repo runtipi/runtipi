@@ -1,8 +1,8 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppsService } from './apps.service';
-import { GetAppDto, GetComposeDiffDto, GetConfigDiffDto, GetRandomPortDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
+import { GetAppDto, GetComposeDiffDto, GetConfigDiffDto, GetInstalledAppsQueryDto, GetRandomPortDto, GuestAppsDto, MyAppsDto } from './dto/app.dto';
 import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('apps')
@@ -12,8 +12,8 @@ export class AppsController {
   @Get('installed')
   @UseGuards(AuthGuard)
   @ApiResponse({ type: MyAppsDto })
-  async getInstalledApps() {
-    const installed = await this.appsService.getInstalledApps();
+  async getInstalledApps(@Query() query: GetInstalledAppsQueryDto) {
+    const installed = await this.appsService.getInstalledApps(query.status);
     return MyAppsDto.parse({ installed }, { reportOnly: true });
   }
 
