@@ -4,6 +4,7 @@ import { createArkDto } from 'nestjs-arktype';
 import { UserDto } from './modules/user/dto/user.dto';
 
 import { LOG_LEVEL_ENUM } from './core/logger/logger.service';
+import { APP_STATUS } from './core/database/drizzle/types';
 import { AppInfoSimpleDto } from './modules/marketplace/dto/marketplace.dto';
 
 export const settingsSchema = type({
@@ -76,3 +77,7 @@ const userContextDto = type({
 export class UserContextDto extends createArkDto(userContextDto, { name: 'UserContextDto' }) {}
 
 export class AcknowledgeWelcomeBody extends createArkDto(type({ allowErrorMonitoring: 'boolean' }), { name: 'AcknowledgeWelcomeBody' }) {}
+
+const getInstalledAppsQuerySchema = type({ status: type.enumerated(...APP_STATUS).optional() });
+
+export class GetInstalledAppsQueryDto extends createArkDto(getInstalledAppsQuerySchema, { name: 'GetInstalledAppsQueryDto', input: true }) {}

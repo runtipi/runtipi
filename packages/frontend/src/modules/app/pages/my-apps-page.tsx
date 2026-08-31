@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { getInstalledAppsOptions, getLinksOptions } from '@/api-client/@tanstack/react-query.gen';
+import type { GetInstalledAppsData } from '@/api-client/types.gen';
 import { EmptyPage } from '@/components/empty-page/empty-page';
 import type { CustomLink } from '@/types/app.types';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -15,10 +17,12 @@ import { useAppContext } from '@/context/app-context';
 import { ActionBar } from '@/components/action-bar/action-bar';
 import clsx from 'clsx';
 import { RestartAllButton, StartAllButton, StopAllButton } from '../components/batch-actions-dialog/batch-actions-dialog';
+import { AppStatusSelector } from '@/components/app-status-selector/app-status-selector';
 
 export default () => {
+  const [statusFilter, setStatusFilter] = useState<NonNullable<GetInstalledAppsData['query']>['status']>();
   const { data: apps } = useSuspenseQuery({
-    ...getInstalledAppsOptions(),
+    ...getInstalledAppsOptions({ query: { status: statusFilter } }),
   });
 
   const { data: links } = useSuspenseQuery({
@@ -61,6 +65,14 @@ export default () => {
 
   return (
     <>
+      <ActionBar>
+        <ActionBar.Left>
+          <div className="d-flex align-items-center gap-2">
+            <span className="text-nowrap">{t('MY_APPS_FILTER_BY')} :</span>
+            <AppStatusSelector onSelect={setStatusFilter} className="w-auto" style={{ minWidth: 160, maxWidth: 220 }} />
+          </div>
+        </ActionBar.Left>
+      </ActionBar>
       <ActionBar className={clsx({ 'd-none': installed.length <= 1 })}>
         <ActionBar.Left>
           <StartAllButton availableUpdates={updatesAvailable} />
@@ -74,27 +86,29 @@ export default () => {
       </ActionBar>
       {installed.length === 0 && customLinks.length === 0 ? (
         <EmptyPage
-          title="MY_APPS_EMPTY_TITLE"
-          subtitle="MY_APPS_EMPTY_SUBTITLE"
+          title={statusFilter ? 'MY_APPS_NOT_FOUND_TITLE' : 'MY_APPS_EMPTY_TITLE'}
+          subtitle={statusFilter ? 'MY_APPS_NO_RESULT_SUBTITLE' : 'MY_APPS_EMPTY_SUBTITLE'}
           redirectPath="/app-store"
-          actionLabel="MY_APPS_EMPTY_ACTION"
+          actionLabel={statusFilter ? '' : 'MY_APPS_EMPTY_ACTION'}
           extraContent={
-            <div className="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-              <ButtonTile
-                title={t('CUSTOM_APP_ADD_TITLE')}
-                subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
-                action={() => navigate('/apps/create')}
-                icon={<IconLayoutGridAdd size={50} stroke={1.5} color="#A4A4A4" />}
-                className="col-12 col-sm-6 col-lg-6 col-lg-6"
-              />
-              <ButtonTile
-                title={t('LINKS_ADD_TITLE')}
-                subtitle={t('LINKS_ADD_SUBTITLE')}
-                action={() => addLinkDisclosure.open()}
-                icon={<IconLinkPlus size={50} stroke={1.5} color="#A4A4A4" />}
-                className="col-12 col-sm-6 col-md-6 col-lg-6"
-              />
-            </div>
+            !statusFilter && (
+              <div className="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                <ButtonTile
+                  title={t('CUSTOM_APP_ADD_TITLE')}
+                  subtitle={t('CUSTOM_APP_ADD_SUBTITLE')}
+                  action={() => navigate('/apps/create')}
+                  icon={<IconLayoutGridAdd size={50} stroke={1.5} color="#A4A4A4" />}
+                  className="col-12 col-sm-6 col-lg-6 col-lg-6"
+                />
+                <ButtonTile
+                  title={t('LINKS_ADD_TITLE')}
+                  subtitle={t('LINKS_ADD_SUBTITLE')}
+                  action={() => addLinkDisclosure.open()}
+                  icon={<IconLinkPlus size={50} stroke={1.5} color="#A4A4A4" />}
+                  className="col-12 col-sm-6 col-md-6 col-lg-6"
+                />
+              </div>
+            )
           }
         />
       ) : (
