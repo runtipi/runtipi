@@ -41,6 +41,15 @@ export class AppHelpers {
     const baseEnvFile = await this.filesytem.readTextFile(envFilePath);
     const envMap = this.envUtils.envStringToMap(baseEnvFile?.toString() ?? '');
 
+    // App env is docker compose interpolation scope. Seed only public host vars so
+    // core secrets (JWT_SECRET, POSTGRES_*, RABBITMQ_*) stay in Runtipi's own .env.
+    const publicHostEnvKeys = new Set(['LOCAL_DOMAIN', 'TZ', 'INTERNAL_IP']);
+    for (const key of [...envMap.keys()]) {
+      if (!publicHostEnvKeys.has(key)) {
+        envMap.delete(key);
+      }
+    }
+
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
     // Default always present env variables
