@@ -107,7 +107,7 @@
   "APP_CONFIG_UPDATE_SUCCESS": "App {{name}} configuration updated successfully",
   "APP_CONFIG_UPDATE_ERROR": "Failed to update app configuration",
   "APP_SYNC_WITH_TEMPLATE": "Sincronizar com modelo",
-  "APP_SYNC_TITLE": "Sync with Template",
+  "APP_SYNC_TITLE": "Sincronizar com modelo",
   "APP_SYNC_VERSIONS": "Template version: {{template}} | Your version: {{local}}",
   "APP_SYNC_VIEW_OVERVIEW": "View Overview",
   "APP_SYNC_VIEW_DIFF": "View Diff",
