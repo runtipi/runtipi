@@ -33,7 +33,6 @@ export class AppService {
     private readonly githubService: GithubService,
     @Inject(DOCKERODE) private docker: Dockerode,
   ) {}
-
   public async bootstrap() {
     try {
       await this.databaseService.migrate();
@@ -207,15 +206,46 @@ export class AppService {
     const { dataDir } = this.configuration.get('directories');
 
     const tlsFolder = path.join(dataDir, 'traefik', 'tls');
+    const caCertPath = path.join(tlsFolder, 'ca.pem');
+    const caKeyPath = path.join(tlsFolder, 'ca-key.pem');
+    const certPath = path.join(tlsFolder, 'cert.pem');
+    const keyPath = path.join(tlsFolder, 'key.pem');
+    const csrPath = path.join(tlsFolder, 'cert.csr');
+    const domainMarkerPath = path.join(tlsFolder, `${data.localDomain}.txt`);
 
-    // If the certificate already exists, don't generate it again
-    if (
-      (await this.filesystem.isFile(path.join(tlsFolder, `${data.localDomain}.txt`))) &&
-      (await this.filesystem.isFile(path.join(tlsFolder, 'cert.pem'))) &&
-      (await this.filesystem.isFile(path.join(tlsFolder, 'key.pem')))
-    ) {
-      // Check if the certificate is still valid
-      const { stdout } = await execFileAsync('openssl', ['x509', '-checkend', '86400', '-noout', '-in', `${tlsFolder}/cert.pem`]);
+    let migratedLegacyCertificate = false;
+
+    let hasCa = (await this.filesystem.isFile(caCertPath)) && (await this.filesystem.isFile(caKeyPath));
+
+    const hasServerCertificate =
+      (await this.filesystem.isFile(domainMarkerPath)) && (await this.filesystem.isFile(certPath)) && (await this.filesystem.isFile(keyPath));
+
+    // Migrate a valid legacy self-signed certificate to the local CA.
+    // Existing clients already trust this certificate, so preserving it as the
+    // issuer avoids requiring users to install a new CA after upgrading.
+    if (!hasCa && hasServerCertificate) {
+      const { stdout } = await execFileAsync('openssl', ['x509', '-checkend', '86400', '-noout', '-in', certPath]);
+
+      if (stdout.includes('Certificate will not expire')) {
+        const legacyKey = await this.filesystem.readTextFile(keyPath);
+
+        if (legacyKey) {
+          await this.filesystem.copyFile(certPath, caCertPath);
+          await this.filesystem.writePrivateTextFile(caKeyPath, legacyKey);
+
+          hasCa = true;
+          migratedLegacyCertificate = true;
+
+          this.logger.info('Migrated existing TLS certificate to RunTipi local CA');
+        }
+      } else {
+        this.logger.warn('Legacy TLS certificate is expired or will expire soon. Generating a new local CA...');
+      }
+    }
+
+    if (hasCa && hasServerCertificate && !migratedLegacyCertificate) {
+      const { stdout } = await execFileAsync('openssl', ['x509', '-checkend', '86400', '-noout', '-in', certPath]);
+
       if (stdout.includes('Certificate will not expire')) {
         this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
         return;
@@ -224,44 +254,99 @@ export class AppService {
       this.logger.warn(`TLS certificate for ${data.localDomain} is expired or will expire soon. Regenerating a new one...`);
     }
 
-    // Empty out the folder
+    // Remove only the server certificate material and domain markers.
+    // Keep the local CA so clients do not need to trust a new CA on renewal.
     const files = await this.filesystem.listFiles(tlsFolder);
     await Promise.all(
-      files.map(async (file) => {
-        this.logger.info(`Removing file ${file}`);
-        await this.filesystem.removeFile(path.join(tlsFolder, file));
-      }),
+      files
+        .filter((file) => file === 'cert.pem' || file === 'key.pem' || file === 'cert.csr' || file.endsWith('.txt'))
+        .map(async (file) => {
+          this.logger.info(`Removing file ${file}`);
+          await this.filesystem.removeFile(path.join(tlsFolder, file));
+        }),
     );
 
     const subject = `/O=runtipi.io/OU=IT/CN=*.${data.localDomain}/emailAddress=webmaster@${data.localDomain}`;
+    const caSubject = '/O=runtipi.io/OU=IT/CN=RunTipi Local CA';
     const subjectAltName = `DNS:*.${data.localDomain},DNS:${data.localDomain}`;
 
     try {
+      if (!hasCa) {
+        this.logger.info('Generating RunTipi local CA');
+
+        await execFileAsync('openssl', [
+          'req',
+          '-x509',
+          '-newkey',
+          'rsa:4096',
+          '-keyout',
+          caKeyPath,
+          '-out',
+          caCertPath,
+          '-days',
+          '3650',
+          '-subj',
+          caSubject,
+          '-addext',
+          'basicConstraints=critical,CA:TRUE',
+          '-addext',
+          'keyUsage=critical,keyCertSign,cRLSign',
+          '-nodes',
+        ]);
+      }
+
       this.logger.info(`Generating TLS certificate for ${data.localDomain}`);
-      const { stderr } = await execFileAsync('openssl', [
+
+      await execFileAsync('openssl', [
         'req',
-        '-x509',
+        '-new',
         '-newkey',
         'rsa:4096',
         '-keyout',
-        `${dataDir}/traefik/tls/key.pem`,
+        keyPath,
         '-out',
-        `${dataDir}/traefik/tls/cert.pem`,
-        '-days',
-        '365',
+        csrPath,
         '-subj',
         subject,
         '-addext',
-        `subjectAltName = ${subjectAltName}`,
+        'basicConstraints=critical,CA:FALSE',
+        '-addext',
+        'keyUsage=critical,digitalSignature,keyEncipherment',
+        '-addext',
+        'extendedKeyUsage=serverAuth',
+        '-addext',
+        `subjectAltName=${subjectAltName}`,
         '-nodes',
       ]);
-      if (!(await this.filesystem.isFile(path.join(tlsFolder, 'cert.pem'))) || !(await this.filesystem.isFile(path.join(tlsFolder, 'key.pem')))) {
+
+      const { stderr } = await execFileAsync('openssl', [
+        'x509',
+        '-req',
+        '-in',
+        csrPath,
+        '-CA',
+        caCertPath,
+        '-CAkey',
+        caKeyPath,
+        '-CAcreateserial',
+        '-out',
+        certPath,
+        '-days',
+        '365',
+        '-sha256',
+        '-copy_extensions',
+        'copy',
+      ]);
+
+      if (!(await this.filesystem.isFile(certPath)) || !(await this.filesystem.isFile(keyPath))) {
         this.logger.error(`Failed to generate TLS certificate for ${data.localDomain}`);
         this.logger.error(stderr);
       } else {
         this.logger.info(`Writing txt file for ${data.localDomain}`);
       }
-      await this.filesystem.writeTextFile(path.join(tlsFolder, `${data.localDomain}.txt`), '');
+
+      await this.filesystem.removeFile(csrPath);
+      await this.filesystem.writeTextFile(domainMarkerPath, '');
     } catch (error) {
       this.logger.error(error);
     }
