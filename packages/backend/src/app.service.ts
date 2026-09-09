@@ -274,7 +274,7 @@ export class AppService {
       if (!hasCa) {
         this.logger.info('Generating RunTipi local CA');
 
-        await execFileAsync('openssl', [
+        const { stderr } = await execFileAsync('openssl', [
           'req',
           '-x509',
           '-newkey',
@@ -293,6 +293,21 @@ export class AppService {
           'keyUsage=critical,keyCertSign,cRLSign',
           '-nodes',
         ]);
+
+        if (!(await this.filesystem.isFile(caCertPath)) || !(await this.filesystem.isFile(caKeyPath))) {
+          this.logger.error('Failed to generate RunTipi local CA');
+          this.logger.error(stderr);
+          return;
+        }
+
+        const caKey = await this.filesystem.readTextFile(caKeyPath);
+
+        if (!caKey) {
+          this.logger.error('Failed to read generated RunTipi local CA key');
+          return;
+        }
+
+        await this.filesystem.writePrivateTextFile(caKeyPath, caKey);
       }
 
       this.logger.info(`Generating TLS certificate for ${data.localDomain}`);

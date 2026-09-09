@@ -67,6 +67,41 @@ describe('AppService', () => {
   });
 
   describe('generateTlsCertificates', () => {
+    it('should stop when local CA generation fails', async () => {
+      // arrange
+      const localDomain = 'test.home.arpa';
+      const tlsFolder = path.join(DATA_DIR, 'traefik', 'tls');
+      const fsMock = fs as unknown as FsMock;
+
+      fsMock.__createMockFiles({
+        [path.join(tlsFolder, '.gitkeep')]: '',
+      });
+
+      configurationService.get.calledWith('directories').mockReturnValue(
+        fromPartial({
+          dataDir: DATA_DIR,
+        }),
+      );
+
+      vi.mocked(execFileAsync).mockClear();
+      vi.mocked(execFileAsync).mockResolvedValue(
+        fromPartial({
+          stdout: '',
+          stderr: 'CA generation failed',
+        }),
+      );
+
+      // act
+      await appService.generateTlsCertificates({ localDomain });
+
+      // assert
+      const calls = vi.mocked(execFileAsync).mock.calls;
+
+      expect(calls).toHaveLength(1);
+      expect(calls[0]?.[1]).toContain('basicConstraints=critical,CA:TRUE');
+      expect(await fs.promises.stat(path.join(tlsFolder, 'cert.pem')).catch(() => null)).toBeNull();
+    });
+
     it('should generate a new local CA when the legacy certificate is expired', async () => {
       // arrange
       const localDomain = 'test.home.arpa';
@@ -94,12 +129,17 @@ describe('AppService', () => {
             stderr: '',
           }),
         )
-        .mockResolvedValue(
-          fromPartial({
+        .mockImplementation(async (_command, args) => {
+          if (args?.includes('basicConstraints=critical,CA:TRUE')) {
+            await fs.promises.writeFile(path.join(tlsFolder, 'ca.pem'), 'generated-ca-certificate');
+            await fs.promises.writeFile(path.join(tlsFolder, 'ca-key.pem'), 'generated-ca-private-key');
+          }
+
+          return fromPartial({
             stdout: '',
             stderr: '',
-          }),
-        );
+          });
+        });
 
       // act
       await appService.generateTlsCertificates({ localDomain });
@@ -286,6 +326,7 @@ describe('AppService', () => {
         }),
       );
 
+      vi.mocked(execFileAsync).mockClear();
       vi.mocked(execFileAsync).mockResolvedValue(
         fromPartial({
           stdout: 'Certificate will not expire',
@@ -320,12 +361,18 @@ describe('AppService', () => {
         }),
       );
 
-      vi.mocked(execFileAsync).mockResolvedValue(
-        fromPartial({
+      vi.mocked(execFileAsync).mockClear();
+      vi.mocked(execFileAsync).mockImplementation(async (_command, args) => {
+        if (args?.includes('basicConstraints=critical,CA:TRUE')) {
+          await fs.promises.writeFile(path.join(DATA_DIR, 'traefik', 'tls', 'ca.pem'), 'generated-ca-certificate');
+          await fs.promises.writeFile(path.join(DATA_DIR, 'traefik', 'tls', 'ca-key.pem'), 'generated-ca-private-key');
+        }
+
+        return fromPartial({
           stdout: '',
           stderr: '',
-        }),
-      );
+        });
+      });
 
       // act
       await appService.generateTlsCertificates({ localDomain });
