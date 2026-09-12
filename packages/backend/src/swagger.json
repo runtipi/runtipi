@@ -463,7 +463,30 @@
     "/api/apps/installed": {
       "get": {
         "operationId": "getInstalledApps",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "backing_up",
+                "installing",
+                "missing",
+                "resetting",
+                "restarting",
+                "restoring",
+                "running",
+                "starting",
+                "stopped",
+                "stopping",
+                "uninstalling",
+                "updating"
+              ]
+            }
+          }
+        ],
         "responses": {
           "default": {
             "description": "",

@@ -79,8 +79,8 @@ export class AppsRepository {
   /**
    * Returns all apps installed sorted by id ascending
    */
-  public async getApps() {
-    return this.db.query.app.findMany({ orderBy: asc(app.appName), with: { appStore: true } });
+  public async getApps(status?: AppStatus) {
+    return this.db.query.app.findMany({ where: status ? eq(app.status, status) : undefined, orderBy: asc(app.appName), with: { appStore: true } });
   }
 
   /**
