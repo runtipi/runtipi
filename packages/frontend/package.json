@@ -31,7 +31,7 @@
     "@runtipi/common": "workspace:*",
     "@sentry/react": "^10.19.0",
     "@sentry/vite-plugin": "^5.1.1",
-    "@stepperize/core": "^1.2.6",
+    "@stepperize/core": "^3.0.0",
     "@tabler/core": "1.4.0",
     "@tabler/icons-react": "^3.31.0",
     "@tanstack/react-query": "^5.75.7",
