@@ -51,7 +51,7 @@ export class SystemService {
 
   public async getLocalCertificate() {
     const { dataDir } = this.config.get('directories');
-    const filePath = `${dataDir}/traefik/tls/cert.pem`;
+    const filePath = `${dataDir}/traefik/tls/ca.pem`;
 
     if (await this.filesystem.isFile(filePath)) {
       const file = await this.filesystem.readTextFile(filePath);
