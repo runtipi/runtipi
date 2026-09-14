@@ -444,5 +444,58 @@ describe('AppHelpers', () => {
       // Assert - should use false, not the default
       expect(envMap.get('BOOLEAN_WITH_DEFAULT')).toBe('false');
     });
+
+    it('does not copy core secrets from the global env into the app env', async () => {
+      const envMap = new Map<string, string>([
+        ['JWT_SECRET', 'core-jwt-secret'],
+        ['POSTGRES_PASSWORD', 'core-db-password'],
+        ['POSTGRES_USERNAME', 'tipi'],
+        ['POSTGRES_HOST', 'runtipi-db'],
+        ['POSTGRES_DBNAME', 'tipi'],
+        ['RABBITMQ_PASSWORD', 'core-mq-password'],
+        ['RABBITMQ_USERNAME', 'tipi'],
+        ['RABBITMQ_HOST', 'runtipi-queue'],
+        ['LOCAL_DOMAIN', 'tipi.lan'],
+        ['TZ', 'UTC'],
+        ['INTERNAL_IP', '10.0.0.1'],
+      ]);
+      envUtils.envStringToMap.mockReturnValue(envMap);
+
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      expect(envMap.get('JWT_SECRET')).toBeUndefined();
+      expect(envMap.get('POSTGRES_PASSWORD')).toBeUndefined();
+      expect(envMap.get('POSTGRES_USERNAME')).toBeUndefined();
+      expect(envMap.get('POSTGRES_HOST')).toBeUndefined();
+      expect(envMap.get('POSTGRES_DBNAME')).toBeUndefined();
+      expect(envMap.get('RABBITMQ_PASSWORD')).toBeUndefined();
+      expect(envMap.get('RABBITMQ_USERNAME')).toBeUndefined();
+      expect(envMap.get('RABBITMQ_HOST')).toBeUndefined();
+      expect(envMap.get('LOCAL_DOMAIN')).toBe('tipi.lan');
+      expect(envMap.get('TZ')).toBe('UTC');
+      expect(envMap.get('INTERNAL_IP')).toBe('10.0.0.1');
+    });
+
+    it('still writes an app form field named JWT_SECRET after dropping the core secret', async () => {
+      const envMap = new Map<string, string>([['JWT_SECRET', 'core-jwt-secret']]);
+      envUtils.envStringToMap.mockReturnValueOnce(envMap).mockReturnValueOnce(new Map());
+      appFilesManager.getInstalledAppInfo.mockResolvedValue({
+        ...mockAppInfo,
+        form_fields: [
+          {
+            env_variable: 'JWT_SECRET',
+            label: 'JWT Secret',
+            type: 'random' as const,
+            min: 32,
+            required: false,
+          },
+        ],
+      });
+      envUtils.createRandomString.mockReturnValue('app-owned-jwt-secret');
+
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      expect(envMap.get('JWT_SECRET')).toBe('app-owned-jwt-secret');
+    });
   });
 });
