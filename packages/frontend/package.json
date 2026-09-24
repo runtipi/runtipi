@@ -32,7 +32,7 @@
     "@sentry/react": "^10.19.0",
     "@sentry/vite-plugin": "^5.1.1",
     "@stepperize/core": "^1.2.6",
-    "@tabler/core": "1.4.0",
+    "@tabler/core": "1.5.1",
     "@tabler/icons-react": "^3.31.0",
     "@tanstack/react-query": "^5.75.7",
     "@tanstack/react-query-devtools": "^5.75.7",
@@ -72,11 +72,11 @@
     "semver": "^7.7.1",
     "validator": "^13.15.0",
     "yaml": "^2.8.2",
-    "zustand": "5.0.8"
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
-    "@hey-api/openapi-ts": "^0.87.1",
+    "@hey-api/openapi-ts": "^0.99.0",
     "@react-router/dev": "^7.6.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
