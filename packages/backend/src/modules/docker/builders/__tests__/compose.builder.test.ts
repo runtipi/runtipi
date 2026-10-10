@@ -283,6 +283,48 @@ services:
       const resultParsed = yaml.parse(result);
       expect(resultParsed.services.web.ports).toBeUndefined();
     });
+
+    it('should not add a second port mapping when the main service already publishes APP_PORT', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - 127.0.0.1:\${APP_PORT}:80
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.ports).toEqual(['127.0.0.1:${APP_PORT}:80']);
+    });
+
+    it('should still add the port mapping when other ports are published', () => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - 127.0.0.1:9000:9000
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.ports).toEqual(['127.0.0.1:9000:9000', '${APP_PORT}:80']);
+    });
   });
 
   describe('Traefik labels', () => {
