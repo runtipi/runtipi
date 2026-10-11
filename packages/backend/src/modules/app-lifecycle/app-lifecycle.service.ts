@@ -1,8 +1,6 @@
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
-import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
-import type { AsyncMutex } from '@/utils/mutex/async-mutex';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
@@ -18,6 +16,7 @@ import { UpdateAppHandler } from './handlers/update-app.handler';
 import { UpdateConfigHandler } from './handlers/update-config.handler';
 import { BackupAppHandler } from './handlers/backup-app.handler';
 import { RestoreAppHandler } from './handlers/restore-app.handler';
+import { AppJobService } from './services/app-job.service';
 
 @Injectable()
 export class AppLifecycleService {
@@ -27,7 +26,6 @@ export class AppLifecycleService {
     private readonly commandFactory: AppLifecycleCommandFactory,
     private readonly appRepository: AppsRepository,
     private readonly appsService: AppsService,
-    @Inject(APP_ASYNC_MUTEX) private mutex: AsyncMutex,
     private readonly startAppHandler: StartAppHandler,
     private readonly stopAppHandler: StopAppHandler,
     private readonly restartAppHandler: RestartAppHandler,
@@ -38,26 +36,28 @@ export class AppLifecycleService {
     private readonly updateAppHandler: UpdateAppHandler,
     private readonly backupAppHandler: BackupAppHandler,
     private readonly restoreAppHandler: RestoreAppHandler,
+    private readonly jobs: AppJobService,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
   }
 
   async invokeCommand(data: typeof appEventSchema.infer, reply: (response: typeof appEventResultSchema.infer) => Promise<void>) {
-    const release = await this.mutex.acquire(data.appUrn);
+    if (data.command === 'update' || data.command === 'backup') {
+      await reply({ success: false, message: 'This queued job has expired. Submit a new update or backup from the dashboard or CLI.' });
+      return;
+    }
 
     try {
-      const command = this.commandFactory.createCommand(data);
-      await reply(await command.execute(data.appUrn, data.form));
+      await reply(await this.commandFactory.execute(data));
     } catch (err) {
       this.logger.error('Error invoking command:', err);
       await reply({ success: false, message: String(err) });
-    } finally {
-      release();
     }
   }
 
   async startApp(params: { appUrn: AppUrn; skipPull?: boolean }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.startAppHandler.execute(params.appUrn, { skipPull: params.skipPull });
   }
 
@@ -66,22 +66,27 @@ export class AppLifecycleService {
   }
 
   public async stopApp(params: { appUrn: AppUrn }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.stopAppHandler.execute(params.appUrn);
   }
 
   public async restartApp(params: { appUrn: AppUrn; skipPull?: boolean }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.restartAppHandler.execute(params.appUrn, { skipPull: params.skipPull });
   }
 
   public async uninstallApp(params: { appUrn: AppUrn; removeBackups: boolean }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.uninstallAppHandler.execute(params.appUrn, { removeBackups: params.removeBackups });
   }
 
   public async resetApp(params: { appUrn: AppUrn }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.resetAppHandler.execute(params.appUrn);
   }
 
   public async updateAppSettings(params: { appUrn: AppUrn; form: unknown }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.updateConfigHandler.execute(params.appUrn, { form: params.form });
   }
 
@@ -94,6 +99,7 @@ export class AppLifecycleService {
   }
 
   public async restoreApp(params: { appUrn: AppUrn; filename: string }) {
+    this.jobs.assertIdle(params.appUrn);
     return this.restoreAppHandler.execute(params.appUrn, { filename: params.filename });
   }
 

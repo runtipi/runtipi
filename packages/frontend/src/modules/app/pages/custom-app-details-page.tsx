@@ -1,6 +1,7 @@
 import { useParams, useSearchParams } from 'react-router';
 import { AppDetailsTabs } from '../containers/app-details-tabs/app-details-tabs';
 import { AppActions } from '../containers/app-actions/app-actions';
+import { AppJobProgress } from '../components/app-job-progress/app-job-progress';
 import { AppStatus } from '../components/app-status/app-status';
 import { CustomAppLogo } from '@/components/custom-app-logo/custom-app-logo';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
@@ -66,6 +67,7 @@ export const CustomAppDetailsPage = () => {
           <AppActions app={app} metadata={metadata} info={info} localDomain={userSettings.localDomain} sslPort={userSettings.sslPort} />
         </div>
       </div>
+      <AppJobProgress appUrn={info.urn} />
       <AppDetailsTabs info={info} app={app} metadata={metadata} />
     </div>
   );

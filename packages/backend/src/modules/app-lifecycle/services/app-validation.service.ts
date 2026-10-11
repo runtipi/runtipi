@@ -1,7 +1,8 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { type } from 'arktype';
 import type { AppInfo } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { lt, valid } from 'semver';
@@ -124,7 +125,13 @@ export class AppValidationService {
     }
   }
 
-  public async validateUpdateConfigSettings(appUrn: AppUrn, appInfo: AppInfo, form: ParsedForm, excludeAppId: number) {
+  public async validateUpdateConfigSettings(appUrn: AppUrn, appInfo: AppInfo, input: unknown, excludeAppId: number) {
+    const form = appFormSchema(input);
+
+    if (form instanceof type.errors) {
+      throw new TranslatableError('SYSTEM_ERROR_INVALID_BODY', undefined, HttpStatus.BAD_REQUEST, { cause: form });
+    }
+
     this.validateDomainSettings(form);
     this.validateExposability(appUrn, appInfo, form);
     this.validateForceExpose(appUrn, appInfo, form.exposed);
@@ -140,5 +147,7 @@ export class AppValidationService {
     if (form.openPort && form.port) {
       await this.validatePortUniqueness(form.port, excludeAppId);
     }
+
+    return form;
   }
 }

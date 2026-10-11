@@ -1,5 +1,6 @@
 import { type } from 'arktype';
 import { createArkDto } from 'nestjs-arktype';
+import { appJobSchema } from '@runtipi/common/schemas';
 
 export const appFormSchema = type({
   port: 'number >= 1024 & number <= 65535?',
@@ -37,3 +38,5 @@ export class UninstallAppBody extends createArkDto(uninstallAppBodySchema, { nam
 export class UpdateAppBody extends createArkDto(updateAppBodySchema, { name: 'UpdateAppBody', input: true }) {}
 
 export class LifecycleRequestDto extends createArkDto(lifecycleRequestSchema, { name: 'LifecycleRequestDto' }) {}
+
+export class AppJobDto extends createArkDto(type({ job: appJobSchema.or('null') }), { name: 'AppJobDto' }) {}

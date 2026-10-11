@@ -1,3 +1,7 @@
+import type { SSEService } from '@/core/sse/sse.service';
+import { AppJobService } from '../services/app-job.service';
+import { AppLifecycleCommandFactory } from '../app-lifecycle-command.factory';
+import { LoggerService } from '@/core/logger/logger.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppsRepository } from '@/modules/apps/apps.repository';
@@ -12,21 +16,20 @@ import { StartAppHandler } from './start-app.handler';
 import { StatusManagerService } from '../services/status-manager.service';
 
 const flushPromises = async () => {
-  await Promise.resolve();
-  await Promise.resolve();
+  await new Promise((resolve) => setTimeout(resolve, 0));
 };
 
 describe('BackupAppHandler', () => {
   const appUrn = 'test:store' as AppUrn;
   const appRepository = mock<AppsRepository>();
-  const appEventsQueue = mock<AppEventsQueue>();
+  const commandFactory = mock<AppLifecycleCommandFactory>();
   const statusManager = mock<StatusManagerService>();
   const startAppHandler = mock<StartAppHandler>();
   const config = mock<ConfigurationService>();
 
   beforeEach(() => {
     appRepository.getAppByUrn.mockReset();
-    appEventsQueue.publish.mockReset();
+    commandFactory.execute.mockReset();
     statusManager.transitionTo.mockReset();
     statusManager.emitSuccess.mockReset();
     statusManager.emitError.mockReset();
@@ -34,19 +37,24 @@ describe('BackupAppHandler', () => {
     config.get.mockReset();
 
     config.get.calledWith('demoMode').mockReturnValue(false);
-    appEventsQueue.publish.mockResolvedValue({ success: true, message: 'ok' });
+    commandFactory.execute.mockResolvedValue({ success: true, message: 'ok' });
   });
 
   it('publishes a backup job and restores the previous stopped status on success', async () => {
     appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 12, status: 'stopped', config: { foo: 'bar' } }));
 
-    const handler = new BackupAppHandler(appRepository, appEventsQueue, statusManager, startAppHandler, config);
+    const jobs = new AppJobService(mock<LoggerService>(), mock<SSEService>());
+
+    const handler = new BackupAppHandler(appRepository, commandFactory, statusManager, jobs, config);
     const result = await handler.execute(appUrn);
     await flushPromises();
 
     expect(result.requestId).toEqual(expect.any(String));
     expect(statusManager.transitionTo).toHaveBeenCalledWith(12, appUrn, 'backing_up');
-    expect(appEventsQueue.publish).toHaveBeenCalledWith({ appUrn, command: 'backup', requestId: result.requestId, form: { foo: 'bar' } });
+    expect(commandFactory.execute).toHaveBeenCalledWith(
+      { appUrn, command: 'backup', requestId: result.requestId, form: { foo: 'bar' }, wasRunningBeforeBackup: false },
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(statusManager.emitSuccess).toHaveBeenCalledWith({
       appId: 12,
       appUrn,
@@ -58,12 +66,14 @@ describe('BackupAppHandler', () => {
   it('restarts the app after backing up an app that was running', async () => {
     appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 13, status: 'running', config: {} }));
 
-    const handler = new BackupAppHandler(appRepository, appEventsQueue, statusManager, startAppHandler, config);
+    const jobs = new AppJobService(mock<LoggerService>(), mock<SSEService>());
+
+    const handler = new BackupAppHandler(appRepository, commandFactory, statusManager, jobs, config);
     await handler.execute(appUrn);
     await flushPromises();
 
-    expect(startAppHandler.execute).toHaveBeenCalledWith(appUrn);
-    expect(statusManager.emitSuccess).not.toHaveBeenCalled();
+    expect(commandFactory.execute).toHaveBeenCalledWith(expect.objectContaining({ wasRunningBeforeBackup: true }), expect.any(Object));
+    expect(statusManager.emitSuccess).toHaveBeenCalledWith(expect.objectContaining({ event: 'backup_success', status: 'running' }));
   });
 });
 

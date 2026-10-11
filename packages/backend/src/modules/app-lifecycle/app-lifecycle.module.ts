@@ -22,10 +22,12 @@ import { UpdateConfigHandler } from './handlers/update-config.handler';
 import { UpdateAppHandler } from './handlers/update-app.handler';
 import { BackupAppHandler } from './handlers/backup-app.handler';
 import { RestoreAppHandler } from './handlers/restore-app.handler';
+import { AppJobService } from './services/app-job.service';
 
 @Module({
   imports: [QueueModule, AppsModule, EnvModule, DockerModule, MarketplaceModule, BackupManagerModule, SSEModule],
   providers: [
+    AppJobService,
     AppLifecycleService,
     AppLifecycleCommandFactory,
     AppStatusSyncService,
@@ -43,6 +45,6 @@ import { RestoreAppHandler } from './handlers/restore-app.handler';
     RestoreAppHandler,
   ],
   controllers: [AppLifecycleController],
-  exports: [AppLifecycleService, AppStatusSyncService],
+  exports: [AppLifecycleService, AppStatusSyncService, AppJobService],
 })
 export class AppLifecycleModule {}

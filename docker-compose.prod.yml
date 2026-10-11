@@ -63,6 +63,7 @@ services:
         condition: service_started
     container_name: runtipi
     restart: unless-stopped
+    stop_grace_period: 1h
     healthcheck:
       start_period: 10s
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
