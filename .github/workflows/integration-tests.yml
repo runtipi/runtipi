@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - develop
+permissions:
+  contents: read
+
 
 jobs:
   integration-tests:
