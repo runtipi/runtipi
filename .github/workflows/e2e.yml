@@ -6,6 +6,13 @@ on:
         required: true
         type: string
         description: "Version to test (e.g. v1.6.0-beta.1)"
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+      SENTRY_AUTH_TOKEN:
+        required: true
   workflow_dispatch:
 
 jobs:

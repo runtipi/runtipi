@@ -33,14 +33,12 @@ jobs:
       contents: read
     needs: determine-release-type
     uses: "./.github/workflows/integration-tests.yml"
-    secrets: inherit
 
   unit-tests:
     permissions:
       contents: read
     needs: determine-release-type
     uses: "./.github/workflows/ci.yml"
-    secrets: inherit
 
   build-images:
     permissions:
@@ -192,7 +190,10 @@ jobs:
       id-token: write
     needs: [determine-release-type, publish-release]
     uses: "./.github/workflows/e2e.yml"
-    secrets: inherit
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     with:
       version: ${{ needs.determine-release-type.outputs.tagname }}
 
