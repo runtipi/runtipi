@@ -120,6 +120,7 @@ export type LoadDto = {
     cpuLoad: number;
     diskSize: number;
     diskUsed: number;
+    memorySource: 'cgroup' | 'containers' | 'host';
     memoryTotal: number;
     percentUsed: number;
     percentUsedMemory: number;

@@ -34,7 +34,7 @@ export default () => {
         isLoading={isLoading}
         title={t('DASHBOARD_MEMORY_TITLE')}
         metric={`${data.percentUsedMemory}%`}
-        subtitle={`${data.memoryTotal} GB`}
+        subtitle={data.memorySource === 'containers' ? `${data.memoryTotal} GB · ${t('DASHBOARD_MEMORY_ESTIMATED')}` : `${data.memoryTotal} GB`}
         icon={IconCircuitResistor}
         progress={data.percentUsedMemory}
       />
