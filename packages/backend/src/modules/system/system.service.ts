@@ -3,29 +3,21 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import si from 'systeminformation';
+import { HostMemoryService } from './host-memory.service';
 
 @Injectable()
 export class SystemService {
   constructor(
-    private readonly logger: LoggerService,
+    readonly _logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly filesystem: FilesystemService,
+    private readonly hostMemory: HostMemoryService,
   ) {}
 
   public async getSystemLoad() {
     const { currentLoad } = await si.currentLoad();
 
-    const memResult = { total: 0, used: 0, available: 0 };
-
-    try {
-      const memInfo = await this.filesystem.readTextFile('/host/proc/meminfo');
-
-      memResult.total = Number(memInfo?.toString().match(/MemTotal:\s+(\d+)/)?.[1] ?? 0) * 1024;
-      memResult.available = Number(memInfo?.toString().match(/MemAvailable:\s+(\d+)/)?.[1] ?? 0) * 1024;
-      memResult.used = memResult.total - memResult.available;
-    } catch (e) {
-      this.logger.error(`Unable to read /host/proc/meminfo: ${e}`);
-    }
+    const memory = await this.hostMemory.getMemory();
 
     const [disk0] = await si.fsSize();
 
@@ -35,9 +27,9 @@ export class SystemService {
     const diskUsed = diskSize - diskFree;
     const percentUsed = Math.round((diskUsed / diskSize) * 100);
 
-    const memoryTotal = Math.round(Number(memResult.total) / 1024 / 1024 / 1024);
-    const memoryFree = Math.round(Number(memResult.available) / 1024 / 1024 / 1024);
-    const percentUsedMemory = Math.round(((memoryTotal - memoryFree) / memoryTotal) * 100);
+    const memoryTotal = Math.round(memory.total / 1024 / 1024 / 1024);
+    // Computed from bytes, rounding to GB first made low usage show as 0%
+    const percentUsedMemory = memory.total > 0 ? Math.round((memory.used / memory.total) * 1000) / 10 : 0;
 
     return {
       diskUsed: diskUsed || 0,
@@ -46,6 +38,7 @@ export class SystemService {
       cpuLoad: currentLoad || 0,
       memoryTotal: memoryTotal || 0,
       percentUsedMemory: percentUsedMemory || 0,
+      memorySource: memory.source,
     };
   }
 

@@ -85,6 +85,8 @@ services:
       - ./docker-compose.dev.yml:/data/docker-compose.yml
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /proc/meminfo:/host/proc/meminfo:ro
+      # Only used inside LXC containers, to report the memory usage of the whole container
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     networks:

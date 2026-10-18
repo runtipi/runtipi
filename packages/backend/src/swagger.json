@@ -2840,6 +2840,14 @@
           "diskUsed": {
             "type": "number"
           },
+          "memorySource": {
+            "type": "string",
+            "enum": [
+              "cgroup",
+              "containers",
+              "host"
+            ]
+          },
           "memoryTotal": {
             "type": "number"
           },
@@ -2854,6 +2862,7 @@
           "cpuLoad",
           "diskSize",
           "diskUsed",
+          "memorySource",
           "memoryTotal",
           "percentUsed",
           "percentUsedMemory"
