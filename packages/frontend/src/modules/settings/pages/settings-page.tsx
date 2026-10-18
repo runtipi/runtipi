@@ -1,83 +1,71 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TopBar } from '@/components/layouts/app-shell/top-bar';
+import type { RouteHandle } from '@/components/layouts/dashboard/layout';
+import { PageHeader } from '@/components/page-header/page-header';
 import { useAppContext } from '@/context/app-context';
+import clsx from 'clsx';
 import { Suspense, lazy } from 'react';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { AppStoresContainer } from '../containers/app-stores-container';
+import './settings-page.css';
 
 const GeneralActionsContainer = lazy(() => import('../containers/general-actions').then((module) => ({ default: module.GeneralActionsContainer })));
 const UserSettingsContainer = lazy(() => import('../containers/user-settings').then((module) => ({ default: module.UserSettingsContainer })));
 const SecurityContainer = lazy(() => import('../containers/security').then((module) => ({ default: module.SecurityContainer })));
 const LogsContainer = lazy(() => import('../containers/logs').then((module) => ({ default: module.LogsContainer })));
 
+export const handle: RouteHandle = { ownHeader: true };
+
+const SECTIONS = ['general', 'security', 'appstores', 'updates', 'logs'] as const;
+type Section = (typeof SECTIONS)[number];
+
+// Tabs of the previous settings page, kept so old links still work
+const LEGACY_TABS: Record<string, Section> = { settings: 'general', actions: 'updates' };
+
+const toSection = (tab: string | null): Section => {
+  if (!tab) return 'general';
+  if (LEGACY_TABS[tab]) return LEGACY_TABS[tab];
+  return (SECTIONS as readonly string[]).includes(tab) ? (tab as Section) : 'general';
+};
+
 export default () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const tab = searchParams.get('tab');
+  const [searchParams, setSearchParams] = useSearchParams();
   const { userSettings, user } = useAppContext();
-  const [currentTab, setCurrentTab] = React.useState(tab || 'actions');
+  const section = toSection(searchParams.get('tab'));
 
-  const handleTabChange = (newTab: string) => {
-    setCurrentTab(newTab);
-    navigate(`?tab=${newTab}`, { replace: true });
+  const content: Record<Section, React.ReactNode> = {
+    general: <UserSettingsContainer initialValues={userSettings} />,
+    security: <SecurityContainer totpEnabled={Boolean(user.totpEnabled)} username={user.username} />,
+    appstores: <AppStoresContainer />,
+    updates: <GeneralActionsContainer />,
+    logs: <LogsContainer />,
   };
 
   return (
-    <div className="card d-flex">
-      <Tabs value={currentTab}>
-        <TabsList>
-          <TabsTrigger onClick={() => handleTabChange('actions')} value="actions">
-            {t('SETTINGS_ACTIONS_TAB_TITLE')}
-          </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('settings')} value="settings">
-            {t('SETTINGS_GENERAL_TAB_TITLE')}
-          </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('security')} value="security">
-            {t('SETTINGS_SECURITY_TAB_TITLE')}
-          </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('appstores')} value="appstores" className="d-none d-md-block">
-            {t('SETTINGS_APPSTORES_TAB_TITLE')}
-          </TabsTrigger>
-          <TabsTrigger onClick={() => handleTabChange('logs')} value="logs" className="d-none d-md-block">
-            {t('SETTINGS_LOGS_TAB_TITLE')}
-          </TabsTrigger>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="nav-link dropdown-toggle d-block d-md-none">{t('MORE')}</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleTabChange('appstores')}>{t('SETTINGS_APPSTORES_TAB_TITLE')}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleTabChange('logs')}>{t('SETTINGS_LOGS_TAB_TITLE')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TabsList>
-        <TabsContent value="actions">
-          <Suspense>
-            <GeneralActionsContainer />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="settings">
-          <Suspense>
-            <UserSettingsContainer initialValues={userSettings} />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="security">
-          <Suspense>
-            <SecurityContainer totpEnabled={Boolean(user.totpEnabled)} username={user.username} />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="appstores">
-          <Suspense>
-            <AppStoresContainer />
-          </Suspense>
-        </TabsContent>
-        <TabsContent value="logs">
-          <Suspense>
-            <LogsContainer />
-          </Suspense>
-        </TabsContent>
-      </Tabs>
-    </div>
+    <>
+      <TopBar placeholder={t('SETTINGS_SEARCH_PLACEHOLDER')} />
+      <PageHeader eyebrow={t('SETTINGS_EYEBROW')} title={t('HEADER_SETTINGS')} subtitle={t('SETTINGS_SUBTITLE')} />
+
+      <div className="rt-settings">
+        <nav className="rt-settings__nav" aria-label={t('HEADER_SETTINGS')}>
+          {SECTIONS.map((id, index) => (
+            <button
+              key={id}
+              type="button"
+              className={clsx('rt-settings__tab', { 'is-on': section === id })}
+              aria-current={section === id ? 'page' : undefined}
+              onClick={() => setSearchParams({ tab: id }, { replace: true })}
+            >
+              <span className="rt-settings__ix rt-mono">{String(index + 1).padStart(2, '0')}</span>
+              {t(`SETTINGS_SECTION_${id.toUpperCase()}`)}
+            </button>
+          ))}
+        </nav>
+        <div className="rt-settings__content">
+          <Suspense>{content[section]}</Suspense>
+        </div>
+      </div>
+    </>
   );
 };

@@ -1,5 +1,7 @@
 @import "@tabler/core/dist/css/tabler.min.css";
 @import "@tabler/core/dist/css/tabler-themes.min.css";
+@import "./styles/theme.css";
+@import "./styles/ui.css";
 
 #root {
   height: 100%;

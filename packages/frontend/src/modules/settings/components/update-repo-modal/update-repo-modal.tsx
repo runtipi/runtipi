@@ -24,7 +24,9 @@ export const UpdateRepoModal = () => {
 
   return (
     <div>
-      <Button onClick={() => UpdateRepoModalDisclosure.open()}>{t('SETTINGS_ACTIONS_UPDATE_REPO_MODAL_BUTTON')}</Button>
+      <button type="button" className="rt-btn rt-btn--primary" onClick={() => UpdateRepoModalDisclosure.open()}>
+        {t('SETTINGS_REFRESH_NOW')}
+      </button>
       <Dialog open={UpdateRepoModalDisclosure.isOpen} onOpenChange={UpdateRepoModalDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>

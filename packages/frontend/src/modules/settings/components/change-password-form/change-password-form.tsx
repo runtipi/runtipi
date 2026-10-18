@@ -1,6 +1,4 @@
 import { changePasswordMutation } from '@/api-client/@tanstack/react-query.gen';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import type { TranslatableError } from '@/types/error.types';
 import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { useMutation } from '@tanstack/react-query';
@@ -8,6 +6,7 @@ import { type } from 'arktype';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { SettingsPanel } from '../settings-ui/settings-ui';
 
 export const ChangePasswordForm = () => {
   const { t } = useTranslation();
@@ -50,33 +49,63 @@ export const ChangePasswordForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mb-4 w-100 ">
-      <Input
-        disabled={changePassword.isPending}
-        {...register('currentPassword')}
-        error={errors.currentPassword?.message}
-        type="password"
-        placeholder={t('SETTINGS_SECURITY_FORM_CURRENT_PASSWORD')}
-      />
-      <Input
-        disabled={changePassword.isPending}
-        {...register('newPassword')}
-        error={errors.newPassword?.message}
-        className="mt-2"
-        type="password"
-        placeholder={t('SETTINGS_SECURITY_FORM_NEW_PASSWORD')}
-      />
-      <Input
-        disabled={changePassword.isPending}
-        {...register('newPasswordConfirm')}
-        error={errors.newPasswordConfirm?.message}
-        className="mt-2"
-        type="password"
-        placeholder={t('SETTINGS_SECURITY_FORM_CONFIRM_PASSWORD')}
-      />
-      <Button disabled={changePassword.isPending} className="mt-3" type="submit">
-        {t('SETTINGS_SECURITY_FORM_CHANGE_PASSWORD_SUBMIT')}
-      </Button>
-    </form>
+    <SettingsPanel title={t('SETTINGS_SECURITY_PASSWORD_TITLE')} description={t('SETTINGS_SECURITY_CHANGE_PASSWORD_SUBTITLE')}>
+      <form onSubmit={handleSubmit(onSubmit)} className="rt-set-panel__body rt-password-form">
+        <div className="rt-set-fields rt-set-fields--full">
+          <div>
+            <label className="rt-label" htmlFor="current-password">
+              {t('SETTINGS_SECURITY_FORM_CURRENT_PASSWORD')}
+            </label>
+            <input
+              id="current-password"
+              className="rt-field"
+              type="password"
+              autoComplete="current-password"
+              disabled={changePassword.isPending}
+              aria-invalid={Boolean(errors.currentPassword)}
+              {...register('currentPassword')}
+            />
+            {errors.currentPassword && <div className="rt-set-field-error">{errors.currentPassword.message}</div>}
+          </div>
+        </div>
+        <div className="rt-set-fields">
+          <div>
+            <label className="rt-label" htmlFor="new-password">
+              {t('SETTINGS_SECURITY_FORM_NEW_PASSWORD')}
+            </label>
+            <input
+              id="new-password"
+              className="rt-field"
+              type="password"
+              autoComplete="new-password"
+              disabled={changePassword.isPending}
+              aria-invalid={Boolean(errors.newPassword)}
+              {...register('newPassword')}
+            />
+            {errors.newPassword && <div className="rt-set-field-error">{errors.newPassword.message}</div>}
+          </div>
+          <div>
+            <label className="rt-label" htmlFor="confirm-password">
+              {t('SETTINGS_SECURITY_FORM_CONFIRM_PASSWORD')}
+            </label>
+            <input
+              id="confirm-password"
+              className="rt-field"
+              type="password"
+              autoComplete="new-password"
+              disabled={changePassword.isPending}
+              aria-invalid={Boolean(errors.newPasswordConfirm)}
+              {...register('newPasswordConfirm')}
+            />
+            {errors.newPasswordConfirm && <div className="rt-set-field-error">{errors.newPasswordConfirm.message}</div>}
+          </div>
+        </div>
+        <div>
+          <button type="submit" className="rt-btn" disabled={changePassword.isPending}>
+            {t('SETTINGS_SECURITY_FORM_CHANGE_PASSWORD_SUBMIT')}
+          </button>
+        </div>
+      </form>
+    </SettingsPanel>
   );
 };

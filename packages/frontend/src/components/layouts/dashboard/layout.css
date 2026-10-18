@@ -1,3 +1,50 @@
 .title {
   min-height: 50px;
 }
+
+/* Header of the pages that don't render their own (app details, edit, update...) */
+.rt-default-header .page-pretitle {
+  font-family: var(--rt-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rt-muted);
+}
+
+.rt-default-header .breadcrumb {
+  margin: 0;
+  padding: 0;
+  --tblr-breadcrumb-divider-color: var(--rt-faint);
+}
+
+.rt-default-header .breadcrumb a {
+  color: var(--rt-muted);
+  text-decoration: none;
+}
+
+.rt-default-header .breadcrumb a:hover,
+.rt-default-header .breadcrumb .active a {
+  color: var(--rt-text-2);
+}
+
+.rt-default-header .page-title {
+  margin: 10px 0 0;
+  font-family: var(--rt-font-display);
+  font-weight: 700;
+  font-size: clamp(30px, 3.6vw, 44px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--rt-text);
+}
+
+/* Pages rendered with Tabler components inside the new shell */
+.rt-page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.rt-page-content > .row {
+  margin-left: 0;
+  margin-right: 0;
+}

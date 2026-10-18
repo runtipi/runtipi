@@ -1,0 +1,125 @@
+.rt-palette__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.rt-palette {
+  position: fixed;
+  top: 12vh;
+  left: 50%;
+  z-index: 1051;
+  display: flex;
+  flex-direction: column;
+  width: min(640px, calc(100vw - 32px));
+  max-height: 70vh;
+  transform: translateX(-50%);
+  border-radius: var(--rt-radius-lg);
+  background: var(--rt-surface);
+  border: 1px solid var(--rt-border-strong);
+  box-shadow: var(--rt-shadow);
+  color: var(--rt-text);
+  font-family: var(--rt-font-sans);
+  overflow: hidden;
+}
+
+.rt-palette__search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  height: 60px;
+  border-bottom: 1px solid var(--rt-border);
+  color: var(--rt-muted);
+}
+
+.rt-palette__search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--rt-text);
+  font: 400 16px var(--rt-font-sans);
+}
+
+.rt-palette__search input::placeholder {
+  color: var(--rt-muted);
+}
+
+.rt-palette__list {
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.rt-palette__group {
+  padding: 10px 10px 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rt-muted);
+}
+
+.rt-palette__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.rt-palette__item.is-active {
+  background: var(--rt-surface-raised);
+}
+
+.rt-palette__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--rt-surface-raised);
+  color: var(--rt-text-2);
+}
+
+.rt-palette__item.is-active .rt-palette__icon {
+  background: var(--rt-surface-raised-hover);
+}
+
+.rt-palette__label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.rt-palette__label > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rt-palette__hint {
+  font-size: 12px;
+  color: var(--rt-muted);
+}
+
+.rt-palette__arrow {
+  flex: none;
+  color: var(--rt-muted);
+  opacity: 0;
+}
+
+.rt-palette__item.is-active .rt-palette__arrow {
+  opacity: 1;
+}
+
+.rt-palette__empty {
+  padding: 28px;
+  text-align: center;
+  color: var(--rt-muted);
+}

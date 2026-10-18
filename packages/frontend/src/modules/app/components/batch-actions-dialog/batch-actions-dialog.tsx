@@ -10,7 +10,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
-type BatchAction = 'start-all' | 'stop-all' | 'restart-all' | 'update-all';
+export type BatchAction = 'start-all' | 'stop-all' | 'restart-all' | 'update-all';
 
 type Props = {
   availableUpdates: number;
@@ -23,7 +23,7 @@ type BatchActionDialogProps = {
   action: BatchAction | null;
 };
 
-const BatchActionDialog = ({ isOpen, onClose, onConfirm, action }: BatchActionDialogProps) => {
+export const BatchActionDialog = ({ isOpen, onClose, onConfirm, action }: BatchActionDialogProps) => {
   const { t } = useTranslation();
 
   if (!action) return null;

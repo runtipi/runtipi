@@ -1,9 +1,10 @@
 import { getAllAppStoresOptions } from '@/api-client/@tanstack/react-query.gen';
-import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
-import { IconAlertCircle, IconBrandAppstore } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { AddAppStoreDialog } from '../components/add-app-store-dialog/add-app-store-dialog';
 import { AppStoresTable } from '../components/app-stores-table/app-stores-table';
+import { SettingsPanel } from '../components/settings-ui/settings-ui';
 
 export const AppStoresContainer = () => {
   const { t } = useTranslation();
@@ -13,22 +14,12 @@ export const AppStoresContainer = () => {
   });
 
   return (
-    <div className="card-body">
-      <div className="d-flex align-items-center mb-2">
-        <IconBrandAppstore className="me-2" />
-        <h2 className="mb-0">{t('SETTINGS_APPSTORES_TITLE')}</h2>
+    <SettingsPanel title={t('SETTINGS_APPSTORES_TITLE')} description={t('SETTINGS_APPSTORES_SUBTITLE')} action={<AddAppStoreDialog />}>
+      <div className="rt-set-warning" role="note">
+        <IconAlertCircle size={18} stroke={1.8} aria-hidden="true" />
+        {t('SETTINGS_APPSTORES_WARNING')}
       </div>
-      <p className="text-muted">{t('SETTINGS_APPSTORES_SUBTITLE')}</p>
-      <Alert variant="warning">
-        <AlertIcon>
-          <IconAlertCircle stroke={2} />
-        </AlertIcon>
-        <div>
-          <AlertHeading>{t('COMMON_WARNING')}</AlertHeading>
-          <AlertDescription>{t('SETTINGS_APPSTORES_WARNING')}</AlertDescription>
-        </div>
-      </Alert>
       <AppStoresTable appStores={data.appStores} />
-    </div>
+    </SettingsPanel>
   );
 };

@@ -11,6 +11,7 @@ import { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { IconPlus } from '@tabler/icons-react';
 
 export const AddAppStoreDialog = () => {
   const { t } = useTranslation();
@@ -47,9 +48,10 @@ export const AddAppStoreDialog = () => {
 
   return (
     <div className="mt-3 align-self-end">
-      <Button onClick={() => addAppStoreDisclosure.open()} intent="primary">
+      <button type="button" className="rt-btn rt-btn--primary" onClick={() => addAppStoreDisclosure.open()}>
+        <IconPlus size={16} stroke={2} />
         {t('APP_STORE_ADD_BUTTON')}
-      </Button>
+      </button>
       <Dialog open={addAppStoreDisclosure.isOpen} onOpenChange={addAppStoreDisclosure.toggle}>
         <DialogContent>
           <DialogHeader>

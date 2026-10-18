@@ -8,6 +8,7 @@ import { IconAlertTriangle } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { IconTrash } from '@tabler/icons-react';
 
 type Props = {
   appStore: AppStore;
@@ -30,9 +31,16 @@ export const DeleteAppStoreDialog = ({ appStore }: Props) => {
 
   return (
     <div>
-      <Button size="sm" intent="danger" variant="ghost" disabled={deleteAppStore.isPending} onClick={() => deleteAppStoreDisclosure.open()}>
-        {t('APP_STORE_TABLE_DELETE')}
-      </Button>
+      <button
+        type="button"
+        className="rt-icon-btn"
+        disabled={deleteAppStore.isPending}
+        onClick={() => deleteAppStoreDisclosure.open()}
+        aria-label={`${t('APP_STORE_TABLE_DELETE')} ${appStore.name}`}
+        title={t('APP_STORE_TABLE_DELETE')}
+      >
+        <IconTrash size={16} stroke={1.8} />
+      </button>
       <Dialog open={deleteAppStoreDisclosure.isOpen} onOpenChange={deleteAppStoreDisclosure.toggle}>
         <DialogContent type="danger" size="sm">
           <DialogHeader>

@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { type } from 'arktype';
 import { useId } from 'react';
 import { useForm } from 'react-hook-form';
+import { SettingsPanel } from '../settings-ui/settings-ui';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -48,11 +49,18 @@ export const ChangeUsernameForm = ({ username }: Props) => {
   };
 
   return (
-    <div className="mb-4">
-      <Input disabled type="email" value={username} />
-      <Button className="mt-3" onClick={() => changeUsernameDisclosure.open()}>
-        {t('SETTINGS_SECURITY_CHANGE_USERNAME_TITLE')}
-      </Button>
+    <SettingsPanel title={t('SETTINGS_SECURITY_USERNAME_TITLE')} description={t('SETTINGS_SECURITY_CHANGE_USERNAME_SUBTITLE')}>
+      <div className="rt-set-panel__body">
+        <label className="rt-label" htmlFor="current-username">
+          {t('SETTINGS_SECURITY_USERNAME_LABEL')}
+        </label>
+        <div className="rt-set-inline">
+          <input id="current-username" className="rt-field" disabled type="email" value={username ?? ''} />
+          <button type="button" className="rt-btn" onClick={() => changeUsernameDisclosure.open()}>
+            {t('SETTINGS_SECURITY_CHANGE_USERNAME_TITLE')}
+          </button>
+        </div>
+      </div>
       <Dialog open={changeUsernameDisclosure.isOpen} onOpenChange={changeUsernameDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>
@@ -85,6 +93,6 @@ export const ChangeUsernameForm = ({ username }: Props) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </SettingsPanel>
   );
 };

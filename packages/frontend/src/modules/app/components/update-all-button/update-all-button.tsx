@@ -40,7 +40,13 @@ const UpdateAllDialog = ({ isOpen, onClose, onConfirm }: Props) => {
   );
 };
 
-export const UpdateAllButton = () => {
+type UpdateAllButtonProps = {
+  /** Render a plain button with these classes instead of the default one */
+  className?: string;
+  label?: string;
+};
+
+export const UpdateAllButton = ({ className, label }: UpdateAllButtonProps = {}) => {
   const updateDisclosure = useDisclosure();
   const { t } = useTranslation();
 
@@ -60,9 +66,15 @@ export const UpdateAllButton = () => {
   return (
     <>
       <UpdateAllDialog isOpen={updateDisclosure.isOpen} onClose={() => updateDisclosure.close()} onConfirm={() => updateAll.mutate({})} />
-      <Button intent="success" onClick={updateDisclosure.open}>
-        {t('MY_APPS_UPDATE_ALL_FORM_SUBMIT')}
-      </Button>
+      {className ? (
+        <button type="button" className={className} onClick={updateDisclosure.open}>
+          {label ?? t('MY_APPS_UPDATE_ALL_FORM_SUBMIT')}
+        </button>
+      ) : (
+        <Button intent="success" onClick={updateDisclosure.open}>
+          {label ?? t('MY_APPS_UPDATE_ALL_FORM_SUBMIT')}
+        </Button>
+      )}
     </>
   );
 };

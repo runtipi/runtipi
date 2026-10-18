@@ -1,0 +1,154 @@
+.rt-icon-btn--lg {
+  width: 44px;
+  height: 44px;
+}
+
+/* ---------- Needs a look + updates ---------- */
+
+.rt-myapps-attention {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 24px 28px;
+}
+
+.rt-myapps-attention__col {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.rt-myapps-attention__col--updates {
+  flex-basis: 320px;
+}
+
+.rt-myapps-attention h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: var(--rt-text);
+}
+
+.rt-myapps-attention p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--rt-warm-text);
+}
+
+.rt-myapps-attention__col--updates p {
+  margin-bottom: 16px;
+}
+
+.rt-myapps-attention__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--rt-warm-border);
+}
+
+.rt-myapps-attention__row .rt-tile__face {
+  border-radius: 10px;
+}
+
+.rt-myapps-attention__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  color: var(--rt-text);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rt-myapps-attention__name:hover {
+  color: var(--rt-accent-text);
+}
+
+.rt-myapps-attention__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rt-myapps-attention__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+@media (max-width: 575.98px) {
+  .rt-myapps-attention {
+    padding: 20px;
+    gap: 24px;
+  }
+}
+
+/* ---------- Filters and groups ---------- */
+
+.rt-myapps-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rt-myapps-filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rt-myapps-filters__hint {
+  font-size: 12px;
+  color: var(--rt-muted);
+}
+
+.rt-myapps-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.rt-myapps-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rt-myapps-group .rt-section-title h2 {
+  font-size: 24px;
+}
+
+.rt-myapps-none,
+.rt-myapps-empty {
+  margin: 0;
+  padding: 48px;
+  border: 1px dashed var(--rt-border-strong);
+  border-radius: var(--rt-radius);
+  text-align: center;
+  color: var(--rt-text-3);
+}
+
+.rt-myapps-empty h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: var(--rt-text);
+}
+
+.rt-myapps-empty p {
+  margin: 0 0 20px;
+}
+
+.rt-myapps-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}

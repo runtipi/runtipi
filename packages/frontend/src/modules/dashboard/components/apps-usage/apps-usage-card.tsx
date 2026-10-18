@@ -1,15 +1,17 @@
 import type { AppsUsageDto, MyAppsDto } from '@/api-client';
-import { AppLogo } from '@/components/app-logo/app-logo';
+import { AppIcon } from '@/components/app-icon/app-icon';
+import { RuntipiLogo } from '@/components/layouts/app-shell/runtipi-logo';
+import { getAppPath } from '@/modules/app/components/app-open-menu/app-open-menu';
 import { IconBox, IconChevronDown, IconChevronUp, IconSelector } from '@tabler/icons-react';
 import type { TFunction } from 'i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { formatBytes, formatPercent, formatTime } from '../../helpers/format';
 import { Sparkline } from '../sparkline/sparkline';
 import './apps-usage-card.css';
 
-type SortKey = 'cpu' | 'memory' | 'disk';
+export type SortKey = 'cpu' | 'memory' | 'disk';
 type Sort = { key: SortKey; direction: 'asc' | 'desc' };
 type UsageApp = AppsUsageDto['apps'][number];
 
@@ -33,12 +35,18 @@ const describeDisk = (disk: NonNullable<UsageApp['disk']>, t: TFunction) =>
 type Props = {
   usage: AppsUsageDto;
   installed: MyAppsDto['installed'];
+  /** Sort by this column, e.g. when the user reviews a full disk */
+  requestedSort?: { key: SortKey; at: number };
 };
 
-export const AppsUsageCard = ({ usage, installed }: Props) => {
+export const AppsUsageCard = ({ usage, installed, requestedSort }: Props) => {
   const { t, i18n } = useTranslation();
   const [sort, setSort] = useState<Sort>({ key: 'memory', direction: 'desc' });
   const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    if (requestedSort) setSort({ key: requestedSort.key, direction: 'desc' });
+  }, [requestedSort]);
 
   const appsByUrn = new Map(installed.map((app) => [app.info.urn, app.info]));
   const sharedById = new Map(usage.sharedStorage.map((shared) => [shared.id, shared]));
@@ -79,66 +87,67 @@ export const AppsUsageCard = ({ usage, installed }: Props) => {
     );
   };
 
-  const renderLogo = (id: string) => {
-    if (id === 'runtipi') return <AppLogo url="/tipi.png" size={32} alt="" />;
-    if (id === 'other') {
+  const renderLogo = (app: UsageApp) => {
+    if (app.id === 'runtipi' || app.id === 'other') {
       return (
-        <span className="apps-usage-placeholder">
-          <IconBox size={18} aria-hidden="true" />
+        <span className={`rt-tile ${app.id === 'runtipi' ? 'rt-cat--core' : ''}`} style={{ width: 36, height: 36 }}>
+          <span className="rt-tile__face">{app.id === 'runtipi' ? <RuntipiLogo size={18} /> : <IconBox size={18} aria-hidden="true" />}</span>
         </span>
       );
     }
-    return <AppLogo urn={id} size={32} alt="" />;
+    const info = appsByUrn.get(app.id);
+    return <AppIcon name={getName(app.id)} urn={app.id} categories={info?.categories} size={36} inactive={app.containers === 0} />;
   };
 
-  const renderName = (id: string) => {
-    const [appName, storeId] = id.split(':');
-    if (!storeId) return <span className="fw-bold text-truncate">{getName(id)}</span>;
+  const renderName = (app: UsageApp) => {
+    if (!app.id.includes(':')) return <span className="apps-usage-name">{getName(app.id)}</span>;
     return (
-      <Link to={`/apps/${storeId}/${appName}`} className="fw-bold text-reset text-truncate">
-        {getName(id)}
+      <Link to={getAppPath(app.id)} className="apps-usage-name">
+        {getName(app.id)}
       </Link>
     );
   };
 
   const renderDisk = (app: UsageApp) => {
     if (!app.disk) {
-      if (app.id === 'runtipi' || app.id === 'other') return <span className="text-secondary">-</span>;
-      return <span className="text-secondary">{usage.diskMeasuredAt ? '-' : t('DASHBOARD_APPS_USAGE_DISK_MEASURING')}</span>;
+      if (app.id === 'runtipi' || app.id === 'other') return <span className="apps-usage-empty">—</span>;
+      return <span className="apps-usage-empty">{usage.diskMeasuredAt ? '—' : t('DASHBOARD_APPS_USAGE_DISK_MEASURING')}</span>;
     }
 
     const sharedSize = app.disk.shared.reduce((sum, id) => sum + (sharedById.get(id)?.size ?? 0), 0);
 
     return (
       <div className="apps-usage-value" title={describeDisk(app.disk, t)}>
-        <strong>{formatBytes(app.disk.total)}</strong>
+        <span className="apps-usage-num">{formatBytes(app.disk.total)}</span>
         {app.disk.shared.length > 0 && (
-          <span className="text-secondary small">{t('DASHBOARD_APPS_USAGE_DISK_SHARED', { value: formatBytes(sharedSize) })}</span>
+          <span className="apps-usage-sub">{t('DASHBOARD_APPS_USAGE_DISK_SHARED', { value: formatBytes(sharedSize) })}</span>
         )}
         {app.disk.unmeasured.length > 0 && (
-          <span className="text-warning small">{t('DASHBOARD_APPS_USAGE_DISK_UNMEASURED_COUNT', { count: app.disk.unmeasured.length })}</span>
+          <span className="apps-usage-sub apps-usage-sub--warn">
+            {t('DASHBOARD_APPS_USAGE_DISK_UNMEASURED_COUNT', { count: app.disk.unmeasured.length })}
+          </span>
         )}
       </div>
     );
   };
 
   return (
-    <div className="card" data-testid="apps-usage">
-      <div className="card-header">
-        <div>
-          <h3 className="card-title">{t('DASHBOARD_APPS_USAGE_TITLE')}</h3>
-          <div className="card-subtitle text-secondary small mb-0">
-            {usage.diskMeasuredAt
-              ? t('DASHBOARD_APPS_USAGE_SUBTITLE', { time: formatTimestamp(usage.diskMeasuredAt) })
-              : t('DASHBOARD_APPS_USAGE_SUBTITLE_MEASURING')}
-          </div>
-        </div>
+    <section className="rt-panel apps-usage" id="resource-usage" aria-labelledby="apps-usage-title" data-testid="apps-usage">
+      <div className="apps-usage-head">
+        <h2 id="apps-usage-title" className="rt-display">
+          {t('DASHBOARD_APPS_USAGE_TITLE')}
+        </h2>
+        <p>
+          {usage.diskMeasuredAt
+            ? t('DASHBOARD_APPS_USAGE_SUBTITLE', { time: formatTimestamp(usage.diskMeasuredAt) })
+            : t('DASHBOARD_APPS_USAGE_SUBTITLE_MEASURING')}
+        </p>
       </div>
       {rows.length === 0 ? (
-        <div className="card-body text-center text-secondary">{t('DASHBOARD_APPS_USAGE_EMPTY')}</div>
+        <div className="apps-usage-none">{t('DASHBOARD_APPS_USAGE_EMPTY')}</div>
       ) : (
-        <div className="table-responsive">
-          <table className="table table-vcenter card-table apps-usage-table">
+        <div className="apps-usage-scroll">
+          <table className="apps-usage-table">
             <thead>
               <tr>
                 <th>{t('DASHBOARD_APPS_USAGE_APP')}</th>
@@ -155,11 +164,11 @@ export const AppsUsageCard = ({ usage, installed }: Props) => {
                 return (
                   <tr key={app.id}>
                     <td>
-                      <div className="apps-usage-app">
-                        {renderLogo(app.id)}
-                        <div className="d-flex flex-column min-w-0">
-                          {renderName(app.id)}
-                          <span className="text-secondary small">
+                      <div className={`apps-usage-app ${isRunning ? '' : 'apps-usage-app--off'}`}>
+                        {renderLogo(app)}
+                        <div className="apps-usage-app__text">
+                          {renderName(app)}
+                          <span className={`apps-usage-sub ${isRunning ? '' : 'apps-usage-sub--off'}`}>
                             {isRunning ? t('DASHBOARD_APPS_USAGE_CONTAINERS', { count: app.containers }) : t('APP_STATUS_STOPPED')}
                           </span>
                         </div>
@@ -168,7 +177,7 @@ export const AppsUsageCard = ({ usage, installed }: Props) => {
                     <td className="apps-usage-metric">
                       {isRunning ? (
                         <div className="apps-usage-cell">
-                          <strong>{formatPercent(app.cpu)}</strong>
+                          <span className="apps-usage-num">{formatPercent(app.cpu)}</span>
                           <Sparkline
                             className="apps-usage-sparkline"
                             timestamps={app.history.timestamps}
@@ -180,13 +189,13 @@ export const AppsUsageCard = ({ usage, installed }: Props) => {
                           />
                         </div>
                       ) : (
-                        <span className="text-secondary">-</span>
+                        <span className="apps-usage-empty">—</span>
                       )}
                     </td>
                     <td className="apps-usage-metric">
                       {isRunning ? (
                         <div className="apps-usage-cell">
-                          <strong>{formatBytes(app.memory)}</strong>
+                          <span className="apps-usage-num">{formatBytes(app.memory)}</span>
                           <Sparkline
                             className="apps-usage-sparkline"
                             timestamps={app.history.timestamps}
@@ -198,7 +207,7 @@ export const AppsUsageCard = ({ usage, installed }: Props) => {
                           />
                         </div>
                       ) : (
-                        <span className="text-secondary">-</span>
+                        <span className="apps-usage-empty">—</span>
                       )}
                     </td>
                     <td className="apps-usage-metric">{renderDisk(app)}</td>
@@ -210,29 +219,29 @@ export const AppsUsageCard = ({ usage, installed }: Props) => {
         </div>
       )}
       {rows.length > DEFAULT_VISIBLE && (
-        <div className="card-footer text-center py-2">
-          <button type="button" className="btn btn-link btn-sm" onClick={() => setShowAll((value) => !value)}>
+        <div className="apps-usage-more">
+          <button type="button" className="rt-btn rt-btn--sm" onClick={() => setShowAll((value) => !value)}>
             {showAll ? t('DASHBOARD_APPS_USAGE_SHOW_LESS') : t('DASHBOARD_APPS_USAGE_SHOW_ALL', { count: rows.length })}
           </button>
         </div>
       )}
       {usage.sharedStorage.length > 0 && (
-        <div className="card-body border-top">
-          <h4 className="subheader mb-2">{t('DASHBOARD_APPS_USAGE_SHARED_TITLE')}</h4>
-          <ul className="list-unstyled mb-0 d-flex flex-column gap-2">
+        <div className="apps-usage-shared-list">
+          <div className="rt-eyebrow">{t('DASHBOARD_APPS_USAGE_SHARED_TITLE')}</div>
+          <ul>
             {usage.sharedStorage.map((shared) => (
               <li key={shared.id} className="apps-usage-shared">
-                <span className="badge bg-secondary-lt">{t(`DASHBOARD_APPS_USAGE_SHARED_KIND_${shared.kind.toUpperCase()}`)}</span>
-                <code className="text-truncate" title={shared.sources.join(', ')}>
+                <span className="rt-chiptag">{t(`DASHBOARD_APPS_USAGE_SHARED_KIND_${shared.kind.toUpperCase()}`)}</span>
+                <code className="rt-mono" title={shared.sources.join(', ')}>
                   {shared.sources.join(', ')}
                 </code>
-                <strong className="text-nowrap">{formatBytes(shared.size)}</strong>
-                <span className="text-secondary text-truncate">{shared.apps.map(getName).join(', ')}</span>
+                <span className="apps-usage-num">{formatBytes(shared.size)}</span>
+                <span className="apps-usage-sub">{shared.apps.map(getName).join(', ')}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
-    </div>
+    </section>
   );
 };

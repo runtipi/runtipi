@@ -1,72 +1,89 @@
-.app-launcher {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.app-launcher-tile {
+.rt-your-apps {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.rt-your-apps .rt-section-title h2 {
+  font-size: 24px;
+}
+
+.rt-your-apps__all {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  aspect-ratio: 1;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--rt-text-3);
+  text-decoration: none;
+}
+
+.rt-your-apps__all:hover {
+  color: var(--rt-accent-text);
+}
+
+.rt-your-apps__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.rt-applink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   min-width: 0;
-  margin: 0;
-  padding: 0.75rem 0.5rem;
-  color: inherit;
+  padding: 14px 18px 14px 14px;
+  border-radius: var(--rt-radius);
+  background: var(--rt-surface);
+  border: 1px solid var(--rt-border);
+  color: var(--rt-text);
+  font: 600 15px var(--rt-font-sans);
+  text-align: left;
+  text-decoration: none;
   cursor: pointer;
-  transition:
-    border-color 150ms ease,
-    transform 150ms ease;
+  transition: border-color 0.15s;
 }
 
-.app-launcher-tile:hover,
-.app-launcher-tile[data-state="open"] {
-  border-color: var(--tblr-primary);
+.rt-applink:hover,
+.rt-applink[data-state="open"] {
+  border-color: var(--rt-border-hover);
+  color: var(--rt-text);
 }
 
-.app-launcher-tile:hover {
-  transform: translateY(-1px);
-}
-
-.app-launcher-tile:focus-visible {
-  outline: 2px solid var(--tblr-primary);
+.rt-applink:focus-visible {
+  outline: 2px solid var(--rt-accent);
   outline-offset: 2px;
 }
 
-.app-launcher-logo {
-  position: relative;
+.rt-applink__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.app-launcher-name {
-  max-width: 100%;
-  font-weight: 600;
-  font-size: 0.8125rem;
+.rt-applink--off .rt-applink__name {
+  color: var(--rt-text-3);
 }
 
-.app-launcher-tile-inactive .app-launcher-logo > .drop-shadow,
-.app-launcher-tile-inactive .app-launcher-name {
-  opacity: 0.55;
+.rt-applink--add {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--rt-border-strong);
+  color: var(--rt-text-3);
+  font-weight: 500;
 }
 
-.app-launcher-status {
-  position: absolute;
-  right: -2px;
-  bottom: -2px;
-  width: 0.75rem;
-  height: 0.75rem;
-  box-shadow: 0 0 0 2px var(--tblr-bg-surface);
+.rt-applink--add:hover {
+  color: var(--rt-text);
 }
 
-.app-launcher-update {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 0.75rem;
-  height: 0.75rem;
-  padding: 0;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px var(--tblr-bg-surface);
+.rt-applink__plus {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px dashed var(--rt-border-strong);
 }

@@ -13,6 +13,7 @@ import { useId } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { IconPencil } from '@tabler/icons-react';
 
 type Props = {
   appStore: AppStore;
@@ -53,9 +54,16 @@ export const EditAppStoreDialog = ({ appStore }: Props) => {
 
   return (
     <div>
-      <Button loading={editAppStore.isPending} size="sm" variant="ghost" onClick={() => editAppStoreDisclosure.open()} className="me-2">
-        {t('APP_STORE_TABLE_EDIT')}
-      </Button>
+      <button
+        type="button"
+        className="rt-icon-btn"
+        disabled={editAppStore.isPending}
+        onClick={() => editAppStoreDisclosure.open()}
+        aria-label={`${t('APP_STORE_TABLE_EDIT')} ${appStore.name}`}
+        title={t('APP_STORE_TABLE_EDIT')}
+      >
+        <IconPencil size={16} stroke={1.8} />
+      </button>
       <Dialog open={editAppStoreDisclosure.isOpen} onOpenChange={editAppStoreDisclosure.toggle}>
         <DialogContent size="sm">
           <DialogHeader>

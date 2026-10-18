@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Input } from '@/components/ui/Input';
 import { OtpInput } from '@/components/ui/OtpInput';
-import { Switch } from '@/components/ui/Switch';
 import { useAppContext } from '@/context/app-context';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import type { TranslatableError } from '@/types/error.types';
@@ -12,6 +11,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { RtSwitch, SettingsPanel } from '../settings-ui/settings-ui';
 
 export const OtpForm = (props: { totpEnabled: boolean }) => {
   const { totpEnabled } = props;
@@ -79,7 +79,7 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
     if (!uri || totpEnabled) return null;
 
     return (
-      <div className="mt-4">
+      <div className="rt-set-panel__body">
         <div className="mb-4">
           <p className="text-muted">{t('SETTINGS_SECURITY_SCAN_QR_CODE')}</p>
           <QRCodeSVG value={uri} />
@@ -113,13 +113,20 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
   };
 
   return (
-    <>
-      {!key && <Switch onCheckedChange={handleTotp} checked={totpEnabled} label={t('SETTINGS_SECURITY_ENABLE_2FA')} />}
-      {getTotpUri.isPending && (
-        <div className="progress w-50">
-          <div className="progress-bar progress-bar-indeterminate bg-green" />
-        </div>
-      )}
+    <SettingsPanel
+      title={t('SETTINGS_SECURITY_2FA_TITLE')}
+      description={t('SETTINGS_SECURITY_2FA_SUBTITLE_2')}
+      action={
+        !key && (
+          <>
+            <span className={totpEnabled ? 'rt-status-pill' : 'rt-status-pill rt-status-pill--warn'}>
+              {totpEnabled ? t('SETTINGS_ON') : t('SETTINGS_OFF')}
+            </span>
+            <RtSwitch checked={totpEnabled} onChange={handleTotp} label={t('SETTINGS_SECURITY_ENABLE_2FA')} disabled={getTotpUri.isPending} />
+          </>
+        )
+      }
+    >
       {renderSetupQr()}
       <Dialog open={setupOtpDisclosure.isOpen} onOpenChange={(o: boolean) => setupOtpDisclosure.toggle(o)}>
         <DialogContent size="sm">
@@ -179,6 +186,6 @@ export const OtpForm = (props: { totpEnabled: boolean }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </SettingsPanel>
   );
 };

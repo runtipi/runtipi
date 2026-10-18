@@ -1,9 +1,11 @@
 import { useSSE } from '@/lib/hooks/use-sse';
 import { Suspense, lazy, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const LogsTerminal = lazy(() => import('@/components/logs-terminal/logs-terminal').then((module) => ({ default: module.LogsTerminal })));
 
 export const LogsContainer = () => {
+  const { t } = useTranslation();
   let nextId = 0;
   const [logs, setLogs] = useState<{ id: number; text: string }[]>([]);
   const maxLines = useRef(300);
@@ -32,8 +34,16 @@ export const LogsContainer = () => {
   };
 
   return (
-    <Suspense>
-      <LogsTerminal logs={logs} maxLines={maxLines.current} onMaxLinesChange={updateMaxLines} />
-    </Suspense>
+    <section className="rt-panel rt-logs-panel">
+      <Suspense>
+        <LogsTerminal
+          logs={logs}
+          maxLines={maxLines.current}
+          onMaxLinesChange={updateMaxLines}
+          title={<h2 className="rt-logs__title">{t('SETTINGS_SYSTEM_LOGS')}</h2>}
+          downloadName="runtipi"
+        />
+      </Suspense>
+    </section>
   );
 };

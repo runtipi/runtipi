@@ -1,55 +1,43 @@
-import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
-import type { IconAperture } from '@tabler/icons-react';
 import clsx from 'clsx';
-import type React from 'react';
-import { getSeverity, severityClass } from '../helpers/format';
+import type { ReactNode } from 'react';
 
-interface IProps {
-  icon: typeof IconAperture;
-  /** Fill of the meter, in percent. The meter is hidden when undefined */
+type Props = {
+  label: ReactNode;
+  /** Shown on the right of the label, e.g. "4 cores" */
+  meta?: ReactNode;
+  value: string;
+  unit?: string;
+  /** Fill of the meter in percent, hidden when undefined */
   progress?: number;
-  title: string;
-  subtitle: React.ReactNode;
-  metric: string;
-  isLoading?: boolean;
-  /** Rendered below the meter, usually a sparkline */
-  children?: React.ReactNode;
+  tone?: 'default' | 'danger';
+  meterTone?: 'default' | 'accent' | 'danger';
+  /** Rendered between the value and the meter, usually a sparkline */
+  children?: ReactNode;
   className?: string;
-}
+};
 
-export const SystemStat: React.FC<IProps> = ({ icon: IconComponent, progress, title, subtitle, metric, isLoading = false, children, className }) => (
-  <div className={clsx('px-1 pt-0 pb-0', className ?? 'col-sm-6 col-lg-4')}>
-    <div className="card">
-      <div className="card-body d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-start">
-          <Skeleton loading={isLoading}>
-            <div className={clsx('h2 mb-3 font-weight-bold')}>{title}</div>
-          </Skeleton>
-          <IconComponent aria-hidden="true" />
-        </div>
-        <div className={clsx('h2')}>
-          <Skeleton loading={isLoading}>{metric}</Skeleton>
-        </div>
-        <div className={clsx('mb-3 text-muted')}>
-          <Skeleton loading={isLoading}>{subtitle}</Skeleton>
-        </div>
-        {progress !== undefined && (
-          <Skeleton loading={isLoading}>
-            <div className="progress progress-sm">
-              <div
-                className={clsx('progress-bar', severityClass[getSeverity(progress)])}
-                style={{ width: `${Math.min(progress, 100).toFixed(0)}%` }}
-                role="progressbar"
-                aria-valuenow={Math.round(progress)}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={title}
-              />
-            </div>
-          </Skeleton>
-        )}
-        {children && <div className="mt-auto pt-3">{children}</div>}
-      </div>
+export const StatCard = ({ label, meta, value, unit, progress, tone = 'default', meterTone = 'default', children, className }: Props) => (
+  <div className={clsx('rt-stat', { 'rt-stat--danger': tone === 'danger' }, className)}>
+    <div className="rt-stat__head">
+      <span className="rt-stat__label rt-mono">{label}</span>
+      {meta && <span className="rt-stat__meta rt-mono">{meta}</span>}
     </div>
+    <div className="rt-stat__value rt-display">
+      {value}
+      {unit && <span className="rt-stat__unit">{unit}</span>}
+    </div>
+    <div className="rt-stat__body">{children}</div>
+    {progress !== undefined && (
+      <div
+        className={clsx('rt-meter', { 'rt-meter--accent': meterTone === 'accent', 'rt-meter--danger': meterTone === 'danger' })}
+        role="progressbar"
+        aria-valuenow={Math.round(progress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={typeof label === 'string' ? label : undefined}
+      >
+        <span style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }} />
+      </div>
+    )}
   </div>
 );

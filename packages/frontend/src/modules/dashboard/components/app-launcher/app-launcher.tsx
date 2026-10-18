@@ -1,102 +1,65 @@
 import type { MyAppsDto } from '@/api-client';
-import { AppLogo } from '@/components/app-logo/app-logo';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
-import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
-import { useUserContext } from '@/context/user-context';
-import { IconInfoCircle, IconLock, IconLockOff } from '@tabler/icons-react';
+import { AppIcon, toIconStatus } from '@/components/app-icon/app-icon';
+import { AppOpenMenu } from '@/modules/app/components/app-open-menu/app-open-menu';
+import { IconArrowRight, IconPlus } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
-import { getAppUrls, isUpdateAvailable } from '../../helpers/app-urls';
+import { Link } from 'react-router';
+import { padCount } from '../attention-banner';
 import './app-launcher.css';
 
 type InstalledApp = MyAppsDto['installed'][number];
 
-const getAppPath = (urn: string) => {
-  const [appName, storeId] = urn.split(':');
-  return `/apps/${storeId}/${appName}`;
-};
-
 const statusOrder = (app: InstalledApp) => (app.app.status === 'running' ? 0 : 1);
 
 /**
- * Grid of app icons. Clicking an icon opens a menu with the urls the app can be opened with.
+ * "Your apps" row of the dashboard. Clicking an app opens a menu with the links it can be opened with.
  */
 export const AppLauncher = ({ installed }: { installed: InstalledApp[] }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { localDomain, sslPort } = useUserContext();
 
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const apps = installed
     .filter(({ info }) => info.available)
     .sort((a, b) => statusOrder(a) - statusOrder(b) || a.info.name.localeCompare(b.info.name));
 
-  if (apps.length === 0) return null;
-
   return (
-    <div className="col-12 px-1">
-      <div className="app-launcher" data-testid="app-launcher">
-        {apps.map((installedApp) => {
-          const { app, info } = installedApp;
-          const isRunning = app.status === 'running';
-          const urls = isRunning ? getAppUrls(installedApp, { hostname, localDomain, sslPort }) : [];
-          const status = t(`APP_STATUS_${app.status.toUpperCase()}`);
-
+    <section className="rt-your-apps" aria-labelledby="rt-your-apps-title">
+      <div className="rt-section-title">
+        <h2 id="rt-your-apps-title">{t('DASHBOARD_YOUR_APPS')}</h2>
+        <span className="rt-section-title__count">{padCount(apps.length)}</span>
+        <span className="rt-section-title__rule" />
+        <Link to="/apps" className="rt-your-apps__all">
+          {t('DASHBOARD_SEE_ALL')}
+          <IconArrowRight size={14} stroke={1.8} aria-hidden="true" />
+        </Link>
+      </div>
+      <div className="rt-your-apps__grid" data-testid="app-launcher">
+        {apps.map((app) => {
+          const isRunning = app.app.status === 'running';
           return (
-            <DropdownMenu key={info.urn} modal={false}>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className={clsx('app-launcher-tile card', { 'app-launcher-tile-inactive': !isRunning })}
-                  aria-label={`${info.name} (${status})`}
-                >
-                  <span className="app-launcher-logo">
-                    <AppLogo alt="" urn={info.urn} size={56} />
-                    <span
-                      className={clsx('app-launcher-status status-dot', {
-                        'status-green': isRunning,
-                        'status-red': app.status === 'stopped',
-                        'status-gray status-dot-animated': !isRunning && app.status !== 'stopped',
-                      })}
-                      title={status}
-                    />
-                    {isUpdateAvailable(installedApp) && <span className="app-launcher-update badge bg-green" title={t('MY_APPS_UPDATE_AVAILABLE')} />}
-                  </span>
-                  <span className="app-launcher-name text-truncate">{info.name}</span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>{info.name}</DropdownMenuLabel>
-                {urls.length > 0 ? (
-                  <DropdownMenuGroup>
-                    {urls.map((url) => (
-                      <DropdownMenuItem key={url.type} onClick={() => window.open(url.url, '_blank', 'noreferrer')}>
-                        {url.secure ? <IconLock className="text-green me-2" size={16} /> : <IconLockOff className="text-muted me-2" size={16} />}
-                        {url.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                ) : (
-                  <DropdownMenuLabel className="text-secondary fw-normal">{isRunning ? t('DASHBOARD_LAUNCHER_NO_LINKS') : status}</DropdownMenuLabel>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate(getAppPath(info.urn))}>
-                  <IconInfoCircle className="me-2" size={16} />
-                  {t('DASHBOARD_LAUNCHER_DETAILS')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <AppOpenMenu key={app.info.urn} app={app}>
+              <button type="button" className={clsx('rt-applink', { 'rt-applink--off': !isRunning })}>
+                <AppIcon
+                  name={app.info.name}
+                  urn={app.info.urn}
+                  categories={app.info.categories}
+                  status={toIconStatus(app.app.status)}
+                  inactive={!isRunning}
+                  size={44}
+                />
+                <span className="rt-applink__name">{app.info.name}</span>
+                <span className="rt-sr">{t(`APP_STATUS_${app.app.status.toUpperCase()}`)}</span>
+              </button>
+            </AppOpenMenu>
           );
         })}
+        <Link to="/app-store" className="rt-applink rt-applink--add">
+          <span className="rt-applink__plus" aria-hidden="true">
+            <IconPlus size={18} stroke={1.8} />
+          </span>
+          <span>{t('DASHBOARD_INSTALL_MORE')}</span>
+        </Link>
       </div>
-    </div>
+    </section>
   );
 };

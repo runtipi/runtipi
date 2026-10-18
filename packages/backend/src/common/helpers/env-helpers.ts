@@ -36,6 +36,11 @@ const getArchitecture = () => {
   throw new Error(`Unsupported architecture: ${arch}`);
 };
 
+export const DEFAULT_THEME_BASE = 'stone';
+export const DEFAULT_THEME_COLOR = 'orange';
+
+const withoutLegacyDefault = (value: string | undefined, legacyDefault: string) => (value === legacyDefault ? undefined : value);
+
 export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   const logger = new LoggerService('backend', path.join(path.join(DATA_DIR, 'logs')), process.env.LOG_LEVEL as LogLevel);
   logger.info('Generating system env file');
@@ -149,8 +154,10 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   );
   envMap.set('LOG_LEVEL', settings.logLevel || envMap.get('LOG_LEVEL') || 'info');
   envMap.set('EXPERIMENTAL_INSECURE_COOKIE', settings.experimental_insecureCookie ? 'true' : 'false');
-  envMap.set('THEME_BASE', settings.themeBase || envMap.get('THEME_BASE') || 'gray');
-  envMap.set('THEME_COLOR', settings.themeColor || envMap.get('THEME_COLOR') || 'blue');
+  // The .env file used to be written with the previous defaults (gray/blue) even when the user never picked a theme,
+  // those values are treated as unset so these installs get the current defaults. Explicit choices live in settings.json
+  envMap.set('THEME_BASE', settings.themeBase || withoutLegacyDefault(envMap.get('THEME_BASE'), 'gray') || DEFAULT_THEME_BASE);
+  envMap.set('THEME_COLOR', settings.themeColor || withoutLegacyDefault(envMap.get('THEME_COLOR'), 'blue') || DEFAULT_THEME_COLOR);
 
   await fs.promises.writeFile(envFilePath, envUtils.envMapToString(envMap));
 

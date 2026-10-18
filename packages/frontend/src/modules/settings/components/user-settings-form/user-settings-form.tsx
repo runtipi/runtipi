@@ -1,29 +1,20 @@
-import { LanguageSelector } from '@/components/language-selector/language-selector';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Switch } from '@/components/ui/Switch';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
-import type { Locale } from '@/lib/i18n/locales';
-import { IconAdjustmentsAlt, IconAdjustmentsCode, IconInfoCircle, IconUser } from '@tabler/icons-react';
-import clsx from 'clsx';
-import type React from 'react';
-import { Suspense, lazy, useEffect } from 'react';
+import { type Locale, locales, toSupportedLocale } from '@/lib/i18n/locales';
+import { IconArrowUpRight, IconCertificate } from '@tabler/icons-react';
+import { type } from 'arktype';
+import i18next from 'i18next';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from 'react-tooltip';
 import validator from 'validator';
-import { type } from 'arktype';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
-import './user-settings-form.css';
-import { Alert, AlertDescription, AlertHeading, AlertIcon } from '@/components/ui/Alert/Alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
-import { ColorSelector, THEME_COLOR_ENUM, type ThemeColor } from '../color-selector/color-selector';
-import { THEME_BASE_ENUM, type ThemeBase, ThemeBaseSelector } from '../theme-base-selector/theme-base-selector';
-import { TimeZoneSuspense } from '@/components/timezone-selector/timezone.suspense';
+import { THEME_COLOR_ENUM } from '../color-selector/color-selector';
+import { AccentSwatches, RtSwitch, SettingRow, SettingsPanel } from '../settings-ui/settings-ui';
+import { THEME_BASE_ENUM } from '../theme-base-selector/theme-base-selector';
 
-const TimeZoneSelector = lazy(() =>
-  import('@/components/timezone-selector/timezone-selector').then((module) => ({
-    default: module.TimeZoneSelector,
+const TimeZoneField = lazy(() =>
+  import('@/components/timezone-selector/timezone-field').then((module) => ({
+    default: module.TimeZoneField,
   })),
 );
 
@@ -83,37 +74,29 @@ export type SettingsFormValues = {
 
 interface IProps {
   currentLocale?: Locale;
-  currentBaseTheme?: ThemeBase;
   onSubmit: (values: SettingsFormValues) => void;
   initialValues?: Partial<SettingsFormValues>;
   loading?: boolean;
   submitErrors?: Record<string, string>;
 }
 
+const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+/**
+ * Map the detected language (e.g. "en", "en-US@posix") to one of the supported locales.
+ */
 export const UserSettingsForm = (props: IProps) => {
   const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors } = props;
   const { t } = useTranslation();
   const advancedSettingsDisclosure = useDisclosure();
-
-  const validateFields = (values: SettingsFormValues) => {
-    const errors: { [K in keyof SettingsFormValues]?: string } = {};
-
-    if (values.localDomain && !validator.isFQDN(values.localDomain)) {
-      errors.localDomain = t('SETTINGS_GENERAL_INVALID_DOMAIN');
-    }
-
-    if (values.appsRepoUrl && !validator.isURL(values.appsRepoUrl)) {
-      errors.appsRepoUrl = t('SETTINGS_GENERAL_INVALID_URL');
-    }
-
-    return errors;
-  };
+  const [locale, setLocale] = useState<Locale>(toSupportedLocale(currentLocale));
 
   const {
     register,
     handleSubmit,
     setError,
     control,
+    reset,
     formState: { errors, isDirty },
   } = useForm<SettingsFormValues>({ values: initialValues });
 
@@ -126,7 +109,15 @@ export const UserSettingsForm = (props: IProps) => {
   }, [submitErrors, setError]);
 
   const validate = (values: SettingsFormValues) => {
-    const validationErrors = validateFields(values);
+    const validationErrors: { [K in keyof SettingsFormValues]?: string } = {};
+
+    if (values.localDomain && !validator.isFQDN(values.localDomain)) {
+      validationErrors.localDomain = t('SETTINGS_GENERAL_INVALID_DOMAIN');
+    }
+
+    if (values.appsRepoUrl && !validator.isURL(values.appsRepoUrl)) {
+      validationErrors.appsRepoUrl = t('SETTINGS_GENERAL_INVALID_URL');
+    }
 
     for (const [key, value] of Object.entries(validationErrors)) {
       if (value) {
@@ -147,129 +138,142 @@ export const UserSettingsForm = (props: IProps) => {
     }
   };
 
-  const downloadCertificate = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    window.open('/api/system/certificate');
+  // Theme changes are previewed right away and reverted when discarding
+  const previewTheme = (key: 'bsThemeBase' | 'bsThemePrimary', value?: string) => {
+    if (value) document.body.dataset[key] = value;
   };
 
+  const discard = () => {
+    previewTheme('bsThemeBase', initialValues?.themeBase);
+    previewTheme('bsThemePrimary', initialValues?.themeColor);
+    reset(initialValues);
+  };
+
+  const onLocaleChange = (newLocale: Locale) => {
+    i18next.changeLanguage(newLocale);
+    setLocale(newLocale);
+  };
+
+  const advanced = initialValues?.advancedSettings;
+
+  const textRow = (
+    name: 'appsRepoUrl' | 'localDomain' | 'domain' | 'internalIp' | 'listenIp' | 'appDataPath' | 'forwardAuthUrl',
+    label: string,
+    description: string,
+    placeholder: string,
+    options: { mono?: boolean; disabled?: boolean } = {},
+  ) => (
+    <SettingRow label={label} description={description} htmlFor={`setting-${name}`} error={errors[name]?.message}>
+      <input
+        id={`setting-${name}`}
+        className={`rt-field${options.mono ? ' rt-mono' : ''}`}
+        placeholder={placeholder}
+        disabled={options.disabled}
+        {...register(name)}
+      />
+    </SettingRow>
+  );
+
+  const numberRow = (name: 'port' | 'sslPort' | 'eventsTimeout' | 'maxBackups', label: string, description: string, placeholder: string) => (
+    <SettingRow label={label} description={description} htmlFor={`setting-${name}`} error={errors[name]?.message}>
+      <input
+        id={`setting-${name}`}
+        className="rt-field rt-mono"
+        type="number"
+        placeholder={placeholder}
+        {...register(name, { valueAsNumber: true, required: name === 'eventsTimeout' || name === 'maxBackups' })}
+      />
+    </SettingRow>
+  );
+
+  const switchRow = (
+    name: 'allowAutoThemes' | 'guestDashboard' | 'allowErrorMonitoring' | 'persistTraefikConfig',
+    label: string,
+    description: string,
+  ) => (
+    <SettingRow label={label} description={description} inline>
+      <Controller
+        control={control}
+        name={name}
+        defaultValue={false}
+        render={({ field: { onChange, value } }) => <RtSwitch checked={value} onChange={onChange} label={label} />}
+      />
+    </SettingRow>
+  );
+
   return (
-    <>
-      {isDirty && (
-        <Alert variant="info" className="fade-in">
-          <AlertIcon>
-            <IconInfoCircle stroke={2} />
-          </AlertIcon>
-          <div>
-            <AlertHeading>{t('SETTINGS_GENERAL_SAVE_ALERT_TITLE')}</AlertHeading>
-            <AlertDescription>{t('SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE')}</AlertDescription>
-          </div>
-        </Alert>
-      )}
-      <div className="d-flex mb-2">
-        <IconUser className="me-2" />
-        <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_USER_SETTINGS')}</h2>
-      </div>
-      <LanguageSelector showLabel locale={currentLocale} />
-      <Controller
-        control={control}
-        name="themeBase"
-        render={({ field: { onChange, value } }) => <ThemeBaseSelector value={value as ThemeBase} onChange={onChange} />}
-      />
-      <Controller
-        control={control}
-        name="themeColor"
-        render={({ field: { onChange, value } }) => (
-          <ColorSelector name="themeColor" label={t('SETTINGS_GENERAL_PRIMARY_COLOR')} value={value as ThemeColor} onChange={onChange} />
-        )}
-      />
-      <form className="flex flex-col mt-2" onSubmit={handleSubmit(validate)}>
-        <div className="d-flex mb-2">
-          <IconAdjustmentsAlt className="me-2" />
-          <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_TITLE')}</h2>
-        </div>
-        <p className="mb-4">{t('SETTINGS_GENERAL_SUBTITLE')}</p>
-        <div className="mb-3">
+    <form className="rt-settings-stack" onSubmit={handleSubmit(validate)}>
+      <SettingsPanel title={t('SETTINGS_APPEARANCE_TITLE')} description={t('SETTINGS_APPEARANCE_SUBTITLE')}>
+        <SettingRow
+          label={t('SETTINGS_GENERAL_LANGUAGE')}
+          htmlFor="setting-language"
+          description={
+            <a href="https://crowdin.com/project/runtipi" target="_blank" rel="noreferrer">
+              {t('SETTINGS_GENERAL_LANGUAGE_HELP_TRANSLATE')}
+              <IconArrowUpRight size={13} stroke={1.8} aria-hidden="true" />
+            </a>
+          }
+        >
+          <select id="setting-language" className="rt-field" value={locale} onChange={(e) => onLocaleChange(e.target.value as Locale)}>
+            {Object.keys(locales).map((key) => (
+              <option key={key} value={key}>
+                {locales[key as Locale]}
+              </option>
+            ))}
+          </select>
+        </SettingRow>
+        <SettingRow label={t('SETTINGS_GENERAL_BASE_THEME')} description={t('SETTINGS_BASE_THEME_HINT')} htmlFor="setting-themeBase">
           <Controller
             control={control}
-            name="guestDashboard"
-            defaultValue={false}
-            render={({ field: { onChange, value, ref, ...rest } }) => (
-              <Switch
-                className="mb-3"
-                ref={ref}
-                checked={value}
-                onCheckedChange={onChange}
-                {...rest}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_GUEST_DASHBOARD')}
-                    <Tooltip className="tooltip" anchorSelect=".guest-dashboard-hint">
-                      {t('SETTINGS_GENERAL_GUEST_DASHBOARD_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help guest-dashboard-hint')}>?</span>
-                  </>
-                }
+            name="themeBase"
+            render={({ field: { onChange, value } }) => (
+              <select
+                id="setting-themeBase"
+                className="rt-field"
+                value={value}
+                onChange={(e) => {
+                  previewTheme('bsThemeBase', e.target.value);
+                  onChange(e.target.value);
+                }}
+              >
+                {Object.values(THEME_BASE_ENUM).map((base) => (
+                  <option key={base} value={base}>
+                    {capitalize(base)}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
+        </SettingRow>
+        <SettingRow label={t('SETTINGS_ACCENT_COLOR')} description={t('SETTINGS_ACCENT_COLOR_HINT')}>
+          <Controller
+            control={control}
+            name="themeColor"
+            render={({ field: { onChange, value } }) => (
+              <AccentSwatches
+                label={t('SETTINGS_ACCENT_COLOR')}
+                value={value}
+                onChange={(color) => {
+                  previewTheme('bsThemePrimary', color);
+                  onChange(color);
+                }}
               />
             )}
           />
-        </div>
-        <div className="mb-3">
-          <Controller
-            control={control}
-            name="allowErrorMonitoring"
-            defaultValue={false}
-            render={({ field: { onChange, value, ref, ...rest } }) => (
-              <Switch
-                className="mb-3"
-                ref={ref}
-                checked={value}
-                onCheckedChange={onChange}
-                {...rest}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_ALLOW_ERROR_MONITORING')}
-                    <Tooltip className="tooltip" anchorSelect=".allow-errors-hint">
-                      {t('SETTINGS_GENERAL_ALLOW_ERROR_MONITORING_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help allow-errors-hint')}>?</span>
-                  </>
-                }
-              />
-            )}
-          />
-        </div>
-        <div className="mb-3">
-          <Controller
-            control={control}
-            name="allowAutoThemes"
-            defaultValue={false}
-            render={({ field: { onChange, value, ref, ...rest } }) => (
-              <Switch
-                className="mb-3"
-                ref={ref}
-                checked={value}
-                onCheckedChange={onChange}
-                {...rest}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_ALLOW_AUTO_THEMES')}
-                    <Tooltip className="tooltip" anchorSelect=".allow-auto-themes-hint">
-                      {t('SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help allow-auto-themes-hint')}>?</span>
-                  </>
-                }
-              />
-            )}
-          />
-        </div>
-        <div className="mb-3">
+        </SettingRow>
+        {switchRow('allowAutoThemes', t('SETTINGS_GENERAL_ALLOW_AUTO_THEMES'), t('SETTINGS_GENERAL_ALLOW_AUTO_THEMES_HINT'))}
+      </SettingsPanel>
+
+      <SettingsPanel title={t('SETTINGS_INSTANCE_TITLE')} description={t('SETTINGS_INSTANCE_SUBTITLE')}>
+        {switchRow('guestDashboard', t('SETTINGS_GENERAL_GUEST_DASHBOARD'), t('SETTINGS_GENERAL_GUEST_DASHBOARD_HINT'))}
+        {switchRow('allowErrorMonitoring', t('SETTINGS_GENERAL_ALLOW_ERROR_MONITORING'), t('SETTINGS_GENERAL_ALLOW_ERROR_MONITORING_HINT'))}
+        <SettingRow label={t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')} description={t('SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE')} inline>
           <Controller
             control={control}
             name="advancedSettings"
             defaultValue={false}
-            render={({ field: { onChange, value, ref, ...rest } }) => (
-              <div>
+            render={({ field: { onChange, value } }) => (
+              <>
                 <AdvancedSettingsModal
                   onEnable={() => {
                     advancedSettingsDisclosure.close();
@@ -277,301 +281,97 @@ export const UserSettingsForm = (props: IProps) => {
                   }}
                   advancedSettingsDisclosure={advancedSettingsDisclosure}
                 />
-                <Switch
-                  className="mb-3"
-                  ref={ref}
+                <RtSwitch
                   checked={value}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      advancedSettingsDisclosure.open();
-                    } else {
-                      onChange(false);
-                    }
-                  }}
-                  {...rest}
-                  label={
-                    <>
-                      {t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')}
-                      <Tooltip className="tooltip" anchorSelect=".advanced-settings-hint">
-                        {t('SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE')}
-                      </Tooltip>
-                      <span className={clsx('ms-1 form-help advanced-settings-hint')}>?</span>
-                    </>
-                  }
+                  label={t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')}
+                  onChange={(checked) => (checked ? advancedSettingsDisclosure.open() : onChange(false))}
                 />
-              </div>
+              </>
             )}
           />
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('appsRepoUrl')}
-            label={
-              <>
-                {t('SETTINGS_GENERAL_APPS_REPO')}
-                <Tooltip className="tooltip" anchorSelect=".apps-repo-hint">
-                  {t('SETTINGS_GENERAL_APPS_REPO_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help apps-repo-hint')}>?</span>
-              </>
-            }
-            error={errors.appsRepoUrl?.message}
-            placeholder="https://github.com/runtipi/runtipi-appstore"
-          />
-        </div>
-        <div>
+        </SettingRow>
+        {textRow(
+          'appsRepoUrl',
+          t('SETTINGS_GENERAL_APPS_REPO'),
+          t('SETTINGS_GENERAL_APPS_REPO_HINT'),
+          'https://github.com/runtipi/runtipi-appstore',
+          {
+            mono: true,
+          },
+        )}
+        <SettingRow label={t('TIMEZONE_SELECTOR_LABEL')} description={t('SETTINGS_TIMEZONE_HINT')} htmlFor="setting-timezone">
           <Controller
             control={control}
             name="timeZone"
             defaultValue="Etc/GMT"
             render={({ field: { onChange, value } }) => (
-              <Suspense fallback={<TimeZoneSuspense />}>
-                <TimeZoneSelector onChange={onChange} timeZone={value} />
+              <Suspense fallback={<select id="setting-timezone" className="rt-field" disabled />}>
+                <TimeZoneField id="setting-timezone" timeZone={value} onChange={onChange} />
               </Suspense>
             )}
           />
-        </div>
-        <div className="mb-3">
-          <Input
-            {...register('localDomain')}
-            label={
-              <>
-                {t('SETTINGS_GENERAL_LOCAL_DOMAIN')}
-                <Tooltip className="tooltip" anchorSelect=".local-domain-hint">
-                  {t('SETTINGS_GENERAL_LOCAL_DOMAIN_HINT')}
-                </Tooltip>
-                <span className={clsx('ms-1 form-help local-domain-hint')}>?</span>
-              </>
-            }
-            error={errors.localDomain?.message}
+        </SettingRow>
+        <SettingRow
+          label={t('SETTINGS_GENERAL_LOCAL_DOMAIN')}
+          description={t('SETTINGS_GENERAL_LOCAL_DOMAIN_HINT')}
+          htmlFor="setting-localDomain"
+          error={errors.localDomain?.message}
+        >
+          <input
+            id="setting-localDomain"
+            className="rt-field rt-mono"
             placeholder="tipi.lan"
-            disabled={initialValues?.advancedSettings === false}
+            disabled={advanced === false}
+            {...register('localDomain')}
           />
-          <Button className="mt-2 mb-2" onClick={downloadCertificate}>
+          <button type="button" className="rt-btn rt-btn--sm" onClick={() => window.open('/api/system/certificate')}>
+            <IconCertificate size={15} stroke={1.8} aria-hidden="true" />
             {t('SETTINGS_GENERAL_DOWNLOAD_CERTIFICATE')}
-          </Button>
-        </div>
-        {initialValues?.advancedSettings && (
-          <div>
-            <div className="d-flex mb-2">
-              <IconAdjustmentsCode className="me-2" />
-              <h2 className="text-2xl font-bold mb-0">{t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')}</h2>
-            </div>
-            <p className="mb-4">{t('SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE')}</p>
-            <div className="mb-3">
-              <Controller
-                control={control}
-                name="persistTraefikConfig"
-                defaultValue={false}
-                render={({ field: { onChange, value, ref, ...rest } }) => (
-                  <Switch
-                    className="mb-3"
-                    ref={ref}
-                    checked={value}
-                    onCheckedChange={onChange}
-                    {...rest}
-                    label={
-                      <>
-                        {t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG')}
-                        <Tooltip className="tooltip" anchorSelect=".persist-traefik-config-hint">
-                          {t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT')}
-                        </Tooltip>
-                        <span className={clsx('ms-1 form-help persist-traefik-config-hint')}>?</span>
-                      </>
-                    }
-                  />
-                )}
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('domain')}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_DOMAIN')}
-                    <Tooltip className="tooltip" anchorSelect=".domain-hint">
-                      {t('SETTINGS_GENERAL_DOMAIN_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help domain-hint')}>?</span>
-                  </>
-                }
-                error={errors.domain?.message}
-                placeholder="example.com"
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('internalIp')}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_INTERNAL_IP')}
-                    <Tooltip className="tooltip" anchorSelect=".internal-ip-hint">
-                      {t('SETTINGS_GENERAL_INTERNAL_IP_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help internal-ip-hint')}>?</span>
-                  </>
-                }
-                error={errors.internalIp?.message}
-                placeholder="192.168.1.1"
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('listenIp')}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_LISTEN_IP')}
-                    <Tooltip className="tooltip" anchorSelect=".listen-ip-hint">
-                      {t('SETTINGS_GENERAL_LISTEN_IP_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help listen-ip-hint')}>?</span>
-                  </>
-                }
-                error={errors.listenIp?.message}
-                placeholder="0.0.0.0"
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('port', {
-                  valueAsNumber: true,
-                })}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_PORT')}
-                    <Tooltip className="tooltip" anchorSelect=".port-hint">
-                      {t('SETTINGS_GENERAL_PORT_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help port-hint')}>?</span>
-                  </>
-                }
-                error={errors.port?.message}
-                placeholder="80"
-                type="number"
-                max={65535}
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('sslPort', {
-                  valueAsNumber: true,
-                })}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_SSL_PORT')}
-                    <Tooltip className="tooltip" anchorSelect=".sslPort-hint">
-                      {t('SETTINGS_GENERAL_SSL_PORT_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help sslPort-hint')}>?</span>
-                  </>
-                }
-                error={errors.sslPort?.message}
-                placeholder="443"
-                type="number"
-                max={65535}
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('eventsTimeout', {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_EVENTS_TIMEOUT')}
-                    <Tooltip className="tooltip" anchorSelect=".events-timeout-hint">
-                      {t('SETTINGS_GENERAL_EVENTS_TIMEOUT_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help events-timeout-hint')}>?</span>
-                  </>
-                }
-                error={errors.eventsTimeout?.message}
-                placeholder="5"
-                type="number"
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('maxBackups', {
-                  valueAsNumber: true,
-                  required: true,
-                })}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_MAX_BACKUPS')}
-                    <Tooltip className="tooltip" anchorSelect=".max-backups-hint">
-                      {t('SETTINGS_GENERAL_MAX_BACKUPS_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help max-backups-hint')}>?</span>
-                  </>
-                }
-                error={errors.maxBackups?.message}
-                placeholder="5"
-                type="number"
-                min={0}
-                max={100}
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('appDataPath')}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_APP_DATA_PATH')}
-                    <Tooltip className="tooltip" anchorSelect=".app-data-path-hint">
-                      {t('SETTINGS_GENERAL_APP_DATA_PATH_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help app-data-path-hint')}>?</span>
-                  </>
-                }
-                error={errors.appDataPath?.message}
-                placeholder="/path/to/app/data"
-              />
-            </div>
-            <div className="mb-3">
-              <Input
-                {...register('forwardAuthUrl')}
-                label={
-                  <>
-                    {t('SETTINGS_GENERAL_FORWARD_AUTH_URL')}
-                    <Tooltip className="tooltip" anchorSelect=".forward-auth-url-hint">
-                      {t('SETTINGS_GENERAL_FORWARD_AUTH_URL_HINT')}
-                    </Tooltip>
-                    <span className={clsx('ms-1 form-help forward-auth-url-hint')}>?</span>
-                  </>
-                }
-                error={errors.forwardAuthUrl?.message}
-                placeholder="https://auth.example.com"
-              />
-            </div>
-            <div className="mb-3">
-              <Controller
-                control={control}
-                name="logLevel"
-                defaultValue="info"
-                render={({ field: { onChange, value } }) => (
-                  <Select value={value} defaultValue="info" onValueChange={onChange}>
-                    <SelectTrigger className="mb-3" name="logLevel" label={t('SETTINGS_GENERAL_LOG_LEVEL')}>
-                      <SelectValue placeholder="Log level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(LOG_LEVEL_ENUM).map((level) => (
-                        <SelectItem key={level} value={level}>
-                          {level}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-          </div>
-        )}
-        <Button loading={loading} type="submit" intent="success">
-          {t('SETTINGS_GENERAL_SUBMIT')}
-        </Button>
-      </form>
-    </>
+          </button>
+        </SettingRow>
+      </SettingsPanel>
+
+      {advanced && (
+        <SettingsPanel title={t('SETTINGS_GENERAL_ADVANCED_SETTINGS_TITLE')} description={t('SETTINGS_GENERAL_ADVANCED_SETTINGS_SUBTITLE')}>
+          {switchRow('persistTraefikConfig', t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG'), t('SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT'))}
+          {textRow('domain', t('SETTINGS_GENERAL_DOMAIN'), t('SETTINGS_GENERAL_DOMAIN_HINT'), 'example.com', { mono: true })}
+          {textRow('internalIp', t('SETTINGS_GENERAL_INTERNAL_IP'), t('SETTINGS_GENERAL_INTERNAL_IP_HINT'), '192.168.1.1', { mono: true })}
+          {textRow('listenIp', t('SETTINGS_GENERAL_LISTEN_IP'), t('SETTINGS_GENERAL_LISTEN_IP_HINT'), '0.0.0.0', { mono: true })}
+          {numberRow('port', t('SETTINGS_GENERAL_PORT'), t('SETTINGS_GENERAL_PORT_HINT'), '80')}
+          {numberRow('sslPort', t('SETTINGS_GENERAL_SSL_PORT'), t('SETTINGS_GENERAL_SSL_PORT_HINT'), '443')}
+          {numberRow('eventsTimeout', t('SETTINGS_GENERAL_EVENTS_TIMEOUT'), t('SETTINGS_GENERAL_EVENTS_TIMEOUT_HINT'), '5')}
+          {numberRow('maxBackups', t('SETTINGS_GENERAL_MAX_BACKUPS'), t('SETTINGS_GENERAL_MAX_BACKUPS_HINT'), '5')}
+          {textRow('appDataPath', t('SETTINGS_GENERAL_APP_DATA_PATH'), t('SETTINGS_GENERAL_APP_DATA_PATH_HINT'), '/path/to/app/data', { mono: true })}
+          {textRow(
+            'forwardAuthUrl',
+            t('SETTINGS_GENERAL_FORWARD_AUTH_URL'),
+            t('SETTINGS_GENERAL_FORWARD_AUTH_URL_HINT'),
+            'https://auth.example.com',
+            {
+              mono: true,
+            },
+          )}
+          <SettingRow label={t('SETTINGS_GENERAL_LOG_LEVEL')} htmlFor="setting-logLevel">
+            <select id="setting-logLevel" className="rt-field" {...register('logLevel')}>
+              {Object.values(LOG_LEVEL_ENUM).map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </select>
+          </SettingRow>
+        </SettingsPanel>
+      )}
+
+      <div className="rt-set-footer">
+        {isDirty && <span className="rt-set-footer__hint">{t('SETTINGS_GENERAL_SAVE_ALERT_SUBTITLE')}</span>}
+        <button type="button" className="rt-btn" onClick={discard} disabled={!isDirty || loading}>
+          {t('SETTINGS_DISCARD')}
+        </button>
+        <button type="submit" className="rt-btn rt-btn--primary" disabled={loading}>
+          {t('SETTINGS_SAVE_CHANGES')}
+        </button>
+      </div>
+    </form>
   );
 };

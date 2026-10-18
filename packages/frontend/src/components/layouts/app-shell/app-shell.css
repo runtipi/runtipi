@@ -1,0 +1,246 @@
+.rt-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--rt-bg);
+  color: var(--rt-text);
+  font-family: var(--rt-font-sans);
+  font-size: 15px;
+}
+
+/* ---------- Sidebar ---------- */
+
+.rt-sidebar {
+  position: sticky;
+  top: 0;
+  flex: none;
+  width: var(--rt-sidebar-width);
+  height: 100vh;
+  box-sizing: border-box;
+  border-right: 1px solid var(--rt-border-subtle);
+  background: var(--rt-bg);
+  overflow-y: auto;
+}
+
+.rt-sidebar__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 28px 20px;
+}
+
+.rt-sidebar__close {
+  display: none;
+}
+
+.rt-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  color: var(--rt-text);
+  text-decoration: none;
+}
+
+.rt-sidebar__brand:hover {
+  color: var(--rt-text);
+}
+
+.rt-sidebar__brand .rt-display {
+  font-size: 21px;
+}
+
+.rt-sidebar__nav,
+.rt-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rt-sidebar__footer {
+  margin-top: auto;
+}
+
+.rt-navlink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--rt-text-3);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.rt-navlink:hover {
+  background: var(--rt-surface-hover);
+  color: var(--rt-text);
+}
+
+.rt-navlink.is-on {
+  background: var(--rt-inverse-bg);
+  color: var(--rt-inverse-text);
+  font-weight: 600;
+}
+
+.rt-navlink:focus-visible {
+  outline: 2px solid var(--rt-accent);
+  outline-offset: 2px;
+}
+
+.rt-navlink__label {
+  flex: 1;
+}
+
+.rt-navlink__count {
+  font-size: 12px;
+}
+
+.rt-sidebar__update {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--rt-warm-row);
+  border: 1px solid var(--rt-warm-border);
+  color: var(--rt-text);
+  text-decoration: none;
+}
+
+.rt-sidebar__update:hover {
+  color: var(--rt-text);
+  border-color: var(--rt-accent);
+}
+
+.rt-sidebar__update-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rt-accent-soft-text);
+}
+
+.rt-sidebar__update-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rt-sidebar__update-sub {
+  font-size: 13px;
+  color: var(--rt-warm-text);
+}
+
+.rt-sidebar__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px 12px 0;
+  border-top: 1px solid var(--rt-border-subtle);
+}
+
+/* ---------- Main ---------- */
+
+.rt-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 28px clamp(16px, 4vw, 56px) 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.rt-main > * {
+  min-width: 0;
+}
+
+.rt-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rt-topbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.rt-mobilebar {
+  display: none;
+}
+
+.rt-shell__scrim {
+  display: none;
+}
+
+/* ---------- Small screens: drawer ---------- */
+
+@media (max-width: 991.98px) {
+  .rt-shell {
+    flex-direction: column;
+  }
+
+  .rt-mobilebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--rt-bg);
+    border-bottom: 1px solid var(--rt-border-subtle);
+  }
+
+  .rt-mobilebar .rt-sidebar__brand {
+    padding: 0;
+  }
+
+  .rt-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    width: min(300px, 86vw);
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--rt-shadow);
+  }
+
+  .rt-sidebar.is-open {
+    transform: none;
+  }
+
+  .rt-sidebar__close {
+    display: grid;
+    position: absolute;
+    top: 22px;
+    right: 16px;
+  }
+
+  .rt-shell__scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    border: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .rt-main {
+    padding-top: 20px;
+    gap: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rt-sidebar {
+    transition: none;
+  }
+}
