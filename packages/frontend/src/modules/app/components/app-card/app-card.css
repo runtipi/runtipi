@@ -97,19 +97,8 @@
   margin-top: auto;
 }
 
-.rt-spin {
-  animation: rt-spin 1s linear infinite;
-}
-
-@keyframes rt-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .rt-app-card,
-  .rt-spin {
+  .rt-app-card {
     transition: none;
     animation: none;
   }

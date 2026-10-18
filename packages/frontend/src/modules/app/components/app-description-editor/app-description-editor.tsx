@@ -1,5 +1,5 @@
 import { Markdown } from '@/components/markdown/markdown';
-import { copilot } from '@uiw/codemirror-theme-copilot';
+import { rtCodeTheme } from '@/components/code-theme/code-theme';
 import ReactCodeMirror from '@uiw/react-codemirror';
 import { AnimatePresence, motion } from 'framer-motion';
 import { markdown } from '@codemirror/lang-markdown';
@@ -20,8 +20,9 @@ export const AppDescriptionEditor = ({ isEditing, meta, setMeta }: Props) => {
             value={meta}
             height="400px"
             onChange={(e) => setMeta(e)}
-            theme={copilot}
-            extensions={[markdown()]}
+            theme="none"
+            extensions={[markdown(), rtCodeTheme]}
+            basicSetup={{ foldGutter: false }}
           />
         ) : (
           <Markdown content={meta.replace(/^---\s*\n([\s\S]*?)\n---\s*(?=\n|$)/m, '').trim()} className="markdown" />

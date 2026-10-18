@@ -13,14 +13,6 @@
   gap: 12px 20px;
 }
 
-.rt-logs__title {
-  font-family: var(--rt-font-display);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.02em;
-  color: var(--rt-text);
-}
-
 .rt-logs__controls {
   display: flex;
   flex-wrap: wrap;

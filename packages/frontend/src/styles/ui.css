@@ -657,3 +657,49 @@ select.rt-field {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.rt-spin {
+  animation: rt-spin 1s linear infinite;
+}
+
+@keyframes rt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rt-spin {
+    animation: none;
+  }
+}
+
+/* ---------- Logs panels (system and app logs) ---------- */
+
+.rt-logs-panel {
+  padding: 22px 24px 24px;
+}
+
+.rt-logs__title {
+  font-family: var(--rt-font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--rt-text);
+}
+
+.rt-logs-panel .rt-logs__title {
+  margin: 0;
+}
+
+.rt-logs__empty {
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--rt-muted);
+}
+
+@media (max-width: 575.98px) {
+  .rt-logs-panel {
+    padding: 16px 18px;
+  }
+}

@@ -1,3 +1,55 @@
-tr {
-  word-break: break-word;
+/* Segmented control, used for the app page sections and the files switcher */
+.rt-seg {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  overflow-x: auto;
+  border-radius: 999px;
+  background: var(--rt-surface);
+  border: 1px solid var(--rt-border);
+  scrollbar-width: none;
+}
+
+.rt-seg__btn {
+  flex: none;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--rt-text-3);
+  font: 500 14px var(--rt-font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.rt-seg__btn:hover {
+  color: var(--rt-text);
+}
+
+.rt-seg__btn.is-on {
+  background: var(--rt-inverse-bg);
+  color: var(--rt-inverse-text);
+}
+
+.rt-seg__btn:focus-visible {
+  outline: 2px solid var(--rt-accent);
+  outline-offset: -2px;
+}
+
+.rt-seg--sm .rt-seg__btn {
+  height: 34px;
+  padding: 0 14px;
+  font: 500 12.5px var(--rt-font-mono);
+}
+
+.rt-appd-tabpanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  margin-top: -8px;
 }

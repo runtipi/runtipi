@@ -188,16 +188,6 @@
   color: var(--rt-text-2);
 }
 
-/* ---------- Logs ---------- */
-
-.rt-logs-panel {
-  padding: 24px;
-}
-
-.rt-logs-panel .rt-logs__title {
-  margin: 0;
-}
-
 /* ---------- Small screens: tabs scroll horizontally ---------- */
 
 @media (max-width: 767.98px) {
@@ -233,7 +223,6 @@
   }
 
   .rt-store-row,
-  .rt-logs-panel,
   .rt-version {
     padding: 16px 18px;
   }

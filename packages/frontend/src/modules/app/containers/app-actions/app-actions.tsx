@@ -1,33 +1,32 @@
 import {
+  IconArrowUp,
+  IconArrowUpRight,
   IconBan,
   IconCircleCheck,
-  IconDots,
+  IconDotsVertical,
   IconDownload,
   IconEdit,
   IconEraser,
-  IconExternalLink,
+  IconLoader2,
   IconLock,
   IconLockOff,
   IconPlayerPause,
-  IconPlayerPlay,
+  IconPlayerPlayFilled,
+  IconPlayerStopFilled,
   IconRefresh,
   IconRotateClockwise,
   IconSettings,
   IconTrash,
 } from '@tabler/icons-react';
 import type React from 'react';
-import { createElement } from 'react';
-import { Button, type ButtonProps } from '@/components/ui/Button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import './app-actions.css';
 import { ignoreAppVersionMutation, startAppMutation, unignoreAppVersionMutation } from '@/api-client/@tanstack/react-query.gen';
 import type { AppDetails, AppInfo, AppMetadata } from '@/types/app.types';
 import type { TranslatableError } from '@/types/error.types';
 import { useMutation } from '@tanstack/react-query';
-import clsx from 'clsx';
 import { InstallDialog } from '../../components/dialogs/install-dialog/install-dialog';
 import { ResetDialog } from '../../components/dialogs/reset-dialog/reset-dialog';
 import { RestartDialog } from '../../components/dialogs/restart-dialog/restart-dialog';
@@ -36,9 +35,9 @@ import { UninstallDialog } from '../../components/dialogs/uninstall-dialog/unins
 import { UpdateSettingsDialog } from '../../components/dialogs/update-settings-dialog/update-settings-dialog';
 import { TemplateSyncDialog } from '../../components/template-sync-dialog/template-sync-dialog';
 import { useAppStatus } from '../../helpers/use-app-status';
-import { Tooltip } from 'react-tooltip';
 import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
 import { useLocation, useNavigate } from 'react-router';
+import './app-actions.css';
 
 interface IProps {
   app?: AppDetails | null;
@@ -46,28 +45,15 @@ interface IProps {
   metadata: AppMetadata;
   localDomain?: string;
   sslPort?: number;
+  /** `store` renders the large install button of an app that is not installed yet */
+  variant?: 'installed' | 'store';
 }
-
-interface BtnProps extends ButtonProps {
-  IconComponent?: typeof IconDownload;
-}
-
-const ActionButton: React.FC<BtnProps> = (props) => {
-  const { IconComponent, loading, title, className, ...rest } = props;
-
-  const testId = loading ? 'action-button-loading' : undefined;
-
-  return (
-    <Button data-testid={testId} loading={loading} {...rest} className={clsx('action-button', className)}>
-      {title}
-      {IconComponent && <IconComponent className="ms-1" size={14} />}
-    </Button>
-  );
-};
 
 type OpenType = 'local' | 'domain' | 'local_domain';
 
-export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps) => {
+const BUSY_STATUSES = ['installing', 'uninstalling', 'starting', 'stopping', 'restarting', 'updating', 'resetting', 'backing_up', 'restoring'];
+
+export const AppActions = ({ app, info, localDomain, metadata, sslPort, variant = 'installed' }: IProps) => {
   const installDisclosure = useDisclosure();
   const stopDisclosure = useDisclosure();
   const restartDisclosure = useDisclosure();
@@ -81,9 +67,12 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const location = useLocation();
   const navigate = useNavigate();
 
+  const status = app?.status ?? 'missing';
+  const isBusy = BUSY_STATUSES.includes(status);
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const versionIsIgnored = app?.ignoredVersion === metadata.latestVersion;
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
+  const showUpdate = updateAvailable && !versionIsIgnored && (status === 'running' || status === 'stopped');
 
   const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}`;
 
@@ -117,16 +106,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     },
   });
 
-  const StartButton = (
-    <ActionButton
-      key="start"
-      IconComponent={IconPlayerPlay}
-      onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
-      title={t('APP_ACTION_START')}
-      intent="success"
-    />
-  );
-  const LoadingButton = <ActionButton key="loading" loading intent="success" title={t('APP_ACTION_LOADING')} />;
+  const goToUpdate = () => navigate(`${location.pathname}/update`, { state: { from: location.pathname } });
 
   const RemoveListItem = (
     <DropdownMenuItem onClick={uninstallDisclosure.open} key="remove" className="text-danger">
@@ -141,33 +121,17 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
   const RestartListItem = (
-    <DropdownMenuItem onClick={restartDisclosure.open} key="restart" className="configChanged">
+    <DropdownMenuItem onClick={restartDisclosure.open} key="restart">
       <IconRotateClockwise className="me-2" size={16} />
       {t('APP_ACTION_RESTART')}
-      {app?.pendingRestart && (
-        <div>
-          <Tooltip className="tooltip" anchorSelect=".configChanged">
-            {t('MY_APPS_PENDING_RESTART')}
-          </Tooltip>
-          <span className="ms-2 badge bg-red" />
-        </div>
-      )}
+      {app?.pendingRestart && <span className="rt-appd-menu-dot" title={t('MY_APPS_PENDING_RESTART')} />}
     </DropdownMenuItem>
   );
   const UpdateListItem = (
-    <DropdownMenuItem
-      onClick={() => navigate(`${location.pathname}/update`, { state: { from: location.pathname } })}
-      key="update"
-      className="updateAvailable"
-    >
+    <DropdownMenuItem onClick={goToUpdate} key="update">
       <IconDownload className="me-2" size={16} />
-      <Tooltip className="tooltip" anchorSelect=".updateAvailable">
-        {t('MY_APPS_UPDATE_AVAILABLE')}
-      </Tooltip>
-      <div>
-        {t('APP_ACTION_UPDATE')}
-        <span className="ms-2 badge bg-red" />
-      </div>
+      {t('APP_ACTION_UPDATE')}
+      <span className="rt-appd-menu-dot" title={t('MY_APPS_UPDATE_AVAILABLE')} />
     </DropdownMenuItem>
   );
   const IgnoreVersionListItem = (
@@ -208,7 +172,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const editPath = isCustomApp ? `/apps/${info.id}/edit` : `/apps/${storeId}/${info.id}/edit`;
 
   const EditConfigListItem = (
-    <DropdownMenuItem onClick={() => navigate(editPath)} key="edit-config" disabled={app?.status !== 'stopped' && app?.status !== 'missing'}>
+    <DropdownMenuItem onClick={() => navigate(editPath)} key="edit-config" disabled={status !== 'stopped' && status !== 'missing'}>
       <IconEdit className="me-2" size={16} />
       {t('APP_EDIT_CONFIG')}
     </DropdownMenuItem>
@@ -221,110 +185,32 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     </DropdownMenuItem>
   );
 
-  const StopButton = (
-    <ActionButton key="stop" IconComponent={IconPlayerPause} onClick={stopDisclosure.open} title={t('APP_ACTION_STOP')} intent="default" />
-  );
-  const InstallButton = <ActionButton key="install" onClick={installDisclosure.open} title={t('APP_ACTION_INSTALL')} intent="success" />;
-
-  const OpenButton = (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button className="action-button">
-          {t('APP_ACTION_OPEN')}
-          <IconExternalLink className="ms-1" size={14} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuGroup>
-          {app?.exposed && app.domain && (
-            <DropdownMenuItem onClick={() => handleOpen('domain')}>
-              <IconLock className="text-green me-2" size={16} />
-              {app.domain}
-              {sslPort !== 443 ? `:${sslPort}` : ''}
-            </DropdownMenuItem>
-          )}
-          {app?.exposedLocal && (
-            <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
-              <IconLock className="text-muted me-2" size={16} />
-              {appLocalDomain}
-            </DropdownMenuItem>
-          )}
-          {(app?.openPort || !info.dynamic_config) && (
-            <DropdownMenuItem onClick={() => handleOpen('local')}>
-              <IconLockOff className="text-muted me-2" size={16} />
-              {hostname}:{app?.port ?? info.port}
-            </DropdownMenuItem>
-          )}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-
-  const buttons: React.JSX.Element[] = [];
   const listItems: React.JSX.Element[] = [];
   const listItemsAdvanced: React.JSX.Element[] = [];
   const listItemsDestructive: React.JSX.Element[] = [];
 
-  switch (app?.status ?? 'missing') {
-    case 'stopped':
-      buttons.push(StartButton);
-      listItems.push(SettingsListItem);
-      listItemsAdvanced.push(EditConfigListItem);
-      if (app && (app.templateUrn || !isCustomApp)) {
-        listItemsAdvanced.push(SyncTemplateListItem);
-      }
-      listItemsDestructive.push(ResetListItem);
-      listItemsDestructive.push(RemoveListItem);
-      if (updateAvailable && !versionIsIgnored) {
-        listItems.push(UpdateListItem);
-        listItems.push(IgnoreVersionListItem);
-      } else if (versionIsIgnored) {
-        listItems.push(UnignoreVersionListItem);
-      }
-      break;
-    case 'running':
-      buttons.push(StopButton);
-      listItems.push(SettingsListItem);
-      listItems.push(RestartListItem);
-      listItemsAdvanced.push(EditConfigListItem);
-      if (app && (app.templateUrn || !isCustomApp)) {
-        listItemsAdvanced.push(SyncTemplateListItem);
-      }
-      listItemsDestructive.push(ResetListItem);
-      listItemsDestructive.push(RemoveListItem);
-
-      if (!info.no_gui && (app?.exposedLocal || app?.openPort || app?.exposed)) {
-        buttons.push(OpenButton);
-      }
-
-      if (updateAvailable && !versionIsIgnored) {
-        listItems.push(UpdateListItem);
-        listItems.push(IgnoreVersionListItem);
-      } else if (versionIsIgnored) {
-        listItems.push(UnignoreVersionListItem);
-      }
-      break;
-    case 'installing':
-    case 'uninstalling':
-    case 'starting':
-    case 'stopping':
-    case 'restarting':
-    case 'updating':
-    case 'resetting':
-    case 'backing_up':
-    case 'restoring':
-      buttons.push(LoadingButton);
-      listItems.push(CancelListItem);
-      break;
-    case 'missing':
-      buttons.push(InstallButton);
-      if (info.urn.split(':')[1] === '_user') {
-        listItemsDestructive.push(RemoveListItem);
-      }
-      break;
-    default:
-      break;
+  if (status === 'running' || status === 'stopped') {
+    listItems.push(SettingsListItem);
+    if (status === 'running') listItems.push(RestartListItem);
+    if (updateAvailable && !versionIsIgnored) {
+      listItems.push(UpdateListItem);
+      listItems.push(IgnoreVersionListItem);
+    } else if (versionIsIgnored) {
+      listItems.push(UnignoreVersionListItem);
+    }
+    listItemsAdvanced.push(EditConfigListItem);
+    if (app && (app.templateUrn || !isCustomApp)) {
+      listItemsAdvanced.push(SyncTemplateListItem);
+    }
+    listItemsDestructive.push(ResetListItem);
+    listItemsDestructive.push(RemoveListItem);
+  } else if (isBusy) {
+    listItems.push(CancelListItem);
+  } else if (status === 'missing' && isCustomApp) {
+    listItemsDestructive.push(RemoveListItem);
   }
+
+  const canOpen = status === 'running' && !info.no_gui && (app?.exposedLocal || app?.openPort || app?.exposed);
 
   const handleOpen = (type: OpenType) => {
     let url = '';
@@ -348,7 +234,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     window.open(url, '_blank', 'noreferrer');
   };
 
-  return (
+  const dialogs = (
     <>
       <InstallDialog isOpen={installDisclosure.isOpen} onClose={installDisclosure.close} info={info} />
       <StopDialog isOpen={stopDisclosure.isOpen} onClose={stopDisclosure.close} info={info} />
@@ -362,31 +248,130 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
         config={app?.config ?? {}}
       />
       <TemplateSyncDialog appUrn={info.urn} isOpen={syncTemplateDisclosure.isOpen} onClose={syncTemplateDisclosure.close} />
-      <div className="mt-1 btn-list d-flex">
-        {buttons.map((button) => {
-          return createElement(button.type, {
-            ...button.props,
-            key: button.key,
-          });
-        })}
-        {listItems.length > 0 && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button name="more" className="more-button">
-                <IconDots size={14} />
-                {((updateAvailable && !versionIsIgnored) || app?.pendingRestart) && <span className="badge badge-dot bg-red badge-notification" />}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>{listItems}</DropdownMenuGroup>
-              {listItemsAdvanced.length > 0 ? <DropdownMenuSeparator /> : null}
-              <DropdownMenuGroup>{listItemsAdvanced}</DropdownMenuGroup>
-              {listItemsDestructive.length > 0 ? <DropdownMenuSeparator /> : null}
-              <DropdownMenuGroup>{listItemsDestructive}</DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+    </>
+  );
+
+  if (variant === 'store') {
+    const installing = status === 'installing';
+
+    return (
+      <div className="rt-appd-install">
+        {dialogs}
+        {installing ? (
+          <>
+            <button type="button" className="rt-btn rt-btn--lg rt-appd-install__busy" onClick={stopDisclosure.open} aria-live="polite">
+              {t('APP_PAGE_INSTALLING')}
+              <span className="rt-appd-install__cancel">{t('APP_ACTION_CANCEL')}</span>
+            </button>
+            <div className="rt-appd-bar" aria-hidden="true">
+              <span />
+            </div>
+            <span className="rt-appd-install__hint rt-mono">{t('APP_PAGE_INSTALLING_HINT')}</span>
+          </>
+        ) : (
+          <>
+            <button type="button" className="rt-btn rt-btn--primary rt-btn--lg" onClick={installDisclosure.open}>
+              <IconDownload size={17} stroke={2.2} />
+              {t('APP_ACTION_INSTALL')}
+            </button>
+            <span className="rt-appd-install__hint">
+              {info.port ? t('APP_PAGE_INSTALL_HINT_PORT', { port: info.port }) : t('APP_PAGE_INSTALL_HINT')}
+            </span>
+          </>
         )}
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className="rt-appd-actions">
+      {dialogs}
+      {canOpen && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type="button" className="rt-btn rt-btn--primary">
+              {t('APP_ACTION_OPEN')}
+              <IconArrowUpRight size={15} stroke={2.2} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuGroup>
+              {app?.exposed && app.domain && (
+                <DropdownMenuItem onClick={() => handleOpen('domain')}>
+                  <IconLock className="text-green me-2" size={16} />
+                  {app.domain}
+                  {sslPort !== 443 ? `:${sslPort}` : ''}
+                </DropdownMenuItem>
+              )}
+              {app?.exposedLocal && (
+                <DropdownMenuItem onClick={() => handleOpen('local_domain')}>
+                  <IconLock className="text-muted me-2" size={16} />
+                  {appLocalDomain}
+                </DropdownMenuItem>
+              )}
+              {(app?.openPort || !info.dynamic_config) && (
+                <DropdownMenuItem onClick={() => handleOpen('local')}>
+                  <IconLockOff className="text-muted me-2" size={16} />
+                  {hostname}:{app?.port ?? info.port}
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      {status === 'missing' && (
+        <button type="button" className="rt-btn rt-btn--primary" onClick={installDisclosure.open}>
+          {t('APP_ACTION_INSTALL')}
+        </button>
+      )}
+      {showUpdate && (
+        <button
+          type="button"
+          className="rt-appd-btn rt-appd-btn--update"
+          onClick={goToUpdate}
+          aria-label={t('MY_APPS_UPDATE_APP', { name: info.name })}
+          title={t('MY_APPS_UPDATE_AVAILABLE')}
+        >
+          <IconArrowUp size={16} stroke={2.2} />
+        </button>
+      )}
+      {status === 'running' && (
+        <button type="button" className="rt-appd-btn" onClick={stopDisclosure.open} aria-label={t('MY_APPS_STOP_APP', { name: info.name })}>
+          <IconPlayerStopFilled size={14} />
+        </button>
+      )}
+      {status === 'stopped' && (
+        <button
+          type="button"
+          className="rt-appd-btn rt-appd-btn--go"
+          onClick={() => startMutation.mutate({ path: { urn: info.urn } })}
+          aria-label={t('MY_APPS_START_APP', { name: info.name })}
+        >
+          <IconPlayerPlayFilled size={14} />
+        </button>
+      )}
+      {isBusy && (
+        <button type="button" className="rt-appd-btn" disabled aria-label={t('APP_ACTION_LOADING')}>
+          <IconLoader2 size={17} className="rt-spin" />
+        </button>
+      )}
+      {listItems.length + listItemsDestructive.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type="button" name="more" className="rt-appd-btn" aria-label={t('MY_APPS_MORE_ACTIONS', { name: info.name })}>
+              <IconDotsVertical size={17} />
+              {((updateAvailable && !versionIsIgnored) || app?.pendingRestart) && <span className="rt-appd-pip" />}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuGroup>{listItems}</DropdownMenuGroup>
+            {listItemsAdvanced.length > 0 ? <DropdownMenuSeparator /> : null}
+            <DropdownMenuGroup>{listItemsAdvanced}</DropdownMenuGroup>
+            {listItemsDestructive.length > 0 && listItems.length > 0 ? <DropdownMenuSeparator /> : null}
+            <DropdownMenuGroup>{listItemsDestructive}</DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </div>
   );
 };

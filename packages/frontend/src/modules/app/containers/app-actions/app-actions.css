@@ -1,12 +1,167 @@
-.action-button {
-  flex: 1;
-  min-width: 120px;
+.rt-appd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
-.more-button {
-  width: 100%;
+/* Round 44px controls of the app page hero */
+.rt-appd-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--rt-border-strong);
+  background: transparent;
+  color: var(--rt-text-2);
+  cursor: pointer;
+}
 
-  @media (min-width: 768px) {
-    width: auto;
+.rt-appd-btn:hover {
+  border-color: var(--rt-border-focus-strong);
+  color: var(--rt-text);
+}
+
+.rt-appd-btn:focus-visible {
+  outline: 2px solid var(--rt-accent);
+  outline-offset: 2px;
+}
+
+.rt-appd-btn:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.rt-appd-btn[data-state="open"] {
+  background: var(--rt-surface-raised);
+  color: var(--rt-text);
+}
+
+.rt-appd-btn--update {
+  border-color: transparent;
+  background: var(--rt-accent-soft-bg);
+  color: var(--rt-accent-soft-text);
+}
+
+.rt-appd-btn--update:hover {
+  border-color: transparent;
+  background: var(--rt-accent-soft-bg-hover);
+  color: var(--rt-accent-soft-text);
+}
+
+.rt-appd-btn--go {
+  border-color: transparent;
+  background: var(--rt-success-bg);
+  color: var(--rt-success-text);
+}
+
+.rt-appd-btn--go:hover {
+  border-color: transparent;
+  background: var(--rt-success-bg-hover);
+  color: var(--rt-success-text);
+}
+
+.rt-appd-pip {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rt-accent);
+  box-shadow: 0 0 0 3px var(--rt-bg);
+}
+
+.rt-appd-menu-dot {
+  width: 7px;
+  height: 7px;
+  margin-left: auto;
+  padding-left: 0;
+  border-radius: 50%;
+  background: var(--rt-accent);
+}
+
+/* ---------- Install (app store) ---------- */
+
+.rt-appd-install {
+  display: flex;
+  flex: 0 1 280px;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 240px;
+}
+
+.rt-btn--lg {
+  height: 52px;
+  padding: 0 28px;
+  font-size: 16px;
+}
+
+.rt-appd-install__busy,
+.rt-appd-install__busy:hover {
+  border-color: var(--rt-accent-soft-bg);
+  background: var(--rt-accent-soft-bg);
+  color: var(--rt-accent-soft-text);
+  cursor: progress;
+}
+
+.rt-appd-install__cancel {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.rt-appd-install__hint {
+  font-size: 13px;
+  color: var(--rt-muted);
+  text-align: center;
+}
+
+.rt-appd-install__hint.rt-mono {
+  font-size: 12px;
+}
+
+.rt-appd-bar {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--rt-border-strong);
+}
+
+.rt-appd-bar span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  border-radius: 99px;
+  background: var(--rt-accent);
+  animation: rt-appd-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes rt-appd-slide {
+  0% {
+    left: -35%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rt-appd-bar span {
+    left: 0;
+    width: 40%;
+    animation: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .rt-appd-install {
+    flex: 1 1 100%;
+    min-width: 0;
   }
 }

@@ -11,7 +11,7 @@ test.beforeEach(async ({ page, context }) => {
   await loginUser(page, context);
 });
 
-test('user can backup and restore an app', async ({ page, isMobile }) => {
+test('user can backup and restore an app', async ({ page }) => {
   test.slow();
 
   const store = await db.query.appStore.findFirst();
@@ -60,12 +60,7 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   dbapp = await db.query.app.findFirst({ where: eq(app.appName, 'whoami') });
   expect(dbapp?.version).toBe(1);
 
-  if (isMobile) {
-    await page.getByRole('button', { name: 'More' }).click();
-    await page.getByRole('menuitem', { name: 'Backups' }).click();
-  } else {
-    await page.getByRole('tab', { name: 'Backups' }).click();
-  }
+  await page.getByRole('tab', { name: 'Backups' }).click();
 
   await page.getByRole('button', { name: 'Restore' }).click();
   await expect(page.getByText('Do you really want to restore backup')).toBeVisible();
@@ -92,7 +87,7 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
     .toBe(0);
 });
 
-test('user config is preserved when restoring from a backup', async ({ page, isMobile }) => {
+test('user config is preserved when restoring from a backup', async ({ page }) => {
   test.slow();
 
   const store = await db.query.appStore.findFirst();
@@ -104,15 +99,10 @@ test('user config is preserved when restoring from a backup', async ({ page, isM
   await writeFile(path.join('user-config', store.slug, 'whoami', 'docker-compose.yml'), 'version: "3.9"');
 
   // Create a backup
-  if (isMobile) {
-    await page.getByRole('button', { name: 'More' }).click();
-    await page.getByRole('menuitem', { name: 'Backups' }).click();
-  } else {
-    await page.getByRole('tab', { name: 'Backups' }).click();
-  }
+  await page.getByRole('tab', { name: 'Backups' }).click();
 
   await expect(page.getByRole('button', { name: 'Restore' })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Backup now' }).click();
+  await page.getByRole('button', { name: 'Back up now' }).click();
   await expect(page.getByText('Backup Whoami')).toBeVisible();
   await page.getByRole('button', { name: 'Backup' }).click();
 

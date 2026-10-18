@@ -1,4 +1,5 @@
 import { useAppContext } from '@/context/app-context';
+import { toSupportedLocale } from '@/lib/i18n/locales';
 import i18next from 'i18next';
 
 type IProps = {
@@ -9,7 +10,7 @@ export const useDateFormat = () => {
   const { userSettings } = useAppContext();
   const { timeZone } = userSettings;
 
-  const locale = i18next.language;
+  const locale = toSupportedLocale(i18next.language);
 
   const formatDate = (date?: Date | string) => {
     if (!date) return 'Invalid date';
@@ -27,7 +28,7 @@ export const DateFormat = ({ date }: IProps) => {
   const { userSettings } = useAppContext();
   const { timeZone } = userSettings;
 
-  const locale = i18next.language;
+  const locale = toSupportedLocale(i18next.language);
 
   const formattedDate = new Date(date).toLocaleString(locale, { timeZone });
 
