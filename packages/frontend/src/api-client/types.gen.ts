@@ -71,6 +71,7 @@ export type AppContextDto = {
         experimental_insecureCookie?: boolean;
         themeBase?: string;
         themeColor?: string;
+        trustedProxyIps?: string;
     };
     version: {
         body: string;
@@ -108,6 +109,7 @@ export type UserSettingsBody = {
     themeBase?: string;
     themeColor?: string;
     timeZone?: string;
+    trustedProxyIps?: string;
 };
 
 export type AcknowledgeWelcomeBody = {
@@ -116,12 +118,27 @@ export type AcknowledgeWelcomeBody = {
 
 export type LoadDto = {
     cpuLoad: number;
+    cpuTemperature: number | null;
     diskSize: number;
     diskUsed: number;
+    disks: Array<{
+        available: number;
+        fs: string;
+        mount: string;
+        percentUsed: number;
+        size: number;
+        type: string;
+        used: number;
+    }>;
     memorySource: 'cgroup' | 'containers' | 'host';
     memoryTotal: number;
+    memoryTotalBytes: number;
+    memoryUsedBytes: number;
+    networkRxBytesPerSec: number;
+    networkTxBytesPerSec: number;
     percentUsed: number;
     percentUsedMemory: number;
+    timestamp: number;
 };
 
 export type LoginBody = {
@@ -528,32 +545,6 @@ export type UpdateAppBody = {
     performBackup: boolean;
 };
 
-export type BackupRequestDto = {
-    /**
-     * a UUID
-     */
-    requestId: string | '00000000-0000-0000-0000-000000000000' | 'ffffffff-ffff-ffff-ffff-ffffffffffff';
-};
-
-export type RestoreAppBackupDto = {
-    filename: string;
-};
-
-export type GetAppBackupsDto = {
-    currentPage: number;
-    data: Array<{
-        date: number;
-        id: string;
-        size: number;
-    }>;
-    lastPage: number;
-    total: number;
-};
-
-export type DeleteAppBackupBodyDto = {
-    filename: string;
-};
-
 export type LinksDto = {
     links: Array<{
         description: string | null;
@@ -580,6 +571,32 @@ export type EditLinkBodyDto = {
     description?: string;
     iconUrl?: string | '';
     isVisibleOnGuestDashboard?: boolean;
+};
+
+export type BackupRequestDto = {
+    /**
+     * a UUID
+     */
+    requestId: string | '00000000-0000-0000-0000-000000000000' | 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+};
+
+export type RestoreAppBackupDto = {
+    filename: string;
+};
+
+export type GetAppBackupsDto = {
+    currentPage: number;
+    data: Array<{
+        date: number;
+        id: string;
+        size: number;
+    }>;
+    lastPage: number;
+    total: number;
+};
+
+export type DeleteAppBackupBodyDto = {
+    filename: string;
 };
 
 export type GetUserConfigDto = {
@@ -873,6 +890,60 @@ export type TemplateDiffDto = {
     templateVersion: number;
     current?: string;
     template?: string;
+};
+
+export type SystemInfoDto = {
+    architecture: string;
+    cpuCores: number;
+    cpuModel: string;
+    dockerVersion: string;
+    hostname: string;
+    kernel: string;
+    os: string;
+    uptime: number;
+};
+
+export type SystemHistoryDto = {
+    cpu: Array<number>;
+    interval: number;
+    memory: Array<number>;
+    networkRx: Array<number>;
+    networkTx: Array<number>;
+    timestamps: Array<number>;
+};
+
+export type AppsUsageDto = {
+    apps: Array<{
+        containers: number;
+        cpu: number;
+        disk: {
+            containers: number;
+            data: number;
+            images: number;
+            shared: Array<string>;
+            total: number;
+            unmeasured: Array<string>;
+            volumes: number;
+        } | null;
+        history: {
+            cpu: Array<number>;
+            memory: Array<number>;
+            timestamps: Array<number>;
+        };
+        id: string;
+        memory: number;
+        networkRx: number;
+        networkTx: number;
+    }>;
+    diskMeasuredAt: number | null;
+    interval: number;
+    sharedStorage: Array<{
+        apps: Array<string>;
+        id: string;
+        kind: 'data' | 'image' | 'volume';
+        size: number;
+        sources: Array<string>;
+    }>;
 };
 
 export type UserContextData = {
@@ -1489,102 +1560,6 @@ export type RestartAllAppsResponses = {
     201: unknown;
 };
 
-export type BackupAppData = {
-    body?: never;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/backup';
-};
-
-export type BackupAppResponses = {
-    default: BackupRequestDto;
-};
-
-export type BackupAppResponse = BackupAppResponses[keyof BackupAppResponses];
-
-export type RestoreAppBackupData = {
-    body: RestoreAppBackupDto;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/restore';
-};
-
-export type RestoreAppBackupResponses = {
-    default: BackupRequestDto;
-};
-
-export type RestoreAppBackupResponse = RestoreAppBackupResponses[keyof RestoreAppBackupResponses];
-
-export type DeleteAppBackupData = {
-    body: DeleteAppBackupBodyDto;
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}';
-};
-
-export type DeleteAppBackupResponses = {
-    200: unknown;
-};
-
-export type GetAppBackupsData = {
-    body?: never;
-    path: {
-        urn: string;
-    };
-    query?: {
-        page?: number | string;
-        pageSize?: number | string;
-    };
-    url: '/api/backups/{urn}';
-};
-
-export type GetAppBackupsResponses = {
-    default: GetAppBackupsDto;
-};
-
-export type GetAppBackupsResponse = GetAppBackupsResponses[keyof GetAppBackupsResponses];
-
-export type DownloadBackupData = {
-    body?: never;
-    path: {
-        urn: string;
-        filename: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/{filename}/download';
-};
-
-export type DownloadBackupResponses = {
-    /**
-     * Backup file download
-     */
-    200: unknown;
-};
-
-export type UploadBackupData = {
-    body: {
-        file?: Blob | File;
-    };
-    path: {
-        urn: string;
-    };
-    query?: never;
-    url: '/api/backups/{urn}/upload';
-};
-
-export type UploadBackupResponses = {
-    /**
-     * Backup uploaded successfully
-     */
-    201: unknown;
-};
-
 export type AppEventsData = {
     body?: never;
     path?: never;
@@ -1679,6 +1654,102 @@ export type EditLinkData = {
 
 export type EditLinkResponses = {
     200: unknown;
+};
+
+export type BackupAppData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/backup';
+};
+
+export type BackupAppResponses = {
+    default: BackupRequestDto;
+};
+
+export type BackupAppResponse = BackupAppResponses[keyof BackupAppResponses];
+
+export type RestoreAppBackupData = {
+    body: RestoreAppBackupDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/restore';
+};
+
+export type RestoreAppBackupResponses = {
+    default: BackupRequestDto;
+};
+
+export type RestoreAppBackupResponse = RestoreAppBackupResponses[keyof RestoreAppBackupResponses];
+
+export type DeleteAppBackupData = {
+    body: DeleteAppBackupBodyDto;
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}';
+};
+
+export type DeleteAppBackupResponses = {
+    200: unknown;
+};
+
+export type GetAppBackupsData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: {
+        page?: number | string;
+        pageSize?: number | string;
+    };
+    url: '/api/backups/{urn}';
+};
+
+export type GetAppBackupsResponses = {
+    default: GetAppBackupsDto;
+};
+
+export type GetAppBackupsResponse = GetAppBackupsResponses[keyof GetAppBackupsResponses];
+
+export type DownloadBackupData = {
+    body?: never;
+    path: {
+        urn: string;
+        filename: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/{filename}/download';
+};
+
+export type DownloadBackupResponses = {
+    /**
+     * Backup file download
+     */
+    200: unknown;
+};
+
+export type UploadBackupData = {
+    body: {
+        file?: Blob | File;
+    };
+    path: {
+        urn: string;
+    };
+    query?: never;
+    url: '/api/backups/{urn}/upload';
+};
+
+export type UploadBackupResponses = {
+    /**
+     * Backup uploaded successfully
+     */
+    201: unknown;
 };
 
 export type CheckData = {
@@ -1993,3 +2064,42 @@ export type UninstallAllAppsData = {
 export type UninstallAllAppsResponses = {
     201: unknown;
 };
+
+export type SystemInfoData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/system/info';
+};
+
+export type SystemInfoResponses = {
+    default: SystemInfoDto;
+};
+
+export type SystemInfoResponse = SystemInfoResponses[keyof SystemInfoResponses];
+
+export type SystemHistoryData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/system/history';
+};
+
+export type SystemHistoryResponses = {
+    default: SystemHistoryDto;
+};
+
+export type SystemHistoryResponse = SystemHistoryResponses[keyof SystemHistoryResponses];
+
+export type AppsUsageData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/system/apps-usage';
+};
+
+export type AppsUsageResponses = {
+    default: AppsUsageDto;
+};
+
+export type AppsUsageResponse = AppsUsageResponses[keyof AppsUsageResponses];

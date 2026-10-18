@@ -1,5 +1,6 @@
-import { spawn } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import path from 'node:path';
+import { promisify } from 'node:util';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -8,6 +9,8 @@ import type { AppUrn } from '@runtipi/common/types';
 import * as Sentry from '@sentry/nestjs';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsService } from '../apps/apps.service';
+
+const execFileAsync = promisify(execFile);
 
 @Injectable()
 export class DockerService {
@@ -110,6 +113,16 @@ export class DockerService {
     }
 
     return { success: true, stdout: stdout.join(''), stderr: stderr.join('') };
+  }
+
+  /**
+   * Get the fully resolved compose config of an app (env variables and user overrides applied)
+   * @param {string} appUrn - App name
+   */
+  public async getAppComposeConfig(appUrn: AppUrn): Promise<unknown> {
+    const { args } = await this.getBaseComposeArgsApp(appUrn);
+    const { stdout } = await execFileAsync('docker-compose', [...args, 'config', '--format', 'json'], { maxBuffer: 10 * 1024 * 1024 });
+    return JSON.parse(stdout);
   }
 
   public getLogsStream = async (maxLines: number, appUrn?: AppUrn) => {

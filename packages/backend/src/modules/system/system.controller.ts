@@ -1,7 +1,7 @@
 import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthGuard } from '../auth/auth.guard';
-import { LoadDto } from './dto/system.dto';
+import { AppsUsageDto, LoadDto, SystemHistoryDto, SystemInfoDto } from './dto/system.dto';
 import { SystemService } from './system.service';
 import { ApiResponse } from '@nestjs/swagger';
 
@@ -15,6 +15,30 @@ export class SystemController {
   async systemLoad() {
     const res = await this.systemService.getSystemLoad();
     return LoadDto.parse(res, { reportOnly: true });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/info')
+  @ApiResponse({ type: SystemInfoDto })
+  async systemInfo() {
+    const res = await this.systemService.getSystemInfo();
+    return SystemInfoDto.parse(res, { reportOnly: true });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/history')
+  @ApiResponse({ type: SystemHistoryDto })
+  async systemHistory() {
+    const res = this.systemService.getHistory();
+    return SystemHistoryDto.parse(res, { reportOnly: true });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/apps-usage')
+  @ApiResponse({ type: AppsUsageDto })
+  async appsUsage() {
+    const res = this.systemService.getAppsUsage();
+    return AppsUsageDto.parse(res, { reportOnly: true });
   }
 
   @Get('/certificate')

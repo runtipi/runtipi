@@ -69,7 +69,10 @@ export class HostMemoryService implements OnModuleInit {
     }
   }
 
-  public async getMemory(): Promise<HostMemory> {
+  /**
+   * @param containersMemory - Memory used by all containers, when the caller already measured it
+   */
+  public async getMemory(containersMemory?: number): Promise<HostMemory> {
     const meminfoContent = await this.readFile(HOST_MEMINFO_PATH);
     const meminfo = parseMeminfo(meminfoContent ?? '');
     const total = meminfo.total || os.totalmem();
@@ -83,7 +86,7 @@ export class HostMemoryService implements OnModuleInit {
     }
 
     if (this.isLxc) {
-      return { used: Math.min(await this.getContainersMemory(), total), total, source: 'containers' };
+      return { used: Math.min(containersMemory ?? (await this.getContainersMemory()), total), total, source: 'containers' };
     }
 
     if (!meminfoContent) {

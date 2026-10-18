@@ -2300,6 +2300,69 @@
           "Debug"
         ]
       }
+    },
+    "/api/system/info": {
+      "get": {
+        "operationId": "systemInfo",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/system/history": {
+      "get": {
+        "operationId": "systemHistory",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemHistoryDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/system/apps-usage": {
+      "get": {
+        "operationId": "appsUsage",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppsUsageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
     }
   },
   "info": {
@@ -2834,11 +2897,59 @@
           "cpuLoad": {
             "type": "number"
           },
+          "cpuTemperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "diskSize": {
             "type": "number"
           },
           "diskUsed": {
             "type": "number"
+          },
+          "disks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "available": {
+                  "type": "number"
+                },
+                "fs": {
+                  "type": "string"
+                },
+                "mount": {
+                  "type": "string"
+                },
+                "percentUsed": {
+                  "type": "number"
+                },
+                "size": {
+                  "type": "number"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "available",
+                "fs",
+                "mount",
+                "percentUsed",
+                "size",
+                "type",
+                "used"
+              ]
+            }
           },
           "memorySource": {
             "type": "string",
@@ -2851,21 +2962,43 @@
           "memoryTotal": {
             "type": "number"
           },
+          "memoryTotalBytes": {
+            "type": "number"
+          },
+          "memoryUsedBytes": {
+            "type": "number"
+          },
+          "networkRxBytesPerSec": {
+            "type": "number"
+          },
+          "networkTxBytesPerSec": {
+            "type": "number"
+          },
           "percentUsed": {
             "type": "number"
           },
           "percentUsedMemory": {
             "type": "number"
+          },
+          "timestamp": {
+            "type": "number"
           }
         },
         "required": [
           "cpuLoad",
+          "cpuTemperature",
           "diskSize",
           "diskUsed",
+          "disks",
           "memorySource",
           "memoryTotal",
+          "memoryTotalBytes",
+          "memoryUsedBytes",
+          "networkRxBytesPerSec",
+          "networkTxBytesPerSec",
           "percentUsed",
-          "percentUsedMemory"
+          "percentUsedMemory",
+          "timestamp"
         ]
       },
       "LoginBody": {
@@ -5488,6 +5621,267 @@
           "hasChanges",
           "localVersion",
           "templateVersion"
+        ]
+      },
+      "SystemInfoDto": {
+        "type": "object",
+        "properties": {
+          "architecture": {
+            "type": "string"
+          },
+          "cpuCores": {
+            "type": "number"
+          },
+          "cpuModel": {
+            "type": "string"
+          },
+          "dockerVersion": {
+            "type": "string"
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "kernel": {
+            "type": "string"
+          },
+          "os": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "architecture",
+          "cpuCores",
+          "cpuModel",
+          "dockerVersion",
+          "hostname",
+          "kernel",
+          "os",
+          "uptime"
+        ]
+      },
+      "SystemHistoryDto": {
+        "type": "object",
+        "properties": {
+          "cpu": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "interval": {
+            "type": "number"
+          },
+          "memory": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "networkRx": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "networkTx": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "timestamps": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "cpu",
+          "interval",
+          "memory",
+          "networkRx",
+          "networkTx",
+          "timestamps"
+        ]
+      },
+      "AppsUsageDto": {
+        "type": "object",
+        "properties": {
+          "apps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "containers": {
+                  "type": "number"
+                },
+                "cpu": {
+                  "type": "number"
+                },
+                "disk": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "containers": {
+                          "type": "number"
+                        },
+                        "data": {
+                          "type": "number"
+                        },
+                        "images": {
+                          "type": "number"
+                        },
+                        "shared": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "total": {
+                          "type": "number"
+                        },
+                        "unmeasured": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "volumes": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "containers",
+                        "data",
+                        "images",
+                        "shared",
+                        "total",
+                        "unmeasured",
+                        "volumes"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "history": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    },
+                    "memory": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    },
+                    "timestamps": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "required": [
+                    "cpu",
+                    "memory",
+                    "timestamps"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "memory": {
+                  "type": "number"
+                },
+                "networkRx": {
+                  "type": "number"
+                },
+                "networkTx": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "containers",
+                "cpu",
+                "disk",
+                "history",
+                "id",
+                "memory",
+                "networkRx",
+                "networkTx"
+              ]
+            }
+          },
+          "diskMeasuredAt": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "interval": {
+            "type": "number"
+          },
+          "sharedStorage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "apps": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "data",
+                    "image",
+                    "volume"
+                  ]
+                },
+                "size": {
+                  "type": "number"
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "apps",
+                "id",
+                "kind",
+                "size",
+                "sources"
+              ]
+            }
+          }
+        },
+        "required": [
+          "apps",
+          "diskMeasuredAt",
+          "interval",
+          "sharedStorage"
         ]
       }
     }

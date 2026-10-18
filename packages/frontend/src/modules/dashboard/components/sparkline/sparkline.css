@@ -1,0 +1,70 @@
+.sparkline {
+  position: relative;
+  color: var(--tblr-primary);
+  touch-action: pan-y;
+  outline: none;
+}
+
+.sparkline svg {
+  display: block;
+  overflow: visible;
+}
+
+.sparkline:focus-visible {
+  box-shadow: 0 0 0 2px var(--tblr-primary);
+  border-radius: 4px;
+}
+
+.sparkline-empty {
+  border-bottom: 1px dashed var(--tblr-border-color);
+}
+
+.sparkline-crosshair {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--tblr-secondary);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.sparkline-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2px var(--tblr-bg-surface);
+  pointer-events: none;
+}
+
+.sparkline-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--tblr-body-color);
+  background: var(--tblr-bg-surface);
+  border: 1px solid var(--tblr-border-color);
+  border-radius: 4px;
+  box-shadow: var(--tblr-box-shadow-dropdown);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.sparkline-tooltip-start {
+  transform: translateX(0);
+}
+
+.sparkline-tooltip-end {
+  transform: translateX(-100%);
+}

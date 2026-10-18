@@ -1,0 +1,72 @@
+.app-launcher {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.app-launcher-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  aspect-ratio: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0.75rem 0.5rem;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.app-launcher-tile:hover,
+.app-launcher-tile[data-state="open"] {
+  border-color: var(--tblr-primary);
+}
+
+.app-launcher-tile:hover {
+  transform: translateY(-1px);
+}
+
+.app-launcher-tile:focus-visible {
+  outline: 2px solid var(--tblr-primary);
+  outline-offset: 2px;
+}
+
+.app-launcher-logo {
+  position: relative;
+}
+
+.app-launcher-name {
+  max-width: 100%;
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+.app-launcher-tile-inactive .app-launcher-logo > .drop-shadow,
+.app-launcher-tile-inactive .app-launcher-name {
+  opacity: 0.55;
+}
+
+.app-launcher-status {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 0.75rem;
+  height: 0.75rem;
+  box-shadow: 0 0 0 2px var(--tblr-bg-surface);
+}
+
+.app-launcher-update {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--tblr-bg-surface);
+}
