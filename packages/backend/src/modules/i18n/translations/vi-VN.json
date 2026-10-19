@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Đã dùng trên tổng số {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Dung lượng đĩa",
   "DASHBOARD_MEMORY_TITLE": "Đã sử dụng bộ nhớ",
+  "DASHBOARD_MEMORY_ESTIMATED": "ước tính",
   "DASHBOARD_TITLE": "Bảng điều khiển",
   "DASHBOARD_IP_WARNING_TITLE": "Cấu hình không an toàn",
   "DASHBOARD_IP_WARNING": "Cảnh báo, bạn có thể gặp nguy hiểm! Có vẻ bạn đang truy cập vào phiên của mình thông qua IP công cộng. Điều này khiến bảng điều khiển của bạn và các ứng dụng bạn cài đặt có thể bị tấn công",

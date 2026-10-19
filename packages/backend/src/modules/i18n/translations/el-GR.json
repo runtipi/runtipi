@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Χρησιμοποιούνται από τα {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Αποθηκευτικός χώρος",
   "DASHBOARD_MEMORY_TITLE": "Χρησιμοποιημένη μνήμη",
+  "DASHBOARD_MEMORY_ESTIMATED": "εκτίμηση",
   "DASHBOARD_TITLE": "Πίνακας Ελέγχου",
   "DASHBOARD_IP_WARNING_TITLE": "Εσφαλμένη ρύθμιση",
   "DASHBOARD_IP_WARNING": "Προειδοποίηση, ενδέχεται να βρίσκεστε σε κίνδυνο! Φαίνεται ότι έχετε πρόσβαση στον πίνακα ελέγχου μέσω δημόσιας διεύθυνσης IP. Αυτό καθιστά ευάλωτο τον πίνακα ελέγχου σας και όλες τις εφαρμογές που εγκαθιστάτε για επιθέσεις από κακόβουλους attackers",

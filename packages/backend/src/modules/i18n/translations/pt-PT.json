@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Usado de {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Disk space",
   "DASHBOARD_MEMORY_TITLE": "Memory used",
+  "DASHBOARD_MEMORY_ESTIMATED": "estimada",
   "DASHBOARD_TITLE": "Dashboard",
   "DASHBOARD_IP_WARNING_TITLE": "Insecure configuration",
   "DASHBOARD_IP_WARNING": "Warning, you might be at risk! it looks like you are accessing your instance through a public IP address. This makes your dashboard and all apps that you install vulnerable to attackers",
