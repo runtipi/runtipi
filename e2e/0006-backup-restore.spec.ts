@@ -49,13 +49,18 @@ test('user can backup and restore an app', async ({ page }) => {
   await page.locator('button[name="more"]').press('ArrowDown');
   await page.getByRole('menuitem', { name: 'Update', exact: true }).click();
 
-  await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByText('Review the new configuration of the app')).toBeVisible();
-  await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByText('It is highly recommended to backup')).toBeVisible();
-  await page.getByRole('button', { name: 'Update' }).click();
+  await page.getByRole('button', { name: 'Review changes' }).click();
+  await expect(page.getByText("Review the changes to the app's configuration.")).toBeVisible();
+  // A compose file step only shows when the compose file changes
+  while (!(await page.getByRole('button', { name: /^Update to/ }).isVisible())) {
+    await page.getByRole('button', { name: 'Next' }).click();
+  }
+  await expect(page.getByRole('switch', { name: 'Back up before updating' })).toBeChecked();
+  await page.getByRole('button', { name: /^Update to/ }).click();
 
   await expect(page.getByText('App whoami updated successfully')).toBeVisible({ timeout: 100000 });
+  await expect(page.getByRole('heading', { name: /^Whoami is on/ })).toBeVisible();
+  await page.getByRole('link', { name: 'Back to app' }).click();
 
   dbapp = await db.query.app.findFirst({ where: eq(app.appName, 'whoami') });
   expect(dbapp?.version).toBe(1);

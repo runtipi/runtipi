@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 import { AppActions } from '../../containers/app-actions/app-actions';
 import { AppDetailsTabs } from '../../containers/app-details-tabs/app-details-tabs';
-import { formatShortDate } from './app-format';
+import { formatShortDate, getPreferredAddress } from './app-format';
 import { AfterInstallPanel, AppAboutPanel, AppAlerts, AppCategoryChip, AppInfoPanel } from './app-panels';
 import './app-details-view.css';
 
@@ -115,22 +115,8 @@ const AppFacts = ({ info, app, metadata, storeLabel }: FactsProps) => {
   });
   const lastBackup = backups.data?.data[0];
 
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const portSuffix = sslPort !== 443 ? `:${sslPort}` : '';
   const port = app?.port ?? info.port;
-
-  // Preferred address first, like the "Open" menu
-  let address: { label: string; url: string } | undefined;
-  if (!info.no_gui && app) {
-    if (app.exposed && app.domain) {
-      address = { label: `${app.domain}${portSuffix}`, url: `https://${app.domain}${portSuffix}${info.url_suffix || ''}` };
-    } else if (app.exposedLocal && metadata.localSubdomain) {
-      const host = `${metadata.localSubdomain}.${localDomain}${portSuffix}`;
-      address = { label: host, url: `https://${host}${info.url_suffix || ''}` };
-    } else if ((app.openPort || !info.dynamic_config) && port) {
-      address = { label: `${hostname}:${port}`, url: `${info.https ? 'https' : 'http'}://${hostname}:${port}${info.url_suffix || ''}` };
-    }
-  }
+  const address = getPreferredAddress(info, app, metadata, { localDomain, sslPort });
 
   return (
     <section className="rt-panel rt-appd-facts" aria-label={t('APP_PAGE_AT_A_GLANCE')}>
