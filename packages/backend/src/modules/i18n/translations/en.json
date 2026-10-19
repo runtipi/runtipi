@@ -429,7 +429,7 @@
   "DASHBOARD_APPS_USAGE_DISK_VOLUMES": "Volumes: {{value}}",
   "DASHBOARD_APPS_USAGE_DISK_CONTAINERS": "Containers: {{value}}",
   "DASHBOARD_APPS_USAGE_DISK_IMAGES": "Images: {{value}}",
-  "DASHBOARD_APPS_USAGE_DISK_UNMEASURED": "Not measured (not mounted into Runtipi): {{path}}",
+  "DASHBOARD_APPS_USAGE_DISK_UNMEASURED_TITLE": "Not mounted into Runtipi, so not counted:",
   "DASHBOARD_APPS_USAGE_DISK_UNMEASURED_COUNT_one": "{{count}} path not measured",
   "DASHBOARD_APPS_USAGE_DISK_UNMEASURED_COUNT_other": "{{count}} paths not measured",
   "DASHBOARD_APPS_USAGE_SHARED_TITLE": "Shared storage (counted once)",

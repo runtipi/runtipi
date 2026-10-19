@@ -166,7 +166,7 @@ export default () => {
           meterTone="accent"
         >
           <Sparkline
-            className="rt-stat__spark rt-stat__spark--accent"
+            className="rt-stat__spark"
             timestamps={history.timestamps}
             values={networkHistory}
             label={t('DASHBOARD_STAT_NETWORK')}

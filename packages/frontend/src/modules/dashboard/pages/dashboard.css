@@ -145,10 +145,6 @@
 }
 
 .rt-stat__spark {
-  color: var(--rt-text);
-}
-
-.rt-stat__spark--accent {
   color: var(--rt-accent);
 }
 

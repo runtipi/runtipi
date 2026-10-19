@@ -324,12 +324,12 @@ body[data-bs-theme="light"][data-bs-theme-base="neutral"] {
 
 /* ---------- Accent colors ---------- */
 
-body,
 body[data-bs-theme-primary="orange"] {
   --rt-accent: #ff7a3d;
   --rt-accent-rgb: 255, 122, 61;
   --rt-accent-hover: #ff9461;
 }
+body,
 body[data-bs-theme-primary="red"] {
   --rt-accent: #ff6b5a;
   --rt-accent-rgb: 255, 107, 90;

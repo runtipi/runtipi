@@ -31,3 +31,12 @@
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
 }
+
+/* The Radix content sits inside the visible .modal-content wrapper, so it draws no box of its own */
+.modal-content.rt-dialog-inner {
+  margin: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: none;
+}

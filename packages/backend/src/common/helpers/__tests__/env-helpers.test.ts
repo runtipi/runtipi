@@ -27,11 +27,15 @@ describe('generateSystemEnvFile theme defaults', () => {
   };
 
   it('uses the default theme on new installs', async () => {
-    expect(await generate('', {})).toEqual({ base: 'stone', color: 'orange' });
+    expect(await generate('', {})).toEqual({ base: 'stone', color: 'red' });
   });
 
   it('replaces the previous defaults that were written without a user choice', async () => {
-    expect(await generate('THEME_BASE=gray\nTHEME_COLOR=blue\n', {})).toEqual({ base: 'stone', color: 'orange' });
+    expect(await generate('THEME_BASE=gray\nTHEME_COLOR=blue\n', {})).toEqual({ base: 'stone', color: 'red' });
+  });
+
+  it('replaces the orange default of earlier redesign builds', async () => {
+    expect(await generate('THEME_BASE=stone\nTHEME_COLOR=orange\n', {})).toEqual({ base: 'stone', color: 'red' });
   });
 
   it('keeps themes chosen in the settings', async () => {

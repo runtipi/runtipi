@@ -1,9 +1,10 @@
+import { useUserContext } from '@/context/user-context';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { type Locale, locales, toSupportedLocale } from '@/lib/i18n/locales';
 import { IconArrowUpRight, IconCertificate } from '@tabler/icons-react';
 import { type } from 'arktype';
 import i18next from 'i18next';
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import validator from 'validator';
@@ -85,6 +86,11 @@ const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slic
 /**
  * Map the detected language (e.g. "en", "en-US@posix") to one of the supported locales.
  */
+// Theme changes are previewed right away and reverted when discarding
+const previewTheme = (key: 'bsThemeBase' | 'bsThemePrimary', value?: string) => {
+  if (value) document.body.dataset[key] = value;
+};
+
 export const UserSettingsForm = (props: IProps) => {
   const { onSubmit, initialValues, loading, currentLocale = 'en-US', submitErrors } = props;
   const { t } = useTranslation();
@@ -138,10 +144,17 @@ export const UserSettingsForm = (props: IProps) => {
     }
   };
 
-  // Theme changes are previewed right away and reverted when discarding
-  const previewTheme = (key: 'bsThemeBase' | 'bsThemePrimary', value?: string) => {
-    if (value) document.body.dataset[key] = value;
-  };
+  // Leaving the page without saving drops the preview, back to the saved theme
+  const { themeBase: savedBase, themeColor: savedColor } = useUserContext();
+  const savedTheme = useRef({ base: savedBase, color: savedColor });
+  savedTheme.current = { base: savedBase, color: savedColor };
+  useEffect(
+    () => () => {
+      previewTheme('bsThemeBase', savedTheme.current.base);
+      previewTheme('bsThemePrimary', savedTheme.current.color);
+    },
+    [],
+  );
 
   const discard = () => {
     previewTheme('bsThemeBase', initialValues?.themeBase);

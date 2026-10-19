@@ -16,6 +16,7 @@ export const ThemeProvider = (props: Props) => {
   const theme = useUIStore((state) => state.theme);
   const setDarkMode = useUIStore((state) => state.setDarkMode);
 
+  // Kept apart from the light/dark effect below, toggling the mode must not reset a color previewed in the settings
   useEffect(() => {
     if (themeBase) {
       document.body.dataset.bsThemeBase = themeBase;
@@ -24,7 +25,9 @@ export const ThemeProvider = (props: Props) => {
     if (themeColor) {
       document.body.dataset.bsThemePrimary = themeColor;
     }
+  }, [themeBase, themeColor]);
 
+  useEffect(() => {
     if (theme) {
       Cookies.set('theme', theme || initialTheme || 'light', { path: '/', expires: 365 });
       document.body.dataset.bsTheme = theme;
@@ -38,7 +41,7 @@ export const ThemeProvider = (props: Props) => {
 
     const cookieTheme = Cookies.get('theme');
     setDarkMode(cookieTheme === 'dark');
-  }, [initialTheme, setDarkMode, theme, themeBase, themeColor]);
+  }, [initialTheme, setDarkMode, theme]);
 
   return children;
 };

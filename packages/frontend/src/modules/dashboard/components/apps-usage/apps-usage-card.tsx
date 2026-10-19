@@ -7,6 +7,7 @@ import type { TFunction } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { Tooltip } from 'react-tooltip';
 import { formatBytes, formatPercent, formatTime } from '../../helpers/format';
 import { Sparkline } from '../sparkline/sparkline';
 import './apps-usage-card.css';
@@ -29,8 +30,9 @@ const describeDisk = (disk: NonNullable<UsageApp['disk']>, t: TFunction) =>
     t('DASHBOARD_APPS_USAGE_DISK_VOLUMES', { value: formatBytes(disk.volumes) }),
     t('DASHBOARD_APPS_USAGE_DISK_CONTAINERS', { value: formatBytes(disk.containers) }),
     t('DASHBOARD_APPS_USAGE_DISK_IMAGES', { value: formatBytes(disk.images) }),
-    ...disk.unmeasured.map((p) => t('DASHBOARD_APPS_USAGE_DISK_UNMEASURED', { path: p })),
   ].join('\n');
+
+const UNMEASURED_TOOLTIP_ID = 'apps-usage-unmeasured';
 
 type Props = {
   usage: AppsUsageDto;
@@ -117,15 +119,22 @@ export const AppsUsageCard = ({ usage, installed, requestedSort }: Props) => {
     const sharedSize = app.disk.shared.reduce((sum, id) => sum + (sharedById.get(id)?.size ?? 0), 0);
 
     return (
-      <div className="apps-usage-value" title={describeDisk(app.disk, t)}>
-        <span className="apps-usage-num">{formatBytes(app.disk.total)}</span>
+      <div className="apps-usage-value">
+        <span className="apps-usage-num" title={describeDisk(app.disk, t)}>
+          {formatBytes(app.disk.total)}
+        </span>
         {app.disk.shared.length > 0 && (
           <span className="apps-usage-sub">{t('DASHBOARD_APPS_USAGE_DISK_SHARED', { value: formatBytes(sharedSize) })}</span>
         )}
         {app.disk.unmeasured.length > 0 && (
-          <span className="apps-usage-sub apps-usage-sub--warn">
+          <button
+            type="button"
+            className="apps-usage-sub apps-usage-sub--warn apps-usage-unmeasured"
+            data-tooltip-id={UNMEASURED_TOOLTIP_ID}
+            data-tooltip-content={app.disk.unmeasured.join('\n')}
+          >
             {t('DASHBOARD_APPS_USAGE_DISK_UNMEASURED_COUNT', { count: app.disk.unmeasured.length })}
-          </span>
+          </button>
         )}
       </div>
     );
@@ -242,6 +251,25 @@ export const AppsUsageCard = ({ usage, installed, requestedSort }: Props) => {
           </ul>
         </div>
       )}
+      <Tooltip
+        id={UNMEASURED_TOOLTIP_ID}
+        className="rt-tooltip"
+        place="bottom-end"
+        openEvents={{ mouseenter: true, focus: true }}
+        closeEvents={{ mouseleave: true, blur: true }}
+        render={({ content }) => (
+          <div className="apps-usage-unmeasured-tip">
+            <div>{t('DASHBOARD_APPS_USAGE_DISK_UNMEASURED_TITLE')}</div>
+            <ul>
+              {content?.split('\n').map((path) => (
+                <li key={path} className="rt-mono">
+                  {path}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      />
     </section>
   );
 };

@@ -43,7 +43,7 @@ const DialogOverlay = ({ className, ...props }: React.ComponentProps<typeof Dial
 const DialogContent = ({ className, children, ...props }: React.ComponentProps<typeof DialogPrimitive.Content> & ModalProps) => (
   <DialogPortal type={props.type} size={props.size}>
     <DialogOverlay />
-    <DialogPrimitive.Content className={clsx('modal-content mt-1', className)} {...props}>
+    <DialogPrimitive.Content className={clsx('modal-content rt-dialog-inner', className)} {...props}>
       {children}
       <DialogPrimitive.Close className="btn-close" aria-label="Close dialog">
         <span data-testid="modal-close-button" className="btn-close" aria-hidden="true" />

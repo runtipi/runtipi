@@ -703,3 +703,16 @@ select.rt-field {
     padding: 16px 18px;
   }
 }
+
+/* react-tooltip, its injected styles load after ours hence the body prefix */
+body .rt-tooltip {
+  z-index: 1060;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--rt-surface-raised);
+  color: var(--rt-text-2);
+  font: 400 13px / 1.5 var(--rt-font-sans);
+  box-shadow: var(--rt-shadow);
+  opacity: 1;
+}

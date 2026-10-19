@@ -26,6 +26,7 @@
 
 .rt-palette__search {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 12px;
   padding: 0 18px;
