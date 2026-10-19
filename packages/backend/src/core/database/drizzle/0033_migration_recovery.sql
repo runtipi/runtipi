@@ -1,0 +1,1 @@
+ALTER TABLE "app" ADD COLUMN "migration_recovery" jsonb;

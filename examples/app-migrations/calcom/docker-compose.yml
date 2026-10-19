@@ -1,0 +1,44 @@
+services:
+  calcom:
+    image: calcom/cal.com:v6.2.0
+    environment:
+      - DATABASE_HOST=db-calcom
+      - DATABASE_URL=postgresql://tipi:${CALCOM_POSTGRES_PASSWORD}@db-calcom/calcom
+      - DATABASE_DIRECT_URL=postgresql://tipi:${CALCOM_POSTGRES_PASSWORD}@db-calcom/calcom
+      - POSTGRES_USER=tipi
+      - POSTGRES_PASSWORD=${CALCOM_POSTGRES_PASSWORD}
+      - POSTGRES_DB=calcom
+      - LICENSE=agree
+      - NEXT_PUBLIC_LICENSE_CONSENT=agree
+      - NEXT_PUBLIC_WEBAPP_URL=https://${APP_DOMAIN}
+      - NEXTAUTH_SECRET=${CALCOM_NEXTAUTH_SECRET}
+      - CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY}
+      - MS_GRAPH_CLIENT_ID=${MS_GRAPH_CLIENT_ID}
+      - MS_GRAPH_CLIENT_SECRET=${MS_GRAPH_CLIENT_SECRET}
+      - ZOOM_CLIENT_ID=${ZOOM_CLIENT_ID}
+      - ZOOM_CLIENT_SECRET=${ZOOM_CLIENT_SECRET}
+      - GOOGLE_API_CREDENTIALS=${CALCOM_GOOGLE_API_CREDENTIALS}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - EMAIL_SERVER_HOST=${EMAIL_SERVER_HOST}
+      - EMAIL_SERVER_PORT=${EMAIL_SERVER_PORT}
+      - EMAIL_SERVER_PASSWORD=${EMAIL_SERVER_PASSWORD}
+      - EMAIL_SERVER_USER=${EMAIL_SERVER_USER}
+      - NODE_ENV=production
+      - "STRIPE_PRIVATE_KEY= "
+    depends_on:
+      - db-calcom
+    x-runtipi:
+      internal_port: 3000
+      is_main: true
+
+  db-calcom:
+    image: postgres:16.1
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: tipi
+      POSTGRES_PASSWORD: ${CALCOM_POSTGRES_PASSWORD}
+      POSTGRES_DB: calcom
+
+x-runtipi:
+  schema_version: 2

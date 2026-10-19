@@ -5,6 +5,7 @@ import type { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import type { LoggerService } from '@/core/logger/logger.service';
 import type { AppUrn } from '@runtipi/common/types';
+import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppFilesManager } from '../app-files-manager';
 
@@ -32,20 +33,24 @@ const writeFile = async (filePath: string, content: string) => {
 describe('AppFilesManager file security', () => {
   let manager: AppFilesManager;
   let filesystem: FilesystemService;
+  let logger: { debug: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn>; warn: ReturnType<typeof vi.fn> };
+  let configuredAppDataDir: string;
 
   beforeEach(() => {
-    const logger = {
+    configuredAppDataDir = APP_DATA_DIR;
+    logger = {
       debug: vi.fn(),
       error: vi.fn(),
       warn: vi.fn(),
-    } as unknown as LoggerService;
+    };
 
     const configuration = {
-      getConfig: vi.fn().mockReturnValue({ directories }),
+      getConfig: vi.fn(() => ({ directories: { ...directories, appDataDir: configuredAppDataDir } })),
     } as unknown as ConfigurationService;
 
-    filesystem = new FilesystemService(logger);
-    manager = new AppFilesManager(configuration, filesystem, logger);
+    const loggerService = logger as unknown as LoggerService;
+    filesystem = new FilesystemService(loggerService);
+    manager = new AppFilesManager(configuration, filesystem, loggerService);
   });
 
   it('does not expose installed app description symlink targets', async () => {
@@ -92,6 +97,179 @@ describe('AppFilesManager file security', () => {
       expect((await fs.promises.stat(snapshotPath)).mode & 0o777).toBe(0o600);
     } finally {
       await fs.promises.rm(snapshotPath, { force: true });
+    }
+  });
+
+  it('makes app data writable without following symlinks', async () => {
+    const tempDir = '/app-files-manager-permissions';
+    configuredAppDataDir = tempDir;
+    const appDataDir = path.join(tempDir, 'evil', 'demo');
+    const writableFile = path.join(appDataDir, 'data', 'config.json');
+    const externalFile = path.join(tempDir, 'external-file');
+    const symlinkPath = path.join(appDataDir, 'data', 'external-link');
+
+    try {
+      await writeFile(writableFile, 'config');
+      await writeFile(externalFile, 'external');
+      await fs.promises.symlink(externalFile, symlinkPath);
+      await fs.promises.chmod(appDataDir, 0o700);
+      await fs.promises.chmod(externalFile, 0o600);
+
+      await manager.setAppDataDirPermissions('demo:evil' as AppUrn);
+
+      expect((await fs.promises.stat(appDataDir)).mode & 0o777).toBe(0o777);
+      expect((await fs.promises.stat(writableFile)).mode & 0o777).toBe(0o777);
+      expect((await fs.promises.stat(externalFile)).mode & 0o777).toBe(0o600);
+    } finally {
+      await fs.promises.rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it.each(['ELOOP', 'ENXIO', 'ENOENT', 'EACCES'])('handles Linux permission entry errors: %s', async (code) => {
+    const appDataDir = manager.getAppPaths('demo:evil' as AppUrn).appDataDir;
+    const writableFile = path.join(appDataDir, 'writable.txt');
+    await writeFile(writableFile, 'config');
+    await fs.promises.chmod(writableFile, 0o600);
+
+    const originalPlatform = process.platform;
+    const open = fs.promises.open.bind(fs.promises);
+    const openSpy = vi.spyOn(fs.promises, 'open').mockImplementation(async (entryPath, flags, mode) => {
+      if (entryPath === appDataDir) return open(entryPath, flags, mode);
+      if (String(entryPath).endsWith('/unavailable')) throw Object.assign(new Error(code), { code });
+
+      return open(writableFile, flags, mode);
+    });
+    const directorySpy = vi.spyOn(fs.promises, 'opendir').mockResolvedValue(
+      fromPartial<fs.Dir>({
+        async *[Symbol.asyncIterator]() {
+          yield fromPartial<fs.Dirent>({ name: 'unavailable' });
+          yield fromPartial<fs.Dirent>({ name: 'writable.txt' });
+        },
+      }),
+    );
+
+    try {
+      Object.defineProperty(process, 'platform', { value: 'linux' });
+
+      await manager.setAppDataDirPermissions('demo:evil' as AppUrn);
+
+      if (code === 'EACCES') {
+        expect(logger.error).toHaveBeenCalledWith('Error setting permissions for app demo:evil', expect.objectContaining({ code }));
+        expect((await fs.promises.stat(writableFile)).mode & 0o777).toBe(0o600);
+      } else {
+        expect(logger.error).not.toHaveBeenCalled();
+        expect((await fs.promises.stat(writableFile)).mode & 0o777).toBe(0o777);
+      }
+    } finally {
+      Object.defineProperty(process, 'platform', { value: originalPlatform });
+      openSpy.mockRestore();
+      directorySpy.mockRestore();
+    }
+  });
+
+  it.each(['ENOENT', 'EACCES'])('handles non-Linux permission entry errors: %s', async (code) => {
+    const appDataDir = manager.getAppPaths('demo:evil' as AppUrn).appDataDir;
+    const vanishedFile = path.join(appDataDir, 'unavailable');
+    const writableFile = path.join(appDataDir, 'writable.txt');
+    await writeFile(vanishedFile, 'gone');
+    await writeFile(writableFile, 'config');
+    await fs.promises.chmod(writableFile, 0o600);
+
+    const originalPlatform = process.platform;
+    const lstat = fs.promises.lstat.bind(fs.promises);
+    const lstatSpy = vi.spyOn(fs.promises, 'lstat').mockImplementation(async (entryPath) => {
+      if (entryPath === vanishedFile) throw Object.assign(new Error(code), { code });
+
+      return lstat(entryPath);
+    });
+
+    try {
+      Object.defineProperty(process, 'platform', { value: 'darwin' });
+
+      await manager.setAppDataDirPermissions('demo:evil' as AppUrn);
+
+      if (code === 'EACCES') {
+        expect(logger.error).toHaveBeenCalledWith('Error setting permissions for app demo:evil', expect.objectContaining({ code }));
+        expect((await fs.promises.stat(writableFile)).mode & 0o777).toBe(0o600);
+      } else {
+        expect(logger.error).not.toHaveBeenCalled();
+        expect((await fs.promises.stat(writableFile)).mode & 0o777).toBe(0o777);
+      }
+    } finally {
+      Object.defineProperty(process, 'platform', { value: originalPlatform });
+      lstatSpy.mockRestore();
+    }
+  });
+
+  it('does not follow a symlinked app-data child', async () => {
+    const tempDir = '/app-files-manager-symlink';
+    configuredAppDataDir = tempDir;
+    const appDataDir = path.join(tempDir, 'evil', 'demo');
+    const symlinkPath = path.join(appDataDir, 'linked-data');
+    const externalStateDir = path.join(tempDir, 'external-data');
+
+    try {
+      await fs.promises.mkdir(appDataDir, { recursive: true });
+      await fs.promises.mkdir(externalStateDir, { recursive: true });
+      await fs.promises.symlink(externalStateDir, symlinkPath);
+      await fs.promises.chmod(externalStateDir, 0o700);
+
+      await manager.setAppDataDirPermissions('demo:evil' as AppUrn);
+
+      expect((await fs.promises.stat(externalStateDir)).mode & 0o777).toBe(0o700);
+    } finally {
+      await fs.promises.rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('keeps using an opened app-data directory when its path is swapped', async () => {
+    if (process.platform !== 'linux') {
+      return;
+    }
+
+    vi.doUnmock('fs');
+    vi.doUnmock('node:fs');
+    vi.resetModules();
+    const { default: realFs } = await import('node:fs');
+    const { AppFilesManager: LinuxAppFilesManager } = await import('../app-files-manager');
+    const tempDir = await realFs.promises.mkdtemp('/tmp/runtipi-app-permissions-');
+    const appDataDir = path.join(tempDir, 'evil', 'demo');
+    const movedAppDataDir = path.join(tempDir, 'evil', 'demo-before-swap');
+    const safeFile = path.join(appDataDir, 'safe.txt');
+    const externalDir = path.join(tempDir, 'external');
+    const externalFile = path.join(externalDir, 'external.txt');
+    const configuration = {
+      getConfig: vi.fn(() => ({ directories: { ...directories, appDataDir: tempDir } })),
+    } as unknown as ConfigurationService;
+    const linuxManager = new LinuxAppFilesManager(configuration, filesystem, logger as unknown as LoggerService);
+    const originalOpenDir = realFs.promises.opendir;
+    const openDirSpy = vi.spyOn(realFs.promises, 'opendir');
+    let swapped = false;
+
+    try {
+      await realFs.promises.mkdir(path.dirname(safeFile), { recursive: true });
+      await realFs.promises.mkdir(externalDir, { recursive: true });
+      await realFs.promises.writeFile(safeFile, 'safe');
+      await realFs.promises.writeFile(externalFile, 'external');
+      await realFs.promises.chmod(safeFile, 0o600);
+      await realFs.promises.chmod(externalFile, 0o600);
+      openDirSpy.mockImplementation(async (directory, options) => {
+        const isOpenedAppDirectory = typeof directory === 'string' && directory.startsWith('/proc/self/fd/');
+        if (!swapped && isOpenedAppDirectory) {
+          swapped = true;
+          await realFs.promises.rename(appDataDir, movedAppDataDir);
+          await realFs.promises.symlink(externalDir, appDataDir);
+        }
+        return originalOpenDir(directory, options);
+      });
+
+      await linuxManager.setAppDataDirPermissions('demo:evil' as AppUrn);
+
+      expect((await realFs.promises.stat(path.join(movedAppDataDir, 'safe.txt'))).mode & 0o777).toBe(0o777);
+      expect((await realFs.promises.stat(externalFile)).mode & 0o777).toBe(0o600);
+    } finally {
+      openDirSpy.mockRestore();
+      await realFs.promises.rm(tempDir, { recursive: true, force: true });
     }
   });
 

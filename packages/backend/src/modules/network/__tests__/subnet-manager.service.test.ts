@@ -1,6 +1,6 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { AppsRepository } from '@/modules/apps/apps.repository';
-import { DOCKERODE } from '@/modules/docker/docker.module';
+import { DOCKERODE } from '@/modules/docker/docker.constants';
 import { Test } from '@nestjs/testing';
 import type { AppUrn } from '@runtipi/common/types';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';

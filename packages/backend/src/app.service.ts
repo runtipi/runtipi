@@ -12,7 +12,7 @@ import { AppStoreService } from './modules/app-stores/app-store.service';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 import { SystemEventsQueue } from './modules/queue/entities/system-events';
-import { DOCKERODE } from './modules/docker/docker.module';
+import { DOCKERODE } from './modules/docker/docker.constants';
 import Dockerode from 'dockerode';
 import { GithubService } from './utils/github/github.service';
 import YAML from 'yaml';

@@ -68,7 +68,7 @@ export class BackupsController {
       throw new BadRequestException('Invalid backup filename');
     }
 
-    return this.backupsService.deleteAppBackup({ appUrn: castAppUrn(urn), filename: sanitizedFilename });
+    return this.appLifecycleService.deleteAppBackup({ appUrn: castAppUrn(urn), filename: sanitizedFilename });
   }
 
   @Get(':urn/:filename/download')

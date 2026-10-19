@@ -18,7 +18,7 @@ import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
 import { BackupManager } from '@/modules/backups/backup.manager';
-import { DOCKERODE } from '@/modules/docker/docker.module';
+import { DOCKERODE } from '@/modules/docker/docker.constants';
 import { DockerService } from '@/modules/docker/docker.service';
 import { EnvUtils } from '@/modules/env/env.utils';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
@@ -31,6 +31,8 @@ import { eq } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import waitFor from 'wait-for-expect';
+import yaml from 'yaml';
+import deepmerge from 'deepmerge';
 import type { FsMock } from '../__mocks__/fs';
 import { createAppInStore } from '../utils/create-app-in-store';
 import { type TestDatabase, cleanTestData, createTestDatabase } from '../utils/create-test-database';
@@ -47,6 +49,8 @@ import { StartAppHandler } from '@/modules/app-lifecycle/handlers/start-app.hand
 import { AppStatusSyncService } from '@/modules/app-lifecycle/app-status-sync.service';
 import { StatusManagerService } from '@/modules/app-lifecycle/services/status-manager.service';
 import { AppValidationService } from '@/modules/app-lifecycle/services/app-validation.service';
+import { AppMigrationService } from '@/modules/app-lifecycle/services/app-migration.service';
+import type { DynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { BackupAppHandler } from '@/modules/app-lifecycle/handlers/backup-app.handler';
 import { RestoreAppHandler } from '@/modules/app-lifecycle/handlers/restore-app.handler';
 import { AppJobService } from '@/modules/app-lifecycle/services/app-job.service';
@@ -54,11 +58,25 @@ import { AppJobService } from '@/modules/app-lifecycle/services/app-job.service'
 let db: TestDatabase;
 const DB_NAME = 'applifecycletest';
 
+const writeStoreMigration = async (appId: string, id: string) => {
+  const directory = path.join(DATA_DIR, 'repos', 'test', 'apps', appId, 'migrations');
+  await fs.promises.mkdir(directory, { recursive: true });
+  await fs.promises.writeFile(
+    path.join(directory, `${id}.yml`),
+    yaml.stringify({
+      services: { migration: { image: 'nginx:latest', command: ['sh', '-c', 'exit 0'] } },
+    }),
+  );
+};
+
 describe('App lifecycle', () => {
   let appLifecycleService: AppLifecycleService;
   let marketplaceService: MarketplaceService;
   let appsRepository: AppsRepository;
   let filesystemService: FilesystemService;
+  let appFilesManager: AppFilesManager;
+  let backupManager: BackupManager;
+  let appJobService: AppJobService;
   const configurationService = mock<ConfigurationService>();
   let databaseService = mock<DatabaseService>();
   const dockerService = mock<DockerService>();
@@ -121,6 +139,7 @@ describe('App lifecycle', () => {
         AppStatusSyncService,
         StatusManagerService,
         AppValidationService,
+        AppMigrationService,
         BackupAppHandler,
         RestoreAppHandler,
         {
@@ -173,14 +192,58 @@ describe('App lifecycle', () => {
     marketplaceService = moduleRef.get(MarketplaceService);
     appsRepository = moduleRef.get(AppsRepository);
     filesystemService = moduleRef.get(FilesystemService);
+    appFilesManager = moduleRef.get(AppFilesManager);
+    backupManager = moduleRef.get(BackupManager);
+    appJobService = moduleRef.get(AppJobService);
 
     databaseService.db = db;
+    dockerService.composeMigration.mockResolvedValue({ success: true, stdout: '', stderr: '' });
+    dockerService.stopAppMigrations.mockResolvedValue(undefined);
+    dockerService.getEffectiveMigrationServices.mockResolvedValue({ migration: { image: 'nginx:latest' } });
+
+    dockerService.getEffectiveAppServices.mockImplementation(async (appUrn) => {
+      const generatedCompose = await appFilesManager.getGeneratedDockerComposeYaml(appUrn);
+      if (!generatedCompose.content) {
+        throw new Error(`Missing generated compose for ${appUrn}`);
+      }
+      const appEnv = await appFilesManager.getAppEnv(appUrn);
+      const userEnv = await appFilesManager.getUserEnv(appUrn);
+      const environmentFiles = [appEnv.content, userEnv.content];
+      const environment = new Map<string, string>();
+      for (const environmentFile of environmentFiles) {
+        for (const line of environmentFile?.split('\n') ?? []) {
+          const separator = line.indexOf('=');
+          if (separator > 0) {
+            const key = line.slice(0, separator);
+            const value = line.slice(separator + 1);
+            environment.set(key, value);
+          }
+        }
+      }
+      const interpolate = (content: string) =>
+        content.replace(/\$\{([A-Za-z_][A-Za-z0-9_]*)\}/g, (_match, key: string) => environment.get(key) ?? '');
+      const interpolatedGeneratedCompose = interpolate(generatedCompose.content);
+      const generatedComposeObject = yaml.parse(interpolatedGeneratedCompose) as { services?: unknown };
+      const userCompose = await appFilesManager.getUserComposeFile(appUrn);
+      const userComposeContent = userCompose.content ? interpolate(userCompose.content) : '{}';
+      const userComposeObject = yaml.parse(userComposeContent);
+      const arrayMode = { arrayMerge: (_target: unknown[], source: unknown[]) => source };
+      const effectiveCompose = deepmerge(generatedComposeObject, userComposeObject, arrayMode) as { services?: unknown };
+      if (!effectiveCompose.services || typeof effectiveCompose.services !== 'object' || Array.isArray(effectiveCompose.services)) {
+        throw new Error(`Missing effective services for ${appUrn}`);
+      }
+      return effectiveCompose.services as DynamicComposeSchemaYaml['services'];
+    });
 
     archiveService.createTarGz.mockImplementation(async (_sourceDir, destinationFile) => {
       await fs.promises.mkdir(path.dirname(destinationFile), { recursive: true });
       await fs.promises.writeFile(destinationFile, 'archive');
       return { stdout: '', stderr: '' };
     });
+    archiveService.listTarGz.mockResolvedValue([
+      { path: './app-data/', type: 'd' },
+      { path: './app/', type: 'd' },
+    ]);
     archiveService.extractTarGz.mockResolvedValue({ stdout: '', stderr: '' });
     vi.spyOn(filesystemService, 'createTempDirectory').mockImplementation(async (prefix) => {
       const timestampedPrefix = `${prefix}-${Date.now()}`;
@@ -314,6 +377,183 @@ describe('App lifecycle', () => {
         const backups = await fs.promises.readdir(`${DATA_DIR}/backups/test/${appInfo.id}`);
         expect(backups).toHaveLength(1);
       });
+    });
+
+    it('runs newly added migration files in order without adding services to the app compose', async () => {
+      const appInfo = await createAppInStore('test', { id: 'migration-test', tipi_version: 1 });
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+      await waitFor(async () => expect((await appsRepository.getAppByUrn(appInfo.urn))?.status).toBe('running'));
+
+      await createAppInStore('test', { id: appInfo.id, tipi_version: 2 });
+      await writeStoreMigration(appInfo.id, '010-files');
+      await writeStoreMigration(appInfo.id, '002-database');
+      dockerService.composeMigration.mockClear();
+
+      const update = await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
+      await waitFor(() => expect(appJobService.getJob(appInfo.urn, update.requestId)?.status).toBe('succeeded'));
+
+      const executed = dockerService.composeMigration.mock.calls.filter(([, , command]) => command.startsWith('run '));
+      expect(executed.map(([, migration]) => migration.id)).toEqual(['002-database', '010-files']);
+      const generated = await appFilesManager.getGeneratedDockerComposeYaml(appInfo.urn);
+      expect(Object.keys(yaml.parse(generated.content ?? '').services)).toEqual([appInfo.id]);
+      expect(await appsRepository.getMigrationState(appInfo.urn)).toEqual({ initialized: true, migrationIds: ['002-database', '010-files'] });
+    });
+
+    it('baselines migration files on a fresh install and excludes them from normal startup', async () => {
+      const appInfo = await createAppInStore('test', { id: 'migration-fresh-install', tipi_version: 2 });
+      await writeStoreMigration(appInfo.id, '001-historical');
+      dockerService.composeMigration.mockClear();
+
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+      await waitFor(async () => expect((await appsRepository.getAppByUrn(appInfo.urn))?.status).toBe('running'));
+
+      expect(dockerService.composeMigration).not.toHaveBeenCalled();
+      expect(await appsRepository.getMigrationState(appInfo.urn)).toEqual({ initialized: true, migrationIds: ['001-historical'] });
+      const generated = await appFilesManager.getGeneratedDockerComposeYaml(appInfo.urn);
+      expect(Object.keys(yaml.parse(generated.content ?? '').services)).toEqual([appInfo.id]);
+    });
+
+    it('recovers interrupted migration data before startup, then commits a retry only once', async () => {
+      const appInfo = await createAppInStore('test', { id: 'migration-recovery', tipi_version: 1 });
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+      await waitFor(async () => expect((await appsRepository.getAppByUrn(appInfo.urn))?.status).toBe('running'));
+      await appLifecycleService.stopApp({ appUrn: appInfo.urn });
+      await waitFor(async () => expect((await appsRepository.getAppByUrn(appInfo.urn))?.status).toBe('stopped'));
+
+      const { appDataDir } = appFilesManager.getAppPaths(appInfo.urn);
+      const databaseFile = path.join(appDataDir, 'database', 'schema-version');
+      const userEnvPath = path.join(DATA_DIR, 'user-config', 'test', appInfo.id, 'app.env');
+      await fs.promises.mkdir(path.dirname(databaseFile), { recursive: true });
+      await fs.promises.mkdir(path.dirname(userEnvPath), { recursive: true });
+      await fs.promises.writeFile(databaseFile, 'schema-v1');
+      await fs.promises.writeFile(userEnvPath, 'USER_SETTING=original');
+
+      let archiveSequence = 0;
+      archiveService.createTarGz.mockImplementation(async (sourceDir, destinationFile) => {
+        archiveSequence += 1;
+        const snapshotDir = `/tmp/migration-archive-${archiveSequence}`;
+        await fs.promises.cp(sourceDir, snapshotDir, { recursive: true });
+        await fs.promises.writeFile(destinationFile, snapshotDir);
+        return { stdout: '', stderr: '' };
+      });
+      archiveService.extractTarGz.mockImplementation(async (archiveFile, destinationDir) => {
+        const snapshotDir = await fs.promises.readFile(archiveFile, 'utf8');
+        await fs.promises.cp(snapshotDir, destinationDir, { recursive: true });
+        return { stdout: '', stderr: '' };
+      });
+      archiveService.listTarGz.mockResolvedValue([
+        { path: './app-data/', type: 'd' },
+        { path: './app/', type: 'd' },
+        { path: './user-config/', type: 'd' },
+        { path: './runtipi-migrations.json', type: '-' },
+      ]);
+      const backupFilename = await backupManager.backupApp(appInfo.urn);
+
+      await createAppInStore('test', { id: appInfo.id, tipi_version: 2 });
+      const migration = { id: '002-database' };
+      await writeStoreMigration(appInfo.id, migration.id);
+      const targetCompose = {
+        schemaVersion: 2,
+        services: [
+          {
+            name: appInfo.id,
+            image: 'nginx:latest',
+            isMain: true,
+            internalPort: 80,
+            volumes: [{ hostPath: '${APP_DATA_DIR}/database', containerPath: '/var/lib/database' }],
+          },
+        ],
+      };
+      await fs.promises.writeFile(path.join(DATA_DIR, 'repos', 'test', 'apps', appInfo.id, 'docker-compose.json'), JSON.stringify(targetCompose));
+      const persistedRepository = new AppsRepository(db);
+      await persistedRepository.setMigrationRecovery(appInfo.urn, { backupFilename, migrationIds: [migration.id] });
+      await marketplaceService.copyAppFromRepoToInstalled(appInfo.urn);
+      await fs.promises.writeFile(databaseFile, 'partially-migrated');
+      await fs.promises.writeFile(userEnvPath, 'USER_SETTING=partially-migrated');
+      expect((await appFilesManager.getInstalledAppInfo(appInfo.urn))?.tipi_version).toBe(2);
+
+      dockerService.getEffectiveAppServices.mockResolvedValue({
+        [appInfo.id]: {
+          volumes: [{ type: 'bind', source: `${appFilesManager.getAppDataHostPath(appInfo.urn)}/database`, target: '/var/lib/database' }],
+        },
+      });
+      const startupVersions: string[] = [];
+      let migrationRuns = 0;
+      dockerService.composeMigration.mockImplementation(async (appUrn, _migration, command) => {
+        if (command.startsWith('run ')) {
+          expect((await persistedRepository.getAppByUrn(appUrn))?.migrationRecovery?.migrationIds).toEqual([migration.id]);
+          expect(await fs.promises.readFile(databaseFile, 'utf8')).toBe('schema-v1');
+          migrationRuns += 1;
+          await fs.promises.writeFile(databaseFile, 'schema-v2');
+        }
+        return { success: true, stdout: '', stderr: '' };
+      });
+      dockerService.composeApp.mockImplementation(async (_appUrn, command) => {
+        if (command.startsWith('up ')) {
+          startupVersions.push(await fs.promises.readFile(databaseFile, 'utf8'));
+        }
+        return { success: true, stdout: '', stderr: '' };
+      });
+
+      try {
+        await appLifecycleService.startApp({ appUrn: appInfo.urn });
+        await waitFor(async () => expect((await appsRepository.getAppByUrn(appInfo.urn))?.status).toBe('running'));
+
+        expect(startupVersions).toEqual(['schema-v1']);
+        expect(migrationRuns).toBe(0);
+        expect((await appFilesManager.getInstalledAppInfo(appInfo.urn))?.tipi_version).toBe(1);
+        expect(await fs.promises.readFile(userEnvPath, 'utf8')).toBe('USER_SETTING=original');
+        expect(await persistedRepository.getMigrationState(appInfo.urn)).toEqual({ initialized: true, migrationIds: [] });
+        expect((await persistedRepository.getAppByUrn(appInfo.urn))?.migrationRecovery).toBeNull();
+        expect(await persistedRepository.getRestoreJournal(appInfo.urn)).toBeUndefined();
+
+        const update = await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
+        await waitFor(async () => {
+          expect(appJobService.getJob(appInfo.urn, update.requestId)?.status).toBe('succeeded');
+          const app = await persistedRepository.getAppByUrn(appInfo.urn);
+          expect(app?.status).toBe('running');
+          expect(app?.version).toBe(2);
+          expect(app?.migrationRecovery).toBeNull();
+        });
+
+        expect(migrationRuns).toBe(1);
+        expect(startupVersions).toEqual(['schema-v1', 'schema-v2']);
+        expect(await persistedRepository.getMigrationState(appInfo.urn)).toEqual({ initialized: true, migrationIds: [migration.id] });
+        expect(archiveSequence).toBe(2);
+
+        const retry = await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
+        await waitFor(() => expect(appJobService.getJob(appInfo.urn, retry.requestId)?.status).toBe('succeeded'));
+
+        expect(migrationRuns).toBe(1);
+        expect(startupVersions).toEqual(['schema-v1', 'schema-v2', 'schema-v2']);
+        expect(await fs.promises.readFile(databaseFile, 'utf8')).toBe('schema-v2');
+        expect(archiveSequence).toBe(2);
+      } finally {
+        dockerService.composeMigration.mockResolvedValue({ success: true, stdout: '', stderr: '' });
+        dockerService.composeApp.mockResolvedValue({ success: true, stdout: '', stderr: '' });
+      }
+    }, 10_000);
+
+    it('rejects writable storage introduced by a user override before running any migration', async () => {
+      const appInfo = await createAppInStore('test', { id: 'migration-user-override', tipi_version: 1 });
+      await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
+      await waitFor(async () => expect((await appsRepository.getAppByUrn(appInfo.urn))?.status).toBe('running'));
+
+      await createAppInStore('test', { id: appInfo.id, tipi_version: 2 });
+      await writeStoreMigration(appInfo.id, '002-database');
+      const overridePath = path.join(DATA_DIR, 'user-config', 'test', appInfo.id, 'docker-compose.yml');
+      await fs.promises.mkdir(path.dirname(overridePath), { recursive: true });
+      await fs.promises.writeFile(
+        overridePath,
+        yaml.stringify({ services: { [appInfo.id]: { volumes: [{ type: 'bind', source: '/external/database', target: '/data' }] } } }),
+      );
+      dockerService.composeMigration.mockClear();
+
+      const update = await appLifecycleService.updateApp({ appUrn: appInfo.urn, performBackup: false });
+      await waitFor(() => expect(appJobService.getJob(appInfo.urn, update.requestId)?.status).toBe('failed'));
+
+      expect((await appsRepository.getAppByUrn(appInfo.urn))?.version).toBe(1);
+      expect(dockerService.composeMigration).not.toHaveBeenCalled();
     });
   });
 

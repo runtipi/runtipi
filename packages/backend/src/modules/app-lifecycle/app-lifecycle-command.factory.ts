@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import type Dockerode from 'dockerode';
-import { DOCKERODE } from '../docker/docker.module';
-import type { appEventSchema } from '../queue/entities/app-events';
+import { DOCKERODE } from '../docker/docker.constants';
+import type { appEventSchema, appEventResultSchema } from '../queue/entities/app-events';
 import { BackupAppCommand } from './commands/backup-app-command';
 import { GenerateAppEnvCommand } from './commands/generate-env-command';
 import { InstallAppCommand } from './commands/install-app-command';
@@ -16,6 +16,7 @@ import { UpdateAppCommand } from './commands/update-app-command';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 import { AppJobService, type AppJobContext } from './services/app-job.service';
+import { AppMigrationService } from './services/app-migration.service';
 
 @Injectable()
 export class AppLifecycleCommandFactory {
@@ -24,15 +25,24 @@ export class AppLifecycleCommandFactory {
     @Inject(DOCKERODE) private readonly docker: Dockerode,
     @Inject(APP_ASYNC_MUTEX) private readonly mutex: AsyncMutex,
     private readonly jobs: AppJobService,
+    private readonly migrations: AppMigrationService,
   ) {}
 
-  async execute(eventData: typeof appEventSchema.infer, context?: AppJobContext) {
+  async execute(eventData: typeof appEventSchema.infer, context?: AppJobContext): Promise<typeof appEventResultSchema.infer> {
     if (!context) this.jobs.assertIdle(eventData.appUrn);
 
     const release = await this.mutex.acquire(eventData.appUrn);
 
     try {
       if (!context) this.jobs.assertIdle(eventData.appUrn);
+
+      try {
+        await this.migrations.reconcile(eventData.appUrn);
+      } catch (error) {
+        if (eventData.command !== 'uninstall') throw error;
+
+        await this.migrations.discardRecovery(eventData.appUrn, error);
+      }
 
       return await this.createCommand(eventData, context).execute(eventData.appUrn, eventData.form);
     } finally {
@@ -53,7 +63,7 @@ export class AppLifecycleCommandFactory {
       case 'restart':
         return new RestartAppCommand(this.moduleRef, this.docker);
       case 'uninstall':
-        return new UninstallAppCommand(this.moduleRef, this.docker);
+        return new UninstallAppCommand(this.moduleRef, this.docker, eventData.removeBackups);
       case 'reset':
         return new ResetAppCommand(this.moduleRef, this.docker);
       case 'backup':

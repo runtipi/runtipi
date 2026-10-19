@@ -28,13 +28,19 @@ const appCommandFields = {
 
 const commonAppCommandSchema = type({
   ...appCommandFields,
-  command: type("'start' | 'stop' | 'install' | 'uninstall' | 'reset' | 'restart' | 'generate_env'"),
+  command: type("'start' | 'stop' | 'install' | 'reset' | 'restart' | 'generate_env'"),
 });
 
 const backupAppCommandSchema = type({
   ...appCommandFields,
   command: type.unit('backup'),
   wasRunningBeforeBackup: 'boolean',
+});
+
+const uninstallAppCommandSchema = type({
+  ...appCommandFields,
+  command: type.unit('uninstall'),
+  removeBackups: 'boolean',
 });
 
 const restoreAppCommandSchema = type({
@@ -50,12 +56,19 @@ const updateAppCommandSchema = type({
   wasRunningBeforeUpdate: type('boolean').default(false),
 });
 
-export const appEventSchema = type.or(commonAppCommandSchema, backupAppCommandSchema, restoreAppCommandSchema, updateAppCommandSchema);
+export const appEventSchema = type.or(
+  commonAppCommandSchema,
+  uninstallAppCommandSchema,
+  backupAppCommandSchema,
+  restoreAppCommandSchema,
+  updateAppCommandSchema,
+);
 export type AppEvent = typeof appEventSchema.infer;
 
 export const appEventResultSchema = type({
   success: 'boolean',
   message: 'string',
+  appStopped: type('boolean | undefined').optional(),
   rollbackSucceeded: type('boolean | undefined').optional(),
   recoverySnapshotPath: type('string | undefined').optional(),
 });

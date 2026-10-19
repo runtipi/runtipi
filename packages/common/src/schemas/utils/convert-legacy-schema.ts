@@ -356,10 +356,12 @@ export const convertLegacyToYaml = (data: unknown) => {
   }
   const legacy = parseComposeJson(data);
 
+  const xRuntipiMetadata: DynamicComposeSchemaYaml['x-runtipi'] = {
+    schema_version: 2,
+  };
+
   const newCompose: DynamicComposeSchemaYaml = {
-    'x-runtipi': {
-      schema_version: 2,
-    },
+    'x-runtipi': xRuntipiMetadata,
     services: {},
   };
 
@@ -389,10 +391,7 @@ export const convertLegacyToYaml = (data: unknown) => {
       .filter((o) => o !== undefined);
 
     if (overrides.length > 0) {
-      newCompose['x-runtipi'] = {
-        schema_version: 2,
-        overrides: overrides,
-      };
+      newCompose['x-runtipi'].overrides = overrides;
     }
   }
 
