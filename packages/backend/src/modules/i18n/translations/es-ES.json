@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Used out of {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Espacio en disco",
   "DASHBOARD_MEMORY_TITLE": "Memoria en uso",
+  "DASHBOARD_MEMORY_ESTIMATED": "estimada",
   "DASHBOARD_TITLE": "Dashboard",
   "DASHBOARD_IP_WARNING_TITLE": "Configuración insegura",
   "DASHBOARD_IP_WARNING": "¡Advertencia, podrías estar en riesgo! Parece que estás accediendo a tu instancia a través de una dirección IP pública. Esto hace que tu panel de control y todas las aplicaciones que instales sean vulnerables a los atacantes",

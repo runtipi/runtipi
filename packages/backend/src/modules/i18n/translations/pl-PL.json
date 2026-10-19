@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Użyto z {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Miejsce na dysku",
   "DASHBOARD_MEMORY_TITLE": "Użyta pamięć",
+  "DASHBOARD_MEMORY_ESTIMATED": "szacunkowo",
   "DASHBOARD_TITLE": "Kokpit",
   "DASHBOARD_IP_WARNING_TITLE": "Niebezpieczna konfiguracja",
   "DASHBOARD_IP_WARNING": "Uwaga, możesz być zagrożony! Wygląda na to, że uzyskujesz dostęp do twojej instancji przez publiczny adres IP. To powoduje, że twój panel i aplikacje, które instalujesz mogą być narażone na atakujących",

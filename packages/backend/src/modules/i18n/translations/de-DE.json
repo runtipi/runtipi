@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Wird von {{total}} GB verwendet",
   "DASHBOARD_DISK_SPACE_TITLE": "Speicherplatz",
   "DASHBOARD_MEMORY_TITLE": "Benutzter Speicher",
+  "DASHBOARD_MEMORY_ESTIMATED": "geschätzt",
   "DASHBOARD_TITLE": "Übersicht",
   "DASHBOARD_IP_WARNING_TITLE": "Unsichere Konfiguration",
   "DASHBOARD_IP_WARNING": "Warnung, du könntest gefährdet sein! Es sieht so aus, als würdest du auf deine Instanz über eine öffentliche IP-Adresse zugreifen. Dies macht dein Dashboard und alle installierten Apps anfällig für Angreifer",
