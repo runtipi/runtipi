@@ -20,7 +20,6 @@ export class BackupAppCommand extends AppLifecycleCommand {
 
     try {
       await backups.backupApp(appUrn, this.wasRunningBeforeBackup, this.context);
-      this.context?.disableCancellation();
 
       return { success: true, message: `App ${appUrn} backed up successfully` };
     } catch (error) {

@@ -6,8 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-
-const isActive = (job: AppJob) => ['queued', 'running', 'cancelling'].includes(job.status);
+import { createServerClock, getJobElapsed, isJobActive } from './app-job-time';
 
 const formatElapsed = (milliseconds: number) => {
   const seconds = Math.max(0, Math.floor(milliseconds / 1000));
@@ -22,12 +21,15 @@ export const AppJobProgress = ({ appUrn }: { appUrn: string }) => {
   const queryClient = useQueryClient();
 
   const [dismissedRequest, setDismissedRequest] = useState<string | null>(null);
-  const [now, setNow] = useState(Date.now);
+  const [serverClock] = useState(createServerClock);
+  const [, refreshElapsed] = useState(0);
 
   const query = useQuery({
     queryKey: ['app-job', appUrn],
     queryFn: async () => {
       const result = await getAppJob({ path: { urn: appUrn }, query: {}, throwOnError: true });
+      serverClock.observe(Date.parse(result.response.headers.get('date') ?? ''));
+
       return result.data.job;
     },
     refetchInterval: 5000,
@@ -40,12 +42,17 @@ export const AppJobProgress = ({ appUrn }: { appUrn: string }) => {
   });
 
   const job = query.data;
-  const active = job ? isActive(job) : false;
+  const active = job ? isJobActive(job) : false;
+  const updatedAt = job?.updatedAt;
+
+  useEffect(() => {
+    if (updatedAt !== undefined) serverClock.observe(updatedAt);
+  }, [serverClock, updatedAt]);
 
   useEffect(() => {
     if (!active) return;
 
-    const timer = setInterval(() => setNow(Date.now()), 1000);
+    const timer = setInterval(() => refreshElapsed((tick) => tick + 1), 1000);
 
     return () => clearInterval(timer);
   }, [active]);
@@ -54,7 +61,7 @@ export const AppJobProgress = ({ appUrn }: { appUrn: string }) => {
 
   const phase = ['failed', 'cancelling', 'cancelled'].includes(job.status) ? job.status : job.phase;
   const title = t(job.command === 'backup' ? 'APP_JOB_BACKUP' : 'APP_JOB_UPDATE');
-  const elapsed = formatElapsed((active ? now : job.updatedAt) - job.startedAt);
+  const elapsed = formatElapsed(getJobElapsed(job, serverClock.now()));
 
   return (
     <section className="card mx-3 mb-3" aria-label={title}>

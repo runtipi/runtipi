@@ -133,7 +133,7 @@ export class BackupManager implements OnModuleInit {
       context?.progress('archiving');
       await this.archiveManager.createTarGz(tempDir, partialArchive, context?.signal);
 
-      context?.signal.throwIfAborted();
+      context?.disableCancellation();
       context?.progress('saving');
       await fs.promises.rename(partialArchive, this.filesystem.getSafeFilePath(path.join(backupDir, `${backupName}.tar.gz`)));
       this.logger.info('Backup completed!');

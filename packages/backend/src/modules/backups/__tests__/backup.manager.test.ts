@@ -8,6 +8,11 @@ import type { AppFilesManager } from '@/modules/apps/app-files-manager';
 import type { AppsRepository } from '@/modules/apps/apps.repository';
 import type { DockerService } from '@/modules/docker/docker.service';
 import type { AppJobContext } from '@/modules/app-lifecycle/services/app-job.service';
+import { AppJobService } from '@/modules/app-lifecycle/services/app-job.service';
+import { BackupAppCommand } from '@/modules/app-lifecycle/commands/backup-app-command';
+import type { SSEService } from '@/core/sse/sse.service';
+import type { ModuleRef } from '@nestjs/core';
+import type Dockerode from 'dockerode';
 import type { AppUrn } from '@runtipi/common/types';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { afterEach, expect, test, vi } from 'vitest';
@@ -156,6 +161,69 @@ test('applies retention after publishing the completed backup', async () => {
 
   expect(await fs.promises.readdir(backupDir)).toHaveLength(1);
   await expect(fs.promises.lstat(oldBackup)).rejects.toMatchObject({ code: 'ENOENT' });
+});
+
+test.each(['publication', 'retention'])('rejects cancellation during %s and keeps the completed backup successful', async (boundary) => {
+  const { manager, apps, backupDir, logger } = await setup();
+  const jobs = new AppJobService(logger, mock<SSEService>());
+  const moduleRef = mock<ModuleRef>();
+  moduleRef.get.mockReturnValue(manager);
+
+  let cancellationError: unknown;
+
+  const cancel = () => {
+    try {
+      jobs.cancel(appUrn, request.requestId);
+    } catch (error) {
+      cancellationError = error;
+    }
+  };
+
+  if (boundary === 'publication') {
+    const rename = fs.promises.rename.bind(fs.promises);
+
+    vi.spyOn(fs.promises, 'rename').mockImplementation(async (...args) => {
+      cancel();
+      await rename(...args);
+    });
+  } else {
+    apps.getAppByUrn.mockImplementation(async () => {
+      cancel();
+      return fromPartial({ maxBackups: 0 });
+    });
+  }
+
+  const request = jobs.submit(appUrn, 'backup', (context) => new BackupAppCommand(moduleRef, mock<Dockerode>(), false, context).execute(appUrn));
+
+  await vi.waitFor(() => expect(jobs.isActive(appUrn)).toBe(false));
+
+  expect(jobs.getJob(appUrn)).toMatchObject({ status: 'succeeded', message: `App ${appUrn} backed up successfully` });
+  expect(cancellationError).toMatchObject({ status: 409 });
+  expect(await fs.promises.readdir(backupDir)).toHaveLength(2);
+  expect(await fs.promises.readdir(snapshotRoot)).toEqual([]);
+  expect(await fs.promises.readdir(archiveRoot)).toEqual([]);
+});
+
+test('honors cancellation after compression and before archive publication', async () => {
+  const { manager, archive, backupDir } = await setup();
+  const controller = new AbortController();
+  archive.createTarGz.mockImplementation(async (_source, destination) => {
+    await fs.promises.writeFile(destination, 'complete archive');
+    controller.abort(new Error('Job cancelled'));
+    return { stdout: '', stderr: '' };
+  });
+
+  const context: AppJobContext = {
+    signal: controller.signal,
+    progress: () => {},
+    disableCancellation: () => controller.signal.throwIfAborted(),
+  };
+
+  await expect(manager.backupApp(appUrn, false, context)).rejects.toThrow('Job cancelled');
+
+  expect(await fs.promises.readdir(backupDir)).toEqual(['demo-store-old.tar.gz']);
+  expect(await fs.promises.readdir(snapshotRoot)).toEqual([]);
+  expect(await fs.promises.readdir(archiveRoot)).toEqual([]);
 });
 
 test('keeps a completed backup successful when retention housekeeping fails', async () => {

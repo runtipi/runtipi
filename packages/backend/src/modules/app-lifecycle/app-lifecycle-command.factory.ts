@@ -27,6 +27,8 @@ export class AppLifecycleCommandFactory {
   ) {}
 
   async execute(eventData: typeof appEventSchema.infer, context?: AppJobContext) {
+    if (!context) this.jobs.assertIdle(eventData.appUrn);
+
     const release = await this.mutex.acquire(eventData.appUrn);
 
     try {

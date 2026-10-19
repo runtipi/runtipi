@@ -46,7 +46,7 @@ const restoreAppCommandSchema = type({
 const updateAppCommandSchema = type({
   ...appCommandFields,
   command: type.unit('update'),
-  performBackup: type('boolean').default(false),
+  performBackup: type('boolean').default(true),
   wasRunningBeforeUpdate: type('boolean').default(false),
 });
 
