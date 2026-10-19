@@ -22,7 +22,7 @@ type Section = (typeof SECTIONS)[number];
 // Tabs of the previous settings page, kept so old links still work
 const LEGACY_TABS: Record<string, Section> = { settings: 'general', actions: 'updates' };
 
-const toSection = (tab: string | null): Section => {
+const toSection = (tab: string | null) => {
   if (!tab) return 'general';
   if (LEGACY_TABS[tab]) return LEGACY_TABS[tab];
   return (SECTIONS as readonly string[]).includes(tab) ? (tab as Section) : 'general';

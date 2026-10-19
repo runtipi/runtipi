@@ -62,6 +62,7 @@ export const ChangePasswordForm = () => {
               type="password"
               autoComplete="current-password"
               disabled={changePassword.isPending}
+              placeholder={t('SETTINGS_SECURITY_FORM_CURRENT_PASSWORD')}
               aria-invalid={Boolean(errors.currentPassword)}
               {...register('currentPassword')}
             />
@@ -79,6 +80,7 @@ export const ChangePasswordForm = () => {
               type="password"
               autoComplete="new-password"
               disabled={changePassword.isPending}
+              placeholder={t('SETTINGS_SECURITY_FORM_NEW_PASSWORD')}
               aria-invalid={Boolean(errors.newPassword)}
               {...register('newPassword')}
             />
@@ -94,6 +96,7 @@ export const ChangePasswordForm = () => {
               type="password"
               autoComplete="new-password"
               disabled={changePassword.isPending}
+              placeholder={t('SETTINGS_SECURITY_FORM_CONFIRM_PASSWORD')}
               aria-invalid={Boolean(errors.newPasswordConfirm)}
               {...register('newPasswordConfirm')}
             />

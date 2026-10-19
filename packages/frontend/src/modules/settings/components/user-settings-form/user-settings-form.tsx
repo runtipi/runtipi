@@ -5,7 +5,7 @@ import { IconArrowUpRight, IconCertificate } from '@tabler/icons-react';
 import { type } from 'arktype';
 import i18next from 'i18next';
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import validator from 'validator';
 import { AdvancedSettingsModal } from '../advanced-settings-modal/advanced-settings-modal';
@@ -167,7 +167,8 @@ export const UserSettingsForm = (props: IProps) => {
     setLocale(newLocale);
   };
 
-  const advanced = initialValues?.advancedSettings;
+  // Live value, so the advanced fields show as soon as the switch is turned on
+  const advanced = useWatch({ control, name: 'advancedSettings' });
 
   const textRow = (
     name: 'appsRepoUrl' | 'localDomain' | 'domain' | 'internalIp' | 'listenIp' | 'appDataPath' | 'forwardAuthUrl',
@@ -194,7 +195,11 @@ export const UserSettingsForm = (props: IProps) => {
         className="rt-field rt-mono"
         type="number"
         placeholder={placeholder}
-        {...register(name, { valueAsNumber: true, required: name === 'eventsTimeout' || name === 'maxBackups' })}
+        {...register(name, {
+          // An emptied optional field is unset, not NaN
+          setValueAs: (value: string | number) => (value === '' || value === null ? undefined : Number(value)),
+          required: name === 'eventsTimeout' || name === 'maxBackups',
+        })}
       />
     </SettingRow>
   );

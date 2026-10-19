@@ -16,7 +16,12 @@ describe('generateSystemEnvFile theme defaults', () => {
   });
 
   afterEach(() => {
-    process.env.ROOT_FOLDER_HOST = rootFolderHost;
+    // Assigning undefined would store the string "undefined"
+    if (rootFolderHost === undefined) {
+      delete process.env.ROOT_FOLDER_HOST;
+    } else {
+      process.env.ROOT_FOLDER_HOST = rootFolderHost;
+    }
   });
 
   const generate = async (env: string, settings: Record<string, unknown>) => {

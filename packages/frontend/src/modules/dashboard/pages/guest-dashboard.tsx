@@ -38,7 +38,8 @@ const getGuestUrls = ({ info, app, metadata }: GuestApp, localDomain: string, ss
   if (app.exposed && app.domain) {
     urls.push({ key: 'domain', label: `${app.domain}${portSuffix}`, url: `https://${app.domain}${portSuffix}${suffix}`, secure: true });
   }
-  if (app.exposedLocal || !info.dynamic_config) {
+  // Only when the app has a subdomain, otherwise the host would start with a dot
+  if ((app.exposedLocal || !info.dynamic_config) && metadata.localSubdomain) {
     const host = `${metadata.localSubdomain}.${localDomain}${portSuffix}`;
     urls.push({ key: 'local', label: host, url: `https://${host}${suffix}`, secure: true });
   }
