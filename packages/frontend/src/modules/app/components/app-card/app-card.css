@@ -103,3 +103,7 @@
     animation: none;
   }
 }
+
+.rt-app-card.rt-app-card--off {
+  box-shadow: none;
+}

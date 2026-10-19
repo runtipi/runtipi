@@ -60,6 +60,8 @@ body[data-bs-theme="dark"][data-bs-theme-base="stone"] {
   --rt-inverse-text: #11120f;
   --rt-logbox-bg: #0b0c0a;
   --rt-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --rt-card-shadow: none;
+  --rt-card-shadow-hover: none;
 
   --rt-success: #7fd6a6;
   --rt-success-bg: #16271f;
@@ -186,43 +188,45 @@ body[data-bs-theme="dark"][data-bs-theme-base="neutral"] {
 body[data-bs-theme="light"],
 body[data-bs-theme="light"][data-bs-theme-base="stone"] {
   color-scheme: light;
-  --rt-bg: #f6f4ee;
-  --rt-surface: #fffefb;
-  --rt-surface-sunken: #f1efe8;
-  --rt-surface-hover: #f0eee7;
-  --rt-surface-raised: #ebe8df;
-  --rt-surface-raised-hover: #e2dfd4;
-  --rt-input-bg: #fffefb;
-  --rt-border: #e5e1d6;
-  --rt-border-subtle: #eeebe3;
-  --rt-border-control: #dbd7cb;
-  --rt-border-strong: #cfcabd;
-  --rt-border-hover: #bdb8aa;
-  --rt-border-focus-strong: #9a968a;
-  --rt-text: #1c1b17;
-  --rt-text-2: #3b3a34;
-  --rt-text-3: #5c5b53;
-  --rt-text-desc: #69685f;
-  --rt-muted: #75746a;
-  --rt-faint: #9a998f;
-  --rt-inverse-bg: #1c1b17;
-  --rt-inverse-text: #f6f4ee;
+  --rt-bg: #f6f3ec;
+  --rt-surface: #fffdf8;
+  --rt-surface-sunken: #f1ede4;
+  --rt-surface-hover: #ece7dc;
+  --rt-surface-raised: #efebe2;
+  --rt-surface-raised-hover: #e4ded1;
+  --rt-input-bg: #fffdf8;
+  --rt-border: #e6e1d5;
+  --rt-border-subtle: #e4dfd3;
+  --rt-border-control: #ddd7ca;
+  --rt-border-strong: #d6d0c3;
+  --rt-border-hover: #cfc8b8;
+  --rt-border-focus-strong: #a9a294;
+  --rt-text: #1c1d19;
+  --rt-text-2: #4a4a43;
+  --rt-text-3: #5e5d55;
+  --rt-text-desc: #5e5d55;
+  --rt-muted: #6e6d63;
+  --rt-faint: #9a968a;
+  --rt-inverse-bg: #1c1d19;
+  --rt-inverse-text: #f6f3ec;
   --rt-logbox-bg: #161713;
-  --rt-shadow: 0 12px 32px rgba(28, 27, 23, 0.12);
+  --rt-shadow: 0 12px 32px -8px rgba(60, 48, 30, 0.22);
+  --rt-card-shadow: 0 1px 2px rgba(60, 48, 30, 0.04);
+  --rt-card-shadow-hover: 0 8px 24px -12px rgba(60, 48, 30, 0.18);
 
-  --rt-success: #23a565;
-  --rt-success-bg: #e2f3e9;
-  --rt-success-bg-hover: #d2ecdd;
-  --rt-success-text: #16794a;
-  --rt-success-border: #bfe3cd;
-  --rt-danger: #d9472f;
-  --rt-danger-bg: #fbe8e3;
-  --rt-danger-text: #b23a26;
-  --rt-danger-border: #f2c8bd;
-  --rt-warning: #b7791f;
-  --rt-warning-bg: #fbefd9;
+  --rt-success: #2fa36b;
+  --rt-success-bg: #d9f0e2;
+  --rt-success-bg-hover: #c6e8d3;
+  --rt-success-text: #1f6b43;
+  --rt-success-border: #b8dfc8;
+  --rt-danger: #d8492f;
+  --rt-danger-bg: #fae3dc;
+  --rt-danger-text: #a83a24;
+  --rt-danger-border: #f0c4b8;
+  --rt-warning: #9a5f12;
+  --rt-warning-bg: #fbecd3;
 
-  --rt-mix-base: #fffefb;
+  --rt-mix-base: #fffdf8;
   --rt-mix-text: #000000;
 }
 
@@ -402,16 +406,18 @@ body {
 }
 
 body[data-bs-theme="light"] {
-  --rt-accent-text: color-mix(in oklab, var(--rt-accent) 62%, #000000);
-  --rt-accent-soft-bg: color-mix(in oklab, var(--rt-accent) 16%, #ffffff);
-  --rt-accent-soft-bg-hover: color-mix(in oklab, var(--rt-accent) 24%, #ffffff);
-  --rt-accent-soft-text: color-mix(in oklab, var(--rt-accent) 55%, #000000);
-  --rt-warm-bg: color-mix(in oklab, var(--rt-accent) 6%, var(--rt-surface));
-  --rt-warm-row: color-mix(in oklab, var(--rt-accent) 10%, var(--rt-surface));
-  --rt-warm-border: color-mix(in oklab, var(--rt-accent) 22%, var(--rt-border));
-  --rt-warm-text: color-mix(in oklab, var(--rt-accent) 35%, var(--rt-text-3));
-  --rt-warm-pill-bg: color-mix(in oklab, var(--rt-accent) 14%, #ffffff);
-  --rt-warm-pill-text: color-mix(in oklab, var(--rt-accent) 55%, #000000);
+  --rt-accent-text: color-mix(in oklab, var(--rt-accent) 72%, #000000);
+  --rt-accent-soft-bg: color-mix(in oklab, var(--rt-accent) 18%, #fffdf8);
+  --rt-accent-soft-bg-hover: color-mix(in oklab, var(--rt-accent) 27%, #fffdf8);
+  --rt-accent-soft-text: color-mix(in oklab, var(--rt-accent) 72%, #000000);
+  --rt-warm-bg: color-mix(in oklab, var(--rt-accent) 13%, #fffdf8);
+  --rt-warm-row: color-mix(in oklab, var(--rt-accent) 8%, #fffdf8);
+  --rt-warm-border: color-mix(in oklab, var(--rt-accent) 28%, #f6f3ec);
+  --rt-warm-text: color-mix(in oklab, var(--rt-accent) 38%, #3d2a1c);
+  --rt-warm-pill-bg: color-mix(in oklab, var(--rt-accent) 24%, #f9f4ec);
+  --rt-warm-pill-text: color-mix(in oklab, var(--rt-accent) 45%, #000000);
+  /* Primary buttons darken on hover in the light theme */
+  --rt-accent-hover: color-mix(in oklab, var(--rt-accent) 90%, #6b2400);
 }
 
 /* ---------- Tabler mapping ---------- */

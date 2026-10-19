@@ -303,6 +303,7 @@ a.rt-pill:hover {
   border-radius: var(--rt-radius-lg);
   background: var(--rt-surface);
   border: 1px solid var(--rt-border);
+  box-shadow: var(--rt-card-shadow);
 }
 
 .rt-panel--warm {
@@ -468,10 +469,36 @@ a.rt-pill:hover {
 }
 
 body[data-bs-theme="light"] [class*="rt-cat--"] {
-  --rt-cat-bg: color-mix(in oklab, var(--rt-cat-hue) 28%, #ffffff);
-  --rt-cat-fg: color-mix(in oklab, var(--rt-cat-hue) 45%, #000000);
+  --rt-cat-bg: color-mix(in oklab, var(--rt-cat-hue) 30%, #fffdf8);
+  --rt-cat-fg: var(--rt-cat-ink);
   --rt-cat-surface: color-mix(in oklab, var(--rt-cat-hue) 10%, var(--rt-surface));
   --rt-cat-border: color-mix(in oklab, var(--rt-cat-hue) 30%, var(--rt-border));
+}
+
+/* Saturated inks for the light theme, from the reference palette */
+.rt-cat--media {
+  --rt-cat-ink: #9a4b12;
+}
+.rt-cat--monitoring {
+  --rt-cat-ink: #1f6b43;
+}
+.rt-cat--development {
+  --rt-cat-ink: #3a46a8;
+}
+.rt-cat--productivity {
+  --rt-cat-ink: #9b2f62;
+}
+.rt-cat--network {
+  --rt-cat-ink: #17687a;
+}
+.rt-cat--home {
+  --rt-cat-ink: #7a6410;
+}
+.rt-cat--security {
+  --rt-cat-ink: #6a3fb0;
+}
+.rt-cat--core {
+  --rt-cat-ink: #b44a12;
 }
 
 /* ---------- Data ---------- */
@@ -736,4 +763,20 @@ body .rt-tooltip {
   font-weight: 700;
   font-size: 21px;
   letter-spacing: -0.02em;
+}
+
+/* Paper-like shadow on cards, only set in the light theme */
+.rt-app-card,
+.rt-store-card,
+.rt-launch,
+.rt-applink,
+.rt-stat {
+  box-shadow: var(--rt-card-shadow);
+}
+
+.rt-app-card:hover,
+.rt-store-card:hover,
+.rt-launch:hover,
+.rt-applink:hover {
+  box-shadow: var(--rt-card-shadow-hover);
 }
