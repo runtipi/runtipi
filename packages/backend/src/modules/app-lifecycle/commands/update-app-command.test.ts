@@ -15,11 +15,20 @@ import type Dockerode from 'dockerode';
 import { expect, test, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { UpdateAppCommand } from './update-app-command';
+import type { AppJobContext } from '../services/app-job.service';
+import { AppValidationService } from '../services/app-validation.service';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 const appUrn = 'app:test' as AppUrn;
 
 const createCommand = (
-  options: { performBackup?: boolean; wasRunningBeforeUpdate?: boolean; stubEnsureAppDir?: boolean; initialSubnet?: string | null } = {},
+  options: {
+    performBackup?: boolean;
+    wasRunningBeforeUpdate?: boolean;
+    stubEnsureAppDir?: boolean;
+    initialSubnet?: string | null;
+    context?: AppJobContext;
+  } = {},
 ) => {
   const logger = mock<LoggerService>();
   const appFilesManager = mock<AppFilesManager>();
@@ -50,6 +59,7 @@ const createCommand = (
       services: [{ name: 'app', image: 'nginx:latest', isMain: true, internalPort: 80 }],
     }),
   });
+  appFilesManager.getInstalledAppInfo.mockResolvedValue(fromPartial({ exposable: true, port: 8080, tipi_version: 2 }));
   appFilesManager.getAppPaths.mockReturnValue({ appDataDir: '/data/app-data/test', appInstalledDir: '/data/apps/test' });
   appFilesManager.getAppEnv.mockResolvedValue({ path: '/data/app-data/test/app.env', content: 'OLD_ENV=value' });
   appFilesManager.deleteAppFolder.mockResolvedValue(true);
@@ -71,7 +81,6 @@ const createCommand = (
   filesystem.copyDirectory.mockResolvedValue(true);
   filesystem.removeDirectory.mockResolvedValue(true);
   filesystem.writePrivateTextFile.mockResolvedValue(true);
-  filesystem.readTextFile.mockResolvedValue(JSON.stringify({ content: 'OLD_ENV=value' }));
   filesystem.isFile.mockResolvedValue(true);
 
   const services = new Map<unknown, unknown>([
@@ -85,10 +94,11 @@ const createCommand = (
     [ConfigurationService, config],
     [FilesystemService, filesystem],
     [SubnetManagerService, subnetManager],
+    [AppValidationService, new AppValidationService(appsRepository, config, logger)],
   ]);
 
   const moduleRef = { get: (token: unknown) => services.get(token) } as ModuleRef;
-  const command = new UpdateAppCommand(moduleRef, docker, options.performBackup ?? true, options.wasRunningBeforeUpdate ?? false);
+  const command = new UpdateAppCommand(moduleRef, docker, options.performBackup ?? true, options.wasRunningBeforeUpdate ?? false, options.context);
   const ensureAppDir =
     options.stubEnsureAppDir === false
       ? undefined
@@ -115,12 +125,28 @@ test('pulls the target images before stopping or removing the existing deploymen
   const result = await command.execute(appUrn, {});
 
   expect(result).toEqual({ success: true, message: `App ${appUrn} updated successfully` });
-  expect(dockerService.composeApp.mock.calls.map(([, command]) => command)).toEqual(['pull', 'stop', 'down --remove-orphans']);
+  expect(dockerService.composeApp.mock.calls.map(([, command]) => command)).toEqual(['pull', 'down --remove-orphans']);
   expect(dockerService.composeApp).not.toHaveBeenCalledWith(appUrn, expect.stringContaining('--rmi all'));
-  expect(backupManager.cleanupOldBackups).toHaveBeenCalledWith(appUrn, 7);
+  expect(backupManager.backupApp).toHaveBeenCalledWith(appUrn, false, undefined);
   expect(filesystem.copyDirectory).toHaveBeenNthCalledWith(1, '/data/apps/test', '/tmp/runtipi-update-abc/previous-app');
   expect(filesystem.copyDirectory).toHaveBeenNthCalledWith(2, '/tmp/runtipi-update-abc/previous-app', '/data/apps/test');
-  expect(ensureAppDir).toHaveBeenCalledWith(appUrn, {}, { pruneContainers: false, persistSubnet: false });
+  expect(ensureAppDir).toHaveBeenCalledWith(appUrn, expect.objectContaining({ openPort: true }), { pruneContainers: false, persistSubnet: false });
+});
+
+test('generates both target deployments with settings normalized against the new app metadata', async () => {
+  const { command, appFilesManager, appHelpers, ensureAppDir } = createCommand({ performBackup: false });
+  appFilesManager.getInstalledAppInfo.mockResolvedValue(fromPartial({ exposable: false, port: 8080, tipi_version: 2 }));
+  const form = { exposed: true, exposedLocal: true, enableAuth: true, domain: 'app.example.com' };
+
+  const result = await command.execute(appUrn, form);
+
+  expect(result.success).toBe(true);
+  const normalized = expect.objectContaining({ exposed: false, exposedLocal: false, enableAuth: false, domain: undefined, openPort: true });
+  expect(appHelpers.generateEnvFile).toHaveBeenNthCalledWith(1, appUrn, normalized);
+  expect(appHelpers.generateEnvFile).toHaveBeenNthCalledWith(2, appUrn, normalized);
+  expect(ensureAppDir).toHaveBeenNthCalledWith(1, appUrn, normalized, { pruneContainers: false, persistSubnet: false });
+  expect(ensureAppDir).toHaveBeenNthCalledWith(2, appUrn, normalized, { pruneContainers: false });
+  expect(form.exposed).toBe(true);
 });
 
 test('does not allocate a subnet when a preflight pull fails', async () => {
@@ -182,7 +208,7 @@ test('persists a subnet for a legacy null-subnet app after a successful update',
 
   expect(result).toEqual({ success: true, message: `App ${appUrn} updated successfully` });
   expect(appState.subnet).toBe('10.128.10.0/24');
-  expect(appsRepository.updateAppById).toHaveBeenCalledTimes(1);
+  expect(appsRepository.updateAppById).toHaveBeenCalledTimes(2);
   expect(appsRepository.updateAppById).toHaveBeenCalledWith(1, { subnet: '10.128.10.0/24' });
 });
 
@@ -198,7 +224,7 @@ test('restores the previous app files and leaves containers alone when the prefl
   expect(dockerService.composeApp).not.toHaveBeenCalledWith(appUrn, 'down --remove-orphans');
   expect(filesystem.copyDirectory).toHaveBeenNthCalledWith(2, '/tmp/runtipi-update-abc/previous-app', '/data/apps/test');
   expect(appFilesManager.writeAppEnv).toHaveBeenCalledWith(appUrn, 'OLD_ENV=value');
-  expect(ensureAppDir).toHaveBeenCalledWith(appUrn, {}, { pruneContainers: false, persistSubnet: false });
+  expect(ensureAppDir).toHaveBeenCalledWith(appUrn, expect.objectContaining({ openPort: true }), { pruneContainers: false, persistSubnet: false });
 });
 
 test.each([
@@ -243,24 +269,19 @@ test('restores the previous deployment instead of starting the target when the f
   expect(result).toEqual({ success: false, message: `Failed to copy app ${appUrn} from repo test`, rollbackSucceeded: true });
   expect(dockerService.composeApp.mock.calls.map(([, composeCommand]) => composeCommand)).toEqual([
     'pull',
-    'stop',
     'down --remove-orphans',
     'up --detach --force-recreate --remove-orphans',
   ]);
 });
 
-test('persists and restores the previous environment from the durable recovery snapshot', async () => {
+test('keeps a raw environment recovery file and restores the typed snapshot', async () => {
   const { command, dockerService, appFilesManager, filesystem } = createCommand();
   dockerService.composeApp.mockRejectedValueOnce(new Error('registry unavailable'));
-  filesystem.readTextFile.mockResolvedValue(JSON.stringify({ content: 'DURABLE_ENV=value' }));
 
   await command.execute(appUrn, {});
 
-  expect(filesystem.writePrivateTextFile).toHaveBeenCalledWith(
-    '/tmp/runtipi-update-abc/previous-app.env.json',
-    JSON.stringify({ content: 'OLD_ENV=value' }),
-  );
-  expect(appFilesManager.writeAppEnv).toHaveBeenCalledWith(appUrn, 'DURABLE_ENV=value');
+  expect(filesystem.writePrivateTextFile).toHaveBeenCalledWith('/tmp/runtipi-update-abc/previous-app.env', 'OLD_ENV=value');
+  expect(appFilesManager.writeAppEnv).toHaveBeenCalledWith(appUrn, 'OLD_ENV=value');
 });
 
 test('retains the recovery snapshot when restoring the previous environment fails', async () => {
@@ -280,15 +301,14 @@ test('retains the recovery snapshot when restoring the previous environment fail
   expect(filesystem.removeDirectory).not.toHaveBeenCalled();
 });
 
-test('durably records a missing environment file and restores its absence', async () => {
+test('restores an absent environment without serializing a null snapshot', async () => {
   const { command, dockerService, appFilesManager, filesystem } = createCommand();
   appFilesManager.getAppEnv.mockResolvedValue({ path: '/data/app-data/test/app.env', content: null });
   dockerService.composeApp.mockRejectedValueOnce(new Error('registry unavailable'));
-  filesystem.readTextFile.mockResolvedValue(JSON.stringify({ content: null }));
 
   await command.execute(appUrn, {});
 
-  expect(filesystem.writePrivateTextFile).toHaveBeenCalledWith('/tmp/runtipi-update-abc/previous-app.env.json', JSON.stringify({ content: null }));
+  expect(filesystem.writePrivateTextFile).not.toHaveBeenCalled();
   expect(filesystem.removeFile).toHaveBeenCalledWith('/data/app-data/test/app.env');
 });
 
@@ -343,6 +363,18 @@ test('starts the restored deployment when an update fails after a backup stopped
   expect(dockerService.composeApp).toHaveBeenLastCalledWith(appUrn, 'up --detach --force-recreate --remove-orphans');
 });
 
+test('aborts an update when the shared backup operation fails after recovering the app', async () => {
+  const { command, dockerService, backupManager } = createCommand({ wasRunningBeforeUpdate: true });
+  backupManager.backupApp.mockRejectedValue(new Error('tar terminated by SIGTERM'));
+
+  const result = await command.execute(appUrn, {});
+
+  expect(result).toEqual({ success: false, message: 'tar terminated by SIGTERM', rollbackSucceeded: true });
+  expect(dockerService.composeApp).not.toHaveBeenCalledWith(appUrn, 'down --remove-orphans');
+  expect(backupManager.cleanupOldBackups).not.toHaveBeenCalled();
+  expect(dockerService.composeApp).toHaveBeenLastCalledWith(appUrn, 'pull');
+});
+
 test('rolls back a target startup failure before reporting the update as failed', async () => {
   const { command, dockerService, filesystem } = createCommand({ wasRunningBeforeUpdate: true });
   let starts = 0;
@@ -358,7 +390,6 @@ test('rolls back a target startup failure before reporting the update as failed'
   expect(result).toEqual({ success: false, message: 'new version did not start', rollbackSucceeded: true });
   expect(dockerService.composeApp.mock.calls.map(([, composeCommand]) => composeCommand)).toEqual([
     'pull',
-    'stop',
     'down --remove-orphans',
     'up --detach --force-recreate --remove-orphans',
     'up --detach --force-recreate --remove-orphans',
@@ -435,4 +466,38 @@ test('retains the recovery snapshot when the current app folder cannot be remove
   });
   expect(filesystem.copyDirectory).not.toHaveBeenCalledWith('/tmp/runtipi-update-abc/previous-app', '/data/apps/test');
   expect(filesystem.removeDirectory).not.toHaveBeenCalled();
+});
+
+test('persists the deployed normalized settings and version in one update', async () => {
+  const { command, appFilesManager, appsRepository } = createCommand({ performBackup: false });
+  appFilesManager.getInstalledAppInfo.mockResolvedValue(fromPartial({ exposable: false, port: 8080, tipi_version: 2 }));
+
+  await command.execute(appUrn, { exposed: true, domain: 'app.example.com', CUSTOM: 'value' });
+
+  expect(appsRepository.updateAppById).toHaveBeenCalledTimes(1);
+  expect(appsRepository.updateAppById).toHaveBeenCalledWith(
+    1,
+    expect.objectContaining({
+      version: 2,
+      pendingRestart: false,
+      exposed: false,
+      domain: null,
+      config: expect.objectContaining({ exposed: false, domain: undefined, CUSTOM: 'value' }),
+    }),
+  );
+});
+
+test('recovers the deployment if committing the deployed configuration fails', async () => {
+  const { command, appsRepository, dockerService } = createCommand({ performBackup: false, wasRunningBeforeUpdate: true });
+  appsRepository.updateAppById.mockRejectedValueOnce(new Error('database unavailable'));
+
+  const result = await command.execute(appUrn, {});
+
+  expect(result).toEqual({ success: false, message: 'database unavailable', rollbackSucceeded: true });
+  expect(dockerService.composeApp.mock.calls.map(([, action]) => action)).toEqual([
+    'pull',
+    'down --remove-orphans',
+    'up --detach --force-recreate --remove-orphans',
+    'up --detach --force-recreate --remove-orphans',
+  ]);
 });

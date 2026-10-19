@@ -10,9 +10,6 @@ export default defineConfig({
     exclude: ['**/integration/**', '**/.internal/**'],
     coverage: { reporter: ['lcov', 'text-summary'] },
     reporters: ['default'],
-    env: {
-      NODE_OPTIONS: '--experimental-sqlite',
-    },
   },
   resolve: {},
 });
