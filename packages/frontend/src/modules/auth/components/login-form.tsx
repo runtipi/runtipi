@@ -1,27 +1,34 @@
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { useUserContext } from '@/context/user-context';
 import { arktypeResolver } from '@hookform/resolvers/arktype';
+import { IconArrowRight } from '@tabler/icons-react';
 import { type } from 'arktype';
 import type React from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { AuthField } from './auth-field';
 
 type FormValues = { email: string; password: string };
-
-const schema = type({
-  email: 'string.email',
-  password: 'string',
-});
 
 interface IProps {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
-  loginType: string;
+  /** Name of the app the user signs in to, when coming from forward auth */
+  appName?: string;
 }
 
-export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) => {
+export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, appName }) => {
   const { t } = useTranslation();
+  const { isGuestDashboardEnabled } = useUserContext();
+  const schema = useMemo(
+    () =>
+      type({
+        email: type('string.email').configure({ message: t('AUTH_FORM_ERROR_EMAIL_INVALID') }),
+        password: 'string',
+      }),
+    [t],
+  );
   const {
     register,
     handleSubmit,
@@ -31,44 +38,50 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType }) =>
     resolver: arktypeResolver(schema),
   });
 
-  const watchEmail = watch('email');
-  const watchPassword = watch('password');
-
-  const isDisabled = !watchEmail || !watchPassword;
+  const isDisabled = !watch('email') || !watch('password') || loading;
 
   return (
-    <>
-      <h2 className="h2 text-center mb-4">{t('AUTH_LOGIN_TITLE', { type: loginType })}</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          {...register('email')}
-          name="email"
-          label={t('AUTH_FORM_EMAIL')}
-          error={errors.email?.message}
-          disabled={loading}
-          type="email"
-          className="mb-3"
-          placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
-        />
-        <Input
-          {...register('password')}
-          name="password"
-          label={t('AUTH_FORM_PASSWORD')}
-          error={errors.password?.message}
-          disabled={loading}
-          type="password"
-          className="mb-3 password-input"
-          placeholder={t('AUTH_FORM_PASSWORD_PLACEHOLDER')}
-        />
-        <div className="form-footer">
-          <Button disabled={isDisabled} loading={loading} type="submit" intent="primary" className="w-100">
-            {t('AUTH_LOGIN_SUBMIT')}
-          </Button>
-        </div>
-        <div className="form-text text-center">
-          <Link to="/reset-password">{t('AUTH_FORM_FORGOT')}</Link>
-        </div>
-      </form>
-    </>
+    <form className="rt-auth-form" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <div>
+        <h1 className="rt-auth-title">{t('AUTH_LOGIN_HEADING')}</h1>
+        <p className="rt-auth-sub">{appName ? t('AUTH_LOGIN_SUBTITLE_APP', { app: appName }) : t('AUTH_LOGIN_SUBTITLE')}</p>
+      </div>
+
+      <AuthField
+        {...register('email')}
+        label={t('AUTH_FORM_EMAIL')}
+        type="email"
+        autoComplete="username"
+        placeholder={t('AUTH_FORM_EMAIL_PLACEHOLDER')}
+        error={errors.email?.message}
+        disabled={loading}
+      />
+
+      <AuthField
+        {...register('password')}
+        label={t('AUTH_FORM_PASSWORD')}
+        type="password"
+        autoComplete="current-password"
+        placeholder={t('AUTH_FORM_YOUR_PASSWORD')}
+        error={errors.password?.message}
+        disabled={loading}
+        aside={
+          <Link to="/reset-password" className="rt-auth-link">
+            {t('AUTH_FORM_FORGOT')}
+          </Link>
+        }
+      />
+
+      <button type="submit" className="rt-auth-submit" disabled={isDisabled}>
+        {t('AUTH_LOGIN_SUBMIT')}
+        <IconArrowRight size={16} stroke={2.2} />
+      </button>
+
+      {isGuestDashboardEnabled && (
+        <Link to="/dashboard" className="rt-auth-back rt-auth-back--center">
+          ← {t('AUTH_BACK_TO_APPS')}
+        </Link>
+      )}
+    </form>
   );
 };

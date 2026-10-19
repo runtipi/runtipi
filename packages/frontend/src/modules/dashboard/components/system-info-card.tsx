@@ -40,7 +40,7 @@ export const SystemInfoCard = ({ info }: { info: SystemInfoDto }) => {
         : t('DASHBOARD_SYSTEM_INFO_CORES', { count: info.cpuCores }),
     },
     { label: t('DASHBOARD_SYSTEM_INFO_DOCKER'), value: info.dockerVersion || '—', mono: true },
-    { label: t('DASHBOARD_SYSTEM_INFO_UPTIME'), value: formatUptime(info.uptime), mono: true },
+    { label: t('DASHBOARD_SYSTEM_INFO_UPTIME'), value: formatUptime(info.uptime, t), mono: true },
   ];
 
   return (

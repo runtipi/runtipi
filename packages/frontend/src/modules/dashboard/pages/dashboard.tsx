@@ -64,7 +64,7 @@ export default () => {
       <TopBar>
         <span className="rt-host-status rt-mono">
           <span className="rt-host-status__dot" aria-hidden="true" />
-          {info.hostname} · {t('DASHBOARD_UP_FOR', { uptime: formatUptime(info.uptime) })}
+          {info.hostname} · {t('DASHBOARD_UP_FOR', { uptime: formatUptime(info.uptime, t) })}
         </span>
       </TopBar>
 

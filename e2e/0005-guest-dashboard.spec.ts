@@ -12,9 +12,9 @@ test('user can activate the guest dashboard and see it when logged out', async (
   await loginUser(page, context);
   await page.goto('/settings');
 
-  await page.getByRole('tab', { name: 'Settings' }).click();
+  await page.goto('/settings?tab=general');
   await page.getByRole('switch', { name: 'Enable guest dashboard' }).setChecked(true);
-  await page.getByRole('button', { name: 'Update settings' }).click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
   await page.getByTestId('logout-button').click();
 
   await expect(page.getByText('No apps to display')).toBeVisible();
@@ -35,18 +35,17 @@ test('logged out users can see the apps on the guest dashboard', async ({ page, 
   await installApp(page, store.slug, 'whoami', { visibleOnGuestDashboard: false });
 
   await page.goto('/settings');
-  await page.getByRole('tab', { name: 'Settings' }).click();
+  await page.goto('/settings?tab=general');
   await page.getByRole('switch', { name: 'Enable guest dashboard' }).setChecked(true);
-  await page.getByRole('button', { name: 'Update settings' }).click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
   await page.getByTestId('logout-button').click();
 
   await expect(page.getByText(/Open-source simple and fast web server/)).toBeVisible();
   const locator = page.locator('text=Whoami');
   await expect(locator).not.toBeVisible();
 
-  await page.getByText('Nginx', { exact: true }).click();
-
-  const [newPage] = await Promise.all([context.waitForEvent('page'), page.getByRole('menuitem', { name: 'duckduckgo.com' }).click()]);
+  // Apps open with their preferred url, the domain when the app is exposed
+  const [newPage] = await Promise.all([context.waitForEvent('page'), page.getByRole('link', { name: 'Open Nginx' }).click()]);
 
   await newPage.waitForLoadState();
   expect(newPage.url()).toBe('https://duckduckgo.com/');
@@ -59,11 +58,11 @@ test('user can deactivate the guest dashboard and not see it when logged out', a
   await loginUser(page, context);
   await page.goto('/settings');
 
-  await page.getByRole('tab', { name: 'Settings' }).click();
+  await page.goto('/settings?tab=general');
   await page.getByRole('switch', { name: 'Enable guest dashboard' }).setChecked(false);
-  await page.getByRole('button', { name: 'Update settings' }).click();
+  await page.getByRole('button', { name: 'Save changes' }).click();
   await page.getByTestId('logout-button').click();
 
   // We should be redirected to the login page
-  await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();
 });

@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
 export const formatBytes = (bytes: number, decimals = 1) => {
@@ -24,16 +26,16 @@ export const formatTime = (timestamp: number, locale?: string) => {
 };
 
 /**
- * Format a duration in seconds as "3d 4h", "4h 12m" or "12m"
+ * Format a duration in seconds as "3d 4h", "4h 12m" or "12m", with the units of the current language when `t` is given
  */
-export const formatUptime = (seconds: number) => {
+export const formatUptime = (seconds: number, t?: TFunction) => {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
-  if (days > 0) return `${days}d ${hours}h`;
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  return `${minutes}m`;
+  if (days > 0) return t ? t('DURATION_DAYS_HOURS', { days, hours }) : `${days}d ${hours}h`;
+  if (hours > 0) return t ? t('DURATION_HOURS_MINUTES', { hours, minutes }) : `${hours}h ${minutes}m`;
+  return t ? t('DURATION_MINUTES', { minutes }) : `${minutes}m`;
 };
 
 export type Severity = 'ok' | 'warning' | 'danger';

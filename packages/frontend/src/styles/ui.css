@@ -716,3 +716,24 @@ body .rt-tooltip {
   box-shadow: var(--rt-shadow);
   opacity: 1;
 }
+
+/* ---------- Brand (logo + wordmark) ---------- */
+
+.rt-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--rt-text);
+  text-decoration: none;
+}
+
+.rt-brand:hover {
+  color: var(--rt-text);
+}
+
+.rt-brand__name {
+  font-family: var(--rt-font-display);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+}

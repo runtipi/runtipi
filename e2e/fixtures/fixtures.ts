@@ -21,7 +21,7 @@ export const loginUser = async (page: Page, _: BrowserContext) => {
 
   await page.getByPlaceholder('you@example.com').fill(testUser.email);
   await page.getByPlaceholder('Your password').fill(testUser.password);
-  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 };

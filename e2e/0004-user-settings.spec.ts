@@ -15,7 +15,7 @@ test.beforeEach(async ({ page, context }) => {
 
 test('user can change their password', async ({ page }) => {
   // Change password
-  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.goto('/settings?tab=security');
 
   await page.getByPlaceholder('Current password').click();
   await page.getByPlaceholder('Current password').fill(testUser.password);
@@ -30,7 +30,7 @@ test('user can change their password', async ({ page }) => {
   // Login with new password
   await page.getByPlaceholder('you@example.com').fill(testUser.email);
   await page.getByPlaceholder('Your password').fill('password2');
-  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 });
@@ -39,7 +39,7 @@ test('user can change their email', async ({ page }) => {
   // Change email
   const newEmail = 'tester2@test.com';
 
-  await page.getByRole('tab', { name: 'Security' }).click();
+  await page.goto('/settings?tab=security');
   await page.getByRole('button', { name: 'Change username' }).click();
   await page.getByPlaceholder('New username').click();
   await page.getByPlaceholder('New username').fill(newEmail);
@@ -76,13 +76,13 @@ test('user can change their email', async ({ page }) => {
   await page.getByPlaceholder('Your password').click();
   await page.getByPlaceholder('Your password').fill(testUser.password);
 
-  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 });
 
 test('user can download the self-signed certificate', async ({ page }) => {
-  await page.getByRole('tab', { name: 'Settings' }).click();
+  await page.goto('/settings?tab=general');
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download certificate' }).click();
 

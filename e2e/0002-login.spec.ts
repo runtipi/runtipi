@@ -14,7 +14,7 @@ test('user can login and is redirected to the dashboard', async ({ page }) => {
 
   await page.getByPlaceholder('you@example.com').fill(testUser.email);
   await page.getByPlaceholder('Your password').fill(testUser.password);
-  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('button', { name: 'Sign in' }).click();
 
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 });
@@ -23,7 +23,7 @@ test('user can logout', async ({ page, context }) => {
   await loginUser(page, context);
   await page.getByTestId('logout-button').click();
 
-  await expect(page.getByText('Login to your account')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();
 });
 
 test('reset password page only shows the CLI instructions', async ({ page }) => {
@@ -31,8 +31,8 @@ test('reset password page only shows the CLI instructions', async ({ page }) => 
   await createTestUser();
   await page.goto('/login');
 
-  await expect(page.getByRole('link', { name: 'Forgot password?' })).toBeVisible();
-  await page.getByRole('link', { name: 'Forgot password?' }).click();
+  await expect(page.getByRole('link', { name: 'Forgot it?' })).toBeVisible();
+  await page.getByRole('link', { name: 'Forgot it?' }).click();
 
   await expect(page.getByText('./runtipi-cli reset-password')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Reset password' })).toHaveCount(0);

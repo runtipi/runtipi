@@ -67,7 +67,7 @@ export default () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const loginType = capitalize(app ?? '') || t('AUTH_LOGIN_TYPE_ACCOUNT');
+  const appName = app ? capitalize(app) : undefined;
 
   useEffect(() => {
     if (!isLoggedIn || !redirect_url || !isSafeRedirect(redirect_url)) {
@@ -146,6 +146,7 @@ export default () => {
     return (
       <TotpForm
         loading={verifyTotp.isPending}
+        onBack={() => setTotpSessionId(null)}
         onSubmit={(totpCode) => verifyTotp.mutate({ body: { redirectUrl: redirect_url ?? undefined, totpCode, totpSessionId } })}
       />
     );
@@ -155,7 +156,7 @@ export default () => {
     <LoginForm
       onSubmit={(values) => login.mutate({ body: { password: values.password, redirectUrl: redirect_url ?? undefined, username: values.email } })}
       loading={login.isPending}
-      loginType={loginType}
+      appName={appName}
     />
   );
 };
