@@ -1,0 +1,341 @@
+/*
+ * Motion: page and panel transitions, overlays, status changes.
+ * Everything here only runs when the user has not asked for reduced motion.
+ */
+
+:root {
+  --rt-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --rt-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --rt-dur-fast: 140ms;
+  --rt-dur: 220ms;
+  --rt-dur-slow: 340ms;
+}
+
+@keyframes rt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes rt-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rt-pop-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+@keyframes rt-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rt-menu-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes rt-palette-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes rt-palette-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- Pages and panels ---------- */
+
+  /* Remounted on every navigation (keyed by path) */
+  .rt-page-enter {
+    animation: rt-rise var(--rt-dur-slow) var(--rt-ease-out) both;
+  }
+
+  /* Content that swaps in place: tabs, settings sections, update steps */
+  .rt-swap-enter {
+    animation: rt-fade-in var(--rt-dur) var(--rt-ease-out) both;
+  }
+
+  .rt-auth__body > * {
+    animation: rt-rise var(--rt-dur-slow) var(--rt-ease-out) both;
+  }
+
+  .rt-auth__brand {
+    animation: rt-fade-in 600ms var(--rt-ease-out) both;
+  }
+
+  /* Cards rise in one after the other when a list first shows */
+  .rt-app-grid > *,
+  .rt-guest__grid > *,
+  .rt-store-grid > *,
+  .rt-stats > *,
+  .rt-your-apps__grid > * {
+    animation: rt-rise var(--rt-dur-slow) var(--rt-ease-out) both;
+  }
+
+  :is(.rt-app-grid, .rt-guest__grid, .rt-store-grid, .rt-stats, .rt-your-apps__grid) > :nth-child(2) {
+    animation-delay: 30ms;
+  }
+  :is(.rt-app-grid, .rt-guest__grid, .rt-store-grid, .rt-stats, .rt-your-apps__grid) > :nth-child(3) {
+    animation-delay: 60ms;
+  }
+  :is(.rt-app-grid, .rt-guest__grid, .rt-store-grid, .rt-stats, .rt-your-apps__grid) > :nth-child(4) {
+    animation-delay: 90ms;
+  }
+  :is(.rt-app-grid, .rt-guest__grid, .rt-store-grid, .rt-stats, .rt-your-apps__grid) > :nth-child(5) {
+    animation-delay: 120ms;
+  }
+  :is(.rt-app-grid, .rt-guest__grid, .rt-store-grid, .rt-stats, .rt-your-apps__grid) > :nth-child(6) {
+    animation-delay: 150ms;
+  }
+  :is(.rt-app-grid, .rt-guest__grid, .rt-store-grid, .rt-stats, .rt-your-apps__grid) > :nth-child(n + 7) {
+    animation-delay: 180ms;
+  }
+
+  /* ---------- Dialogs ---------- */
+
+  /* The visible box is the wrapper around the Radix content, it follows the content's state */
+  .modal.dimmed-background {
+    animation: rt-fade-in var(--rt-dur) var(--rt-ease-out) both;
+  }
+
+  .modal.dimmed-background .zoom-in {
+    animation: rt-pop-in var(--rt-dur) var(--rt-ease-out) both;
+  }
+
+  /* Radix keeps the content mounted while it animates out, which lets the wrapper follow */
+  .rt-dialog-inner[data-state="closed"] {
+    animation: rt-fade-out var(--rt-dur-fast) var(--rt-ease-in) both;
+  }
+
+  .modal.dimmed-background:has([role="dialog"][data-state="closed"]) {
+    animation: rt-fade-out var(--rt-dur-fast) var(--rt-ease-in) both;
+  }
+
+  .modal.dimmed-background:has([role="dialog"][data-state="closed"]) .zoom-in {
+    animation: rt-pop-out var(--rt-dur-fast) var(--rt-ease-in) both;
+  }
+
+  /* ---------- Command palette ---------- */
+
+  .rt-palette__overlay[data-state="open"] {
+    animation: rt-fade-in var(--rt-dur) var(--rt-ease-out) both;
+  }
+
+  .rt-palette__overlay[data-state="closed"] {
+    animation: rt-fade-out var(--rt-dur-fast) var(--rt-ease-in) both;
+  }
+
+  .rt-palette[data-state="open"] {
+    animation: rt-palette-in var(--rt-dur) var(--rt-ease-out) both;
+  }
+
+  .rt-palette[data-state="closed"] {
+    animation: rt-palette-out var(--rt-dur-fast) var(--rt-ease-in) both;
+  }
+
+  .rt-palette__item {
+    transition: background var(--rt-dur-fast) ease;
+  }
+
+  /* ---------- Menus ---------- */
+
+  .dropdown-menu[data-state] {
+    transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+  }
+
+  .dropdown-menu[data-state="open"] {
+    animation: rt-menu-in var(--rt-dur-fast) var(--rt-ease-out) both;
+  }
+
+  .dropdown-menu[data-state="closed"] {
+    animation: rt-menu-out 110ms var(--rt-ease-in) both;
+  }
+
+  /* ---------- Drawer ---------- */
+
+  .rt-shell__scrim {
+    animation: rt-fade-in var(--rt-dur) var(--rt-ease-out) both;
+  }
+
+  .rt-sidebar {
+    transition-timing-function: var(--rt-ease-out);
+    transition-duration: var(--rt-dur-slow);
+  }
+
+  /* ---------- Controls and status ---------- */
+
+  .rt-btn,
+  .rt-icon-btn,
+  .rt-ctl,
+  .rt-appd-btn,
+  .rt-chip,
+  .rt-seg__btn,
+  .rt-pg,
+  .rt-kebab {
+    transition:
+      background var(--rt-dur-fast) ease,
+      border-color var(--rt-dur-fast) ease,
+      color var(--rt-dur-fast) ease,
+      box-shadow var(--rt-dur-fast) ease,
+      transform var(--rt-dur-fast) ease,
+      opacity var(--rt-dur-fast) ease;
+  }
+
+  :is(.rt-btn, .rt-icon-btn, .rt-ctl, .rt-appd-btn, .rt-chip, .rt-pg):active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  /* Controls that appear when an app changes state ease in instead of popping */
+  .rt-appd-btn,
+  .rt-ctl,
+  .rt-appd-actions > .rt-btn,
+  .rt-appd-chip,
+  .rt-status-pill {
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+  }
+
+  .rt-appd-chip,
+  .rt-status-pill,
+  .rt-sdot,
+  .rt-tile__face {
+    transition:
+      background var(--rt-dur) ease,
+      color var(--rt-dur) ease,
+      box-shadow var(--rt-dur) ease,
+      filter var(--rt-dur) ease,
+      opacity var(--rt-dur) ease,
+      transform var(--rt-dur) ease;
+  }
+
+  .rt-app-card,
+  .rt-store-card,
+  .rt-launch,
+  .rt-applink,
+  .rt-stat {
+    transition:
+      background var(--rt-dur) ease,
+      border-color var(--rt-dur) ease,
+      box-shadow var(--rt-dur) var(--rt-ease-out),
+      transform var(--rt-dur) var(--rt-ease-out);
+  }
+
+  .rt-meter > span {
+    transition: width 600ms var(--rt-ease-out);
+  }
+
+  .rt-switch::after {
+    transition: transform var(--rt-dur) var(--rt-ease-out);
+  }
+
+  .rt-settings__tab,
+  .rt-upd-step,
+  .rt-navlink {
+    transition:
+      background var(--rt-dur-fast) ease,
+      color var(--rt-dur-fast) ease,
+      box-shadow var(--rt-dur-fast) ease;
+  }
+
+  .rt-upd-step__dot {
+    transition:
+      background var(--rt-dur) ease,
+      border-color var(--rt-dur) ease,
+      color var(--rt-dur) ease;
+  }
+
+  /* Results of an update appear one after the other */
+  .rt-upd__run > * {
+    animation: rt-rise var(--rt-dur-slow) var(--rt-ease-out) both;
+  }
+
+  .rt-upd__run > :nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .rt-upd__run > :nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .rt-upd__run > :nth-child(n + 4) {
+    animation-delay: 120ms;
+  }
+
+  .rt-upd__done-badge,
+  .rt-upd__failed-badge {
+    animation: rt-pop-in 420ms var(--rt-ease-out) both;
+  }
+}
+
+/* Theme switches crossfade with the browser's default view transition (see withViewTransition), unless motion is reduced */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

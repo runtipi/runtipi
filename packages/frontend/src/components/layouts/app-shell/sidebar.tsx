@@ -1,5 +1,6 @@
 import { getInstalledAppsOptions, logoutMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useAppContext } from '@/context/app-context';
+import { switchColorMode } from '@/lib/theme/view-transition';
 import { useUIStore } from '@/stores/ui-store';
 import {
   IconAdjustmentsHorizontal,
@@ -108,7 +109,7 @@ export const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
           <button
             type="button"
             className="rt-icon-btn"
-            onClick={() => setDarkMode(!isDark)}
+            onClick={() => switchColorMode(!isDark, setDarkMode)}
             aria-label={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
             title={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
             data-testid={isDark ? 'light-mode-toggle' : 'dark-mode-toggle'}

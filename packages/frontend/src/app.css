@@ -2,6 +2,7 @@
 @import "@tabler/core/dist/css/tabler-themes.min.css";
 @import "./styles/theme.css";
 @import "./styles/ui.css";
+@import "./styles/motion.css";
 
 #root {
   height: 100%;

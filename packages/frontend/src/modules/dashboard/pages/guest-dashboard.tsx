@@ -4,6 +4,7 @@ import { AppIcon } from '@/components/app-icon/app-icon';
 import { RuntipiLogo } from '@/components/layouts/app-shell/runtipi-logo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { useUserContext } from '@/context/user-context';
+import { switchColorMode } from '@/lib/theme/view-transition';
 import { useUIStore } from '@/stores/ui-store';
 import type { CustomLink } from '@/types/app.types';
 import {
@@ -142,7 +143,7 @@ const GuestHeader = () => {
         <button
           type="button"
           className="rt-guest__icon-btn"
-          onClick={() => setDarkMode(!isDark)}
+          onClick={() => switchColorMode(!isDark, setDarkMode)}
           aria-label={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
           title={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
         >

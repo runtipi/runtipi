@@ -86,7 +86,13 @@ export const AppDetailsTabs = ({ info, app, metadata }: IProps) => {
         ))}
       </div>
 
-      <div id={`rt-appd-panel-${currentTab}`} role="tabpanel" aria-labelledby={`rt-appd-tab-${currentTab}`} className="rt-appd-tabpanel">
+      <div
+        key={currentTab}
+        id={`rt-appd-panel-${currentTab}`}
+        role="tabpanel"
+        aria-labelledby={`rt-appd-tab-${currentTab}`}
+        className="rt-appd-tabpanel rt-swap-enter"
+      >
         {currentTab === 'overview' && (
           <>
             <AppAlerts info={info} metadata={metadata} />

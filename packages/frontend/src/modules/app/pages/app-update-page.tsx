@@ -181,7 +181,7 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
               <p>{leads[current.id]}</p>
             </div>
 
-            <div className="rt-upd__panel-body">
+            <div key={current.id} className="rt-upd__panel-body rt-swap-enter">
               {current.id === 'info' && (
                 <div className="rt-upd__info">
                   <div className="rt-upd__facts">

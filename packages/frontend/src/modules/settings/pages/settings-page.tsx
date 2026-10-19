@@ -62,7 +62,7 @@ export default () => {
             </button>
           ))}
         </nav>
-        <div className="rt-settings__content">
+        <div key={section} className="rt-settings__content rt-swap-enter">
           <Suspense>{content[section]}</Suspense>
         </div>
       </div>

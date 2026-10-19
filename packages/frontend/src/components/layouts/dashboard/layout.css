@@ -48,3 +48,11 @@
   margin-left: 0;
   margin-right: 0;
 }
+
+/* Wraps each page so navigations can animate, laid out like the main column it sits in */
+.rt-page-enter {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  min-width: 0;
+}
