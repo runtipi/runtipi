@@ -1,3 +1,4 @@
+import { ColorModeSwitch } from '@/components/color-mode-switch/color-mode-switch';
 import { useUserContext } from '@/context/user-context';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
 import { type Locale, locales, toSupportedLocale } from '@/lib/i18n/locales';
@@ -239,6 +240,9 @@ export const UserSettingsForm = (props: IProps) => {
               </option>
             ))}
           </select>
+        </SettingRow>
+        <SettingRow label={t('COLOR_MODE_LABEL')} description={t('SETTINGS_COLOR_MODE_HINT')}>
+          <ColorModeSwitch withLabels />
         </SettingRow>
         <SettingRow label={t('SETTINGS_GENERAL_BASE_THEME')} description={t('SETTINGS_BASE_THEME_HINT')} htmlFor="setting-themeBase">
           <Controller

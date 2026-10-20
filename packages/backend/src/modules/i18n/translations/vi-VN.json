@@ -913,5 +913,10 @@
   "APP_UPDATE_FAILED_TITLE": "Cập nhật chưa hoàn tất",
   "APP_UPDATE_FAILED_LEAD": "Runtipi đã cố đưa {{name}} về trạng thái trước đó. Hãy kiểm tra nhật ký hoặc khôi phục bản sao lưu từ tab Sao lưu.",
   "APP_UPDATE_BACK_TO_APP": "Quay lại ứng dụng",
-  "APP_UPDATE_VIEW_LOGS": "Xem nhật ký"
+  "APP_UPDATE_VIEW_LOGS": "Xem nhật ký",
+  "COLOR_MODE_LABEL": "Giao diện",
+  "COLOR_MODE_LIGHT": "Sáng",
+  "COLOR_MODE_DARK": "Tối",
+  "COLOR_MODE_SYSTEM": "Hệ thống",
+  "SETTINGS_COLOR_MODE_HINT": "Hệ thống sẽ theo chế độ sáng hoặc tối của thiết bị. Được lưu trên thiết bị này."
 }

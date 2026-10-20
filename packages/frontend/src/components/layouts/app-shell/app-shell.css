@@ -140,6 +140,10 @@
   border-top: 1px solid var(--rt-border-subtle);
 }
 
+.rt-sidebar__logout {
+  margin-left: auto;
+}
+
 /* ---------- Main ---------- */
 
 .rt-main {

@@ -68,6 +68,11 @@
   outline-offset: 2px;
 }
 
+.rt-guest__actions .rt-cmode {
+  height: 44px;
+  padding: 5px;
+}
+
 .rt-guest__signin {
   margin-left: 6px;
 }

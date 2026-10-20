@@ -923,5 +923,10 @@
   "APP_UPDATE_FAILED_TITLE": "The update didn't finish",
   "APP_UPDATE_FAILED_LEAD": "Runtipi tried to put {{name}} back the way it was. Check its logs, or restore a backup from the Backups tab.",
   "APP_UPDATE_BACK_TO_APP": "Back to app",
-  "APP_UPDATE_VIEW_LOGS": "View logs"
+  "APP_UPDATE_VIEW_LOGS": "View logs",
+  "COLOR_MODE_LABEL": "Theme",
+  "COLOR_MODE_LIGHT": "Light",
+  "COLOR_MODE_DARK": "Dark",
+  "COLOR_MODE_SYSTEM": "System",
+  "SETTINGS_COLOR_MODE_HINT": "System follows your device's light or dark setting. Saved on this device."
 }

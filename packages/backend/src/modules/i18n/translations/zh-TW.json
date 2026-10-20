@@ -913,5 +913,10 @@
   "APP_UPDATE_FAILED_TITLE": "更新未完成",
   "APP_UPDATE_FAILED_LEAD": "Runtipi 已嘗試將 {{name}} 還原為原本的狀態。請檢查其日誌，或在「備份」分頁中還原備份。",
   "APP_UPDATE_BACK_TO_APP": "返回應用程式",
-  "APP_UPDATE_VIEW_LOGS": "檢視日誌"
+  "APP_UPDATE_VIEW_LOGS": "檢視日誌",
+  "COLOR_MODE_LABEL": "主題",
+  "COLOR_MODE_LIGHT": "淺色",
+  "COLOR_MODE_DARK": "深色",
+  "COLOR_MODE_SYSTEM": "跟隨系統",
+  "SETTINGS_COLOR_MODE_HINT": "跟隨系統會使用裝置的淺色或深色設定。僅儲存在此裝置上。"
 }

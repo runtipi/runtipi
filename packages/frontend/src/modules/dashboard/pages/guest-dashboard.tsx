@@ -4,21 +4,9 @@ import { AppIcon } from '@/components/app-icon/app-icon';
 import { RuntipiLogo } from '@/components/layouts/app-shell/runtipi-logo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { useUserContext } from '@/context/user-context';
-import { switchColorMode } from '@/lib/theme/view-transition';
-import { useUIStore } from '@/stores/ui-store';
+import { ColorModeSwitch } from '@/components/color-mode-switch/color-mode-switch';
 import type { CustomLink } from '@/types/app.types';
-import {
-  IconArrowUpRight,
-  IconCertificate,
-  IconCode,
-  IconHeart,
-  IconLock,
-  IconLockOff,
-  IconLogin2,
-  IconMoon,
-  IconSearch,
-  IconSun,
-} from '@tabler/icons-react';
+import { IconArrowUpRight, IconCertificate, IconCode, IconHeart, IconLock, IconLockOff, IconLogin2, IconSearch } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
@@ -111,9 +99,6 @@ const LaunchCard = ({ name, description, icon, urls, testId }: LaunchProps) => {
 
 const GuestHeader = () => {
   const { t } = useTranslation();
-  const theme = useUIStore((state) => state.theme);
-  const setDarkMode = useUIStore((state) => state.setDarkMode);
-  const isDark = theme === 'dark';
 
   return (
     <header className="rt-guest__top">
@@ -140,15 +125,7 @@ const GuestHeader = () => {
         >
           <IconCertificate size={17} stroke={1.8} />
         </button>
-        <button
-          type="button"
-          className="rt-guest__icon-btn"
-          onClick={() => switchColorMode(!isDark, setDarkMode)}
-          aria-label={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
-          title={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
-        >
-          {isDark ? <IconSun size={17} stroke={1.8} /> : <IconMoon size={17} stroke={1.8} />}
-        </button>
+        <ColorModeSwitch />
         <Link to="/login" className="rt-btn rt-guest__signin">
           <IconLogin2 size={16} stroke={1.8} />
           {t('AUTH_LOGIN_SUBMIT')}

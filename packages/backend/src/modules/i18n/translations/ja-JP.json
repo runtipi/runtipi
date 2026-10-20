@@ -913,5 +913,10 @@
   "APP_UPDATE_FAILED_TITLE": "更新が完了しませんでした",
   "APP_UPDATE_FAILED_LEAD": "Runtipi は {{name}} を元の状態に戻そうとしました。ログを確認するか、バックアップタブからバックアップを復元してください。",
   "APP_UPDATE_BACK_TO_APP": "アプリに戻る",
-  "APP_UPDATE_VIEW_LOGS": "ログを表示"
+  "APP_UPDATE_VIEW_LOGS": "ログを表示",
+  "COLOR_MODE_LABEL": "テーマ",
+  "COLOR_MODE_LIGHT": "ライト",
+  "COLOR_MODE_DARK": "ダーク",
+  "COLOR_MODE_SYSTEM": "システム",
+  "SETTINGS_COLOR_MODE_HINT": "システムはデバイスのライト／ダーク設定に従います。このデバイスに保存されます。"
 }

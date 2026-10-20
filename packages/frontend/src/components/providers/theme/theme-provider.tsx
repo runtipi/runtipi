@@ -1,20 +1,20 @@
 import { useUserContext } from '@/context/user-context';
-import { useUIStore } from '@/stores/ui-store';
-import Cookies from 'js-cookie';
+import { onSystemThemeChange, readColorMode, resolveColorMode, saveColorMode } from '@/lib/theme/color-mode';
+import { type ResolvedTheme, useUIStore } from '@/stores/ui-store';
 import type React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 type Props = {
   children: React.ReactNode;
-  initialTheme?: string;
 };
 
 export const ThemeProvider = (props: Props) => {
-  const { children, initialTheme } = props;
+  const { children } = props;
   const { themeBase, themeColor } = useUserContext();
 
-  const theme = useUIStore((state) => state.theme);
-  const setDarkMode = useUIStore((state) => state.setDarkMode);
+  const colorMode = useUIStore((state) => state.colorMode);
+  const setColorMode = useUIStore((state) => state.setColorMode);
+  const setResolvedTheme = useUIStore((state) => state.setResolvedTheme);
 
   // Kept apart from the light/dark effect below, toggling the mode must not reset a color previewed in the settings
   useEffect(() => {
@@ -27,21 +27,30 @@ export const ThemeProvider = (props: Props) => {
     }
   }, [themeBase, themeColor]);
 
+  const loaded = useRef(false);
+
   useEffect(() => {
-    if (theme) {
-      Cookies.set('theme', theme || initialTheme || 'light', { path: '/', expires: 365 });
-      document.body.dataset.bsTheme = theme;
-    } else if (!Cookies.get('theme')) {
-      // Detect system theme
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      setDarkMode(systemTheme === 'dark');
-      Cookies.set('theme', systemTheme, { path: '/', expires: 365 });
-      document.body.dataset.bsTheme = systemTheme;
+    // The store starts on "system", pick up the saved preference before applying anything so a saved choice doesn't flash
+    if (!loaded.current) {
+      loaded.current = true;
+      const saved = readColorMode();
+      if (saved !== colorMode) {
+        setColorMode(saved);
+        return;
+      }
     }
 
-    const cookieTheme = Cookies.get('theme');
-    setDarkMode(cookieTheme === 'dark');
-  }, [initialTheme, setDarkMode, theme]);
+    saveColorMode(colorMode);
+
+    const apply = (theme: ResolvedTheme) => {
+      document.body.dataset.bsTheme = theme;
+      setResolvedTheme(theme);
+    };
+    apply(resolveColorMode(colorMode));
+
+    // "system" keeps following the device while the page is open
+    if (colorMode === 'system') return onSystemThemeChange(apply);
+  }, [colorMode, setColorMode, setResolvedTheme]);
 
   return children;
 };

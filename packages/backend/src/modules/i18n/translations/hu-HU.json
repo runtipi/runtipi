@@ -923,5 +923,10 @@
   "APP_UPDATE_FAILED_TITLE": "A frissítés nem fejeződött be",
   "APP_UPDATE_FAILED_LEAD": "A Runtipi megpróbálta visszaállítani a(z) {{name}} korábbi állapotát. Ellenőrizze a naplóit, vagy állítson vissza egy biztonsági mentést a Biztonsági mentések lapon.",
   "APP_UPDATE_BACK_TO_APP": "Vissza az alkalmazáshoz",
-  "APP_UPDATE_VIEW_LOGS": "Naplók megtekintése"
+  "APP_UPDATE_VIEW_LOGS": "Naplók megtekintése",
+  "COLOR_MODE_LABEL": "Téma",
+  "COLOR_MODE_LIGHT": "Világos",
+  "COLOR_MODE_DARK": "Sötét",
+  "COLOR_MODE_SYSTEM": "Rendszer",
+  "SETTINGS_COLOR_MODE_HINT": "A Rendszer az eszköz világos vagy sötét beállítását követi. Ezen az eszközön mentve."
 }

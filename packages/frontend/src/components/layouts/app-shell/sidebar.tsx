@@ -1,7 +1,6 @@
 import { getInstalledAppsOptions, logoutMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useAppContext } from '@/context/app-context';
-import { switchColorMode } from '@/lib/theme/view-transition';
-import { useUIStore } from '@/stores/ui-store';
+import { ColorModeSwitch } from '@/components/color-mode-switch/color-mode-switch';
 import {
   IconAdjustmentsHorizontal,
   IconCode,
@@ -9,9 +8,7 @@ import {
   IconHome,
   IconLayoutGrid,
   IconLogout,
-  IconMoon,
   IconShoppingBag,
-  IconSun,
   type IconAperture,
 } from '@tabler/icons-react';
 import { useIsMutating, useMutation, useQuery } from '@tanstack/react-query';
@@ -38,8 +35,6 @@ export const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { version } = useAppContext();
-  const theme = useUIStore((state) => state.theme);
-  const setDarkMode = useUIStore((state) => state.setDarkMode);
   const pendingMutations = useIsMutating();
 
   const { data: apps } = useQuery({ ...getInstalledAppsOptions() });
@@ -58,7 +53,6 @@ export const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
     { to: '/settings', label: t('HEADER_SETTINGS'), icon: IconAdjustmentsHorizontal },
   ];
 
-  const isDark = theme === 'dark';
   const updateAvailable = isRuntipiUpdateAvailable(version);
 
   return (
@@ -106,19 +100,10 @@ export const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
           {t('HEADER_SPONSOR')}
         </a>
         <div className="rt-sidebar__actions">
+          <ColorModeSwitch />
           <button
             type="button"
-            className="rt-icon-btn"
-            onClick={() => switchColorMode(!isDark, setDarkMode)}
-            aria-label={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
-            title={isDark ? t('HEADER_LIGHT_MODE') : t('HEADER_DARK_MODE')}
-            data-testid={isDark ? 'light-mode-toggle' : 'dark-mode-toggle'}
-          >
-            {isDark ? <IconSun size={17} stroke={1.8} /> : <IconMoon size={17} stroke={1.8} />}
-          </button>
-          <button
-            type="button"
-            className="rt-icon-btn"
+            className="rt-icon-btn rt-sidebar__logout"
             onClick={() => logout.mutate({})}
             disabled={pendingMutations > 0 || logout.isPending}
             aria-label={t('HEADER_LOGOUT')}

@@ -1,3 +1,6 @@
+import type { ColorMode } from '@/stores/ui-store';
+import { resolveColorMode } from './color-mode';
+
 type ViewTransitionDocument = Document & { startViewTransition?: (update: () => void) => unknown };
 
 /**
@@ -17,8 +20,14 @@ export const withViewTransition = (update: () => void) => {
 };
 
 /** Switch the color mode, updating the page right away so the transition captures the new look */
-export const switchColorMode = (dark: boolean, setDarkMode: (dark: boolean) => void) =>
-  withViewTransition(() => {
-    document.body.dataset.bsTheme = dark ? 'dark' : 'light';
-    setDarkMode(dark);
-  });
+export const switchColorMode = (mode: ColorMode, setColorMode: (mode: ColorMode) => void) => {
+  const next = resolveColorMode(mode);
+  const update = () => {
+    document.body.dataset.bsTheme = next;
+    setColorMode(mode);
+  };
+
+  // Nothing changes on screen (e.g. "system" while the device matches the current theme), no need to animate
+  if (document.body.dataset.bsTheme === next) update();
+  else withViewTransition(update);
+};

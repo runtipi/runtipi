@@ -923,5 +923,10 @@
   "APP_UPDATE_FAILED_TITLE": "Uppdateringen slutfördes inte",
   "APP_UPDATE_FAILED_LEAD": "Runtipi försökte återställa {{name}} till hur det var. Kontrollera loggarna eller återställ en säkerhetskopia från fliken Säkerhetskopior.",
   "APP_UPDATE_BACK_TO_APP": "Tillbaka till appen",
-  "APP_UPDATE_VIEW_LOGS": "Visa loggar"
+  "APP_UPDATE_VIEW_LOGS": "Visa loggar",
+  "COLOR_MODE_LABEL": "Tema",
+  "COLOR_MODE_LIGHT": "Ljust",
+  "COLOR_MODE_DARK": "Mörkt",
+  "COLOR_MODE_SYSTEM": "System",
+  "SETTINGS_COLOR_MODE_HINT": "System följer enhetens ljusa eller mörka inställning. Sparas på den här enheten."
 }

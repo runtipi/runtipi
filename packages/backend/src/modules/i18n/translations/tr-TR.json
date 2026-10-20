@@ -923,5 +923,10 @@
   "APP_UPDATE_FAILED_TITLE": "Güncelleme tamamlanamadı",
   "APP_UPDATE_FAILED_LEAD": "Runtipi, {{name}} uygulamasını önceki haline döndürmeye çalıştı. Loglarını kontrol edin veya Yedekler sekmesinden bir yedeği geri yükleyin.",
   "APP_UPDATE_BACK_TO_APP": "Uygulamaya dön",
-  "APP_UPDATE_VIEW_LOGS": "Logları görüntüle"
+  "APP_UPDATE_VIEW_LOGS": "Logları görüntüle",
+  "COLOR_MODE_LABEL": "Tema",
+  "COLOR_MODE_LIGHT": "Açık",
+  "COLOR_MODE_DARK": "Koyu",
+  "COLOR_MODE_SYSTEM": "Sistem",
+  "SETTINGS_COLOR_MODE_HINT": "Sistem, cihazınızın açık veya koyu ayarını izler. Bu cihazda kaydedilir."
 }

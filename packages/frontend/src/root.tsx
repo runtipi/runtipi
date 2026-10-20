@@ -6,6 +6,7 @@ import { userContext } from './api-client';
 import { client } from './api-client/client.gen';
 import stylesheet from './app.css?url';
 import { Providers } from './components/providers/providers';
+import { colorModeBootScript } from './lib/theme/color-mode';
 import { TranslatableError } from './types/error.types';
 
 client.interceptors.response.use(async (res) => {
@@ -74,7 +75,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
+        {/* Applies the saved or system color mode before the first paint */}
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: static inline script, no user input */}
+        <script dangerouslySetInnerHTML={{ __html: colorModeBootScript }} />
         <main id="root">
           {children}
           <ScrollRestoration />
