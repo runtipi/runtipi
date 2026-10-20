@@ -1,3 +1,4 @@
+import { mockPlatform } from '@/tests/helpers/mock-platform';
 import type { DockerService } from '@/modules/docker/docker.service';
 import { mock } from 'vitest-mock-extended';
 import fs from 'node:fs';
@@ -15,6 +16,9 @@ import { fromPartial } from '@total-typescript/shoehorn';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BackupManager } from '../backup.manager';
 import { BackupArchive } from '../backup-archive';
+
+// memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
+mockPlatform('darwin');
 
 const writeFile = async (filePath: string, content: string) => {
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });

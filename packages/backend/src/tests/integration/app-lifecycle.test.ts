@@ -1,3 +1,4 @@
+import { mockPlatform } from '@/tests/helpers/mock-platform';
 import fs from 'node:fs';
 import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
@@ -54,6 +55,9 @@ import type { DynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { BackupAppHandler } from '@/modules/app-lifecycle/handlers/backup-app.handler';
 import { RestoreAppHandler } from '@/modules/app-lifecycle/handlers/restore-app.handler';
 import { AppJobService } from '@/modules/app-lifecycle/services/app-job.service';
+
+// memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
+mockPlatform('darwin');
 
 let db: TestDatabase;
 const DB_NAME = 'applifecycletest';

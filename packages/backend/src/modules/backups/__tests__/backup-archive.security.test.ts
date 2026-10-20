@@ -1,3 +1,4 @@
+import { mockPlatform } from '@/tests/helpers/mock-platform';
 import type { DockerService } from '@/modules/docker/docker.service';
 import { mock } from 'vitest-mock-extended';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -14,10 +15,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { BackupManager } from '../backup.manager';
 import { BackupArchive } from '../backup-archive';
 
-const writeFile = async (filePath: string, content: string) => {
-  await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.promises.writeFile(filePath, content);
-};
+// memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
+mockPlatform('darwin');
 
 const mockBackupTempDirectories = (filesystem: FilesystemService, temporaryBackupDir: string) => {
   return vi.spyOn(filesystem, 'createTempDirectory').mockImplementation(async (prefix) => {
@@ -351,128 +350,6 @@ describe('BackupManager backup source validation', () => {
 
       await expect(backupManager.backupApp(appUrn)).resolves.toMatch(/\.tar\.gz$/);
     } finally {
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('copies a regular file from its no-follow handle when the source is swapped', async () => {
-    if (process.platform !== 'linux') {
-      return;
-    }
-
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const source = path.join(rootDir, 'source.txt');
-    const destination = path.join(rootDir, 'quarantine', 'source.txt');
-    const movedSource = path.join(rootDir, 'source-before-swap.txt');
-    const externalFile = path.join(rootDir, 'external.txt');
-    const logger = createLogger();
-    const manager = new BackupArchive(new FilesystemService(logger), logger);
-    const copySourceToQuarantine = (
-      manager as unknown as { copySourceToQuarantine: (source: string, destination: string) => Promise<void> }
-    ).copySourceToQuarantine.bind(manager);
-    const originalCopyFile = fs.promises.copyFile;
-    const copyFileSpy = vi.spyOn(fs.promises, 'copyFile');
-    let swapped = false;
-
-    try {
-      await fs.promises.writeFile(source, 'safe');
-      await fs.promises.writeFile(externalFile, 'external');
-      copyFileSpy.mockImplementation(async (copySource, copyDestination, mode) => {
-        if (!swapped) {
-          swapped = true;
-          await fs.promises.rename(source, movedSource);
-          await fs.promises.symlink(externalFile, source);
-        }
-        await originalCopyFile(copySource, copyDestination, mode);
-      });
-
-      await copySourceToQuarantine(source, destination);
-
-      await expect(fs.promises.readFile(destination, 'utf8')).resolves.toBe('safe');
-    } finally {
-      copyFileSpy.mockRestore();
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('traverses a directory from its no-follow handle when the source is swapped', async () => {
-    if (process.platform !== 'linux') {
-      return;
-    }
-
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const source = path.join(rootDir, 'source');
-    const destination = path.join(rootDir, 'quarantine', 'source');
-    const movedSource = path.join(rootDir, 'source-before-swap');
-    const externalDirectory = path.join(rootDir, 'external');
-    const logger = createLogger();
-    const manager = new BackupArchive(new FilesystemService(logger), logger);
-    const copySourceToQuarantine = (
-      manager as unknown as { copySourceToQuarantine: (source: string, destination: string) => Promise<void> }
-    ).copySourceToQuarantine.bind(manager);
-    const originalMkdir = fs.promises.mkdir;
-    const mkdirSpy = vi.spyOn(fs.promises, 'mkdir');
-    let swapped = false;
-
-    try {
-      await writeFile(path.join(source, 'safe.txt'), 'safe');
-      await writeFile(path.join(externalDirectory, 'external.txt'), 'external');
-      mkdirSpy.mockImplementation(async (directory, options) => {
-        if (!swapped && directory === destination) {
-          swapped = true;
-          await fs.promises.rename(source, movedSource);
-          await fs.promises.symlink(externalDirectory, source);
-        }
-        return originalMkdir(directory, options);
-      });
-
-      await copySourceToQuarantine(source, destination);
-
-      await expect(fs.promises.readFile(path.join(destination, 'safe.txt'), 'utf8')).resolves.toBe('safe');
-      await expect(fs.promises.access(path.join(destination, 'external.txt'))).rejects.toMatchObject({ code: 'ENOENT' });
-    } finally {
-      mkdirSpy.mockRestore();
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('rejects a quarantine root that becomes a symlink before rewriting it', async () => {
-    if (process.platform !== 'linux') {
-      return;
-    }
-
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const source = path.join(rootDir, 'source');
-    const destination = path.join(rootDir, 'backup', 'app-data');
-    const movedSource = path.join(rootDir, 'source-before-swap');
-    const externalDirectory = path.join(rootDir, 'external');
-    const externalFile = path.join(externalDirectory, 'external.txt');
-    const logger = createLogger();
-    const manager = new BackupArchive(new FilesystemService(logger), logger);
-    const stageBackupDirectory = (
-      manager as unknown as { stageBackupDirectory: (source: string, destination: string, name: string) => Promise<void> }
-    ).stageBackupDirectory.bind(manager);
-    const originalOpen = fs.promises.open;
-    const openSpy = vi.spyOn(fs.promises, 'open');
-    let swapped = false;
-
-    try {
-      await writeFile(path.join(source, 'safe.txt'), 'safe');
-      await writeFile(externalFile, 'external');
-      openSpy.mockImplementation(async (file, flags, mode) => {
-        if (!swapped && file === source) {
-          swapped = true;
-          await fs.promises.rename(source, movedSource);
-          await fs.promises.symlink(externalDirectory, source);
-        }
-        return originalOpen(file, flags, mode);
-      });
-
-      await expect(stageBackupDirectory(source, destination, 'app data')).rejects.toThrow('Backup contains unsupported file types');
-      await expect(fs.promises.readFile(externalFile, 'utf8')).resolves.toBe('external');
-      await expect(fs.promises.readdir(externalDirectory)).resolves.toEqual(['external.txt']);
-    } finally {
-      openSpy.mockRestore();
       await fs.promises.rm(rootDir, { recursive: true, force: true });
     }
   });

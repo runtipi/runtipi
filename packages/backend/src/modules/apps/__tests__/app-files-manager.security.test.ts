@@ -1,3 +1,4 @@
+import { mockPlatform } from '@/tests/helpers/mock-platform';
 import fs from 'node:fs';
 import path from 'node:path';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
@@ -8,6 +9,9 @@ import type { AppUrn } from '@runtipi/common/types';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppFilesManager } from '../app-files-manager';
+
+// memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
+mockPlatform('darwin');
 
 const directories = {
   appDataDir: APP_DATA_DIR,
@@ -219,57 +223,6 @@ describe('AppFilesManager file security', () => {
       expect((await fs.promises.stat(externalStateDir)).mode & 0o777).toBe(0o700);
     } finally {
       await fs.promises.rm(tempDir, { recursive: true, force: true });
-    }
-  });
-
-  it('keeps using an opened app-data directory when its path is swapped', async () => {
-    if (process.platform !== 'linux') {
-      return;
-    }
-
-    vi.doUnmock('fs');
-    vi.doUnmock('node:fs');
-    vi.resetModules();
-    const { default: realFs } = await import('node:fs');
-    const { AppFilesManager: LinuxAppFilesManager } = await import('../app-files-manager');
-    const tempDir = await realFs.promises.mkdtemp('/tmp/runtipi-app-permissions-');
-    const appDataDir = path.join(tempDir, 'evil', 'demo');
-    const movedAppDataDir = path.join(tempDir, 'evil', 'demo-before-swap');
-    const safeFile = path.join(appDataDir, 'safe.txt');
-    const externalDir = path.join(tempDir, 'external');
-    const externalFile = path.join(externalDir, 'external.txt');
-    const configuration = {
-      getConfig: vi.fn(() => ({ directories: { ...directories, appDataDir: tempDir } })),
-    } as unknown as ConfigurationService;
-    const linuxManager = new LinuxAppFilesManager(configuration, filesystem, logger as unknown as LoggerService);
-    const originalOpenDir = realFs.promises.opendir;
-    const openDirSpy = vi.spyOn(realFs.promises, 'opendir');
-    let swapped = false;
-
-    try {
-      await realFs.promises.mkdir(path.dirname(safeFile), { recursive: true });
-      await realFs.promises.mkdir(externalDir, { recursive: true });
-      await realFs.promises.writeFile(safeFile, 'safe');
-      await realFs.promises.writeFile(externalFile, 'external');
-      await realFs.promises.chmod(safeFile, 0o600);
-      await realFs.promises.chmod(externalFile, 0o600);
-      openDirSpy.mockImplementation(async (directory, options) => {
-        const isOpenedAppDirectory = typeof directory === 'string' && directory.startsWith('/proc/self/fd/');
-        if (!swapped && isOpenedAppDirectory) {
-          swapped = true;
-          await realFs.promises.rename(appDataDir, movedAppDataDir);
-          await realFs.promises.symlink(externalDir, appDataDir);
-        }
-        return originalOpenDir(directory, options);
-      });
-
-      await linuxManager.setAppDataDirPermissions('demo:evil' as AppUrn);
-
-      expect((await realFs.promises.stat(path.join(movedAppDataDir, 'safe.txt'))).mode & 0o777).toBe(0o777);
-      expect((await realFs.promises.stat(externalFile)).mode & 0o777).toBe(0o600);
-    } finally {
-      openDirSpy.mockRestore();
-      await realFs.promises.rm(tempDir, { recursive: true, force: true });
     }
   });
 

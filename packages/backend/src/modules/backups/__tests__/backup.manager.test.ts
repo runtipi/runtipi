@@ -1,3 +1,4 @@
+import { mockPlatform } from '@/tests/helpers/mock-platform';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { ArchiveService } from '@/core/archive/archive.service';
@@ -18,6 +19,9 @@ import { fromPartial } from '@total-typescript/shoehorn';
 import { afterEach, expect, test, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { BackupManager, BackupRecoveryError } from '../backup.manager';
+
+// memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
+mockPlatform('darwin');
 
 const appUrn = 'demo:store' as AppUrn;
 const snapshotRoot = '/tmp/runtipi-backup-staging';
