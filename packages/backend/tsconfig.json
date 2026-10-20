@@ -18,6 +18,7 @@
     "outDir": "./dist",
     "noEmit": true,
     "lib": ["es2022"],
+    "types": ["bun"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
