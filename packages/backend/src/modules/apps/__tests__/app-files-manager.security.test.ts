@@ -121,6 +121,7 @@ describe('AppFilesManager file security', () => {
 
       await manager.setAppDataDirPermissions('demo:evil' as AppUrn);
 
+      expect(logger.error).not.toHaveBeenCalled();
       expect((await fs.promises.stat(appDataDir)).mode & 0o777).toBe(0o777);
       expect((await fs.promises.stat(writableFile)).mode & 0o777).toBe(0o777);
       expect((await fs.promises.stat(externalFile)).mode & 0o777).toBe(0o600);
@@ -220,6 +221,7 @@ describe('AppFilesManager file security', () => {
 
       await manager.setAppDataDirPermissions('demo:evil' as AppUrn);
 
+      expect(logger.error).not.toHaveBeenCalled();
       expect((await fs.promises.stat(externalStateDir)).mode & 0o777).toBe(0o700);
     } finally {
       await fs.promises.rm(tempDir, { recursive: true, force: true });

@@ -23,14 +23,19 @@ export class RestoreAppCommand extends AppLifecycleCommand {
     let appStopped = false;
 
     try {
-      // Stop the app
       logger.info(`Stopping app ${appUrn} for restore operation`);
-      await dockerService.composeApp(appUrn, 'stop');
+      try {
+        await dockerService.composeApp(appUrn, 'stop');
+      } catch (stopError) {
+        const running = await this.docker.listContainers({ filters: { label: [`runtipi.appurn=${appUrn}`] } });
+        if (running.length > 0) throw stopError;
+
+        logger.warn(`Compose stop failed for ${appUrn}, but no app containers are running; continuing restore`, stopError);
+      }
       appStopped = true;
 
       await backupManager.restoreApp(appUrn, this.filename);
 
-      // Done
       logger.info(`App ${appUrn} restored!`);
       return { success: true, message: `App ${appUrn} restored successfully`, appStopped };
     } catch (err) {

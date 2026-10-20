@@ -48,6 +48,7 @@
         "dotenv": "^17.2.2",
         "dotenv-cli": "^11.0.0",
         "drizzle-orm": "^0.45.4",
+        "effect": "^3.22.3",
         "i18next": "^25.1.2",
         "i18next-fs-backend": "^2.6.0",
         "isomorphic-git": "^1.30.1",
