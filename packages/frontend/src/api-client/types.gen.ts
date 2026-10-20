@@ -514,6 +514,23 @@ export type UpdateAppStoreDto = {
     success: boolean;
 };
 
+export type AppJobDto = {
+    job: {
+        appUrn: string;
+        cancellable: boolean;
+        command: 'backup' | 'update';
+        message: string;
+        phase: 'archiving' | 'copying' | 'finished' | 'preparing' | 'queued' | 'recovering' | 'restarting' | 'saving' | 'stopping' | 'updating';
+        /**
+         * a UUID
+         */
+        requestId: string | '00000000-0000-0000-0000-000000000000' | 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+        startedAt: number;
+        status: 'cancelled' | 'cancelling' | 'failed' | 'queued' | 'running' | 'succeeded';
+        updatedAt: number;
+    } | null;
+};
+
 export type AppFormBody = {
     domain?: string;
     enableAuth?: boolean;
@@ -1395,6 +1412,39 @@ export type UpdateAppStoreResponses = {
 };
 
 export type UpdateAppStoreResponse = UpdateAppStoreResponses[keyof UpdateAppStoreResponses];
+
+export type GetAppJobData = {
+    body?: never;
+    path: {
+        urn: string;
+    };
+    query?: {
+        requestId?: string;
+    };
+    url: '/api/app-lifecycle/{urn}/job';
+};
+
+export type GetAppJobResponses = {
+    default: AppJobDto;
+};
+
+export type GetAppJobResponse = GetAppJobResponses[keyof GetAppJobResponses];
+
+export type CancelAppJobData = {
+    body?: never;
+    path: {
+        urn: string;
+        requestId: string;
+    };
+    query?: never;
+    url: '/api/app-lifecycle/{urn}/jobs/{requestId}/cancel';
+};
+
+export type CancelAppJobResponses = {
+    default: AppJobDto;
+};
+
+export type CancelAppJobResponse = CancelAppJobResponses[keyof CancelAppJobResponses];
 
 export type InstallAppData = {
     body: AppFormBody;

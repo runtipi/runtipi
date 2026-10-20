@@ -11,11 +11,6 @@ vi.mock('fs', async () => {
   };
 });
 
-vi.mock('node:sqlite', () => {
-  const sqlite = require('node:sqlite');
-  return sqlite;
-});
-
 vi.mock('@/utils/cooldown/cooldown', () => ({
   Cooldown: () => vi.fn().mockImplementation((fn) => fn),
 }));

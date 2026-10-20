@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 import { AppActions } from '../../containers/app-actions/app-actions';
 import { AppDetailsTabs } from '../../containers/app-details-tabs/app-details-tabs';
+import { AppJobProgress } from '../app-job-progress/app-job-progress';
 import { formatShortDate, getPreferredAddress } from './app-format';
 import { AfterInstallPanel, AppAboutPanel, AppAlerts, AppCategoryChip, AppInfoPanel } from './app-panels';
 import './app-details-view.css';
@@ -69,6 +70,8 @@ export const AppDetailsView = ({ info, app, metadata, icon }: Props) => {
           </header>
 
           <AppFacts info={info} app={app} metadata={metadata} storeLabel={isUserApp ? t('APP_PAGE_STORE_CUSTOM') : appStoreId} />
+
+          <AppJobProgress appUrn={info.urn} />
 
           <AppDetailsTabs info={info} app={app} metadata={metadata} />
         </>

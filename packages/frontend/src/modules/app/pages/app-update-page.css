@@ -444,6 +444,12 @@
   color: var(--rt-text-3);
 }
 
+.rt-upd__run-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--rt-muted);
+}
+
 .rt-upd__done-badge,
 .rt-upd__failed-badge {
   display: grid;

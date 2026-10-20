@@ -7,7 +7,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
 
 COPY --from=bun_base /usr/local/bin/bun /usr/local/bin/bun
 
-RUN apk add --no-cache g++ make curl python3 openssl git
+RUN apk add --no-cache g++ make curl python3 openssl git tar pigz
 
 ARG TARGETARCH
 ARG DOCKER_COMPOSE_VERSION="v2.39.2"

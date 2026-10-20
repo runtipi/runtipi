@@ -20,31 +20,37 @@ const queueAppFormSchema = type({
   '[string]': 'unknown',
 });
 
-const commonAppCommandSchema = type({
-  command: type("'start' | 'stop' | 'install' | 'uninstall' | 'reset' | 'restart' | 'generate_env' | 'backup'"),
+const appCommandFields = {
   appUrn: arkAppUrn,
   form: queueAppFormSchema,
   requestId: 'string.uuid',
+} as const;
+
+const commonAppCommandSchema = type({
+  ...appCommandFields,
+  command: type("'start' | 'stop' | 'install' | 'uninstall' | 'reset' | 'restart' | 'generate_env'"),
+});
+
+const backupAppCommandSchema = type({
+  ...appCommandFields,
+  command: type.unit('backup'),
+  wasRunningBeforeBackup: 'boolean',
 });
 
 const restoreAppCommandSchema = type({
+  ...appCommandFields,
   command: type.unit('restore'),
-  appUrn: arkAppUrn,
   filename: 'string',
-  form: queueAppFormSchema,
-  requestId: 'string.uuid',
 });
 
 const updateAppCommandSchema = type({
+  ...appCommandFields,
   command: type.unit('update'),
-  appUrn: arkAppUrn,
-  form: queueAppFormSchema,
   performBackup: type('boolean').default(true),
   wasRunningBeforeUpdate: type('boolean').default(false),
-  requestId: 'string.uuid',
 });
 
-export const appEventSchema = type.or(commonAppCommandSchema, restoreAppCommandSchema, updateAppCommandSchema);
+export const appEventSchema = type.or(commonAppCommandSchema, backupAppCommandSchema, restoreAppCommandSchema, updateAppCommandSchema);
 export type AppEvent = typeof appEventSchema.infer;
 
 export const appEventResultSchema = type({

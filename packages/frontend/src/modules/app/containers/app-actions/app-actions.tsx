@@ -205,7 +205,8 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort, variant 
     listItemsDestructive.push(ResetListItem);
     listItemsDestructive.push(RemoveListItem);
   } else if (isBusy) {
-    listItems.push(CancelListItem);
+    // Updates and backups are cancelled from their job progress card
+    if (status !== 'updating' && status !== 'backing_up') listItems.push(CancelListItem);
   } else if (status === 'missing' && isCustomApp) {
     listItemsDestructive.push(RemoveListItem);
   }

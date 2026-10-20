@@ -1,3 +1,6 @@
+import type { DockerService } from '@/modules/docker/docker.service';
+import type { AppsRepository } from '@/modules/apps/apps.repository';
+import { mock } from 'vitest-mock-extended';
 import fs from 'node:fs';
 import path from 'node:path';
 import { DATA_DIR } from '@/common/constants';
@@ -34,7 +37,15 @@ describe('BackupManager file security', () => {
       get: vi.fn().mockReturnValue({ dataDir: DATA_DIR }),
     } as unknown as ConfigurationService;
 
-    manager = new BackupManager({} as ArchiveService, logger, config, new FilesystemService(logger), {} as AppFilesManager);
+    manager = new BackupManager(
+      {} as ArchiveService,
+      logger,
+      config,
+      new FilesystemService(logger),
+      {} as AppFilesManager,
+      mock<DockerService>(),
+      mock<AppsRepository>(),
+    );
   });
 
   it('does not return backup paths for symlink targets', async () => {
@@ -107,7 +118,7 @@ describe('BackupManager restore security', () => {
     await fs.promises.mkdir(userConfigDir, { recursive: true });
     await fs.promises.writeFile(path.join(userConfigDir, 'app.env'), 'EXISTING=true\n');
 
-    backupManager = new BackupManager(archiveManager, logger, config, filesystem, appFilesManager);
+    backupManager = new BackupManager(archiveManager, logger, config, filesystem, appFilesManager, mock<DockerService>(), mock<AppsRepository>());
   });
 
   afterEach(async () => {

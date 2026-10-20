@@ -16,12 +16,13 @@ import type { TranslatableError } from '@/types/error.types';
 import { IconAlertTriangle, IconArchive, IconArrowLeft, IconArrowRight, IconArrowUp, IconArrowUpRight, IconCheck } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, redirect, useLocation, useParams } from 'react-router';
 import yaml from 'yaml';
 import { formatShortDate, getPreferredAddress } from '../components/app-details-view/app-format';
 import { getAppPath } from '../components/app-open-menu/app-open-menu';
+import { getJobPhase, useAppJob } from '../components/app-job-progress/use-app-job';
 import { DiffView, countLineChanges } from '../components/app-update/diff-view';
 import type { Route } from './+types/app-update-page';
 import '../components/app-details-view/app-details-view.css';
@@ -44,7 +45,12 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 type StepId = 'info' | 'config' | 'compose' | 'backup';
-type Phase = { kind: 'wizard' } | { kind: 'running'; backup: boolean } | { kind: 'done'; backup: boolean } | { kind: 'failed'; error?: string };
+type Phase =
+  | { kind: 'wizard' }
+  | { kind: 'running'; backup: boolean; requestId?: string }
+  | { kind: 'done'; backup: boolean }
+  | { kind: 'failed'; error?: string }
+  | { kind: 'cancelled' };
 
 const composeToYaml = (json?: string | null) => {
   try {
@@ -105,11 +111,12 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
     backup: t('APP_UPDATE_BACKUP_LEAD'),
   };
 
-  // The update runs in the worker, its outcome comes back as an app event
+  // The update runs as a job in the background, its progress and outcome come back as app events
   useSSE({
     topic: 'app',
-    onEvent: ({ event, appUrn, error }) => {
-      if (appUrn !== info.urn) return;
+    onEvent: (data) => {
+      if (data.event === 'job_progress' || data.appUrn !== info.urn) return;
+      const { event, error } = data;
       if (event === 'update_success') setPhase((p) => (p.kind === 'running' ? { kind: 'done', backup: p.backup } : p));
       if (event === 'update_error') setPhase((p) => (p.kind === 'running' ? { kind: 'failed', error } : p));
     },
@@ -118,8 +125,21 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
   const update = useMutation({
     ...updateAppMutation(),
     onMutate: (variables) => setPhase({ kind: 'running', backup: Boolean(variables.body?.performBackup) }),
+    onSuccess: ({ requestId }) => setPhase((p) => (p.kind === 'running' ? { ...p, requestId } : p)),
     onError: (e: TranslatableError) => setPhase({ kind: 'failed', error: t(e.message, e.intlParams) }),
   });
+
+  const appJob = useAppJob(info.urn);
+  const job = phase.kind === 'running' && phase.requestId && appJob.job?.requestId === phase.requestId ? appJob.job : null;
+  const jobStatus = job?.status;
+  const jobMessage = job?.message;
+
+  // A cancelled update sends no update event, the job is the only place that says so
+  useEffect(() => {
+    if (jobStatus === 'cancelled') setPhase({ kind: 'cancelled' });
+    if (jobStatus === 'failed') setPhase((p) => (p.kind === 'running' ? { kind: 'failed', error: jobMessage } : p));
+    if (jobStatus === 'succeeded') setPhase((p) => (p.kind === 'running' ? { kind: 'done', backup: p.backup } : p));
+  }, [jobStatus, jobMessage]);
 
   const address = getPreferredAddress(info, app, metadata, userSettings);
   const githubReleases = info.source?.includes('github.com') ? `${info.source.replace(/\/$/, '')}/releases` : undefined;
@@ -298,9 +318,19 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
               <p className="rt-upd__run-lead">{t('APP_UPDATE_RUNNING_LEAD')}</p>
               <div className="rt-upd-task">
                 <span className="rt-upd-task__icon rt-upd-task__icon--run" aria-hidden="true" />
-                <span className="rt-upd-task__label">{phase.backup ? t('APP_UPDATE_RUNNING_BACKUP') : t('APP_UPDATE_RUNNING_NO_BACKUP')}</span>
-                <span className="rt-upd-task__note rt-mono">{t('APP_UPDATE_RUNNING_NOTE')}</span>
+                <span className="rt-upd-task__label">
+                  {job ? t(`APP_JOB_PHASE_${getJobPhase(job)}`) : phase.backup ? t('APP_UPDATE_RUNNING_BACKUP') : t('APP_UPDATE_RUNNING_NO_BACKUP')}
+                </span>
+                <span className="rt-upd-task__note rt-mono">{job ? `${t('APP_JOB_ELAPSED')} ${appJob.elapsed}` : t('APP_UPDATE_RUNNING_NOTE')}</span>
               </div>
+              {job && !job.cancellable && job.status !== 'cancelling' && <p className="rt-upd__run-note">{t('APP_JOB_FINISHING')}</p>}
+              {job && (
+                <div className="rt-upd__run-actions">
+                  <button type="button" className="rt-btn" disabled={!appJob.canCancel || appJob.cancelling} onClick={appJob.cancel}>
+                    {t('APP_UPDATE_CANCEL')}
+                  </button>
+                </div>
+              )}
             </>
           )}
 
@@ -334,6 +364,18 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
                   </a>
                 )}
                 <Link to={appPath} className="rt-btn">
+                  {t('APP_UPDATE_BACK_TO_APP')}
+                </Link>
+              </div>
+            </>
+          )}
+
+          {phase.kind === 'cancelled' && (
+            <>
+              <h2 id="rt-upd-run-title">{t('APP_UPDATE_CANCELLED_TITLE')}</h2>
+              <p className="rt-upd__run-lead">{t('APP_UPDATE_CANCELLED_LEAD', { name: info.name, version: versions.from })}</p>
+              <div className="rt-upd__run-actions">
+                <Link to={appPath} className="rt-btn rt-btn--primary">
                   {t('APP_UPDATE_BACK_TO_APP')}
                 </Link>
               </div>

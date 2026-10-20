@@ -9,6 +9,7 @@ import { AppsRepository } from '../apps/apps.repository';
 import type { AppStatus } from '@/core/database/drizzle/types';
 import { SystemEventsQueue } from '../queue/entities/system-events';
 import { ConfigurationService } from '@/core/config/configuration.service';
+import { AppJobService } from './services/app-job.service';
 
 const TRANSITIONAL_STATES: AppStatus[] = [
   'installing',
@@ -31,6 +32,7 @@ export class AppStatusSyncService {
     private readonly systemEventsQueue: SystemEventsQueue,
     private readonly configuration: ConfigurationService,
     @Inject(DOCKERODE) private readonly docker: Dockerode,
+    private readonly jobs: AppJobService,
   ) {
     if (this.configuration.get('userSettings').eventsTimeout > 5) {
       this.logger.warn(
@@ -78,6 +80,11 @@ export class AppStatusSyncService {
 
       for (const app of apps) {
         const appUrn: AppUrn = `${app.appName}:${app.appStoreSlug}` as AppUrn;
+
+        if (this.jobs.isActive(appUrn)) {
+          skippedCount++;
+          continue;
+        }
 
         const isTransitional = TRANSITIONAL_STATES.includes(app.status);
         if (isTransitional) {

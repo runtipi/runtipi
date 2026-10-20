@@ -925,6 +925,82 @@
         ]
       }
     },
+    "/api/app-lifecycle/{urn}/job": {
+      "get": {
+        "operationId": "getAppJob",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
+    "/api/app-lifecycle/{urn}/jobs/{requestId}/cancel": {
+      "post": {
+        "operationId": "cancelAppJob",
+        "parameters": [
+          {
+            "name": "urn",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "AppLifecycle"
+        ]
+      }
+    },
     "/api/app-lifecycle/{urn}/install": {
       "post": {
         "operationId": "installApp",
@@ -4701,6 +4777,104 @@
         },
         "required": [
           "success"
+        ]
+      },
+      "AppJobDto": {
+        "type": "object",
+        "properties": {
+          "job": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "appUrn": {
+                    "type": "string"
+                  },
+                  "cancellable": {
+                    "type": "boolean"
+                  },
+                  "command": {
+                    "enum": [
+                      "backup",
+                      "update"
+                    ]
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "phase": {
+                    "enum": [
+                      "archiving",
+                      "copying",
+                      "finished",
+                      "preparing",
+                      "queued",
+                      "recovering",
+                      "restarting",
+                      "saving",
+                      "stopping",
+                      "updating"
+                    ]
+                  },
+                  "requestId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "description": "a UUID",
+                        "format": "uuid",
+                        "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+                      },
+                      {
+                        "const": "00000000-0000-0000-0000-000000000000",
+                        "description": "a UUID",
+                        "format": "uuid"
+                      },
+                      {
+                        "const": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+                        "description": "a UUID",
+                        "format": "uuid"
+                      }
+                    ],
+                    "description": "a UUID",
+                    "format": "uuid"
+                  },
+                  "startedAt": {
+                    "type": "number"
+                  },
+                  "status": {
+                    "enum": [
+                      "cancelled",
+                      "cancelling",
+                      "failed",
+                      "queued",
+                      "running",
+                      "succeeded"
+                    ]
+                  },
+                  "updatedAt": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "appUrn",
+                  "cancellable",
+                  "command",
+                  "message",
+                  "phase",
+                  "requestId",
+                  "startedAt",
+                  "status",
+                  "updatedAt"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "job"
         ]
       },
       "AppFormBody": {

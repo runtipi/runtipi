@@ -6,18 +6,25 @@ import { ArchiveService, type ArchiveEntry } from '@/core/archive/archive.servic
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, type OnModuleInit } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppFilesManager } from '../apps/app-files-manager';
+import { AppsRepository } from '../apps/apps.repository';
+import { DockerService } from '../docker/docker.service';
+import type { AppJobContext } from '../app-lifecycle/services/app-job.service';
+
+export class BackupRecoveryError extends Error {}
 
 @Injectable()
-export class BackupManager {
+export class BackupManager implements OnModuleInit {
   constructor(
     private readonly archiveManager: ArchiveService,
     private readonly logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly filesystem: FilesystemService,
     private readonly appFilesManager: AppFilesManager,
+    private readonly docker: DockerService,
+    private readonly apps: AppsRepository,
   ) {}
 
   private getBackupPaths(appUrn: AppUrn) {
@@ -30,6 +37,38 @@ export class BackupManager {
       backupDir: path.join(dataDir, 'backups', appStoreId, appName),
       userConfigDir: path.join(dataDir, 'user-config', appStoreId, appName),
     };
+  }
+
+  private getStagingPaths() {
+    const { dataDir } = this.config.get('directories');
+
+    return {
+      snapshotRoot: '/tmp/runtipi-backup-staging',
+      archiveRoot: path.join(dataDir, 'backups', '.staging'),
+    };
+  }
+
+  async onModuleInit() {
+    const { snapshotRoot, archiveRoot } = this.getStagingPaths();
+    await this.cleanupStaging(snapshotRoot);
+
+    if (await this.filesystem.isDirectory(path.dirname(archiveRoot))) {
+      await this.cleanupStaging(archiveRoot);
+    }
+  }
+
+  private async cleanupStaging(stagingPath: string) {
+    try {
+      if ((await fs.promises.lstat(stagingPath)).isSymbolicLink()) {
+        await fs.promises.unlink(stagingPath);
+        return;
+      }
+
+      await fs.promises.rm(stagingPath, { recursive: true, force: true });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return;
+      this.logger.warn(`Failed to clean backup staging path ${stagingPath}:`, error);
+    }
   }
 
   private getValidatedBackupFilename(filename: string) {
@@ -53,53 +92,96 @@ export class BackupManager {
     };
   }
 
-  public backupApp = async (appUrn: AppUrn) => {
-    const { appName, appStoreId, backupDir, userConfigDir } = this.getBackupPaths(appUrn);
+  public async backupApp(appUrn: AppUrn, wasRunning: boolean, context?: AppJobContext) {
+    context?.signal.throwIfAborted();
+
+    const { appName, appStoreId, backupDir } = this.getBackupPaths(appUrn);
+    const { snapshotRoot, archiveRoot } = this.getStagingPaths();
     const backupName = `${appName}-${appStoreId}-${Date.now()}`;
 
-    const tempDir = await this.filesystem.createTempDirectory(appUrn);
+    await Promise.all([snapshotRoot, archiveRoot, backupDir].map((directory) => fs.promises.mkdir(directory, { recursive: true })));
+    const tempDir = await this.filesystem.createTempDirectory(path.join(snapshotRoot, 'snapshot-'));
+    if (!tempDir) throw new Error('Failed to create temp directory');
 
-    if (!tempDir) {
-      throw new Error('Failed to create temp directory');
+    const partialArchive = this.filesystem.getSafeFilePath(path.join(archiveRoot, `${backupName}.partial`));
+
+    try {
+      context?.signal.throwIfAborted();
+      let snapshotError: Error | undefined;
+
+      try {
+        context?.progress('stopping');
+        await this.docker.composeApp(appUrn, 'stop');
+        await this.copySnapshot(appUrn, tempDir, context);
+      } catch (error) {
+        snapshotError = error instanceof Error ? error : new Error(String(error));
+      }
+
+      if (wasRunning) {
+        try {
+          await this.docker.composeApp(appUrn, 'up --detach --remove-orphans');
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          const original = snapshotError ? `${snapshotError.message}. ` : '';
+          throw new BackupRecoveryError(`${original}Failed to restart the app: ${message}`, { cause: error });
+        }
+      }
+
+      if (snapshotError) throw snapshotError;
+
+      context?.signal.throwIfAborted();
+      context?.progress('archiving');
+      await this.archiveManager.createTarGz(tempDir, partialArchive, context?.signal);
+
+      context?.disableCancellation();
+      context?.progress('saving');
+      await fs.promises.rename(partialArchive, this.filesystem.getSafeFilePath(path.join(backupDir, `${backupName}.tar.gz`)));
+      this.logger.info('Backup completed!');
+
+      try {
+        const app = await this.apps.getAppByUrn(appUrn);
+        const maxBackups = app?.maxBackups ?? this.config.get('userSettings').maxBackups;
+
+        await this.cleanupOldBackups(appUrn, maxBackups);
+      } catch (error) {
+        this.logger.warn(`Failed to clean old backups for ${appUrn}:`, error);
+      }
+    } finally {
+      await Promise.all([this.cleanupStaging(partialArchive), this.cleanupStaging(tempDir)]);
     }
+  }
 
-    this.logger.info('Copying files to backup location...');
-
-    await this.filesystem.createDirectory(tempDir);
+  private async copySnapshot(appUrn: AppUrn, tempDir: string, context?: AppJobContext) {
+    context?.signal.throwIfAborted();
+    context?.progress('copying');
 
     const { appDataDir, appInstalledDir } = this.appFilesManager.getAppPaths(appUrn);
+    const { userConfigDir } = this.getBackupPaths(appUrn);
+    const copyOptions = {
+      preserveTimestamps: true,
+      verbatimSymlinks: true,
+      filter: () => {
+        context?.signal.throwIfAborted();
+        return true;
+      },
+    };
 
-    await this.filesystem.copyDirectory(appDataDir, path.join(tempDir, 'app-data'), {
-      recursive: true,
-      filter: (src) => !src.includes('backups'),
+    const copiedData = await this.filesystem.copyDirectory(appDataDir, path.join(tempDir, 'app-data'), {
+      ...copyOptions,
+      filter: (source) => copyOptions.filter() && path.basename(source) !== 'backups',
     });
+    if (!copiedData) throw new Error('Failed to copy the app data for backup');
 
-    await this.filesystem.copyDirectory(appInstalledDir, path.join(tempDir, 'app'));
-
-    if (await this.filesystem.isDirectory(userConfigDir)) {
-      this.logger.info('Including user configuration in backup...');
-      await this.filesystem.copyDirectory(userConfigDir, path.join(tempDir, 'user-config'));
+    if (!(await this.filesystem.copyDirectory(appInstalledDir, path.join(tempDir, 'app'), copyOptions))) {
+      throw new Error('Failed to copy the installed app files for backup');
     }
 
-    this.logger.info('Creating archive...');
-
-    // Create the archive
-    const { stdout, stderr } = await this.archiveManager.createTarGz(tempDir, `${path.join(tempDir, backupName)}.tar.gz`);
-    this.logger.debug('--- archiveManager.createTarGz ---');
-    this.logger.debug('stderr:', stderr);
-    this.logger.debug('stdout:', stdout);
-
-    this.logger.info('Moving archive to backup directory...', backupDir);
-
-    // Move the archive to the backup directory
-    await this.filesystem.createDirectory(backupDir);
-    await this.filesystem.copyFile(`${path.join(tempDir, backupName)}.tar.gz`, path.join(backupDir, `${backupName}.tar.gz`));
-
-    // Remove the temp backup folder
-    await this.filesystem.removeDirectory(tempDir);
-
-    this.logger.info('Backup completed!');
-  };
+    if (await this.filesystem.isDirectory(userConfigDir)) {
+      if (!(await this.filesystem.copyDirectory(userConfigDir, path.join(tempDir, 'user-config'), copyOptions))) {
+        throw new Error('Failed to copy the user configuration for backup');
+      }
+    }
+  }
 
   public restoreApp = async (appUrn: AppUrn, filename: string) => {
     const restoreDir = await this.filesystem.createTempDirectory(appUrn);
@@ -357,16 +439,18 @@ export class BackupManager {
       const list = await this.filesystem.listFiles(backupsDir);
 
       const backups = await Promise.all(
-        list.map(async (backup) => {
-          const backupPath = path.join(backupsDir, backup);
+        list
+          .filter((backup) => backup.endsWith('.tar.gz') && !backup.startsWith('.'))
+          .map(async (backup) => {
+            const backupPath = path.join(backupsDir, backup);
 
-          if (!(await this.filesystem.isFile(backupPath))) {
-            return null;
-          }
+            if (!(await this.filesystem.isFile(backupPath))) {
+              return null;
+            }
 
-          const stats = await this.filesystem.getStats(backupPath);
-          return { id: backup, size: stats.size, date: stats.mtime.getTime() };
-        }),
+            const stats = await this.filesystem.getStats(backupPath);
+            return { id: backup, size: stats.size, date: stats.mtime.getTime() };
+          }),
       );
 
       return backups.filter((backup) => backup !== null);

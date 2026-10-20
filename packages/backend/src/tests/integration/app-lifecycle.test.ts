@@ -49,6 +49,7 @@ import { StatusManagerService } from '@/modules/app-lifecycle/services/status-ma
 import { AppValidationService } from '@/modules/app-lifecycle/services/app-validation.service';
 import { BackupAppHandler } from '@/modules/app-lifecycle/handlers/backup-app.handler';
 import { RestoreAppHandler } from '@/modules/app-lifecycle/handlers/restore-app.handler';
+import { AppJobService } from '@/modules/app-lifecycle/services/app-job.service';
 
 let db: TestDatabase;
 const DB_NAME = 'applifecycletest';
@@ -94,6 +95,7 @@ describe('App lifecycle', () => {
 
     const moduleRef = await Test.createTestingModule({
       providers: [
+        AppJobService,
         AppLifecycleService,
         MarketplaceService,
         AppStoreService,
