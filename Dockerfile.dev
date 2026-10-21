@@ -1,6 +1,6 @@
 ARG NODE_VERSION="jod"
 ARG ALPINE_VERSION="3.21"
-ARG BUN_VERSION="1.3.0"
+ARG BUN_VERSION="1.4.3"
 
 FROM oven/bun:${BUN_VERSION}-alpine AS bun_base
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
