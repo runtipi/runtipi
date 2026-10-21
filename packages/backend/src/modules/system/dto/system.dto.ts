@@ -8,6 +8,7 @@ const loadSchema = type({
   cpuLoad: 'number = 0',
   memoryTotal: 'number = 0',
   percentUsedMemory: 'number = 0',
+  memorySource: type.enumerated('host', 'cgroup', 'containers'),
 });
 
 // Load

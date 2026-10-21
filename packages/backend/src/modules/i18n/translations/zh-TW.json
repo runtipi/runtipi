@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "在 {{total}} GB 中已使用",
   "DASHBOARD_DISK_SPACE_TITLE": "硬碟空間",
   "DASHBOARD_MEMORY_TITLE": "已使用記憶體",
+  "DASHBOARD_MEMORY_ESTIMATED": "估計值",
   "DASHBOARD_TITLE": "儀表板",
   "DASHBOARD_IP_WARNING_TITLE": "不安全的設定",
   "DASHBOARD_IP_WARNING": "注意，你的安全性可能會受到威脅！看起來你正透過公共 IP 位址存取系統。這使得你的儀表板和你安裝的所有應用程式容易受到攻擊。",

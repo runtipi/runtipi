@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Används av {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Disk utrymme",
   "DASHBOARD_MEMORY_TITLE": "Använt minne",
+  "DASHBOARD_MEMORY_ESTIMATED": "uppskattat",
   "DASHBOARD_TITLE": "Kontrollpanel",
   "DASHBOARD_IP_WARNING_TITLE": "Osäkra inställningar",
   "DASHBOARD_IP_WARNING": "Varning! Du kan vara i fara! Det verkar som att du har tillgång till ditt instans via en offentlig IP-adress. Detta gör din instrumentpanel och alla appar som du installerar sårbara för angripare",

@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Utilizat din {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Spatiu pe disc",
   "DASHBOARD_MEMORY_TITLE": "Memorie utilizată",
+  "DASHBOARD_MEMORY_ESTIMATED": "estimat",
   "DASHBOARD_TITLE": "Tablou de bord",
   "DASHBOARD_IP_WARNING_TITLE": "Insecure configuration",
   "DASHBOARD_IP_WARNING": "Warning, you might be at risk! it looks like you are accessing your instance through a public IP address. This makes your dashboard and all apps that you install vulnerable to attackers",
