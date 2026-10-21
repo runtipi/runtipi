@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import Dockerode from 'dockerode';
 import { AppsRepository } from '../apps/apps.repository';
-import { DOCKERODE } from '../docker/docker.module';
+import { DOCKERODE } from '../docker/docker.constants';
 
 const SUBNET_MASK = '/24';
 const MAX_RETRIES = 3;

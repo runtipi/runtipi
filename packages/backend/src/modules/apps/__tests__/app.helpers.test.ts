@@ -76,6 +76,7 @@ describe('AppHelpers', () => {
 
       envUtils.envStringToMap.mockReturnValue(new Map());
       envUtils.envMapToString.mockReturnValue('');
+      appFilesManager.getAppDataHostPath.mockReturnValue('/opt/runtipi/app-data/test-store/test-app');
       appFilesManager.getInstalledAppInfo.mockResolvedValue(mockAppInfo);
       appFilesManager.getAppEnv.mockResolvedValue({ path: '/data/.env', content: '' });
       appFilesManager.writeAppEnv.mockResolvedValue(true);

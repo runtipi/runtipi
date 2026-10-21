@@ -202,6 +202,10 @@ export class FilesystemService {
       await fs.promises.unlink(this.getSafeFilePath(filePath));
       return true;
     } catch (error) {
+      const errorCode = (error as NodeJS.ErrnoException).code;
+      if (errorCode === 'ENOENT') {
+        return true;
+      }
       this.logger.error(`Error removing file ${filePath}:`, error);
       return false;
     }
@@ -233,7 +237,19 @@ export class FilesystemService {
   }
 
   async createTempDirectory(prefix: string): Promise<string | null> {
-    return fs.promises.mkdtemp(prefix);
+    const directory = await fs.promises.mkdtemp(prefix);
+    try {
+      await fs.promises.chmod(directory, 0o700);
+      const stats = await fs.promises.stat(directory);
+      const mode = stats.mode & 0o777;
+      if (mode !== 0o700) {
+        throw new Error(`Temporary directory ${directory} is not private`);
+      }
+    } catch (error) {
+      await fs.promises.rmdir(directory).catch(() => undefined);
+      throw error;
+    }
+    return directory;
   }
 
   async getStats(filePath: string) {

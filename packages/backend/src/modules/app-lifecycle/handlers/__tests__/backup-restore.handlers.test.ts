@@ -1,6 +1,6 @@
 import type { SSEService } from '@/core/sse/sse.service';
-import { AppJobService } from '../services/app-job.service';
-import { AppLifecycleCommandFactory } from '../app-lifecycle-command.factory';
+import { AppJobService } from '../../services/app-job.service';
+import { AppLifecycleCommandFactory } from '../../app-lifecycle-command.factory';
 import { LoggerService } from '@/core/logger/logger.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
@@ -10,10 +10,11 @@ import type { AppUrn } from '@runtipi/common/types';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { BackupAppHandler } from './backup-app.handler';
-import { RestoreAppHandler } from './restore-app.handler';
-import { StartAppHandler } from './start-app.handler';
-import { StatusManagerService } from '../services/status-manager.service';
+import { BackupAppHandler } from '../backup-app.handler';
+import { RestoreAppHandler } from '../restore-app.handler';
+import { StartAppHandler } from '../start-app.handler';
+import { StatusManagerService } from '../../services/status-manager.service';
+import { UninstallAppHandler } from '../uninstall-app.handler';
 
 const flushPromises = async () => {
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -75,6 +76,52 @@ describe('BackupAppHandler', () => {
     expect(commandFactory.execute).toHaveBeenCalledWith(expect.objectContaining({ wasRunningBeforeBackup: true }), expect.any(Object));
     expect(statusManager.emitSuccess).toHaveBeenCalledWith(expect.objectContaining({ event: 'backup_success', status: 'running' }));
   });
+
+  it('preserves the running status when backup cannot stop the app', async () => {
+    appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 14, status: 'running', config: {} }));
+    commandFactory.execute.mockResolvedValue({ success: false, message: 'stop failed', rollbackSucceeded: true });
+
+    const handler = new BackupAppHandler(
+      appRepository,
+      commandFactory,
+      statusManager,
+      new AppJobService(mock<LoggerService>(), mock<SSEService>()),
+      config,
+    );
+    await handler.execute(appUrn);
+    await flushPromises();
+
+    expect(statusManager.emitError).toHaveBeenCalledWith({
+      appId: 14,
+      appUrn,
+      event: 'backup_error',
+      status: 'running',
+      error: 'stop failed',
+    });
+  });
+
+  it('marks the app stopped when backup fails after it stops the app', async () => {
+    appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 15, status: 'running', config: {} }));
+    commandFactory.execute.mockResolvedValue({ success: false, message: 'backup failed', rollbackSucceeded: false });
+
+    const handler = new BackupAppHandler(
+      appRepository,
+      commandFactory,
+      statusManager,
+      new AppJobService(mock<LoggerService>(), mock<SSEService>()),
+      config,
+    );
+    await handler.execute(appUrn);
+    await flushPromises();
+
+    expect(statusManager.emitError).toHaveBeenCalledWith({
+      appId: 15,
+      appUrn,
+      event: 'backup_error',
+      status: 'stopped',
+      error: 'backup failed',
+    });
+  });
 });
 
 describe('RestoreAppHandler', () => {
@@ -121,6 +168,64 @@ describe('RestoreAppHandler', () => {
       appUrn,
       event: 'restore_success',
       status: 'stopped',
+    });
+  });
+
+  it('preserves the running status when restore cannot stop the app', async () => {
+    appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 22, status: 'running', config: {} }));
+    appEventsQueue.publish.mockResolvedValue({ success: false, message: 'stop failed' });
+
+    const handler = new RestoreAppHandler(appRepository, appEventsQueue, statusManager, appFilesManager, startAppHandler);
+    await handler.execute(appUrn, { filename: 'test-store-1.tar.gz' });
+    await flushPromises();
+
+    expect(statusManager.emitError).toHaveBeenCalledWith({
+      appId: 22,
+      appUrn,
+      event: 'restore_error',
+      status: 'running',
+      error: 'stop failed',
+    });
+  });
+
+  it('marks the app stopped when restore fails after it stops the app', async () => {
+    appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 23, status: 'running', config: {} }));
+    appEventsQueue.publish.mockResolvedValue({ success: false, message: 'restore failed', appStopped: true });
+
+    const handler = new RestoreAppHandler(appRepository, appEventsQueue, statusManager, appFilesManager, startAppHandler);
+    await handler.execute(appUrn, { filename: 'test-store-1.tar.gz' });
+    await flushPromises();
+
+    expect(statusManager.emitError).toHaveBeenCalledWith({
+      appId: 23,
+      appUrn,
+      event: 'restore_error',
+      status: 'stopped',
+      error: 'restore failed',
+    });
+  });
+});
+
+describe('UninstallAppHandler', () => {
+  const appUrn = 'test:store' as AppUrn;
+
+  it('passes removeBackups to the queued uninstall command without mutating backups', async () => {
+    const appRepository = mock<AppsRepository>();
+    const appEventsQueue = mock<AppEventsQueue>();
+    const statusManager = mock<StatusManagerService>();
+    appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 31, config: {} }));
+    appEventsQueue.publish.mockResolvedValue({ success: true, message: 'ok' });
+    const handler = new UninstallAppHandler(appRepository, appEventsQueue, statusManager);
+
+    const result = await handler.execute(appUrn, { removeBackups: true });
+
+    expect(statusManager.transitionTo).toHaveBeenCalledWith(31, appUrn, 'uninstalling');
+    expect(appEventsQueue.publish).toHaveBeenCalledWith({
+      command: 'uninstall',
+      appUrn,
+      requestId: result.requestId,
+      form: {},
+      removeBackups: true,
     });
   });
 });

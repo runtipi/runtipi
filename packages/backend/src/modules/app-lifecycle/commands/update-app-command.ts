@@ -17,6 +17,8 @@ import path from 'node:path';
 import type { AppJobContext } from '../services/app-job.service';
 import { getAppConfigUpdate } from '../services/app-config';
 import { AppValidationService } from '../services/app-validation.service';
+import { AppMigrationService } from '../services/app-migration.service';
+import { ConfigurationService } from '@/core/config/configuration.service';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
@@ -39,6 +41,8 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     const appsRepository = this.moduleRef.get(AppsRepository, { strict: false });
     const filesystem = this.moduleRef.get(FilesystemService, { strict: false });
     const validation = this.moduleRef.get(AppValidationService, { strict: false });
+    const appMigrationService = this.moduleRef.get(AppMigrationService, { strict: false });
+    const config = this.moduleRef.get(ConfigurationService, { strict: false });
 
     let temporaryDirectory: string | null = null;
     let appInstalledDir: string | null = null;
@@ -48,6 +52,10 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     let subnetBeforeUpdate: { id: number; subnet: string | null } | null = null;
     let deploymentMayHaveChanged = false;
     let deploymentMayHaveStopped = false;
+    let migrationRecoveryRequired = false;
+    let migrationCommitAttempted = false;
+    let migrationBackupFilename: string | null = null;
+    let backupMaxBackups: number | null = null;
     let recoverySucceeded = false;
 
     const restorePreviousApp = async () => {
@@ -108,6 +116,8 @@ export class UpdateAppCommand extends AppLifecycleCommand {
         }
       }
 
+      await appMigrationService.baselineCurrentMigrations(appUrn);
+
       // Stage the target files in the installed directory while the existing containers keep running.
       // The previous files and compose are restored immediately after the target images are pulled.
       deploymentMayHaveChanged = true;
@@ -119,13 +129,24 @@ export class UpdateAppCommand extends AppLifecycleCommand {
 
       await this.ensureAppDir(appUrn, targetForm, { pruneContainers: false, persistSubnet: false });
       await appHelpers.generateEnvFile(appUrn, targetForm);
+      const pendingMigrations = await appMigrationService.prepareMigrations(appUrn);
+      const hasPendingMigrations = pendingMigrations.length > 0;
       await dockerService.composeApp(appUrn, 'pull');
 
       // Restore the old compose before taking a backup
       await clearAppFolderForRestore();
       await restorePreviousApp();
 
-      if (this.performBackup) {
+      if (hasPendingMigrations) {
+        deploymentMayHaveStopped = true;
+        const backupFilename = await backupManager.createBackup(appUrn, false, this.context);
+        migrationBackupFilename = backupFilename;
+        migrationRecoveryRequired = true;
+        await appMigrationService.beginMigrationBatch(appUrn, backupFilename, pendingMigrations);
+
+        const app = await appsRepository.getAppByUrn(appUrn);
+        backupMaxBackups = app?.maxBackups ?? config.get('userSettings').maxBackups;
+      } else if (this.performBackup) {
         await backupManager.backupApp(appUrn, this.wasRunningBeforeUpdate, this.context);
       }
 
@@ -139,16 +160,33 @@ export class UpdateAppCommand extends AppLifecycleCommand {
       await this.ensureAppDir(appUrn, targetForm, { pruneContainers: false });
       await appHelpers.generateEnvFile(appUrn, targetForm);
 
+      if (hasPendingMigrations) {
+        await appMigrationService.runMigrations(appUrn, pendingMigrations);
+      }
+
       if (this.wasRunningBeforeUpdate) {
         this.context?.progress('restarting');
         await dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans');
       }
 
-      await appsRepository.updateAppById(appBeforeUpdate.id, {
+      const appUpdate = {
         ...getAppConfigUpdate(targetAppInfo, targetForm),
         version: targetAppInfo.tipi_version,
         pendingRestart: false,
-      });
+      };
+
+      if (hasPendingMigrations) {
+        migrationCommitAttempted = true;
+        await appMigrationService.commitMigrations(appUrn, pendingMigrations, appUpdate);
+      } else {
+        await appsRepository.updateAppById(appBeforeUpdate.id, appUpdate);
+      }
+
+      if (backupMaxBackups !== null) {
+        await backupManager.cleanupOldBackups(appUrn, backupMaxBackups).catch((cleanupError) => {
+          logger.error(`Failed to clean up old backups for app ${appUrn}:`, cleanupError);
+        });
+      }
 
       recoverySucceeded = true;
       return { success: true, message: `App ${appUrn} updated successfully` };
@@ -157,7 +195,24 @@ export class UpdateAppCommand extends AppLifecycleCommand {
       this.context?.progress('recovering');
 
       try {
-        if (previousFilesStaged && deploymentMayHaveChanged) {
+        if (migrationCommitAttempted) {
+          const app = await appsRepository.getAppByUrn(appUrn);
+          if (!app) throw new Error(`Cannot confirm the migration commit for app ${appUrn}`);
+
+          if (app.migrationRecovery === null) {
+            logger.warn(`Migration commit completed for app ${appUrn} despite a lost response:`, err);
+            recoverySucceeded = true;
+            return { success: true, message: `App ${appUrn} updated successfully` };
+          }
+        }
+
+        let restoredFromBackup = false;
+        if (migrationRecoveryRequired && migrationBackupFilename) {
+          await appMigrationService.rollbackMigrations(appUrn, migrationBackupFilename);
+          restoredFromBackup = true;
+        }
+
+        if (!restoredFromBackup && previousFilesStaged && deploymentMayHaveChanged) {
           await clearAppFolderForRestore();
           await restorePreviousApp();
         }

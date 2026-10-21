@@ -39,7 +39,10 @@ export class RestoreAppHandler implements ILifecycleHandler<RestoreAppParams> {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ appUrn, command: 'restore', requestId, filename, form: app.config }).then(async ({ success, message }) => {
+    this.appEventsQueue.publish({ appUrn, command: 'restore', requestId, filename, form: app.config }).then(async (result) => {
+      const { success, message } = result;
+      const appStopped = 'appStopped' in result && result.appStopped === true;
+
       if (success) {
         const restoredAppConfig = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
@@ -58,11 +61,12 @@ export class RestoreAppHandler implements ILifecycleHandler<RestoreAppParams> {
           });
         }
       } else {
+        const errorStatus = appStopped ? 'stopped' : appStatusBeforeRestore;
         await this.statusManager.emitError({
           appId: app.id,
           appUrn,
           event: 'restore_error',
-          status: 'stopped',
+          status: errorStatus,
           error: message ?? 'Unknown error',
         });
       }

@@ -1,0 +1,1 @@
+export const DOCKERODE = 'DOCKERODE_INSTANCE';

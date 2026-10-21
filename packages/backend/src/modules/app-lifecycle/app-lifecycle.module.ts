@@ -23,6 +23,7 @@ import { UpdateAppHandler } from './handlers/update-app.handler';
 import { BackupAppHandler } from './handlers/backup-app.handler';
 import { RestoreAppHandler } from './handlers/restore-app.handler';
 import { AppJobService } from './services/app-job.service';
+import { AppMigrationService } from './services/app-migration.service';
 
 @Module({
   imports: [QueueModule, AppsModule, EnvModule, DockerModule, MarketplaceModule, BackupManagerModule, SSEModule],
@@ -33,6 +34,7 @@ import { AppJobService } from './services/app-job.service';
     AppStatusSyncService,
     StatusManagerService,
     AppValidationService,
+    AppMigrationService,
     StartAppHandler,
     StopAppHandler,
     RestartAppHandler,

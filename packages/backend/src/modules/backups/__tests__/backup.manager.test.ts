@@ -1,3 +1,4 @@
+import { mockPlatform } from '@/tests/helpers/mock-platform';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { ArchiveService } from '@/core/archive/archive.service';
@@ -19,6 +20,9 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { BackupManager, BackupRecoveryError } from '../backup.manager';
 
+// memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
+mockPlatform('darwin');
+
 const appUrn = 'demo:store' as AppUrn;
 const snapshotRoot = '/tmp/runtipi-backup-staging';
 const archiveRoot = '/data/backups/.staging';
@@ -39,8 +43,10 @@ const setup = async () => {
 
   config.get.calledWith('directories').mockReturnValue(fromPartial({ dataDir: '/data' }));
   appFiles.getAppPaths.mockReturnValue({ appDataDir, appInstalledDir });
+  apps.getMigrationState.mockResolvedValue({ initialized: false, migrationIds: [] });
   apps.getAppByUrn.mockResolvedValue(fromPartial({ maxBackups: 0 }));
   docker.composeApp.mockResolvedValue({ success: true, stdout: '', stderr: '' });
+  archive.listTarGz.mockResolvedValue([]);
   archive.createTarGz.mockImplementation(async (_source, destination) => {
     await fs.promises.writeFile(destination, 'complete archive');
     return { stdout: '', stderr: '' };
@@ -54,7 +60,7 @@ const setup = async () => {
   await fs.promises.writeFile(path.join(appDataDir, 'data.txt'), 'consistent snapshot');
   await fs.promises.writeFile(path.join(appInstalledDir, 'config.json'), '{}');
 
-  const manager = new BackupManager(archive, logger, config, filesystem, appFiles, docker, apps);
+  const manager = new BackupManager(archive, logger, config, filesystem, appFiles, apps, docker);
 
   return { manager, archive, backupDir, appDataDir, appInstalledDir, docker, apps, logger };
 };
@@ -88,7 +94,7 @@ test('restarts the app before compressing its immutable snapshot', async () => {
   archive.createTarGz.mockImplementation(async (source, destination) => {
     expect(await fs.promises.readFile(path.join(source, 'app-data', 'data.txt'), 'utf8')).toBe('consistent snapshot');
     expect(await fs.promises.readFile(path.join(appDataDir, 'data.txt'), 'utf8')).toBe('new live data');
-    expect(path.dirname(destination)).toBe(archiveRoot);
+    expect(path.dirname(destination)).toBe(path.dirname(source));
     await fs.promises.writeFile(destination, 'complete archive');
 
     return { stdout: '', stderr: '' };
@@ -180,11 +186,11 @@ test.each(['publication', 'retention'])('rejects cancellation during %s and keep
   };
 
   if (boundary === 'publication') {
-    const rename = fs.promises.rename.bind(fs.promises);
+    const link = fs.promises.link.bind(fs.promises);
 
-    vi.spyOn(fs.promises, 'rename').mockImplementation(async (...args) => {
+    vi.spyOn(fs.promises, 'link').mockImplementation(async (...args) => {
       cancel();
-      await rename(...args);
+      await link(...args);
     });
   } else {
     apps.getAppByUrn.mockImplementation(async () => {
@@ -230,7 +236,7 @@ test('keeps a completed backup successful when retention housekeeping fails', as
   const { manager, apps, logger } = await setup();
   apps.getAppByUrn.mockRejectedValue(new Error('database unavailable'));
 
-  await expect(manager.backupApp(appUrn, false)).resolves.toBeUndefined();
+  await expect(manager.backupApp(appUrn, false)).resolves.toMatch(/\.tar\.gz$/);
 
   expect(await manager.listBackupsByAppId(appUrn)).toHaveLength(2);
   expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('clean old backups'), expect.any(Error));

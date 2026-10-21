@@ -60,6 +60,8 @@ export const createMockApp = (data: Partial<AppWithStore> = {}): AppWithStore =>
   exposed: false,
   exposedLocal: false,
   isVisibleOnGuestDashboard: false,
+  migrationsBaselined: false,
+  migrationRecovery: null,
   openPort: true,
   port: faker.number.int({ min: 1024, max: 65535 }),
   status: 'running',

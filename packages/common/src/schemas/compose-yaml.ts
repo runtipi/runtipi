@@ -39,6 +39,7 @@ export const dynamicComposeSchemaYaml = type({
   }).optional(),
   'x-runtipi': type({
     schema_version: '1 | 2',
+    migrations: type('never').configure({ message: 'Define app migrations in migrations/*.yml files' }).optional(),
     overrides: type({
       architecture: '"arm64" | "amd64"',
       services: type({

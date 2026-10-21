@@ -1,10 +1,14 @@
+import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
+import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
+import { BackupManager } from '../backups/backup.manager';
 import { AppEventsQueue, appEventResultSchema, appEventSchema } from '../queue/entities/app-events';
+import { AppMigrationService } from './services/app-migration.service';
 import { AppLifecycleCommandFactory } from './app-lifecycle-command.factory';
 import { InstallAppHandler } from './handlers/install-app.handler';
 import { ResetAppHandler } from './handlers/reset-app.handler';
@@ -26,6 +30,9 @@ export class AppLifecycleService {
     private readonly commandFactory: AppLifecycleCommandFactory,
     private readonly appRepository: AppsRepository,
     private readonly appsService: AppsService,
+    @Inject(APP_ASYNC_MUTEX) private mutex: AsyncMutex,
+    private readonly backupManager: BackupManager,
+    private readonly appMigrationService: AppMigrationService,
     private readonly startAppHandler: StartAppHandler,
     private readonly stopAppHandler: StopAppHandler,
     private readonly restartAppHandler: RestartAppHandler,
@@ -101,6 +108,17 @@ export class AppLifecycleService {
   public async restoreApp(params: { appUrn: AppUrn; filename: string }) {
     this.jobs.assertIdle(params.appUrn);
     return this.restoreAppHandler.execute(params.appUrn, { filename: params.filename });
+  }
+
+  public async deleteAppBackup(params: { appUrn: AppUrn; filename: string }) {
+    const release = await this.mutex.acquire(params.appUrn);
+
+    try {
+      await this.appMigrationService.reconcile(params.appUrn);
+      await this.backupManager.deleteBackup(params.appUrn, params.filename);
+    } finally {
+      release();
+    }
   }
 
   async updateAllApps() {

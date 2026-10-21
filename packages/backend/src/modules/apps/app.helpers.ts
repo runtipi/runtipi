@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -30,7 +29,7 @@ export class AppHelpers {
    * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
    */
   public generateEnvFile = async (appUrn: AppUrn, form: AppEventFormInput) => {
-    const { internalIp, envFilePath, rootFolderHost, userSettings } = this.config.getConfig();
+    const { internalIp, envFilePath, rootFolderHost } = this.config.getConfig();
 
     const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
@@ -52,7 +51,7 @@ export class AppHelpers {
     envMap.set('APP_NAME', appName);
     envMap.set('APP_STORE_ID', appStoreId);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-    envMap.set('APP_DATA_DIR', path.join(`${userSettings.appDataPath}/app-data`, appStoreId, appName));
+    envMap.set('APP_DATA_DIR', this.appFilesManager.getAppDataHostPath(appUrn));
     envMap.set('APP_IMAGE_TAG', config.version);
 
     const appEnv = await this.appFilesManager.getAppEnv(appUrn);
