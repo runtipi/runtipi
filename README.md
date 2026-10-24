@@ -38,6 +38,10 @@ Thanks to our generous sponsors for supporting the development of Runtipi:
 
 Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_campaign=readme) for installation instructions, documentation and guides.
 
+## One-click deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Runtipi/)
+
 ## Demo
 
 You can try out a demo of Runtipi at [demo.runtipi.io](https://demo.runtipi.io) using the following credentials:
