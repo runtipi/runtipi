@@ -359,12 +359,15 @@ describe('BackupManager restore security', () => {
     }
   });
 
-  it('rejects restored backups containing user-config symlinks before extracting', async () => {
+  it('rejects restored backups containing files beneath user-config symlinks before extracting', async () => {
     const targetFile = path.join(dataDir, 'state', 'proof.txt');
     await fs.promises.mkdir(path.dirname(targetFile), { recursive: true });
     await fs.promises.writeFile(targetFile, 'unchanged\n');
 
-    listTarGz.mockResolvedValue([{ path: './user-config/app.env', type: 'l' }]);
+    listTarGz.mockResolvedValue([
+      { path: './user-config/app.env', type: 'l' },
+      { path: './user-config/app.env/overwrite', type: '-' },
+    ]);
 
     await expect(backupManager.restoreApp(appUrn, 'backup.tar.gz')).rejects.toThrow('Backup contains unsupported file types');
 
@@ -382,13 +385,16 @@ describe('BackupManager restore security', () => {
   });
 
   it('preserves archive validation errors when pinned archive cleanup fails', async () => {
-    listTarGz.mockResolvedValue([{ path: './app-data/proof.txt', type: 'l' }]);
+    listTarGz.mockResolvedValue([
+      { path: './app-data/proof.txt', type: 'l' },
+      { path: './app-data/proof.txt/overwrite', type: '-' },
+    ]);
     vi.spyOn(fs.promises, 'unlink').mockRejectedValue(new Error('cleanup failed'));
 
     await expect(backupManager.restoreApp(appUrn, 'backup.tar.gz')).rejects.toThrow('Backup contains unsupported file types');
   });
 
-  it('rejects restored app-data symlinks before extracting', async () => {
+  it('rejects restored files beneath app-data symlinks before extracting', async () => {
     const targetFile = path.join(dataDir, 'state', 'proof.txt');
     const liveFile = path.join(appDataDir, 'data', 'live.txt');
     await fs.promises.mkdir(path.dirname(targetFile), { recursive: true });
@@ -396,7 +402,10 @@ describe('BackupManager restore security', () => {
     await fs.promises.writeFile(targetFile, 'unchanged\n');
     await fs.promises.writeFile(liveFile, 'live data\n');
 
-    listTarGz.mockResolvedValue([{ path: './app-data/proof.txt', type: 'l' }]);
+    listTarGz.mockResolvedValue([
+      { path: './app-data/proof.txt', type: 'l' },
+      { path: './app-data/proof.txt/overwrite', type: '-' },
+    ]);
 
     await expect(backupManager.restoreApp(appUrn, 'backup.tar.gz')).rejects.toThrow('Backup contains unsupported file types');
 
