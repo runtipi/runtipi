@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { LoggerService } from '@/core/logger/logger.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -46,9 +47,11 @@ export class UpdateConfigHandler implements ILifecycleHandler<UpdateConfigParams
       throw new TranslatableError('APP_ERROR_APP_FAILED_TO_UPDATE', { id: appUrn }, HttpStatus.INTERNAL_SERVER_ERROR, { cause: message });
     }
 
+    const configChanged = !isDeepStrictEqual(app.config, JSON.parse(JSON.stringify(form)));
+
     await this.appRepository.updateAppById(app.id, {
       ...getAppConfigUpdate(appInfo, form),
-      pendingRestart: app.pendingRestart || JSON.stringify(app.config) !== JSON.stringify(form),
+      pendingRestart: app.pendingRestart || configChanged,
     });
 
     return { requestId };

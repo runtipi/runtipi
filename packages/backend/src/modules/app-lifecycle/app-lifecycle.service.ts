@@ -1,8 +1,11 @@
+import { describeError } from '@/common/error/diagnostic-error';
+import { AppOperationsService } from './services/app-operations.service';
+import { TranslatableError } from '@/common/error/translatable-error';
 import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
 import type { AsyncMutex } from '@/utils/mutex/async-mutex';
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
 import { AppsRepository } from '../apps/apps.repository';
 import { AppsService } from '../apps/apps.service';
@@ -21,6 +24,9 @@ import { UpdateConfigHandler } from './handlers/update-config.handler';
 import { BackupAppHandler } from './handlers/backup-app.handler';
 import { RestoreAppHandler } from './handlers/restore-app.handler';
 import { AppJobService } from './services/app-job.service';
+
+export type BulkCommand = 'start' | 'stop' | 'restart' | 'update';
+export type BulkResult = { urn: AppUrn; status: 'accepted'; requestId: string } | { urn: AppUrn; status: 'rejected'; message: string };
 
 @Injectable()
 export class AppLifecycleService {
@@ -44,6 +50,7 @@ export class AppLifecycleService {
     private readonly backupAppHandler: BackupAppHandler,
     private readonly restoreAppHandler: RestoreAppHandler,
     private readonly jobs: AppJobService,
+    private readonly operations: AppOperationsService,
   ) {
     this.logger.debug('Subscribing to app events...');
     this.appEventsQueue.onEvent((data, reply) => this.invokeCommand(data, reply));
@@ -121,20 +128,49 @@ export class AppLifecycleService {
     }
   }
 
-  async updateAllApps() {
-    const installedApps = await this.appsService.getInstalledApps();
-    const availableUpdates = installedApps.filter(
-      ({ app, metadata }) => Number(app.version) < Number(metadata.latestVersion) && app.ignoredVersion !== metadata.latestVersion,
-    );
+  async runBulk(command: BulkCommand): Promise<BulkResult[]> {
+    const installed = await this.appsService.getInstalledApps();
+    const eligible = installed.filter(({ app, metadata }) => {
+      if (command === 'start') return app.status === 'stopped';
+      if (command === 'update') return app.version < metadata.latestVersion && app.ignoredVersion !== metadata.latestVersion;
+      return app.status === 'running';
+    });
+    const results: BulkResult[] = [];
 
-    for (const { app } of availableUpdates) {
+    for (const { info } of eligible) {
+      const appUrn = info.urn;
       try {
-        const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-        await this.updateApp({ appUrn, performBackup: true });
-      } catch (e) {
-        this.logger.error(`Failed to update app ${app.id}`, e);
+        this.operations.assertIdle(appUrn);
+        const request = await this.submitBulkCommand(command, appUrn);
+        results.push({ urn: appUrn, status: 'accepted', requestId: request.requestId });
+      } catch (error) {
+        this.logger.error('Failed to submit bulk app operation', { appUrn, command, ...describeError(error) });
+        let message = 'Could not submit the operation. Check the instance logs.';
+        if (error instanceof TranslatableError) message = error.message;
+        else if (error instanceof HttpException && error.getStatus() < 500) message = error.message;
+
+        results.push({ urn: appUrn, status: 'rejected', message });
       }
     }
+
+    return results;
+  }
+
+  private submitBulkCommand(command: BulkCommand, appUrn: AppUrn) {
+    switch (command) {
+      case 'start':
+        return this.startApp({ appUrn, skipPull: true });
+      case 'stop':
+        return this.stopApp({ appUrn });
+      case 'restart':
+        return this.restartApp({ appUrn });
+      case 'update':
+        return this.updateApp({ appUrn, performBackup: true });
+    }
+  }
+
+  updateAllApps() {
+    return this.runBulk('update');
   }
 
   async restartRunningApps() {
@@ -153,36 +189,12 @@ export class AppLifecycleService {
     })();
   }
 
-  async startAllApps() {
-    const apps = await this.appRepository.getApps();
-    const stoppedApps = apps.filter((app) => app.status === 'stopped');
-
-    (async () => {
-      for (const app of stoppedApps) {
-        try {
-          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          await this.startApp({ appUrn, skipPull: true });
-        } catch (e) {
-          this.logger.error(`Failed to start app ${app.id}`, e);
-        }
-      }
-    })();
+  startAllApps() {
+    return this.runBulk('start');
   }
 
-  async stopAllApps() {
-    const apps = await this.appRepository.getApps();
-    const runningApps = apps.filter((app) => app.status === 'running');
-
-    (async () => {
-      for (const app of runningApps) {
-        try {
-          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          await this.stopApp({ appUrn });
-        } catch (e) {
-          this.logger.error(`Failed to stop app ${app.id}`, e);
-        }
-      }
-    })();
+  stopAllApps() {
+    return this.runBulk('stop');
   }
 
   async backupAllApps() {
@@ -201,19 +213,7 @@ export class AppLifecycleService {
     })();
   }
 
-  async restartAllApps() {
-    const apps = await this.appRepository.getApps();
-    const runningApps = apps.filter((app) => app.status === 'running');
-
-    (async () => {
-      for (const app of runningApps) {
-        try {
-          const appUrn = createAppUrn(app.appName, app.appStoreSlug);
-          await this.restartApp({ appUrn });
-        } catch (e) {
-          this.logger.error(`Failed to restart app ${app.id}`, e);
-        }
-      }
-    })();
+  restartAllApps() {
+    return this.runBulk('restart');
   }
 }

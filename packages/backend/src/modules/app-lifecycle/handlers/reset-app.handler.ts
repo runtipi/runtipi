@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
@@ -14,6 +15,7 @@ export class ResetAppHandler implements ILifecycleHandler {
     private readonly appEventsQueue: AppEventsQueue,
     private readonly statusManager: StatusManagerService,
     private readonly startAppHandler: StartAppHandler,
+    private readonly operations: AppOperationsService,
   ) {}
 
   async execute(appUrn: AppUrn): Promise<HandlerResult> {
@@ -28,7 +30,9 @@ export class ResetAppHandler implements ILifecycleHandler {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ command: 'reset', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
+    return this.operations.submit(appUrn, 'reset', requestId, async (progress) => {
+      const result = await this.appEventsQueue.publish({ command: 'reset', appUrn, requestId, form: app.config });
+      const { success, message } = result;
       if (success) {
         await this.statusManager.emitSuccess({
           appId: app.id,
@@ -38,7 +42,9 @@ export class ResetAppHandler implements ILifecycleHandler {
         });
 
         if (appStatusBeforeReset === 'running') {
-          await this.startAppHandler.execute(appUrn);
+          progress('starting');
+          const followup = await this.startAppHandler.execute(appUrn);
+          return this.operations.waitFor(followup.requestId);
         } else {
           await this.appRepository.updateAppById(app.id, { status: appStatusBeforeReset });
         }
@@ -51,8 +57,8 @@ export class ResetAppHandler implements ILifecycleHandler {
           error: message ?? 'Unknown error',
         });
       }
-    });
 
-    return { requestId };
+      return result;
+    });
   }
 }

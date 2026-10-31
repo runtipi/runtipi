@@ -2376,6 +2376,79 @@
           "Debug"
         ]
       }
+    },
+    "/api/agent-credentials": {
+      "get": {
+        "operationId": "listAgentCredentials",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCredentialsDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "AgentCredentials"
+        ]
+      },
+      "post": {
+        "operationId": "createAgentCredential",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentCredentialBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedAgentCredentialDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "AgentCredentials"
+        ]
+      }
+    },
+    "/api/agent-credentials/{id}": {
+      "delete": {
+        "operationId": "revokeAgentCredential",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "AgentCredentials"
+        ]
+      }
     }
   },
   "info": {
@@ -4689,7 +4762,7 @@
                         "type": "string",
                         "description": "a UUID",
                         "format": "uuid",
-                        "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+                        "pattern": "^[\\dA-Fa-f]{8}-[\\dA-Fa-f]{4}-[1-8][\\dA-Fa-f]{3}-[89ABab][\\dA-Fa-f]{3}-[\\dA-Fa-f]{12}$"
                       },
                       {
                         "const": "00000000-0000-0000-0000-000000000000",
@@ -4802,7 +4875,7 @@
                 "type": "string",
                 "description": "a UUID",
                 "format": "uuid",
-                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+                "pattern": "^[\\dA-Fa-f]{8}-[\\dA-Fa-f]{4}-[1-8][\\dA-Fa-f]{3}-[89ABab][\\dA-Fa-f]{3}-[\\dA-Fa-f]{12}$"
               },
               {
                 "const": "00000000-0000-0000-0000-000000000000",
@@ -4994,7 +5067,7 @@
                 "type": "string",
                 "description": "a UUID",
                 "format": "uuid",
-                "pattern": "[\\da-f]{8}-[\\da-f]{4}-[1-8][\\da-f]{3}-[89ab][\\da-f]{3}-[\\da-f]{12}"
+                "pattern": "^[\\dA-Fa-f]{8}-[\\dA-Fa-f]{4}-[1-8][\\dA-Fa-f]{3}-[89ABab][\\dA-Fa-f]{3}-[\\dA-Fa-f]{12}$"
               },
               {
                 "const": "00000000-0000-0000-0000-000000000000",
@@ -5328,6 +5401,10 @@
                         "services"
                       ]
                     }
+                  },
+                  "migrations": {
+                    "enum": [],
+                    "message": "Define app migrations in migrations/*.yml files"
                   }
                 },
                 "required": [
@@ -5566,6 +5643,10 @@
                         "services"
                       ]
                     }
+                  },
+                  "migrations": {
+                    "enum": [],
+                    "message": "Define app migrations in migrations/*.yml files"
                   }
                 },
                 "required": [
@@ -5662,6 +5743,118 @@
           "hasChanges",
           "localVersion",
           "templateVersion"
+        ]
+      },
+      "AgentCredentialsDto": {
+        "type": "object",
+        "properties": {
+          "credentials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "type": "number"
+                },
+                "expiresAt": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "lastUsedAt": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "createdAt",
+                "expiresAt",
+                "id",
+                "lastUsedAt",
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "credentials"
+        ]
+      },
+      "CreateAgentCredentialBody": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expiresInDays": {
+            "type": "integer",
+            "maximum": 365,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "name",
+          "password"
+        ]
+      },
+      "CreatedAgentCredentialDto": {
+        "type": "object",
+        "properties": {
+          "credential": {
+            "type": "object",
+            "properties": {
+              "createdAt": {
+                "type": "number"
+              },
+              "expiresAt": {
+                "type": "number"
+              },
+              "id": {
+                "type": "string"
+              },
+              "lastUsedAt": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "createdAt",
+              "expiresAt",
+              "id",
+              "lastUsedAt",
+              "name"
+            ]
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "credential",
+          "token"
         ]
       }
     }

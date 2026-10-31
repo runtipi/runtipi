@@ -1,3 +1,4 @@
+import { InstanceService } from '@/modules/system/instance.service';
 import fs from 'node:fs';
 import path from 'node:path';
 import { AppService } from '@/app.service';
@@ -50,6 +51,7 @@ describe('AppService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         AppService,
+        InstanceService,
         FilesystemService,
         {
           provide: DOCKERODE,
