@@ -1,7 +1,6 @@
-import type { CopyOptions } from 'node:fs';
+import type { CopyOptions, MakeDirectoryOptions } from 'node:fs';
 import path from 'node:path';
 import { fs, vol } from 'memfs';
-import type { IMkdirOptions } from 'memfs/lib/node/types/options';
 
 const copyFolderRecursiveSync = (src: string, dest: string, options: CopyOptions = {}) => {
   const stats = vol.lstatSync(src);
@@ -34,7 +33,7 @@ export const fsMock = {
     writeFileSync: (path: string, data: string) => {
       vol.writeFileSync(path, data);
     },
-    mkdirSync: (path: string, options: IMkdirOptions) => {
+    mkdirSync: (path: string, options: MakeDirectoryOptions) => {
       vol.mkdirSync(path, options);
     },
     promises: {
