@@ -5,7 +5,7 @@ on:
       version:
         required: true
         type: string
-        description: "Version to test (e.g. v1.6.0-beta.1)"
+        description: 'Version to test (e.g. v1.6.0-beta.1)'
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -38,7 +38,7 @@ jobs:
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
         with:
           driver: cloud
-          endpoint: "meienberger/runtipi-builder"
+          endpoint: 'meienberger/runtipi-builder'
           install: true
 
       - name: Login to GitHub Container Registry
@@ -145,7 +145,7 @@ jobs:
           echo "HOME=/root" >> .env.e2e
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
       - name: Get installed playwright version
         id: playwright-version
@@ -163,7 +163,7 @@ jobs:
         run: sudo env "PATH=$PATH" bunx playwright install --with-deps
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
       - name: Run Playwright tests
         id: run-e2e

@@ -1,6 +1,9 @@
 pre-commit:
   commands:
-    biome-format:
-      glob: '*.{js,jsx,ts,tsx,json,jsonc}'
-      run: bunx biome check --write --unsafe {staged_files}
+    format:
+      glob: '*.{js,jsx,ts,tsx,mjs,cjs,json,jsonc,css,scss,html,yml,yaml,toml,md,mdx}'
+      run: bun fmt --no-script --ignore-unknown --no-error-on-unmatched-pattern {staged_files}
       stage_fixed: true
+    lint:
+      glob: '*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}'
+      run: bun run lint --deny-warnings --no-error-on-unmatched-pattern {staged_files}

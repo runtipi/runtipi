@@ -22,13 +22,15 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
-      - name: Run biome tests
+      - name: Check formatting and lint
         run: bun run lint:ci
+        env:
+          FORMAT_BASE: ${{ github.event.pull_request.base.sha || 'HEAD~1' }}
 
       - name: Run tests
         run: bun run test
@@ -42,10 +44,10 @@ jobs:
           persist-credentials: false
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
       - name: Build client
         run: bun run bundle
 
-      - name: Run tsc
-        run: bun run tsc
+      - name: Typecheck with Bun
+        run: bun run typecheck

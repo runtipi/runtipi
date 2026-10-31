@@ -3,7 +3,7 @@ name: Nightly Release
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 0 * * *'
 
 jobs:
   build-images:
@@ -33,7 +33,7 @@ jobs:
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
         with:
           driver: cloud
-          endpoint: "meienberger/runtipi-builder"
+          endpoint: 'meienberger/runtipi-builder'
           install: true
 
       - name: Login to GitHub Container Registry
@@ -133,7 +133,7 @@ jobs:
       pages: write
       id-token: write
     needs: [update-release]
-    uses: "./.github/workflows/e2e.yml"
+    uses: './.github/workflows/e2e.yml'
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

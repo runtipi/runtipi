@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
       - name: Run integration tests
         run: bun run test:integration

@@ -6,7 +6,6 @@ import { type } from 'arktype';
 
 type ValidationResult<T> = { success: true; data: T } | { success: false };
 
-// biome-ignore lint/suspicious/noExplicitAny: excessive depth
 function safeParseArk<T>(schema: any, data: unknown): ValidationResult<T> {
   const result = schema(data);
 

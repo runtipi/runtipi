@@ -59,7 +59,7 @@ export const DebugPanel = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [handleKeyDown, handleKeyUp]);
+  }, [handleKeyDown, handleKeyUp, isDevelopment]);
 
   const seedMutation = useMutation({
     ...seedDatabaseMutation(),

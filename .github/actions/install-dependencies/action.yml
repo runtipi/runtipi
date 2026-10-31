@@ -3,12 +3,12 @@ name: Install dependencies
 description: Install dependencies
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       name: Install Bun
       with:
-        bun-version: "1.4.4"
+        bun-version: '1.4.4'
 
     - name: Install dependencies
       shell: bash

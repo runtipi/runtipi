@@ -1,0 +1,67 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["unicorn", "typescript", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "ignorePatterns": [
+    "docs/",
+    "cli/",
+    ".build/",
+    "**/dist/",
+    "**/public/",
+    "**/legacy/",
+    "**/.internal/",
+    "**/metadata.ts",
+    "**/api-client/",
+    "**/swagger.json",
+    "**/packages/backend/src/core/database/drizzle/meta/"
+  ],
+  "rules": {
+    "no-console": [
+      "error",
+      {
+        "allow": ["error", "info", "warn"]
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "caughtErrors": "none",
+        "ignoreRestSiblings": true,
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "typescript/no-this-alias": "off",
+    "unicorn/no-empty-file": "off"
+  },
+  "overrides": [
+    {
+      "files": ["packages/frontend/**"],
+      "plugins": ["react", "jsx-a11y"],
+      "rules": {
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn",
+        "react/refs": "off",
+        "react/purity": "off",
+        "react/immutability": "off",
+        "react/set-state-in-effect": "off",
+        "react/incompatible-library": "off",
+        "react/no-danger": "error",
+        "react/no-array-index-key": "warn"
+      }
+    },
+    {
+      "files": ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      "plugins": ["vitest"],
+      "rules": {
+        "no-empty": "off",
+        "vitest/require-mock-type-parameters": "off",
+        "vitest/no-conditional-expect": "off",
+        "vitest/require-to-throw-message": "off",
+        "vitest/expect-expect": "off"
+      }
+    }
+  ]
+}
