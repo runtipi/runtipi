@@ -51,9 +51,11 @@ You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.
 
 ## ❤ Contributing
 
-Runtipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.
+Runtipi is designed to make adding new apps very easy. We welcome and appreciate new contributions.
 
-If you want to add a new app or feature, you can follow the [Contribution guide](https://www.runtipi.io/docs/contributing/adding-a-new-app) for instructions on how to do so.
+If you want to add a new app, you can follow the [Creating apps guide](https://runtipi.io/docs/developers/creating-apps) for instructions on how to do so.
+
+If you want to add a new feature, take a look at [how to set Runtipi up locally](https://runtipi.io/docs/developers/contributing/running-locally) so you can develop and test your changes before creating a PR.
 
 We are looking for contributions of all kinds. If you know design, development, or have ideas for new features, please get in touch.
 

@@ -14,6 +14,7 @@ import { APP_CATEGORIES, ARCHITECTURES, FIELD_TYPES, RANDOM_ENCODINGS, appInfoSc
 import type { AppCategory, AppInfo, AppInfoInput, FieldType, FormField, RandomEncoding } from './app-info.js';
 
 import { type SSE, type Topic, sseSchema } from './sse.js';
+import { appJobSchema, type AppJob } from './app-job.js';
 
 export {
   parseComposeJson,
@@ -50,4 +51,6 @@ export {
   type XRuntipiServiceParams,
   type ServiceSchema,
   type ServicesSchema,
+  appJobSchema,
+  type AppJob,
 };

@@ -1,4 +1,5 @@
 import { type } from 'arktype';
+import { appJobSchema } from './app-job.js';
 
 export type Topic = 'app' | 'app-logs' | 'runtipi-logs';
 
@@ -44,6 +45,14 @@ export const APP_STATUS_TYPES = {
 } as const;
 
 export const sseSchema = type.or(
+  type({
+    topic: type.unit('app'),
+    data: {
+      event: type.unit('job_progress'),
+      appUrn: appUrnSchema,
+      job: appJobSchema,
+    },
+  }),
   type({
     topic: type.unit('app'),
     data: {

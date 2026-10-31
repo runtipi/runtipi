@@ -1,7 +1,7 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { APP_GENERATED_COMPOSE_FILENAME, APP_REL_COMPOSE_FILENAME } from '@/common/constants';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { execFileAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -9,6 +9,8 @@ import { Injectable } from '@nestjs/common';
 import { appInfoSchema, convertLegacyToYaml, dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
+
+export type AppMigration = { id: string; path: string };
 
 @Injectable()
 export class AppFilesManager {
@@ -33,6 +35,42 @@ export class AppFilesManager {
       appDataDir: path.join(directories.appDataDir, appStoreId, appName),
       appInstalledDir: path.join(this.getInstalledAppsFolder(), appStoreId, appName),
     };
+  }
+
+  public getAppDataHostPath(appUrn: AppUrn) {
+    const { appStoreId, appName } = extractAppUrn(appUrn);
+    const { appDataPath } = this.configuration.getConfig().userSettings;
+
+    return path.join(appDataPath, 'app-data', appStoreId, appName);
+  }
+
+  public async getAppMigrations(appUrn: AppUrn): Promise<AppMigration[]> {
+    const { appInstalledDir } = this.getAppPaths(appUrn);
+    const directory = this.filesystem.getSafeFilePath(path.join(appInstalledDir, 'migrations'));
+    const stats = await fs.promises.lstat(directory).catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    });
+
+    if (!stats) return [];
+    if (!stats.isDirectory()) throw new Error(`App migrations must be a directory: ${directory}`);
+
+    const entries = await fs.promises.readdir(directory, { withFileTypes: true });
+    const migrations: AppMigration[] = [];
+
+    for (const entry of entries) {
+      if (entry.name.endsWith('.yaml')) throw new Error(`Use the .yml extension for app migrations: ${entry.name}`);
+      if (!entry.name.endsWith('.yml')) continue;
+
+      const id = entry.name.slice(0, -4);
+      if (!entry.isFile() || !/^[a-z0-9][a-z0-9._-]{0,63}$/.test(id)) {
+        throw new Error(`Invalid app migration file: ${entry.name}`);
+      }
+
+      migrations.push({ id, path: path.join(directory, entry.name) });
+    }
+
+    return migrations.sort((left, right) => (left.id < right.id ? -1 : 1));
   }
 
   /**
@@ -193,9 +231,83 @@ export class AppFilesManager {
   public async setAppDataDirPermissions(appUrn: AppUrn) {
     const { appDataDir } = this.getAppPaths(appUrn);
 
-    await execFileAsync('chmod', ['-Rf', 'a+rwx', appDataDir]).catch(() => {
-      this.logger.error(`Error setting permissions for app ${appUrn}`);
-    });
+    try {
+      if (process.platform === 'linux') {
+        await this.setAppDataDirPermissionsOnLinux(appDataDir);
+      } else {
+        await this.setAppDataDirPermissionsOutsideLinux(appDataDir);
+      }
+    } catch (error) {
+      this.logger.error(`Error setting permissions for app ${appUrn}`, error);
+    }
+  }
+
+  private async setAppDataDirPermissionsOnLinux(entryPath: string): Promise<void> {
+    const openFlags = fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK;
+    let entryHandle: fs.promises.FileHandle;
+
+    try {
+      entryHandle = await fs.promises.open(entryPath, openFlags);
+    } catch (error) {
+      const errorCode = (error as NodeJS.ErrnoException).code;
+      if (errorCode === 'ELOOP' || errorCode === 'ENXIO' || errorCode === 'ENOENT') {
+        return;
+      }
+      throw error;
+    }
+
+    try {
+      const entryStats = await entryHandle.stat();
+      if (!entryStats.isFile() && !entryStats.isDirectory()) {
+        return;
+      }
+
+      const writableMode = entryStats.mode | 0o777;
+      await entryHandle.chmod(writableMode);
+
+      if (!entryStats.isDirectory()) {
+        return;
+      }
+
+      const entryHandlePath = `/proc/self/fd/${entryHandle.fd}`;
+      const directory = await fs.promises.opendir(entryHandlePath);
+      for await (const entry of directory) {
+        const childPath = path.join(entryHandlePath, entry.name);
+        await this.setAppDataDirPermissionsOnLinux(childPath);
+      }
+    } finally {
+      await entryHandle.close();
+    }
+  }
+
+  private async setAppDataDirPermissionsOutsideLinux(entryPath: string): Promise<void> {
+    let entryStats: fs.Stats;
+
+    try {
+      entryStats = await fs.promises.lstat(entryPath);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return;
+      }
+      throw error;
+    }
+
+    if (entryStats.isSymbolicLink() || (!entryStats.isFile() && !entryStats.isDirectory())) {
+      return;
+    }
+
+    const writableMode = entryStats.mode | 0o777;
+    await fs.promises.chmod(entryPath, writableMode);
+
+    if (!entryStats.isDirectory()) {
+      return;
+    }
+
+    const entries = await fs.promises.readdir(entryPath);
+    for (const entry of entries) {
+      const childPath = path.join(entryPath, entry);
+      await this.setAppDataDirPermissionsOutsideLinux(childPath);
+    }
   }
 
   public async getAppEnv(appUrn: AppUrn) {

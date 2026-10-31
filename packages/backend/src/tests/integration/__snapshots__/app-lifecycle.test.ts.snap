@@ -104,6 +104,7 @@ exports[`App lifecycle > update all apps > should update multiple apps that have
 │  │        └─ metadata/
 │  │           └─ description.md
 │  ├─ backups/
+│  │  ├─ .staging/
 │  │  └─ test/
 │  │     ├─ app1/
 │  │     │  └─ app1-test-TIMESTAMP.tar.gz
@@ -132,5 +133,6 @@ exports[`App lifecycle > update all apps > should update multiple apps that have
 │  │              └─ description.md
 │  └─ state/
 │     └─ seed
-└─ tmp/"
+└─ tmp/
+   └─ runtipi-backup-staging/"
 `;

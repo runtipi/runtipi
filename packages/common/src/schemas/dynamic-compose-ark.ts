@@ -151,6 +151,7 @@ export const serviceSchemaArk = type({
 // dynamicComposeSchemaV2
 export const dynamicComposeSchemaArk = type({
   schemaVersion: type.unit(2),
+  migrations: type('never').configure({ message: 'Define app migrations in migrations/*.yml files' }).optional(),
   services: type(serviceSchemaArk).array().moreThanLength(0).configure({ message: 'CUSTOM_APP_ERROR_SERVICES_MIN_LENGTH' }),
   overrides: type({
     architecture: type("'arm64' | 'amd64'").configure({ message: 'CUSTOM_APP_ERROR_ARCHITECTURE_INVALID' }).optional(),

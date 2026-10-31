@@ -1,14 +1,31 @@
 import { castAppUrn } from '@/common/helpers/app-helpers';
-import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, LifecycleRequestDto, UninstallAppBody, UpdateAppBody } from './dto/app-lifecycle.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { AppFormBody, AppJobDto, LifecycleRequestDto, UninstallAppBody, UpdateAppBody } from './dto/app-lifecycle.dto';
+import { ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { AppJobService } from './services/app-job.service';
 
 @UseGuards(AuthGuard)
 @Controller('app-lifecycle')
 export class AppLifecycleController {
-  constructor(private readonly appLifecycleService: AppLifecycleService) {}
+  constructor(
+    private readonly appLifecycleService: AppLifecycleService,
+    private readonly jobs: AppJobService,
+  ) {}
+
+  @Get(':urn/job')
+  @ApiResponse({ type: AppJobDto })
+  @ApiQuery({ name: 'requestId', required: false, type: String })
+  async getAppJob(@Param('urn') urn: string, @Query('requestId') requestId?: string) {
+    return AppJobDto.parse({ job: this.jobs.getJob(castAppUrn(urn), requestId) });
+  }
+
+  @Post(':urn/jobs/:requestId/cancel')
+  @ApiResponse({ type: AppJobDto })
+  async cancelAppJob(@Param('urn') urn: string, @Param('requestId') requestId: string) {
+    return AppJobDto.parse({ job: this.jobs.cancel(castAppUrn(urn), requestId) });
+  }
 
   @Post(':urn/install')
   @ApiResponse({ type: LifecycleRequestDto })

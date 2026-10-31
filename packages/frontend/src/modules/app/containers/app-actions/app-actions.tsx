@@ -81,11 +81,11 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
   const location = useLocation();
   const navigate = useNavigate();
 
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const hostname = typeof window === 'undefined' ? '' : window.location.hostname;
   const versionIsIgnored = app?.ignoredVersion === metadata.latestVersion;
   const updateAvailable = Number(app?.version ?? 0) < Number(metadata?.latestVersion || 0);
 
-  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort !== 443 ? `:${sslPort}` : ''}`;
+  const appLocalDomain = `${metadata.localSubdomain}.${localDomain}${sslPort === 443 ? '' : `:${sslPort}`}`;
 
   const startMutation = useMutation({
     ...startAppMutation(),
@@ -240,7 +240,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
             <DropdownMenuItem onClick={() => handleOpen('domain')}>
               <IconLock className="text-green me-2" size={16} />
               {app.domain}
-              {sslPort !== 443 ? `:${sslPort}` : ''}
+              {sslPort === 443 ? '' : `:${sslPort}`}
             </DropdownMenuItem>
           )}
           {app?.exposedLocal && (
@@ -314,7 +314,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     case 'backing_up':
     case 'restoring':
       buttons.push(LoadingButton);
-      listItems.push(CancelListItem);
+      if (app?.status !== 'updating' && app?.status !== 'backing_up') listItems.push(CancelListItem);
       break;
     case 'missing':
       buttons.push(InstallButton);
@@ -338,7 +338,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     }
 
     if (type === 'domain' && app?.domain) {
-      url = `https://${app.domain}${sslPort !== 443 ? `:${sslPort}` : ''}${info.url_suffix || ''}`;
+      url = `https://${app.domain}${sslPort === 443 ? '' : `:${sslPort}`}${info.url_suffix || ''}`;
     }
 
     if (type === 'local_domain') {

@@ -51,7 +51,15 @@ export const BaseHeader = (props: BaseHeaderProps) => {
     <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
       <div className="container-xl">
         {showNav && (
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu"
+            aria-expanded="false"
+            aria-label={t('HEADER_MAIN_NAVIGATION')}
+          >
             <span className="navbar-toggler-icon" />
           </button>
         )}

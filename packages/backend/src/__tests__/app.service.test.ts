@@ -11,7 +11,7 @@ import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { DOCKERODE } from '@/modules/docker/docker.module';
+import { DOCKERODE } from '@/modules/docker/docker.constants';
 import YAML from 'yaml';
 
 const TRAEFIK_CONFIG = `api:

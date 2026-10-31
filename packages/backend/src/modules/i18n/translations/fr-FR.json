@@ -513,7 +513,7 @@
   "SETTINGS_GENERAL_SETTINGS_UPDATED_RESTART": "Paramètres mis à jour. Redémarrez votre instance pour appliquer les nouveaux paramètres.",
   "SETTINGS_GENERAL_SETTINGS_UPDATED": "Paramètres mis à jour.",
   "SETTINGS_GENERAL_APP_DATA_PATH": "Chemin d'accès des données de l'application",
-  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "The location in which app data are stored.",
+  "SETTINGS_GENERAL_APP_DATA_PATH_HINT": "L'emplacement où sont stockées les données de l'application.",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG": "Conserver la configuration Traefik",
   "SETTINGS_GENERAL_PERSIST_TRAEFIK_CONFIG_HINT": "Faire persister le dossier de configuration de Traefik lors des redémarrages. Cela vous permettra de personnaliser la configuration de Traefik.",
   "SETTINGS_GENERAL_DOMAIN": "Nom de domaine",

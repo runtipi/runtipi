@@ -1,7 +1,8 @@
 #!/bin/sh
 
-FILE="./node_modules/@tabler/core/dist/js/tabler.min.js"
+set -eu
 
-[ -f "$FILE" ] || exit 0
+FILE=$(bun -p "require.resolve('@tabler/core/dist/js/tabler.min.js')")
 
+mkdir -p ./public/js
 cp "$FILE" ./public/js/tabler.min.js
