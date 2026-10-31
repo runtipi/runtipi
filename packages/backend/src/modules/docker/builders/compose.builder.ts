@@ -76,15 +76,14 @@ const normalizePorts = (ports: unknown) => {
   return [];
 };
 
-/**
- * Whether one of the service's port mappings already publishes `${APP_PORT}` to the given container port
- * (e.g. `127.0.0.1:${APP_PORT}:80` to keep the app reachable from the host only).
- */
-const publishesAppPort = (ports: unknown[] | undefined, internalPort: string | number) => {
+const publishesAppTcpPort = (ports: string[] | undefined, internalPort: string | number) => {
   const mapping = `\${APP_PORT}:${internalPort}`;
+
   return (ports ?? []).some((port) => {
-    const [withoutProtocol = ''] = String(port).split('/');
-    return withoutProtocol === mapping || withoutProtocol.endsWith(`:${mapping}`);
+    const [binding = '', protocol = 'tcp'] = port.split('/');
+    if (protocol !== 'tcp') return false;
+
+    return binding === mapping || binding.endsWith(`:${mapping}`);
   });
 };
 
@@ -128,10 +127,13 @@ export class DockerComposeBuilder {
   ) => {
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
-    const serviceCopy = { ...service };
-    serviceCopy.networks = normalizeNetworks(serviceCopy.networks);
-    serviceCopy.ports = normalizePorts(serviceCopy.ports);
-    serviceCopy.labels = normalizeLabels(serviceCopy.labels);
+    const serviceCopy = {
+      ...service,
+      networks: normalizeNetworks(service.networks),
+      ports: normalizePorts(service.ports),
+      labels: normalizeLabels(service.labels),
+      restart: service.restart || 'unless-stopped',
+    };
 
     const xruntipiParams = service['x-runtipi'] || ({} as XRuntipiServiceParams);
 
@@ -153,9 +155,7 @@ export class DockerComposeBuilder {
     }
 
     if (xruntipiParams.is_main) {
-      // Don't add a second mapping if the service already publishes its main port itself, otherwise the
-      // `${APP_PORT}` host port would be bound twice and compose fails with "port is already allocated".
-      if (form.openPort && xruntipiParams.internal_port && !publishesAppPort(serviceCopy.ports, xruntipiParams.internal_port)) {
+      if (form.openPort && xruntipiParams.internal_port && !publishesAppTcpPort(serviceCopy.ports, xruntipiParams.internal_port)) {
         serviceCopy.ports = serviceCopy.ports || [];
         serviceCopy.ports.push(`\${APP_PORT}:${xruntipiParams.internal_port}`);
       }
@@ -178,10 +178,6 @@ export class DockerComposeBuilder {
     }
 
     serviceCopy.labels = { ...serviceCopy.labels, 'runtipi.managed': 'true', 'runtipi.appurn': appUrn };
-
-    if (!service.restart) {
-      serviceCopy.restart = 'unless-stopped';
-    }
 
     return serviceCopy as NormalizedComposeService;
   };

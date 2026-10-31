@@ -284,7 +284,14 @@ services:
       expect(resultParsed.services.web.ports).toBeUndefined();
     });
 
-    it('should not add a second port mapping when the main service already publishes APP_PORT', () => {
+    it.each([
+      '${APP_PORT}:80',
+      '127.0.0.1:${APP_PORT}:80',
+      '[::1]:${APP_PORT}:80',
+      '${APP_PORT}:80/tcp',
+      '127.0.0.1:${APP_PORT}:80/tcp',
+      '[::1]:${APP_PORT}:80/tcp',
+    ])('should not duplicate an existing TCP mapping: %s', (port) => {
       const doc = `x-runtipi:
   schema-version: 2
 
@@ -292,7 +299,7 @@ services:
   web:
     image: nginx:alpine
     ports:
-      - 127.0.0.1:\${APP_PORT}:80
+      - "${port}"
     x-runtipi:
       is_main: true
       internal_port: 80
@@ -302,10 +309,17 @@ services:
       const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
 
       const resultParsed = yaml.parse(result);
-      expect(resultParsed.services.web.ports).toEqual(['127.0.0.1:${APP_PORT}:80']);
+      expect(resultParsed.services.web.ports).toEqual([port]);
     });
 
-    it('should still add the port mapping when other ports are published', () => {
+    it.each([
+      '127.0.0.1:9000:9000',
+      '${APP_PORT}:80/udp',
+      '127.0.0.1:${APP_PORT}:80/udp',
+      '[::1]:${APP_PORT}:80/udp',
+      '${APP_PORT}:8080',
+      '${OTHER_PORT}:80',
+    ])('should add the TCP mapping when only a different mapping exists: %s', (port) => {
       const doc = `x-runtipi:
   schema-version: 2
 
@@ -313,7 +327,7 @@ services:
   web:
     image: nginx:alpine
     ports:
-      - 127.0.0.1:9000:9000
+      - "${port}"
     x-runtipi:
       is_main: true
       internal_port: 80
@@ -323,7 +337,33 @@ services:
       const result = composeBuilder.getDockerCompose(parsed, { openPort: true, domain: 'hello.com', exposed: true }, urn, subnet);
 
       const resultParsed = yaml.parse(result);
-      expect(resultParsed.services.web.ports).toEqual(['127.0.0.1:9000:9000', '${APP_PORT}:80']);
+      expect(resultParsed.services.web.ports).toEqual([port, '${APP_PORT}:80']);
+    });
+
+    it.each([
+      { protocol: 'tcp', expectedPorts: ['${APP_PORT}:80/tcp'] },
+      { protocol: 'udp', expectedPorts: ['${APP_PORT}:80/udp', '${APP_PORT}:80'] },
+    ])('should respect the protocol of long port syntax: $protocol', ({ protocol, expectedPorts }) => {
+      const doc = `x-runtipi:
+  schema-version: 2
+
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - target: 80
+        published: \${APP_PORT}
+        protocol: ${protocol}
+    x-runtipi:
+      is_main: true
+      internal_port: 80
+`;
+
+      const parsed = yaml.parse(doc);
+      const result = composeBuilder.getDockerCompose(parsed, { openPort: true }, urn, subnet);
+
+      const resultParsed = yaml.parse(result);
+      expect(resultParsed.services.web.ports).toEqual(expectedPorts);
     });
   });
 
