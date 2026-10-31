@@ -42,6 +42,28 @@ export class MarketplaceService {
     private readonly appStoreService: AppStoreService,
   ) {}
 
+  async createAppStore(input: Parameters<AppStoreService['createAppStore']>[0]) {
+    const result = await this.appStoreService.createAppStore(input);
+    await this.initialize();
+    return result;
+  }
+
+  async updateAppStore(id: string, input: Parameters<AppStoreService['updateAppStore']>[1]) {
+    await this.appStoreService.updateAppStore(id, input);
+    await this.initialize();
+  }
+
+  async deleteAppStore(id: string) {
+    await this.appStoreService.deleteAppStore(id);
+    await this.initialize();
+  }
+
+  async pullAppStores() {
+    const result = await this.appStoreService.pullRepositories();
+    await this.initialize();
+    return result;
+  }
+
   async initialize() {
     this.stores.clear();
 

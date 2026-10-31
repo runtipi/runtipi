@@ -38,6 +38,13 @@ export class AppJobService implements OnModuleDestroy {
     return { ...job };
   }
 
+  getCompletion(appUrn: AppUrn, requestId: string) {
+    const entry = this.jobs.get(appUrn);
+    if (entry?.job.requestId !== requestId) return undefined;
+
+    return entry.completion;
+  }
+
   isActive(appUrn: AppUrn) {
     const job = this.jobs.get(appUrn)?.job;
 

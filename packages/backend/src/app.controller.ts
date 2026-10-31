@@ -1,3 +1,4 @@
+import { InstanceService } from './modules/system/instance.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { ApiResponse } from '@nestjs/swagger';
 export class AppController {
   constructor(
     private readonly appService: AppService,
+    private readonly instance: InstanceService,
     private readonly userRepository: UserRepository,
     private readonly configuration: ConfigurationService,
     private readonly appsService: AppsService,
@@ -79,14 +81,6 @@ export class AppController {
       return;
     }
 
-    const version = await this.appService.getVersion();
-    this.configuration.initSentry({ release: version.current, allowSentry: body.allowErrorMonitoring });
-    await this.userRepository.updateUser(req.user.id, { hasSeenWelcome: true });
-
-    if (this.configuration.get('demoMode')) {
-      return;
-    }
-
-    await this.configuration.setUserSettings({ allowErrorMonitoring: body.allowErrorMonitoring });
+    await this.instance.acknowledgeWelcome(req.user.id, body.allowErrorMonitoring);
   }
 }

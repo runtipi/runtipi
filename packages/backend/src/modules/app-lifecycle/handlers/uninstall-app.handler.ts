@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
@@ -16,6 +17,7 @@ export class UninstallAppHandler implements ILifecycleHandler<UninstallAppParams
     private readonly appRepository: AppsRepository,
     private readonly appEventsQueue: AppEventsQueue,
     private readonly statusManager: StatusManagerService,
+    private readonly operations: AppOperationsService,
   ) {}
 
   async execute(appUrn: AppUrn, params?: UninstallAppParams): Promise<HandlerResult> {
@@ -32,7 +34,9 @@ export class UninstallAppHandler implements ILifecycleHandler<UninstallAppParams
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ command: 'uninstall', appUrn, requestId, form: app.config, removeBackups }).then(async ({ success, message }) => {
+    return this.operations.submit(appUrn, 'uninstall', requestId, async () => {
+      const result = await this.appEventsQueue.publish({ command: 'uninstall', appUrn, requestId, form: app.config, removeBackups });
+      const { success, message } = result;
       if (success) {
         await this.statusManager.deleteApp(app.id);
         this.statusManager.emitEvent({ appUrn, event: 'uninstall_success' });
@@ -45,8 +49,8 @@ export class UninstallAppHandler implements ILifecycleHandler<UninstallAppParams
           error: message ?? 'Unknown error',
         });
       }
-    });
 
-    return { requestId };
+      return result;
+    });
   }
 }

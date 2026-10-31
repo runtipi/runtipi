@@ -8,5 +8,6 @@ import { UserConfigService } from './user-config.service';
   imports: [AppLifecycleModule, AppsModule],
   controllers: [UserConfigController],
   providers: [UserConfigService],
+  exports: [UserConfigService],
 })
 export class UserConfigModule {}

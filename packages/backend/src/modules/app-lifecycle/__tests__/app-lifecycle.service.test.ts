@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
@@ -10,7 +11,6 @@ import { mock } from 'vitest-mock-extended';
 import { AppLifecycleCommandFactory } from '../app-lifecycle-command.factory';
 import { AppLifecycleService } from '../app-lifecycle.service';
 import { AppMigrationService } from '../services/app-migration.service';
-import { AppJobService } from '../services/app-job.service';
 
 test('backup deletion waits for the app lock and reconciles recovery before deleting', async () => {
   const appUrn = 'store:test' as AppUrn;
@@ -37,7 +37,7 @@ test('backup deletion waits for the app lock and reconciles recovery before dele
     mock(),
     mock(),
     mock(),
-    mock<AppJobService>(),
+    Object.assign(mock<AppOperationsService>(), { admit: async (_urn: AppUrn, task: () => Promise<void>) => task() }),
   );
   let recovered = false;
   migrations.reconcile.mockImplementation(async () => {

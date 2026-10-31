@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { Injectable } from '@nestjs/common';
@@ -42,18 +43,17 @@ export class BackupsService {
     return this.backupManager.getBackupPath(appUrn, filename);
   }
 
-  public async uploadBackup(params: { appUrn: AppUrn; filename: string; fileBuffer: Buffer }): Promise<void> {
-    if (this.config.get('demoMode')) {
-      throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
-    }
+  public async uploadBackupStream(params: { appUrn: AppUrn; filename: string; source: Readable }): Promise<void> {
+    if (this.config.get('demoMode')) throw new TranslatableError('SERVER_ERROR_NOT_ALLOWED_IN_DEMO');
 
-    const { appUrn, filename, fileBuffer } = params;
+    const { appUrn, filename, source } = params;
     const app = await this.appsRepository.getAppByUrn(appUrn);
+    if (!app) throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
 
-    if (!app) {
-      throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn });
-    }
+    await this.backupManager.uploadBackupStream(appUrn, filename, source);
+  }
 
-    await this.backupManager.uploadBackup(appUrn, filename, fileBuffer);
+  public uploadBackup(params: { appUrn: AppUrn; filename: string; fileBuffer: Buffer }): Promise<void> {
+    return this.uploadBackupStream({ appUrn: params.appUrn, filename: params.filename, source: Readable.from([params.fileBuffer]) });
   }
 }

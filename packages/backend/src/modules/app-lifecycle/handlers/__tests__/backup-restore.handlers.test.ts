@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../../services/app-operations.service';
 import type { SSEService } from '@/core/sse/sse.service';
 import { AppJobService } from '../../services/app-job.service';
 import { AppLifecycleCommandFactory } from '../../app-lifecycle-command.factory';
@@ -149,7 +150,14 @@ describe('RestoreAppHandler', () => {
   it('publishes a restore job, records the restored version, and restores the previous status', async () => {
     appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 21, status: 'stopped', config: { baz: 'qux' } }));
 
-    const handler = new RestoreAppHandler(appRepository, appEventsQueue, statusManager, appFilesManager, startAppHandler);
+    const handler = new RestoreAppHandler(
+      appRepository,
+      appEventsQueue,
+      statusManager,
+      appFilesManager,
+      startAppHandler,
+      new AppOperationsService(mock<AppJobService>(), mock<LoggerService>()),
+    );
     const result = await handler.execute(appUrn, { filename: 'test-store-1.tar.gz' });
     await flushPromises();
 
@@ -175,7 +183,14 @@ describe('RestoreAppHandler', () => {
     appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 22, status: 'running', config: {} }));
     appEventsQueue.publish.mockResolvedValue({ success: false, message: 'stop failed' });
 
-    const handler = new RestoreAppHandler(appRepository, appEventsQueue, statusManager, appFilesManager, startAppHandler);
+    const handler = new RestoreAppHandler(
+      appRepository,
+      appEventsQueue,
+      statusManager,
+      appFilesManager,
+      startAppHandler,
+      new AppOperationsService(mock<AppJobService>(), mock<LoggerService>()),
+    );
     await handler.execute(appUrn, { filename: 'test-store-1.tar.gz' });
     await flushPromises();
 
@@ -192,7 +207,14 @@ describe('RestoreAppHandler', () => {
     appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 23, status: 'running', config: {} }));
     appEventsQueue.publish.mockResolvedValue({ success: false, message: 'restore failed', appStopped: true });
 
-    const handler = new RestoreAppHandler(appRepository, appEventsQueue, statusManager, appFilesManager, startAppHandler);
+    const handler = new RestoreAppHandler(
+      appRepository,
+      appEventsQueue,
+      statusManager,
+      appFilesManager,
+      startAppHandler,
+      new AppOperationsService(mock<AppJobService>(), mock<LoggerService>()),
+    );
     await handler.execute(appUrn, { filename: 'test-store-1.tar.gz' });
     await flushPromises();
 
@@ -215,7 +237,12 @@ describe('UninstallAppHandler', () => {
     const statusManager = mock<StatusManagerService>();
     appRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 31, config: {} }));
     appEventsQueue.publish.mockResolvedValue({ success: true, message: 'ok' });
-    const handler = new UninstallAppHandler(appRepository, appEventsQueue, statusManager);
+    const handler = new UninstallAppHandler(
+      appRepository,
+      appEventsQueue,
+      statusManager,
+      new AppOperationsService(mock<AppJobService>(), mock<LoggerService>()),
+    );
 
     const result = await handler.execute(appUrn, { removeBackups: true });
 
