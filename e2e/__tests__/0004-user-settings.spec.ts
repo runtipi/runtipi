@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { loginUser } from './fixtures/fixtures';
-import { testUser } from './helpers/constants';
-import { clearDatabase } from './helpers/db';
-import { setSettings } from './helpers/settings';
+import { loginUser } from '../fixtures/fixtures';
+import { testUser } from '../helpers/constants';
+import { clearDatabase } from '../helpers/db';
+import { setSettings } from '../helpers/settings';
 
 test.beforeEach(async ({ page, context }) => {
   await setSettings({});
@@ -81,10 +81,11 @@ test('user can change their email', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 });
 
-test('user can download the self-signed certificate', async ({ page }) => {
+test('user can download the local CA certificate', async ({ page }) => {
   await page.getByRole('tab', { name: 'Settings' }).click();
+
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Download certificate' }).click();
+  await page.getByRole('button', { name: 'Download local CA certificate', exact: true }).click();
 
   const download = await downloadPromise;
 
