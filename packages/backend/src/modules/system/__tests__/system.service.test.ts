@@ -1,45 +1,41 @@
-import path from 'node:path';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { SystemService } from '@/modules/system/system.service';
-import { Test } from '@nestjs/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { LoggerService } from '@/core/logger/logger.service';
+import { fsMock } from '@/tests/__mocks__/fs';
+import { expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
+import { SystemService } from '../system.service';
 
-describe('SystemService', () => {
-  let systemService: SystemService;
-  let configurationService = mock<ConfigurationService>();
-  let filesystemService = mock<FilesystemService>();
+const setup = async () => {
+  const dataDir = '/tmp/runtipi-ca-download';
+  const tlsDir = `${dataDir}/traefik/tls`;
+  const fs = fsMock.default.promises;
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      providers: [SystemService],
-    })
-      .useMocker(mock)
-      .compile();
+  await fs.mkdir(tlsDir, { recursive: true });
+  await fs.writeFile(`${tlsDir}/cert.pem`, 'served leaf certificate');
+  await fs.writeFile(`${tlsDir}/key.pem`, 'served leaf private key');
+  await fs.writeFile(`${tlsDir}/ca-key.pem`, 'root CA private key');
 
-    systemService = moduleRef.get(SystemService);
-    configurationService = moduleRef.get(ConfigurationService);
-    filesystemService = moduleRef.get(FilesystemService);
-  });
+  const logger = mock<LoggerService>();
+  const config = mock<ConfigurationService>();
+  config.get.mockReturnValue({ dataDir, appDataDir: `${dataDir}/app-data`, appDir: `${dataDir}/apps` });
 
-  describe('getLocalCertificate', () => {
-    it('should return the local CA certificate', async () => {
-      const dataDir = '/data';
-      const caPath = path.join(dataDir, 'traefik', 'tls', 'ca.pem');
+  const filesystem = new FilesystemService(logger);
+  const service = new SystemService(logger, config, filesystem);
 
-      configurationService.get.calledWith('directories').mockReturnValue({
-        dataDir,
-      } as never);
+  return { service, tlsDir, fs };
+};
 
-      filesystemService.isFile.mockResolvedValue(true);
-      filesystemService.readTextFile.mockResolvedValue('test-ca-certificate');
+test('downloads only the public root CA from the configured data directory', async () => {
+  const { service, tlsDir, fs } = await setup();
+  const publicCa = '-----BEGIN CERTIFICATE-----\nlocal root CA\n-----END CERTIFICATE-----\n';
+  await fs.writeFile(`${tlsDir}/ca.pem`, publicCa);
 
-      const result = await systemService.getLocalCertificate();
+  await expect(service.getLocalCertificate()).resolves.toBe(publicCa);
+});
 
-      expect(filesystemService.isFile).toHaveBeenCalledWith(caPath);
-      expect(filesystemService.readTextFile).toHaveBeenCalledWith(caPath);
-      expect(result).toBe('test-ca-certificate');
-    });
-  });
+test('returns no certificate when the root CA is absent, even if the leaf and private keys exist', async () => {
+  const { service } = await setup();
+
+  await expect(service.getLocalCertificate()).resolves.toBeUndefined();
 });

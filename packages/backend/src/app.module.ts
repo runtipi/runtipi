@@ -11,6 +11,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LocalTlsService } from './core/local-tls/local-tls.service';
 import { APP_DIR } from './common/constants';
 import { MainExceptionFilter } from './common/error/exception.filter';
 import { FilesystemModule } from './core/filesystem/filesystem.module';
@@ -87,6 +88,7 @@ if (NODE_ENV === 'production') {
   imports,
   providers: [
     AppService,
+    LocalTlsService,
     {
       provide: APP_PIPE,
       useClass: ArkValidationPipe,
