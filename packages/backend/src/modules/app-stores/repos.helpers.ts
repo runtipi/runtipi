@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -71,34 +70,6 @@ export class ReposHelpers {
     }
 
     await fs.promises.chmod(dirPath, 0o755);
-
-    // Only add the safe.directory entry when it is not there yet. This method runs on
-    // every cloneRepo() call, including the "repo already exists" path, and `--add`
-    // appends unconditionally. Without this check the global gitconfig grows by one
-    // identical line per store refresh.
-    if (!this.hasSafeDirectory(dirPath)) {
-      execFileSync('git', ['config', '--global', '--add', 'safe.directory', dirPath], {
-        stdio: 'ignore',
-      });
-    }
-  }
-
-  /**
-   * Whether `safe.directory` already lists `dirPath` in the global git config.
-   * `git config --get-all` exits 1 when the key is unset, which counts as "no".
-   *
-   * @param {string} dirPath
-   */
-  private hasSafeDirectory(dirPath: string): boolean {
-    try {
-      const output = execFileSync('git', ['config', '--global', '--get-all', 'safe.directory'], {
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore'],
-      });
-      return output.split('\n').some((line) => line.trim() === dirPath);
-    } catch {
-      return false;
-    }
   }
 
   /**
