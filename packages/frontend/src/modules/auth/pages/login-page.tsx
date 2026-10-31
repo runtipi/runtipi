@@ -1,8 +1,8 @@
-import { userContext } from '@/api-client';
-import { loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
+import { type LoginDto, userContext } from '@/api-client';
+import { getLoginProvidersOptions, getProviderAuthUrlMutation, loginMutation, verifyTotpMutation } from '@/api-client/@tanstack/react-query.gen';
 import { useUserContext } from '@/context/user-context';
 import type { TranslatableError } from '@/types/error.types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -68,6 +68,19 @@ export default () => {
   const navigate = useNavigate();
 
   const loginType = capitalize(app ?? '') || t('AUTH_LOGIN_TYPE_ACCOUNT');
+  const { data: oauthProviders } = useQuery({
+    ...getLoginProvidersOptions(),
+    retry: false,
+    throwOnError: false,
+  });
+
+  useEffect(() => {
+    const challenge = new URLSearchParams(window.location.hash.slice(1)).get('totp_session_id');
+    if (!challenge) return;
+
+    setTotpSessionId(challenge);
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn || !redirect_url || !isSafeRedirect(redirect_url)) {
@@ -93,41 +106,41 @@ export default () => {
     };
   }, [isLoggedIn, navigate, redirect_url]);
 
+  const finishLogin = (data: LoginDto) => {
+    if (data.totpSessionId) {
+      setTotpSessionId(data.totpSessionId);
+      return;
+    }
+
+    setUserContext({ isLoggedIn: true });
+    refreshUserContext();
+
+    if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
+      window.location.href = data.redirectUrl;
+      return;
+    }
+    navigate('/dashboard');
+  };
+
   const login = useMutation({
     ...loginMutation(),
-    onSuccess: async (data) => {
-      if (data?.success && data.totpSessionId) {
-        setTotpSessionId(data.totpSessionId);
-      } else {
-        setUserContext({ isLoggedIn: true });
-        refreshUserContext();
-
-        if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-          return;
-        }
-        navigate('/dashboard');
-      }
-    },
-    onError: (e: TranslatableError) => {
-      toast.error(t(e.message, e.intlParams));
-    },
+    onSuccess: finishLogin,
+    onError: (error: TranslatableError) => toast.error(t(error.message, error.intlParams)),
   });
 
   const verifyTotp = useMutation({
     ...verifyTotpMutation(),
+    onSuccess: finishLogin,
+    onError: (error: TranslatableError) => toast.error(t(error.message, error.intlParams)),
+  });
+
+  const getOAuthURL = useMutation({
+    ...getProviderAuthUrlMutation(),
+    onSuccess: (res) => {
+      window.location.assign(res.url);
+    },
     onError: (e: TranslatableError) => {
       toast.error(t(e.message, e.intlParams));
-    },
-    onSuccess: (data) => {
-      setUserContext({ isLoggedIn: true });
-      refreshUserContext();
-
-      if (redirect_url && isSafeRedirect(redirect_url) && data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-        return;
-      }
-      navigate('/dashboard');
     },
   });
 
@@ -156,6 +169,9 @@ export default () => {
       onSubmit={(values) => login.mutate({ body: { password: values.password, redirectUrl: redirect_url ?? undefined, username: values.email } })}
       loading={login.isPending}
       loginType={loginType}
+      oauthProviders={oauthProviders?.providers ?? []}
+      onOAuthClick={(provider) => getOAuthURL.mutate({ path: { slug: provider.slug }, body: { redirectUrl: redirect_url ?? undefined } })}
+      oauthLoading={getOAuthURL.isPending}
     />
   );
 };

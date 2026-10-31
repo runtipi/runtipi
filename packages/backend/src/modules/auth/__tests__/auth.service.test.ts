@@ -53,6 +53,7 @@ describe('AuthService', () => {
 
   it('stores TOTP login sessions for five minutes', async () => {
     userRepository.getUserByUsername.mockResolvedValue(totpUser);
+    userRepository.getUserById.mockResolvedValue(totpUser);
     passwordService.verify.mockResolvedValue(true);
 
     const result = await authService.login({ username: totpUser.username, password: 'password' });

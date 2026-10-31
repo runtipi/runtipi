@@ -52,6 +52,7 @@
     "lodash.clonedeep": "^4.5.0",
     "minisearch": "^7.2.0",
     "nestjs-arktype": "^1.3.2",
+    "openid-client": "^6.8.2",
     "octokit": "^5.0.5",
     "pg": "^8.23.1",
     "psl": "^1.15.0",

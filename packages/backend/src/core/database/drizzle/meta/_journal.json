@@ -239,6 +239,13 @@
       "when": 1792435767818,
       "tag": "0033_migration_recovery",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793454560272,
+      "tag": "0034_oidc",
+      "breakpoints": true
     }
   ]
 }

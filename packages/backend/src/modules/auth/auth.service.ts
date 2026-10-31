@@ -13,6 +13,9 @@ import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
+import { LoggerService } from '@/core/logger/logger.service';
+import { type Request as ExpressRequest, type Response as ExpressResponse } from 'express';
+import { SESSION_COOKIE_NAME, SESSION_COOKIE_MAX_AGE } from '@/common/constants';
 
 const TOTP_SESSION_EXPIRATION = 60 * 5;
 const MAX_TOTP_ATTEMPTS = 5;
@@ -27,7 +30,33 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
+    private logger: LoggerService,
   ) {}
+
+  public async setSessionCookie(res: ExpressResponse, sessionId: string, req: ExpressRequest) {
+    const host = ((req.headers['x-forwarded-host'] as string | undefined) ?? req.headers.host)?.split(',')[0]?.trim().split(':')[0];
+    const proto = (req.headers['x-forwarded-proto'] as string | undefined)?.split(',')[0]?.trim() ?? req.protocol;
+    const secure = proto === 'https';
+
+    this.logger.debug('Setting session cookie', { host, proto, secure });
+
+    if (this.config.get('userSettings').experimental.insecureCookie) {
+      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
+      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
+    } else {
+      const legacyDomain = this.getCookieDomain(host);
+      if (legacyDomain) {
+        res.clearCookie(SESSION_COOKIE_NAME, { domain: legacyDomain });
+      }
+
+      res.cookie(SESSION_COOKIE_NAME, sessionId, {
+        httpOnly: true,
+        secure,
+        sameSite: 'lax',
+        maxAge: SESSION_COOKIE_MAX_AGE,
+      });
+    }
+  }
 
   public getCookieDomain(domain?: string) {
     if (!domain || !validator.isFQDN(domain)) {
@@ -64,6 +93,20 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_INVALID_CREDENTIALS', {}, HttpStatus.BAD_REQUEST);
     }
 
+    return this.createLoginSession(user.id);
+  };
+
+  public async confirmPassword(userId: number, password: string) {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user || !(await this.passwordService.verify(password, user.password))) {
+      throw new TranslatableError('AUTH_ERROR_INVALID_CREDENTIALS', {}, HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  public async createLoginSession(userId: number) {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
+
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
       this.cache.set(totpSessionId, user.id.toString(), TOTP_SESSION_EXPIRATION);
@@ -75,7 +118,7 @@ export class AuthService {
     return {
       sessionId,
     };
-  };
+  }
 
   /**
    * Verify TOTP code and return a JWT token
