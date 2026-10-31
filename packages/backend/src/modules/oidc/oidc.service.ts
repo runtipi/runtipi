@@ -381,7 +381,7 @@ export class OIDCService {
         );
       }
 
-      return OIDCProvidersLoginDto.parse({ providers: oidcProviders });
+      return OIDCProvidersLoginDto.parse({ providers });
     } catch (error) {
       this.logger.error('Failed to get OIDC providers', error);
       return undefined;

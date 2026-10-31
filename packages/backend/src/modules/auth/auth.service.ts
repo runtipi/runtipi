@@ -34,23 +34,26 @@ export class AuthService {
   ) {}
 
   public async setSessionCookie(res: ExpressResponse, sessionId: string, req: ExpressRequest) {
-    const host = req.headers['x-forwarded-host'] as string | undefined;
-    const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    const domain = this.getCookieDomain(host);
-    const secure = Boolean(domain) && proto === 'https';
+    const host = ((req.headers['x-forwarded-host'] as string | undefined) ?? req.headers.host)?.split(',')[0]?.trim().split(':')[0];
+    const proto = (req.headers['x-forwarded-proto'] as string | undefined)?.split(',')[0]?.trim() ?? req.protocol;
+    const secure = proto === 'https';
 
-    this.logger.debug('Setting session cookie', { host, domain, proto, secure });
+    this.logger.debug('Setting session cookie', { host, proto, secure });
 
     if (this.config.get('userSettings').experimental.insecureCookie) {
       this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
       res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge: SESSION_COOKIE_MAX_AGE });
     } else {
+      const legacyDomain = this.getCookieDomain(host);
+      if (legacyDomain) {
+        res.clearCookie(SESSION_COOKIE_NAME, { domain: legacyDomain });
+      }
+
       res.cookie(SESSION_COOKIE_NAME, sessionId, {
         httpOnly: true,
         secure,
         sameSite: 'lax',
         maxAge: SESSION_COOKIE_MAX_AGE,
-        domain,
       });
     }
   }

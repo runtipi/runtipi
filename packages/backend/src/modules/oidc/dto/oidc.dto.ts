@@ -70,6 +70,7 @@ export const GetOIDCProvidersSchema = type({
 export class GetOIDCProvidersDto extends createArkDto(GetOIDCProvidersSchema, { name: 'GetOIDCProvidersDto' }) {}
 
 export const OIDCProviderLoginSchema = type({
+  '+': 'delete',
   slug: 'string >= 1',
   displayName: 'string >= 1',
 });
