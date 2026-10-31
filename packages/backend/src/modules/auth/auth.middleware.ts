@@ -82,10 +82,10 @@ export class AuthMiddleware implements NestMiddleware {
         return next();
       }
 
-      const jwtSecret = this.config.get('jwtSecret');
+      const cliSecret = this.config.get('cliSecret');
 
       try {
-        const { sub } = jsonwebtoken.verify(token, jwtSecret) as { sub: string };
+        const { sub } = jsonwebtoken.verify(token, cliSecret, { algorithms: ['HS256'] }) as { sub: string };
         if (sub === 'cli') {
           const user = await this.userRepository.getFirstOperator();
           req.user = user;
