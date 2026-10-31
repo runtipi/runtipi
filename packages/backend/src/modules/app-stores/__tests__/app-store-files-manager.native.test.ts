@@ -62,7 +62,10 @@ test.each(['file', 'directory', 'symlink', 'dangling symlink'])('skips a reserve
   await storeFiles.copyAppFromRepoToInstalled(appUrn);
 
   await expect(fs.promises.lstat(path.join(appInstalledDir, 'docker-compose.generated.yml'))).rejects.toMatchObject({ code: 'ENOENT' });
-  expect((await fs.promises.lstat(path.join(appInstalledDir, 'assets', 'linked-asset'))).isSymbolicLink()).toBe(true);
+  await expect(fs.promises.readlink(path.join(appInstalledDir, 'assets', 'linked-asset'))).resolves.toBe('docker-compose.generated.yml');
+
+  await fs.promises.rename(appRepoDir, `${appRepoDir}-moved`);
+
   await expect(fs.promises.readFile(path.join(appInstalledDir, 'assets', 'linked-asset'), 'utf8')).resolves.toBe('asset');
   await expect(fs.promises.readFile(path.join(appInstalledDir, 'assets', 'docker-compose.generated.yml'), 'utf8')).resolves.toBe('asset');
 

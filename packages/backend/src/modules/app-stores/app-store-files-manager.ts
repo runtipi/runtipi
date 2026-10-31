@@ -167,6 +167,7 @@ export class AppStoreFilesManager {
     this.logger.info(`Copying app ${appUrn} from repo ${this.storeConfig.slug}`);
     const generatedComposePath = path.join(appRepoDir, APP_GENERATED_COMPOSE_FILENAME);
     const copied = await this.filesystem.copyDirectory(appRepoDir, appInstalledDir, {
+      verbatimSymlinks: true,
       filter: (source) => source !== generatedComposePath,
     });
 
