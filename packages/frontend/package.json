@@ -79,7 +79,7 @@
     "@hey-api/openapi-ts": "^0.99.0",
     "@react-router/dev": "^7.18.5",
     "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",
     "@types/dompurify": "^3.2.0",
