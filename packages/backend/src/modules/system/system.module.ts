@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SystemController } from './system.controller';
 import { DockerModule } from '../docker/docker.module';
+import { SystemController } from './system.controller';
 import { HostMemoryService } from './host-memory.service';
 import { SystemService } from './system.service';
 

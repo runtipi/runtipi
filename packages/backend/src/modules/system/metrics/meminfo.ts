@@ -10,12 +10,10 @@ export type Meminfo = {
 
 const readKb = (content: string, key: string): number | null => {
   const match = content.match(new RegExp(`^${key}:\\s+(\\d+)`, 'm'));
+
   return match?.[1] ? Number(match[1]) * 1024 : null;
 };
 
-/**
- * Parse the content of /proc/meminfo. All values are returned in bytes.
- */
 export const parseMeminfo = (content: string): Meminfo => {
   return {
     total: readKb(content, 'MemTotal') ?? 0,
@@ -28,10 +26,6 @@ export const parseMeminfo = (content: string): Meminfo => {
   };
 };
 
-/**
- * Compute used memory the same way `free` does. Falls back to the classic
- * formula when the kernel (or lxcfs) does not expose MemAvailable.
- */
 export const getUsedMemory = (meminfo: Meminfo): number => {
   if (meminfo.total <= 0) return 0;
 
@@ -40,6 +34,7 @@ export const getUsedMemory = (meminfo: Meminfo): number => {
   }
 
   const used = meminfo.total - meminfo.free - meminfo.buffers - meminfo.cached - meminfo.sReclaimable + meminfo.shmem;
+
   return clamp(used, 0, meminfo.total);
 };
 

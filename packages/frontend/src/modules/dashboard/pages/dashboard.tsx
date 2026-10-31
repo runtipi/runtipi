@@ -11,6 +11,11 @@ export default () => {
     refetchInterval: 3000,
   });
   const isLoading = !data;
+  let memoryMetric = `${data.percentUsedMemory}%`;
+
+  if (data.memorySource === 'containers') {
+    memoryMetric += ` · ${t('DASHBOARD_MEMORY_ESTIMATED')}`;
+  }
 
   return (
     <div className="row row-deck row-cards px-1">
@@ -33,8 +38,8 @@ export default () => {
       <SystemStat
         isLoading={isLoading}
         title={t('DASHBOARD_MEMORY_TITLE')}
-        metric={`${data.percentUsedMemory}%`}
-        subtitle={data.memorySource === 'containers' ? `${data.memoryTotal} GB · ${t('DASHBOARD_MEMORY_ESTIMATED')}` : `${data.memoryTotal} GB`}
+        metric={memoryMetric}
+        subtitle={`${data.memoryTotal} GB`}
         icon={IconCircuitResistor}
         progress={data.percentUsedMemory}
       />

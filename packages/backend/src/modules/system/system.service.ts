@@ -1,6 +1,5 @@
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import si from 'systeminformation';
 import { HostMemoryService } from './host-memory.service';
@@ -8,18 +7,13 @@ import { HostMemoryService } from './host-memory.service';
 @Injectable()
 export class SystemService {
   constructor(
-    readonly _logger: LoggerService,
     private readonly config: ConfigurationService,
     private readonly filesystem: FilesystemService,
     private readonly hostMemory: HostMemoryService,
   ) {}
 
   public async getSystemLoad() {
-    const { currentLoad } = await si.currentLoad();
-
-    const memory = await this.hostMemory.getMemory();
-
-    const [disk0] = await si.fsSize();
+    const [{ currentLoad }, memory, [disk0]] = await Promise.all([si.currentLoad(), this.hostMemory.getMemory(), si.fsSize()]);
 
     const disk = disk0 ?? { available: 0, size: 0 };
     const diskFree = Math.round(disk.available / 1024 / 1024 / 1024);

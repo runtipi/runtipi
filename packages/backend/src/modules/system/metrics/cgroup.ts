@@ -1,91 +1,79 @@
 import path from 'node:path';
 
 type ReadFile = (filePath: string) => Promise<string | null>;
+type MemoryStat = Readonly<Record<string, number | undefined>>;
 
 export type CgroupMemory = {
-  /** Memory used by the cgroup, without inactive page cache (bytes) */
   used: number;
-  /** Memory limit of the cgroup, null when unlimited (bytes) */
   limit: number | null;
 };
 
-const parseStatFile = (content: string): Record<string, number> => {
-  const result: Record<string, number> = {};
+const parseNumber = (content: string | null): number | null => {
+  if (!content?.trim()) return null;
+
+  const value = Number(content.trim());
+
+  return Number.isSafeInteger(value) && value >= 0 ? value : null;
+};
+
+const parseStat = (content: string): MemoryStat => {
+  const stat: Record<string, number> = {};
+
   for (const line of content.split('\n')) {
     const [key, value] = line.trim().split(/\s+/);
-    if (key && value !== undefined && !Number.isNaN(Number(value))) {
-      result[key] = Number(value);
+    const parsed = parseNumber(value ?? null);
+
+    if (key && parsed !== null) {
+      stat[key] = parsed;
     }
   }
-  return result;
+
+  return stat;
 };
 
-const parseNumber = (content: string | null): number | null => {
-  if (content === null) return null;
-  const value = Number(content.trim());
-  return Number.isFinite(value) ? value : null;
+export const getUsedCgroupMemory = (usage: number, stat: MemoryStat): number => {
+  const inactiveFile = stat.total_inactive_file ?? stat.inactive_file ?? 0;
+  const activeFile = stat.total_active_file ?? stat.active_file ?? 0;
+  const reclaimableSlab = stat.slab_reclaimable ?? 0;
+
+  // Match lxcfs MemAvailable, including reclaimable active file cache and slab.
+  return Math.max(usage - inactiveFile - activeFile - reclaimableSlab, 0);
 };
 
-// cgroup v1 reports "no limit" as a huge page-aligned number instead of "max"
-const V1_UNLIMITED_THRESHOLD = 2 ** 60;
+export const readCgroupMemory = async (root: string, readFile: ReadFile): Promise<CgroupMemory | null> => {
+  const [current, stat, max] = await Promise.all([
+    readFile(path.join(root, 'memory.current')),
+    readFile(path.join(root, 'memory.stat')),
+    readFile(path.join(root, 'memory.max')),
+  ]);
+  const usage = parseNumber(current);
 
-/**
- * Reads memory accounting of the cgroup mounted at `root`.
- *
- * Inside an LXC container, `/sys/fs/cgroup` is the container's own cgroup, so mounting it into
- * runtipi gives the real usage of the whole LXC container, which /proc/meminfo (served by lxcfs)
- * can not provide when read from a nested Docker container.
- */
-export class CgroupReader {
-  constructor(
-    private readonly root: string,
-    private readonly readFile: ReadFile,
-  ) {}
-
-  private read(file: string) {
-    return this.readFile(path.join(this.root, file));
+  if (usage !== null && stat !== null) {
+    return { used: getUsedCgroupMemory(usage, parseStat(stat)), limit: parseNumber(max) };
   }
 
-  /**
-   * Returns the cgroup memory usage, or null if the mounted cgroup has no memory accounting.
-   */
-  async getMemory(): Promise<CgroupMemory | null> {
-    // cgroup v2
-    const current = parseNumber(await this.read('memory.current'));
-    if (current !== null) {
-      const stat = parseStatFile((await this.read('memory.stat')) ?? '');
-      const max = (await this.read('memory.max'))?.trim();
-      const limit = max && max !== 'max' ? parseNumber(max) : null;
+  const [v1Current, v1Stat, v1Max] = await Promise.all([
+    readFile(path.join(root, 'memory/memory.usage_in_bytes')),
+    readFile(path.join(root, 'memory/memory.stat')),
+    readFile(path.join(root, 'memory/memory.limit_in_bytes')),
+  ]);
+  const v1Usage = parseNumber(v1Current);
 
-      return { used: Math.max(current - (stat.inactive_file ?? 0), 0), limit };
-    }
+  if (v1Usage === null || v1Stat === null) return null;
 
-    // cgroup v1
-    const usage = parseNumber(await this.read('memory/memory.usage_in_bytes'));
-    if (usage !== null) {
-      const stat = parseStatFile((await this.read('memory/memory.stat')) ?? '');
-      const rawLimit = parseNumber(await this.read('memory/memory.limit_in_bytes'));
-      const limit = rawLimit !== null && rawLimit < V1_UNLIMITED_THRESHOLD ? rawLimit : null;
+  const memoryStat = parseStat(v1Stat);
+  const limits = [parseNumber(v1Max), memoryStat.hierarchical_memory_limit].filter((limit): limit is number => typeof limit === 'number');
+  const limit = limits.length > 0 ? Math.min(...limits) : null;
 
-      return { used: Math.max(usage - (stat.total_inactive_file ?? 0), 0), limit };
-    }
+  return { used: getUsedCgroupMemory(v1Usage, memoryStat), limit };
+};
 
-    return null;
-  }
-}
-
-/**
- * Detects if a path inside this container is served by lxcfs (i.e. runtipi runs inside LXC).
- * lxcfs computes /proc/meminfo from the cgroup of the *reading* process, so from within a Docker
- * container it only reports the memory used by that container instead of the whole LXC.
- */
 export const isServedByLxcfs = (mountinfo: string | null, mountPoint: string) => {
-  if (!mountinfo) return false;
-
-  return mountinfo.split('\n').some((line) => {
+  return (mountinfo ?? '').split('\n').some((line) => {
     const [before, after] = line.split(' - ');
-    const fields = before?.split(' ') ?? [];
-    const fsType = after?.split(' ')[0] ?? '';
-    return fields[4] === mountPoint && fsType.includes('lxcfs');
+    const mountedPath = before?.split(' ')[4];
+    const fsType = after?.split(' ')[0];
+
+    return mountedPath === mountPoint && fsType === 'fuse.lxcfs';
   });
 };

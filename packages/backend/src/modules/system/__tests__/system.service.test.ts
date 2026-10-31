@@ -4,6 +4,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { fsMock } from '@/tests/__mocks__/fs';
 import { expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
+import { HostMemoryService } from '../host-memory.service';
 import { SystemService } from '../system.service';
 
 const setup = async () => {
@@ -21,7 +22,7 @@ const setup = async () => {
   config.get.mockReturnValue({ dataDir, appDataDir: `${dataDir}/app-data`, appDir: `${dataDir}/apps` });
 
   const filesystem = new FilesystemService(logger);
-  const service = new SystemService(logger, config, filesystem);
+  const service = new SystemService(config, filesystem, mock<HostMemoryService>());
 
   return { service, tlsDir, fs };
 };
