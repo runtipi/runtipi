@@ -1,0 +1,73 @@
+name: Build and push image
+description: Build with Docker Build Cloud, falling back to Buildx on the GitHub runner.
+
+inputs:
+  version:
+    description: Runtipi version passed to the image build.
+    required: true
+  tags:
+    description: Image tags to publish.
+    required: true
+  labels:
+    description: Labels to apply to the image.
+    required: false
+  platforms:
+    description: Target platforms for the image.
+    default: linux/amd64,linux/arm64
+  sentry-token:
+    description: Sentry token used to upload source maps.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Docker Build Cloud
+      id: cloud-builder
+      continue-on-error: true
+      uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      with:
+        driver: cloud
+        endpoint: meienberger/runtipi-builder
+
+    - name: Build and push with Docker Build Cloud
+      id: cloud-build
+      if: steps.cloud-builder.outcome == 'success'
+      continue-on-error: true
+      uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+      with:
+        builder: ${{ steps.cloud-builder.outputs.name }}
+        context: .
+        secrets: |
+          "sentry_token=${{ inputs.sentry-token }}"
+        build-args: |
+          TIPI_VERSION=${{ inputs.version }}
+        platforms: ${{ inputs.platforms }}
+        push: true
+        tags: ${{ inputs.tags }}
+        labels: ${{ inputs.labels }}
+
+    - name: Set up QEMU for runner build
+      if: steps.cloud-builder.outcome == 'failure' || steps.cloud-build.outcome == 'failure'
+      uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
+
+    - name: Set up Docker Buildx on runner
+      id: runner-builder
+      if: steps.cloud-builder.outcome == 'failure' || steps.cloud-build.outcome == 'failure'
+      uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      with:
+        driver: docker-container
+
+    - name: Build and push on runner
+      if: steps.cloud-builder.outcome == 'failure' || steps.cloud-build.outcome == 'failure'
+      uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+      with:
+        builder: ${{ steps.runner-builder.outputs.name }}
+        context: .
+        secrets: |
+          "sentry_token=${{ inputs.sentry-token }}"
+        build-args: |
+          TIPI_VERSION=${{ inputs.version }}
+        platforms: ${{ inputs.platforms }}
+        push: true
+        tags: ${{ inputs.tags }}
+        labels: ${{ inputs.labels }}
