@@ -2,7 +2,7 @@
   "name": "runtipi",
   "version": "4.1.0",
   "description": "",
-  "packageManager": "bun@1.4.3",
+  "packageManager": "bun@1.4.4",
   "workspaces": {
     "catalog": {
       "arktype": "^2.1.29"
