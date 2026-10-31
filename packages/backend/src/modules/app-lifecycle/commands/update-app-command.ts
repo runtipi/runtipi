@@ -2,7 +2,7 @@ import { LoggerService } from '@/core/logger/logger.service';
 import { AppFilesManager } from '@/modules/apps/app-files-manager';
 import { AppHelpers } from '@/modules/apps/app.helpers';
 import { AppsRepository } from '@/modules/apps/apps.repository';
-import { BackupManager } from '@/modules/backups/backup.manager';
+import { BackupManager, BackupRecoveryError } from '@/modules/backups/backup.manager';
 import { DockerService } from '@/modules/docker/docker.service';
 import { MarketplaceService } from '@/modules/marketplace/marketplace.service';
 import type { AppEventFormInput } from '@/modules/queue/entities/app-events';
@@ -12,16 +12,21 @@ import type Dockerode from 'dockerode';
 import { AppLifecycleCommand } from './command';
 import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { type } from 'arktype';
-import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import path from 'node:path';
+import type { AppJobContext } from '../services/app-job.service';
+import { getAppConfigUpdate } from '../services/app-config';
+import { AppValidationService } from '../services/app-validation.service';
+import { AppMigrationService } from '../services/app-migration.service';
+import { ConfigurationService } from '@/core/config/configuration.service';
 
 export class UpdateAppCommand extends AppLifecycleCommand {
   constructor(
     moduleRef: ModuleRef,
     docker: Dockerode,
-    private readonly performBackup: boolean = true,
+    private readonly performBackup: boolean = false,
     private readonly wasRunningBeforeUpdate: boolean = false,
+    private readonly context?: AppJobContext,
   ) {
     super(moduleRef, docker);
   }
@@ -34,22 +39,27 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
     const backupManager = this.moduleRef.get(BackupManager, { strict: false });
     const appsRepository = this.moduleRef.get(AppsRepository, { strict: false });
-    const config = this.moduleRef.get(ConfigurationService, { strict: false });
     const filesystem = this.moduleRef.get(FilesystemService, { strict: false });
+    const validation = this.moduleRef.get(AppValidationService, { strict: false });
+    const appMigrationService = this.moduleRef.get(AppMigrationService, { strict: false });
+    const config = this.moduleRef.get(ConfigurationService, { strict: false });
 
     let temporaryDirectory: string | null = null;
     let appInstalledDir: string | null = null;
     let previousAppDirectory: string | null = null;
-    let previousEnvPath: string | null = null;
-    let previousEnvSnapshotPath: string | null = null;
+    let previousEnv: Awaited<ReturnType<AppFilesManager['getAppEnv']>> | undefined;
     let previousFilesStaged = false;
     let subnetBeforeUpdate: { id: number; subnet: string | null } | null = null;
     let deploymentMayHaveChanged = false;
     let deploymentMayHaveStopped = false;
-    let recoverySucceeded = true;
+    let migrationRecoveryRequired = false;
+    let migrationCommitAttempted = false;
+    let migrationBackupFilename: string | null = null;
+    let backupMaxBackups: number | null = null;
+    let recoverySucceeded = false;
 
     const restorePreviousApp = async () => {
-      if (!previousAppDirectory || !appInstalledDir || !previousEnvPath || !previousEnvSnapshotPath) {
+      if (!previousAppDirectory || !appInstalledDir || !previousEnv) {
         throw new Error(`Recovery snapshot is incomplete for app ${appUrn}`);
       }
 
@@ -57,32 +67,11 @@ export class UpdateAppCommand extends AppLifecycleCommand {
         throw new Error(`Failed to restore the previous files for app ${appUrn}`);
       }
 
-      const envSnapshot = await filesystem.readTextFile(previousEnvSnapshotPath);
-      if (envSnapshot === null) {
-        throw new Error(`Failed to read the previous environment snapshot for app ${appUrn}`);
-      }
-
-      let previousEnv: unknown;
-      try {
-        previousEnv = JSON.parse(envSnapshot);
-      } catch {
-        throw new Error(`Failed to parse the previous environment snapshot for app ${appUrn}`);
-      }
-
-      if (
-        typeof previousEnv !== 'object' ||
-        previousEnv === null ||
-        !('content' in previousEnv) ||
-        (typeof previousEnv.content !== 'string' && previousEnv.content !== null)
-      ) {
-        throw new Error(`Invalid previous environment snapshot for app ${appUrn}`);
-      }
-
       if (previousEnv.content !== null) {
         if (!(await appFilesManager.writeAppEnv(appUrn, previousEnv.content))) {
           throw new Error(`Failed to restore the previous environment for app ${appUrn}`);
         }
-      } else if ((await filesystem.isFile(previousEnvPath)) && !(await filesystem.removeFile(previousEnvPath))) {
+      } else if ((await filesystem.isFile(previousEnv.path)) && !(await filesystem.removeFile(previousEnv.path))) {
         throw new Error(`Failed to remove the generated environment for app ${appUrn}`);
       }
     };
@@ -94,6 +83,7 @@ export class UpdateAppCommand extends AppLifecycleCommand {
     };
 
     try {
+      this.context?.signal.throwIfAborted();
       const composeToInstall = await marketplaceService.getSourceDockerComposeYaml(appUrn);
       const compose = dynamicComposeSchemaYaml(composeToInstall.content);
 
@@ -103,68 +93,126 @@ export class UpdateAppCommand extends AppLifecycleCommand {
       }
 
       const appBeforeUpdate = await appsRepository.getAppByUrn(appUrn);
-      if (appBeforeUpdate) {
-        subnetBeforeUpdate = { id: appBeforeUpdate.id, subnet: appBeforeUpdate.subnet };
-      }
+      if (!appBeforeUpdate) throw new Error(`App ${appUrn} not found`);
+      subnetBeforeUpdate = { id: appBeforeUpdate.id, subnet: appBeforeUpdate.subnet };
 
       appInstalledDir = appFilesManager.getAppPaths(appUrn).appInstalledDir;
-      const previousEnv = await appFilesManager.getAppEnv(appUrn);
-      previousEnvPath = previousEnv.path;
+      previousEnv = await appFilesManager.getAppEnv(appUrn);
       temporaryDirectory = await filesystem.createTempDirectory(path.join('/tmp', 'runtipi-update-'));
       if (!temporaryDirectory) {
         throw new Error(`Failed to create an update staging directory for app ${appUrn}`);
       }
 
       previousAppDirectory = path.join(temporaryDirectory, 'previous-app');
-      previousEnvSnapshotPath = path.join(temporaryDirectory, 'previous-app.env.json');
 
       if (!(await filesystem.copyDirectory(appInstalledDir, previousAppDirectory))) {
         throw new Error(`Failed to stage the current files for app ${appUrn}`);
       }
       previousFilesStaged = true;
-      if (!(await filesystem.writePrivateTextFile(previousEnvSnapshotPath, JSON.stringify({ content: previousEnv.content })))) {
-        throw new Error(`Failed to stage the previous environment for app ${appUrn}`);
+      if (previousEnv.content !== null) {
+        const snapshotPath = path.join(temporaryDirectory, 'previous-app.env');
+        if (!(await filesystem.writePrivateTextFile(snapshotPath, previousEnv.content))) {
+          throw new Error(`Failed to stage the previous environment for app ${appUrn}`);
+        }
       }
+
+      await appMigrationService.baselineCurrentMigrations(appUrn);
 
       // Stage the target files in the installed directory while the existing containers keep running.
       // The previous files and compose are restored immediately after the target images are pulled.
       deploymentMayHaveChanged = true;
       await marketplaceService.copyAppFromRepoToInstalled(appUrn);
-      await this.ensureAppDir(appUrn, form, { pruneContainers: false, persistSubnet: false });
-      await appHelpers.generateEnvFile(appUrn, form);
+      const targetAppInfo = await appFilesManager.getInstalledAppInfo(appUrn);
+      if (!targetAppInfo) throw new Error(`App ${appUrn} config not found`);
+
+      const targetForm = await validation.validateUpdateConfigSettings(appUrn, targetAppInfo, { ...form }, appBeforeUpdate.id);
+
+      await this.ensureAppDir(appUrn, targetForm, { pruneContainers: false, persistSubnet: false });
+      await appHelpers.generateEnvFile(appUrn, targetForm);
+      const pendingMigrations = await appMigrationService.prepareMigrations(appUrn);
+      const hasPendingMigrations = pendingMigrations.length > 0;
       await dockerService.composeApp(appUrn, 'pull');
 
       // Restore the old compose before taking a backup
       await clearAppFolderForRestore();
       await restorePreviousApp();
 
-      if (this.performBackup) {
+      if (hasPendingMigrations) {
         deploymentMayHaveStopped = true;
-        await dockerService.composeApp(appUrn, 'stop');
-        await backupManager.backupApp(appUrn);
+        const backupFilename = await backupManager.createBackup(appUrn, false, this.context);
+        migrationBackupFilename = backupFilename;
+        migrationRecoveryRequired = true;
+        await appMigrationService.beginMigrationBatch(appUrn, backupFilename, pendingMigrations);
 
         const app = await appsRepository.getAppByUrn(appUrn);
-        const maxBackups = app?.maxBackups ?? config.get('userSettings').maxBackups;
-
-        await backupManager.cleanupOldBackups(appUrn, maxBackups);
+        backupMaxBackups = app?.maxBackups ?? config.get('userSettings').maxBackups;
+      } else if (this.performBackup) {
+        await backupManager.backupApp(appUrn, this.wasRunningBeforeUpdate, this.context);
       }
 
+      this.context?.disableCancellation();
+      this.context?.progress('updating');
       logger.info(`Updating app ${appUrn}`);
       deploymentMayHaveStopped = true;
       await dockerService.composeApp(appUrn, 'down --remove-orphans');
 
       await marketplaceService.copyAppFromRepoToInstalled(appUrn);
-      await this.ensureAppDir(appUrn, form, { pruneContainers: false });
-      await appHelpers.generateEnvFile(appUrn, form);
+      await this.ensureAppDir(appUrn, targetForm, { pruneContainers: false });
+      await appHelpers.generateEnvFile(appUrn, targetForm);
+
+      if (hasPendingMigrations) {
+        await appMigrationService.runMigrations(appUrn, pendingMigrations);
+      }
 
       if (this.wasRunningBeforeUpdate) {
+        this.context?.progress('restarting');
         await dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans');
       }
 
+      const appUpdate = {
+        ...getAppConfigUpdate(targetAppInfo, targetForm),
+        version: targetAppInfo.tipi_version,
+        pendingRestart: false,
+      };
+
+      if (hasPendingMigrations) {
+        migrationCommitAttempted = true;
+        await appMigrationService.commitMigrations(appUrn, pendingMigrations, appUpdate);
+      } else {
+        await appsRepository.updateAppById(appBeforeUpdate.id, appUpdate);
+      }
+
+      if (backupMaxBackups !== null) {
+        await backupManager.cleanupOldBackups(appUrn, backupMaxBackups).catch((cleanupError) => {
+          logger.error(`Failed to clean up old backups for app ${appUrn}:`, cleanupError);
+        });
+      }
+
+      recoverySucceeded = true;
       return { success: true, message: `App ${appUrn} updated successfully` };
     } catch (err) {
+      if (err instanceof BackupRecoveryError) deploymentMayHaveStopped = true;
+      this.context?.progress('recovering');
+
       try {
-        if (previousFilesStaged && deploymentMayHaveChanged) {
+        if (migrationCommitAttempted) {
+          const app = await appsRepository.getAppByUrn(appUrn);
+          if (!app) throw new Error(`Cannot confirm the migration commit for app ${appUrn}`);
+
+          if (app.migrationRecovery === null) {
+            logger.warn(`Migration commit completed for app ${appUrn} despite a lost response:`, err);
+            recoverySucceeded = true;
+            return { success: true, message: `App ${appUrn} updated successfully` };
+          }
+        }
+
+        let restoredFromBackup = false;
+        if (migrationRecoveryRequired && migrationBackupFilename) {
+          await appMigrationService.rollbackMigrations(appUrn, migrationBackupFilename);
+          restoredFromBackup = true;
+        }
+
+        if (!restoredFromBackup && previousFilesStaged && deploymentMayHaveChanged) {
           await clearAppFolderForRestore();
           await restorePreviousApp();
         }
@@ -180,8 +228,9 @@ export class UpdateAppCommand extends AppLifecycleCommand {
           await this.ensureAppDir(appUrn, form, { pruneContainers: false, persistSubnet: false });
           await dockerService.composeApp(appUrn, 'up --detach --force-recreate --remove-orphans');
         }
+
+        recoverySucceeded = true;
       } catch (rollbackError) {
-        recoverySucceeded = false;
         if (temporaryDirectory) {
           logger.error(
             `Failed to restore app ${appUrn} after an update error. Recovery snapshot retained at ${temporaryDirectory}. After recovering the app, remove this directory manually:`,

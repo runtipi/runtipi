@@ -19,7 +19,7 @@ export const SentryProvider = ({ children }: PropsWithChildren) => {
         },
       });
     }
-  }, [allowErrorMonitoring, version.current]);
+  }, [allowErrorMonitoring, version]);
 
   return children;
 };

@@ -5,6 +5,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { redirect, useParams } from 'react-router';
 import { AppStatus } from '../components/app-status/app-status';
+import { AppJobProgress } from '../components/app-job-progress/app-job-progress';
 import { AppActions } from '../containers/app-actions/app-actions';
 import { AppDetailsTabs } from '../containers/app-details-tabs/app-details-tabs';
 import type { Route } from './+types/app-details-page';
@@ -46,6 +47,7 @@ export default () => {
           <AppActions app={app} metadata={metadata} info={info} localDomain={userSettings.localDomain} sslPort={userSettings.sslPort} />
         </div>
       </div>
+      <AppJobProgress appUrn={info.urn} />
       <AppDetailsTabs info={info} app={app} metadata={metadata} />
     </div>
   );

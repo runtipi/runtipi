@@ -3,10 +3,12 @@ import { Button } from '../ui/Button';
 
 type ErrorPageProps = {
   onReset: () => void;
-  error: Error;
+  error: unknown;
 };
 
 export const ErrorPage = ({ error, onReset }: ErrorPageProps) => {
+  const message = error instanceof Error ? error.message : 'Unknown error occurred';
+
   return (
     <div className="page page-center">
       <div className="container-tight py-4">
@@ -23,7 +25,7 @@ export const ErrorPage = ({ error, onReset }: ErrorPageProps) => {
             </Button>
           </div>
           <pre className="mt-5" style={{ whiteSpace: 'normal' }}>
-            {error.message}
+            {message}
             <br />
             Location: {location.pathname}
           </pre>

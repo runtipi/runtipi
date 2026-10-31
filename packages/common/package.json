@@ -38,8 +38,8 @@
     "ci": "npm run build && npm run check-exports",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "local-release": "changeset version && changeset publish",
-    "tsc": "tsc",
-    "test": "bun test --coverage"
+    "test": "bun test --coverage",
+    "typecheck": "bun check"
   },
   "keywords": [],
   "author": "",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
     "@changesets/cli": "^2.29.3",
-    "vitest": "^4.0.4"
+    "vitest": "^4.1.12"
   },
   "peerDependencies": {
     "arktype": ">=2",

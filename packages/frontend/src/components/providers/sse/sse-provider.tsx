@@ -14,7 +14,13 @@ export const SSEProvider = ({ children }: PropsWithChildren) => {
 
   useSSE({
     topic: 'app',
-    onEvent: ({ event, appUrn, error }) => {
+    onEvent: (data) => {
+      if (data.event === 'job_progress') {
+        queryClient.setQueryData(['app-job', data.appUrn], data.job);
+        return;
+      }
+
+      const { event, appUrn, error } = data;
       if (error) {
         console.error(error);
       }

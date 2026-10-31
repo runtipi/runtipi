@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 
 import { serviceSchema, dynamicComposeSchema } from '../dynamic-compose.js';
+import { dynamicComposeSchemaYaml } from '../compose-yaml.js';
 import { type } from 'arktype';
 
 type ValidationResult<T> = { success: true; data: T } | { success: false };
 
-// biome-ignore lint/suspicious/noExplicitAny: excessive depth
 function safeParseArk<T>(schema: any, data: unknown): ValidationResult<T> {
   const result = schema(data);
 
@@ -319,6 +319,17 @@ describe('DynamicCompose Schema Tests', () => {
               }
             `);
         }
+      });
+
+      it('rejects inline migrations in both source formats', () => {
+        const migrations = [{ id: '001-database', service: 'migration' }];
+        const legacy = { schemaVersion: 2, services: [{ name: 'app', image: 'example:latest' }], migrations };
+        const yaml = { services: { app: { image: 'example:latest' } }, 'x-runtipi': { schema_version: 2, migrations } };
+
+        expect(safeParse(dynamicComposeSchema, legacy).success).toBe(false);
+        expect(dynamicComposeSchemaYaml(yaml)).toBeInstanceOf(type.errors);
+        expect(() => dynamicComposeSchema.toJsonSchema({})).not.toThrow();
+        expect(() => dynamicComposeSchemaYaml.toJsonSchema({})).not.toThrow();
       });
 
       it('should validate complex dynamic compose with all features', () => {

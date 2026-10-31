@@ -1,4 +1,4 @@
-import { execFileAsync } from '../exec-helpers';
+import { execFileAsync, spawnAsync } from '../exec-helpers';
 import { describe, expect, it } from 'vitest';
 
 describe('execFileAsync', () => {
@@ -125,6 +125,27 @@ describe('execFileAsync', () => {
     it('should execute command with numeric argument', async () => {
       const result = await execFileAsync('sleep', ['0.1']);
       expect(result.stderr).toBe('');
+    });
+  });
+});
+
+describe('spawnAsync', () => {
+  it('rejects a process terminated by a signal, even without stderr', async () => {
+    await expect(spawnAsync(process.execPath, ['-e', 'process.kill(process.pid, "SIGTERM")'])).rejects.toThrow('SIGTERM');
+  });
+
+  it('rejects a nonzero exit even when the process writes a warning', async () => {
+    await expect(spawnAsync(process.execPath, ['-e', 'console.error("archive incomplete"); process.exit(2)'])).rejects.toThrow('archive incomplete');
+  });
+
+  it('rejects when the executable cannot be started', async () => {
+    await expect(spawnAsync('/nonexistent/runtipi-tar', [])).rejects.toThrow();
+  });
+
+  it('returns successful output while allowing warnings on stderr', async () => {
+    await expect(spawnAsync(process.execPath, ['-e', 'console.log("done"); console.error("warning")'])).resolves.toEqual({
+      stdout: 'done\n',
+      stderr: 'warning\n',
     });
   });
 });

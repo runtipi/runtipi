@@ -1,6 +1,6 @@
 ARG NODE_VERSION="jod"
-ARG ALPINE_VERSION="3.21"
-ARG BUN_VERSION="1.3.0"
+ARG ALPINE_VERSION="3.24"
+ARG BUN_VERSION="1.4.4"
 
 FROM oven/bun:${BUN_VERSION}-alpine AS bun_base
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node_base
@@ -11,6 +11,7 @@ FROM bun_base AS builder_base
 WORKDIR /deps
 
 ARG TARGETARCH
+# renovate: datasource=github-releases depName=docker/compose
 ARG DOCKER_COMPOSE_VERSION="v2.40.0"
 ENV TARGETARCH=${TARGETARCH}
 
@@ -28,7 +29,7 @@ RUN chmod +x docker-binary
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git
+RUN apk add --no-cache curl openssl git tar pigz file
 
 # ---- BUILDER ----
 FROM builder_base AS builder
@@ -70,7 +71,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install --no-save --omit=dev argon2 class-transformer
+RUN npm install --no-save --omit=dev argon2@0.45.1 class-transformer@0.5.1
 
 COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./

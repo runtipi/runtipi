@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
@@ -30,7 +29,7 @@ export class AppHelpers {
    * @throws Will throw an error if the app has an invalid config.json file or if a required variable is missing.
    */
   public generateEnvFile = async (appUrn: AppUrn, form: AppEventFormInput) => {
-    const { internalIp, envFilePath, rootFolderHost, userSettings } = this.config.getConfig();
+    const { internalIp, envFilePath, rootFolderHost } = this.config.getConfig();
 
     const config = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
@@ -40,6 +39,15 @@ export class AppHelpers {
 
     const baseEnvFile = await this.filesytem.readTextFile(envFilePath);
     const envMap = this.envUtils.envStringToMap(baseEnvFile?.toString() ?? '');
+
+    // App env is docker compose interpolation scope. Seed only public host vars so
+    // core secrets (JWT_SECRET, POSTGRES_*, RABBITMQ_*) stay in Runtipi's own .env.
+    const publicHostEnvKeys = new Set(['LOCAL_DOMAIN', 'TZ', 'INTERNAL_IP']);
+    for (const key of envMap.keys()) {
+      if (!publicHostEnvKeys.has(key)) {
+        envMap.delete(key);
+      }
+    }
 
     const { appName, appStoreId } = extractAppUrn(appUrn);
 
@@ -52,7 +60,7 @@ export class AppHelpers {
     envMap.set('APP_NAME', appName);
     envMap.set('APP_STORE_ID', appStoreId);
     envMap.set('ROOT_FOLDER_HOST', rootFolderHost);
-    envMap.set('APP_DATA_DIR', path.join(`${userSettings.appDataPath}/app-data`, appStoreId, appName));
+    envMap.set('APP_DATA_DIR', this.appFilesManager.getAppDataHostPath(appUrn));
     envMap.set('APP_IMAGE_TAG', config.version);
 
     const appEnv = await this.appFilesManager.getAppEnv(appUrn);

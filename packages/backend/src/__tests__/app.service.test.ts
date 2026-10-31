@@ -4,6 +4,9 @@ import { AppService } from '@/app.service';
 import { APP_DATA_DIR, APP_DIR, DATA_DIR } from '@/common/constants';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { LocalTlsService } from '@/core/local-tls/local-tls.service';
+import { LoggerService } from '@/core/logger/logger.service';
+import { AppLifecycleService } from '@/modules/app-lifecycle/app-lifecycle.service';
 import type { FsMock } from '@/tests/__mocks__/fs';
 import { GithubService } from '@/utils/github/github.service';
 import { faker } from '@faker-js/faker';
@@ -11,7 +14,7 @@ import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { DOCKERODE } from '@/modules/docker/docker.module';
+import { DOCKERODE } from '@/modules/docker/docker.constants';
 import YAML from 'yaml';
 
 const TRAEFIK_CONFIG = `api:
@@ -39,17 +42,18 @@ describe('AppService', () => {
   let appService: AppService;
   let configurationService = mock<ConfigurationService>();
   let githubService = mock<GithubService>();
+  let localTls = mock<LocalTlsService>();
+  let logger = mock<LoggerService>();
+  let appLifecycle = mock<AppLifecycleService>();
 
   beforeEach(async () => {
-    const Dockerode = vi.fn();
     const moduleRef = await Test.createTestingModule({
       providers: [
         AppService,
         FilesystemService,
         {
           provide: DOCKERODE,
-          useFactory: () => Dockerode,
-          inject: [],
+          useValue: { pruneNetworks: vi.fn() },
         },
       ],
     })
@@ -59,6 +63,30 @@ describe('AppService', () => {
     appService = moduleRef.get(AppService);
     configurationService = moduleRef.get(ConfigurationService);
     githubService = moduleRef.get(GithubService);
+    localTls = moduleRef.get(LocalTlsService);
+    logger = moduleRef.get(LoggerService);
+    appLifecycle = moduleRef.get(AppLifecycleService);
+  });
+
+  describe('bootstrap', () => {
+    it('logs TLS provisioning failures and still restarts apps after an upgrade', async () => {
+      const failure = new Error('TLS provisioning failed');
+      configurationService.getConfig.mockReturnValue(
+        fromPartial({
+          version: 'new-version',
+          __prod__: true,
+          userSettings: { localDomain: 'tipi.lan', allowErrorMonitoring: false },
+          directories: { appDir: APP_DIR, dataDir: DATA_DIR, appDataDir: APP_DATA_DIR },
+        }),
+      );
+      localTls.ensure.mockRejectedValueOnce(failure);
+
+      await appService.bootstrap();
+
+      expect(localTls.ensure).toHaveBeenCalledWith('tipi.lan');
+      expect(logger.error).toHaveBeenCalledWith(failure);
+      expect(appLifecycle.restartRunningApps).toHaveBeenCalledOnce();
+    });
   });
 
   describe('getVersion', () => {

@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import { boolean, customType, integer, pgEnum, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
+import { boolean, customType, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, varchar } from 'drizzle-orm/pg-core';
 
 export const appStatusEnum = pgEnum('app_status_enum', [
   'running',
@@ -40,6 +40,25 @@ const appConfig = customType<{ data: Record<string, unknown>; driverData: string
   },
 });
 
+export type MigrationLedgerState = {
+  initialized: boolean;
+  migrationIds: string[];
+};
+
+export type RestoreDirectory = {
+  destination: string;
+  staged: string;
+  original: string;
+  destinationExisted: boolean;
+};
+
+export type RestorePhase = 'prepared' | 'recovered' | 'committed';
+
+export type MigrationRecovery = {
+  backupFilename: string;
+  migrationIds: string[];
+};
+
 export const app = pgTable('app', {
   id: serial().primaryKey().notNull(),
   status: appStatusEnum().default('stopped').notNull(),
@@ -51,6 +70,8 @@ export const app = pgTable('app', {
   exposed: boolean().default(false).notNull(),
   domain: varchar(),
   isVisibleOnGuestDashboard: boolean('is_visible_on_guest_dashboard').default(false).notNull(),
+  migrationsBaselined: boolean('migrations_baselined').default(false).notNull(),
+  migrationRecovery: jsonb('migration_recovery').$type<MigrationRecovery>(),
   openPort: boolean('open_port').default(true).notNull(),
   port: integer(),
   exposedLocal: boolean('exposed_local').default(false).notNull(),
@@ -73,6 +94,28 @@ export const appRelations = relations(app, ({ one }) => ({
     references: [appStore.slug],
   }),
 }));
+
+export const appMigration = pgTable(
+  'app_migration',
+  {
+    appId: integer('app_id')
+      .notNull()
+      .references(() => app.id, { onDelete: 'cascade' }),
+    migrationId: varchar('migration_id').notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.appId, table.migrationId] })],
+);
+
+export const appRestoreJournal = pgTable('app_restore_journal', {
+  appId: integer('app_id')
+    .primaryKey()
+    .notNull()
+    .references(() => app.id, { onDelete: 'cascade' }),
+  previousState: jsonb('previous_state').$type<MigrationLedgerState>().notNull(),
+  targetState: jsonb('target_state').$type<MigrationLedgerState>().notNull(),
+  directories: jsonb('directories').$type<RestoreDirectory[]>().notNull(),
+  phase: varchar().$type<RestorePhase>().default('prepared').notNull(),
+});
 
 export const user = pgTable('user', {
   id: serial().primaryKey().notNull(),

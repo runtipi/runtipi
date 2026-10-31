@@ -1,0 +1,138 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App lifecycle > install app > should not delete an existing app-data folder even if the app is reinstalled 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test2/
+│        ├─ data/
+│        │  └─ test.txt
+│        └─ app.env
+└─ data/
+   ├─ apps/
+   │  └─ test/
+   │     └─ test2/
+   │        ├─ data/
+   │        ├─ metadata/
+   │        │  └─ description.md
+   │        ├─ config.json
+   │        ├─ docker-compose.generated.yml
+   │        └─ docker-compose.json
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test2/
+   │           ├─ data/
+   │           ├─ metadata/
+   │           │  └─ description.md
+   │           ├─ config.json
+   │           └─ docker-compose.json
+   ├─ state/
+   │  └─ seed
+   └─ .env"
+`;
+
+exports[`App lifecycle > install app > should successfully install app and create expected directory structure 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     └─ test/
+│        ├─ data/
+│        └─ app.env
+└─ data/
+   ├─ apps/
+   │  └─ test/
+   │     └─ test/
+   │        ├─ data/
+   │        ├─ metadata/
+   │        │  └─ description.md
+   │        ├─ config.json
+   │        ├─ docker-compose.generated.yml
+   │        └─ docker-compose.json
+   ├─ backups/
+   ├─ repos/
+   │  └─ test/
+   │     └─ apps/
+   │        └─ test/
+   │           ├─ data/
+   │           ├─ metadata/
+   │           │  └─ description.md
+   │           ├─ config.json
+   │           └─ docker-compose.json
+   ├─ state/
+   │  └─ seed
+   └─ .env"
+`;
+
+exports[`App lifecycle > update all apps > should update multiple apps that have newer versions available 1`] = `
+"/
+├─ app-data/
+│  └─ test/
+│     ├─ app1/
+│     │  ├─ data/
+│     │  └─ app.env
+│     ├─ app2/
+│     │  ├─ data/
+│     │  └─ app.env
+│     └─ app3/
+│        ├─ data/
+│        └─ app.env
+├─ data/
+│  ├─ apps/
+│  │  └─ test/
+│  │     ├─ app1/
+│  │     │  ├─ data/
+│  │     │  ├─ metadata/
+│  │     │  │  └─ description.md
+│  │     │  ├─ config.json
+│  │     │  ├─ docker-compose.generated.yml
+│  │     │  └─ docker-compose.json
+│  │     ├─ app2/
+│  │     │  ├─ data/
+│  │     │  ├─ metadata/
+│  │     │  │  └─ description.md
+│  │     │  ├─ config.json
+│  │     │  ├─ docker-compose.generated.yml
+│  │     │  └─ docker-compose.json
+│  │     └─ app3/
+│  │        ├─ data/
+│  │        ├─ metadata/
+│  │        │  └─ description.md
+│  │        ├─ config.json
+│  │        ├─ docker-compose.generated.yml
+│  │        └─ docker-compose.json
+│  ├─ backups/
+│  │  ├─ .staging/
+│  │  └─ test/
+│  │     ├─ app1/
+│  │     │  └─ app1-test-TIMESTAMP.tar.gz
+│  │     └─ app3/
+│  │        └─ app3-test-TIMESTAMP.tar.gz
+│  ├─ repos/
+│  │  └─ test/
+│  │     └─ apps/
+│  │        ├─ app1/
+│  │        │  ├─ data/
+│  │        │  ├─ metadata/
+│  │        │  │  └─ description.md
+│  │        │  ├─ config.json
+│  │        │  └─ docker-compose.json
+│  │        ├─ app2/
+│  │        │  ├─ data/
+│  │        │  ├─ metadata/
+│  │        │  │  └─ description.md
+│  │        │  ├─ config.json
+│  │        │  └─ docker-compose.json
+│  │        └─ app3/
+│  │           ├─ data/
+│  │           ├─ metadata/
+│  │           │  └─ description.md
+│  │           ├─ config.json
+│  │           └─ docker-compose.json
+│  ├─ state/
+│  │  └─ seed
+│  └─ .env
+└─ tmp/
+   └─ runtipi-backup-staging/"
+`;

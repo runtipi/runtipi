@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Inject, Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
-import { execFileAsync } from './common/helpers/exec-helpers';
+import { LocalTlsService } from './core/local-tls/local-tls.service';
 import { CacheService, ONE_DAY_IN_SECONDS } from './core/cache/cache.service';
 import { ConfigurationService } from './core/config/configuration.service';
 import { DatabaseService } from './core/database/database.service';
@@ -12,7 +12,7 @@ import { AppStoreService } from './modules/app-stores/app-store.service';
 import { MarketplaceService } from './modules/marketplace/marketplace.service';
 import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 import { SystemEventsQueue } from './modules/queue/entities/system-events';
-import { DOCKERODE } from './modules/docker/docker.module';
+import { DOCKERODE } from './modules/docker/docker.constants';
 import Dockerode from 'dockerode';
 import { GithubService } from './utils/github/github.service';
 import YAML from 'yaml';
@@ -31,6 +31,7 @@ export class AppService {
     private readonly databaseService: DatabaseService,
     private readonly appLifecycleService: AppLifecycleService,
     private readonly githubService: GithubService,
+    private readonly localTls: LocalTlsService,
     @Inject(DOCKERODE) private docker: Dockerode,
   ) {}
 
@@ -194,74 +195,9 @@ export class AppService {
     await this.filesystem.writeTextFile(dest, YAML.stringify(parsed));
   }
 
-  /**
-   * Given a domain, generates the TLS certificates for it to be used with Traefik
-   *
-   * @param {string} data.domain The domain to generate the certificates for
-   */
   public generateTlsCertificates = async (data: { localDomain?: string }) => {
-    if (!data.localDomain) {
-      return;
-    }
-
-    const { dataDir } = this.configuration.get('directories');
-
-    const tlsFolder = path.join(dataDir, 'traefik', 'tls');
-
-    // If the certificate already exists, don't generate it again
-    if (
-      (await this.filesystem.isFile(path.join(tlsFolder, `${data.localDomain}.txt`))) &&
-      (await this.filesystem.isFile(path.join(tlsFolder, 'cert.pem'))) &&
-      (await this.filesystem.isFile(path.join(tlsFolder, 'key.pem')))
-    ) {
-      // Check if the certificate is still valid
-      const { stdout } = await execFileAsync('openssl', ['x509', '-checkend', '86400', '-noout', '-in', `${tlsFolder}/cert.pem`]);
-      if (stdout.includes('Certificate will not expire')) {
-        this.logger.info(`TLS certificate for ${data.localDomain} already exists`);
-        return;
-      }
-
-      this.logger.warn(`TLS certificate for ${data.localDomain} is expired or will expire soon. Regenerating a new one...`);
-    }
-
-    // Empty out the folder
-    const files = await this.filesystem.listFiles(tlsFolder);
-    await Promise.all(
-      files.map(async (file) => {
-        this.logger.info(`Removing file ${file}`);
-        await this.filesystem.removeFile(path.join(tlsFolder, file));
-      }),
-    );
-
-    const subject = `/O=runtipi.io/OU=IT/CN=*.${data.localDomain}/emailAddress=webmaster@${data.localDomain}`;
-    const subjectAltName = `DNS:*.${data.localDomain},DNS:${data.localDomain}`;
-
     try {
-      this.logger.info(`Generating TLS certificate for ${data.localDomain}`);
-      const { stderr } = await execFileAsync('openssl', [
-        'req',
-        '-x509',
-        '-newkey',
-        'rsa:4096',
-        '-keyout',
-        `${dataDir}/traefik/tls/key.pem`,
-        '-out',
-        `${dataDir}/traefik/tls/cert.pem`,
-        '-days',
-        '365',
-        '-subj',
-        subject,
-        '-addext',
-        `subjectAltName = ${subjectAltName}`,
-        '-nodes',
-      ]);
-      if (!(await this.filesystem.isFile(path.join(tlsFolder, 'cert.pem'))) || !(await this.filesystem.isFile(path.join(tlsFolder, 'key.pem')))) {
-        this.logger.error(`Failed to generate TLS certificate for ${data.localDomain}`);
-        this.logger.error(stderr);
-      } else {
-        this.logger.info(`Writing txt file for ${data.localDomain}`);
-      }
-      await this.filesystem.writeTextFile(path.join(tlsFolder, `${data.localDomain}.txt`), '');
+      await this.localTls.ensure(data.localDomain);
     } catch (error) {
       this.logger.error(error);
     }

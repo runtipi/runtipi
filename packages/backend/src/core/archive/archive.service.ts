@@ -1,17 +1,27 @@
 import { spawnAsync } from '@/common/helpers/exec-helpers';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
+import { availableParallelism } from 'node:os';
 
 export type ArchiveEntry = { path: string; type: string };
 
 @Injectable()
 export class ArchiveService {
+  private pigzAvailable?: Promise<boolean>;
+
   constructor(private readonly logger: LoggerService) {}
 
-  createTarGz = async (sourceDir: string, destinationFile: string) => {
-    const args = ['-czpf', destinationFile, '-C', sourceDir, '.'];
+  createTarGz = async (sourceDir: string, destinationFile: string, signal?: AbortSignal) => {
+    signal?.throwIfAborted();
+    this.pigzAvailable ??= spawnAsync('pigz', ['--version'])
+      .then(() => true)
+      .catch(() => false);
+
+    const compression = (await this.pigzAvailable) ? ['--use-compress-program', `pigz -p ${Math.min(4, availableParallelism())}`] : ['-z'];
+    const args = [...compression, '-cpf', destinationFile, '-C', sourceDir, '.'];
+
     this.logger.debug(`Creating archive with args: tar ${args.join(' ')}`);
-    return spawnAsync('tar', args);
+    return spawnAsync('tar', args, { signal });
   };
 
   extractTarGz = async (sourceFile: string, destinationDir: string) => {

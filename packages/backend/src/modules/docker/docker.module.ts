@@ -3,8 +3,7 @@ import Dockerode from 'dockerode';
 import { AppStoreModule } from '../app-stores/app-store.module';
 import { AppsModule } from '../apps/apps.module';
 import { DockerService } from './docker.service';
-
-export const DOCKERODE = 'DOCKERODE_INSTANCE';
+import { DOCKERODE } from './docker.constants';
 
 @Module({
   imports: [AppsModule, AppStoreModule],

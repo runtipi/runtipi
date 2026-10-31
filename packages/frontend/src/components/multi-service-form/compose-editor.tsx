@@ -1,4 +1,4 @@
-import { dynamicComposeSchemaYaml, convertLegacyToYaml, convertYamlToLegacy, dynamicComposeSchemaArk } from '@runtipi/common/schemas';
+import { dynamicComposeSchemaYaml, convertLegacyToYaml, convertYamlToLegacy } from '@runtipi/common/schemas';
 import { useEffect, useState, useCallback } from 'react';
 import { useMultiServiceStore } from '@/stores/multiServiceStore';
 import CodeMirror from '@uiw/react-codemirror';
@@ -11,17 +11,12 @@ import { type } from 'arktype';
 import { deepClean } from '@/utils/objects';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs/tabs';
 import betterAjvErrors from 'better-ajv-errors';
-import Ajv from 'ajv/dist/2020';
+import { composeEditorJsonSchema, validateComposeEditorJson } from './compose-editor-schema';
 
 type Props = {
   onChange: (value: string, format: 'yaml' | 'json', error?: string) => void;
   initialFormat?: 'yaml' | 'json';
 };
-
-const jsonSchema = dynamicComposeSchemaArk.omit('schemaVersion').toJsonSchema({ fallback: { default: (ctx) => ctx.base } });
-const ajv = new Ajv({ allErrors: true });
-ajv.addKeyword('message');
-const validateJson = ajv.compile(jsonSchema);
 
 export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
   const { t } = useTranslation();
@@ -105,12 +100,15 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
             }
           } else {
             const parsedValue = JSON.parse(newValue);
-            const valid = validateJson(parsedValue);
+            const valid = validateComposeEditorJson(parsedValue);
 
             if (valid) {
               currentError = undefined;
             } else {
-              const formattedErrors = betterAjvErrors(jsonSchema, parsedValue, validateJson.errors, { format: 'cli', indent: 2 });
+              const formattedErrors = betterAjvErrors(composeEditorJsonSchema, parsedValue, validateComposeEditorJson.errors, {
+                format: 'cli',
+                indent: 2,
+              });
               currentError = formattedErrors;
             }
           }
@@ -134,7 +132,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     [checkDirty, onChange, setIsDirty, t],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on mount
+  // oxlint-disable react-hooks/exhaustive-deps -- only want to run on mount
   useEffect(() => {
     if (format === 'yaml') {
       validateInput(yamlValue, 'yaml');
@@ -142,6 +140,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       validateInput(jsonValue, 'json');
     }
   }, []);
+  // oxlint-enable react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

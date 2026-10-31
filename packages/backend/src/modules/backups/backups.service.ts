@@ -31,12 +31,6 @@ export class BackupsService {
     };
   }
 
-  public async deleteAppBackup(params: { appUrn: AppUrn; filename: string }): Promise<void> {
-    const { appUrn, filename } = params;
-
-    await this.backupManager.deleteBackup(appUrn, filename);
-  }
-
   public async getBackupFilePath(params: { appUrn: AppUrn; filename: string }): Promise<string> {
     const { appUrn, filename } = params;
     const app = await this.appsRepository.getAppByUrn(appUrn);
