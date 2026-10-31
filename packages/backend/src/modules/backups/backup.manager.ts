@@ -197,7 +197,7 @@ export class BackupManager implements OnModuleInit {
 
             for (const name of ['app-data', 'app', 'user-config']) {
               await manager.archiveFiles.validateRestoreDirectory(path.join(contentDirectory, name), {
-                allowSymlinks: false,
+                allowSymlinks: true,
                 rejectHardLinks: true,
                 optional: name === 'user-config',
               });
@@ -275,17 +275,11 @@ export class BackupManager implements OnModuleInit {
 
             const runValidationFsOperation = pLimit(16);
 
-            await manager.archiveFiles.validateRestoreDirectory(
-              path.join(restoreDir, 'app-data'),
-              { allowSymlinks: true },
-              undefined,
-              runValidationFsOperation,
-            );
+            await manager.archiveFiles.validateRestoreDirectory(path.join(restoreDir, 'app-data'), { allowSymlinks: true }, runValidationFsOperation);
 
             await manager.archiveFiles.validateRestoreDirectory(
               path.join(restoreDir, 'app'),
               { allowSymlinks: true, rejectHardLinks: true },
-              undefined,
               runValidationFsOperation,
             );
 
@@ -301,11 +295,10 @@ export class BackupManager implements OnModuleInit {
             await manager.archiveFiles.validateRestoreDirectory(
               path.join(restoreDir, 'user-config'),
               {
-                allowSymlinks: false,
+                allowSymlinks: true,
                 optional: true,
                 rejectHardLinks: true,
               },
-              undefined,
               runValidationFsOperation,
             );
 

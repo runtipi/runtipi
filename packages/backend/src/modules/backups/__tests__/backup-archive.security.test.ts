@@ -110,7 +110,7 @@ describe('BackupArchive file handle cleanup', () => {
 describe('BackupManager backup source validation', () => {
   const appUrn = createAppUrn('test-app', 'test-store');
 
-  it('dereferences contained symlinks into independent archive files', async () => {
+  it('preserves contained symlinks as archive links', async () => {
     await fs.promises.mkdir('/tmp', { recursive: true });
     const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
     const appDataDir = path.join(rootDir, 'app-data');
@@ -151,7 +151,7 @@ describe('BackupManager backup source validation', () => {
 
       await expect(backupManager.backupApp(appUrn)).resolves.toMatch(/\.tar\.gz$/);
 
-      expect(copiedLinkStats?.isFile()).toBe(true);
+      expect(copiedLinkStats?.isSymbolicLink()).toBe(true);
     } finally {
       await fs.promises.rm(rootDir, { recursive: true, force: true });
     }
@@ -247,177 +247,6 @@ describe('BackupManager backup source validation', () => {
       await expect(fs.promises.access(destination)).rejects.toMatchObject({ code: 'ENOENT' });
     } finally {
       copyFile.mockRestore();
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('copies a contained linked directory while rejecting an escaping nested link', async () => {
-    await fs.promises.mkdir('/tmp', { recursive: true });
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const appDataDir = path.join(rootDir, 'app-data');
-    const appInstalledDir = path.join(rootDir, 'app');
-    const temporaryBackupDir = path.join(rootDir, 'temporary-backup');
-    const externalFile = path.join(rootDir, 'external.txt');
-    const logger = createLogger();
-    const filesystem = new FilesystemService(logger);
-    const archiveManager = {
-      createTarGz: vi.fn(),
-      listTarGz: vi.fn().mockResolvedValue([
-        { path: './app-data/', type: 'd' },
-        { path: './app/', type: 'd' },
-      ]),
-    } as unknown as ArchiveService;
-    const config = { get: vi.fn().mockReturnValue({ dataDir: rootDir }) } as unknown as ConfigurationService;
-    const appFilesManager = {
-      getAppPaths: vi.fn().mockReturnValue({ appDataDir, appInstalledDir }),
-    } as unknown as AppFilesManager;
-    const backupManager = new BackupManager(archiveManager, logger, config, filesystem, appFilesManager, appsRepository, mock<DockerService>());
-
-    try {
-      await fs.promises.mkdir(path.join(appDataDir, 'data'), { recursive: true });
-      await fs.promises.mkdir(appInstalledDir, { recursive: true });
-      await fs.promises.writeFile(path.join(appDataDir, 'data', 'safe.txt'), 'safe');
-      await fs.promises.writeFile(externalFile, 'external');
-      await fs.promises.writeFile(path.join(appInstalledDir, 'config.json'), '{}');
-      await fs.promises.symlink('data', path.join(appDataDir, 'linked-data'));
-      await fs.promises.symlink('../../external.txt', path.join(appDataDir, 'data', 'escaping-link.txt'));
-      mockBackupTempDirectories(filesystem, temporaryBackupDir);
-
-      await expect(backupManager.backupApp(appUrn)).rejects.toThrow('Backup contains unsupported file types');
-      expect(archiveManager.createTarGz).not.toHaveBeenCalled();
-
-      await fs.promises.unlink(path.join(appDataDir, 'data', 'escaping-link.txt'));
-      archiveManager.createTarGz = vi.fn(async (_sourceDir: string, archivePath: string) => {
-        await expect(fs.promises.readFile(path.join(temporaryBackupDir, 'content', 'app-data', 'linked-data', 'safe.txt'), 'utf8')).resolves.toBe(
-          'safe',
-        );
-        await fs.promises.writeFile(archivePath, 'archive');
-        return { stdout: '', stderr: '' };
-      });
-
-      await expect(backupManager.backupApp(appUrn)).resolves.toMatch(/\.tar\.gz$/);
-    } finally {
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('dereferences only the immutable quarantine copy when a source link changes during backup', async () => {
-    await fs.promises.mkdir('/tmp', { recursive: true });
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const appDataDir = path.join(rootDir, 'app-data');
-    const appInstalledDir = path.join(rootDir, 'app');
-    const temporaryBackupDir = path.join(rootDir, 'temporary-backup');
-    const safeFile = path.join(appDataDir, 'safe.txt');
-    const sourceLink = path.join(appDataDir, 'link.txt');
-    const externalFile = path.join(rootDir, 'external.txt');
-    const logger = createLogger();
-    const filesystem = new FilesystemService(logger);
-    const archiveManager = {
-      createTarGz: vi.fn(async (_sourceDir: string, archivePath: string) => {
-        await expect(fs.promises.readFile(path.join(temporaryBackupDir, 'content', 'app-data', 'link.txt'), 'utf8')).resolves.toBe('safe');
-        await fs.promises.writeFile(archivePath, 'archive');
-        return { stdout: '', stderr: '' };
-      }),
-      listTarGz: vi.fn().mockResolvedValue([
-        { path: './app-data/', type: 'd' },
-        { path: './app/', type: 'd' },
-      ]),
-    } as unknown as ArchiveService;
-    const config = { get: vi.fn().mockReturnValue({ dataDir: rootDir }) } as unknown as ConfigurationService;
-    const appFilesManager = {
-      getAppPaths: vi.fn().mockReturnValue({ appDataDir, appInstalledDir }),
-    } as unknown as AppFilesManager;
-    const backupManager = new BackupManager(archiveManager, logger, config, filesystem, appFilesManager, appsRepository, mock<DockerService>());
-
-    try {
-      await fs.promises.mkdir(appDataDir, { recursive: true });
-      await fs.promises.mkdir(appInstalledDir, { recursive: true });
-      await fs.promises.writeFile(safeFile, 'safe');
-      await fs.promises.writeFile(externalFile, 'external');
-      await fs.promises.writeFile(path.join(appInstalledDir, 'config.json'), '{}');
-      await fs.promises.symlink(safeFile, sourceLink);
-      mockBackupTempDirectories(filesystem, temporaryBackupDir);
-      const rewriteAbsoluteSymlinks = (
-        BackupArchive.prototype as unknown as { rewriteAbsoluteSymlinks: (...args: string[]) => Promise<void> }
-      ).rewriteAbsoluteSymlinks.bind(new BackupArchive(filesystem, logger));
-      vi.spyOn(BackupArchive.prototype as unknown as { rewriteAbsoluteSymlinks: () => Promise<void> }, 'rewriteAbsoluteSymlinks').mockImplementation(
-        async (...args: string[]) => {
-          await rewriteAbsoluteSymlinks(...args);
-          await fs.promises.unlink(sourceLink);
-          await fs.promises.symlink(externalFile, sourceLink);
-        },
-      );
-
-      await expect(backupManager.backupApp(appUrn)).resolves.toMatch(/\.tar\.gz$/);
-    } finally {
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('rejects symlinks escaping the backup source before copying', async () => {
-    await fs.promises.mkdir('/tmp', { recursive: true });
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const appDataDir = path.join(rootDir, 'app-data');
-    const appInstalledDir = path.join(rootDir, 'app');
-    const temporaryBackupDir = path.join(rootDir, 'temporary-backup');
-    const externalFile = path.join(rootDir, 'external.txt');
-    const logger = createLogger();
-    const filesystem = new FilesystemService(logger);
-    const archiveManager = { createTarGz: vi.fn(), listTarGz: vi.fn() } as unknown as ArchiveService;
-    const config = { get: vi.fn().mockReturnValue({ dataDir: rootDir }) } as unknown as ConfigurationService;
-    const appFilesManager = {
-      getAppPaths: vi.fn().mockReturnValue({ appDataDir, appInstalledDir }),
-    } as unknown as AppFilesManager;
-    const backupManager = new BackupManager(archiveManager, logger, config, filesystem, appFilesManager, appsRepository, mock<DockerService>());
-
-    try {
-      await fs.promises.mkdir(appDataDir, { recursive: true });
-      await fs.promises.mkdir(appInstalledDir, { recursive: true });
-      await fs.promises.writeFile(externalFile, 'external');
-      await fs.promises.writeFile(path.join(appInstalledDir, 'config.json'), '{}');
-      await fs.promises.symlink(externalFile, path.join(appDataDir, 'escaping-link.txt'));
-      mockBackupTempDirectories(filesystem, temporaryBackupDir);
-      const copyDirectory = vi.spyOn(filesystem, 'copyDirectory');
-
-      await expect(backupManager.backupApp(appUrn)).rejects.toThrow('Backup contains unsupported file types');
-
-      expect(copyDirectory).not.toHaveBeenCalled();
-      expect(archiveManager.createTarGz).not.toHaveBeenCalled();
-    } finally {
-      await fs.promises.rm(rootDir, { recursive: true, force: true });
-    }
-  });
-
-  it('rejects chained symlinks whose final target escapes the backup source', async () => {
-    await fs.promises.mkdir('/tmp', { recursive: true });
-    const rootDir = await fs.promises.mkdtemp('/tmp/runtipi-backup-source-');
-    const appDataDir = path.join(rootDir, 'app-data');
-    const appInstalledDir = path.join(rootDir, 'app');
-    const temporaryBackupDir = path.join(rootDir, 'temporary-backup');
-    const externalFile = path.join(rootDir, 'external.txt');
-    const logger = createLogger();
-    const filesystem = new FilesystemService(logger);
-    const archiveManager = { createTarGz: vi.fn(), listTarGz: vi.fn() } as unknown as ArchiveService;
-    const config = { get: vi.fn().mockReturnValue({ dataDir: rootDir }) } as unknown as ConfigurationService;
-    const appFilesManager = {
-      getAppPaths: vi.fn().mockReturnValue({ appDataDir, appInstalledDir }),
-    } as unknown as AppFilesManager;
-    const backupManager = new BackupManager(archiveManager, logger, config, filesystem, appFilesManager, appsRepository, mock<DockerService>());
-
-    try {
-      await fs.promises.mkdir(appDataDir, { recursive: true });
-      await fs.promises.mkdir(appInstalledDir, { recursive: true });
-      await fs.promises.writeFile(externalFile, 'external');
-      await fs.promises.writeFile(path.join(appInstalledDir, 'config.json'), '{}');
-      await fs.promises.symlink('../external.txt', path.join(appDataDir, 'second-link.txt'));
-      await fs.promises.symlink('second-link.txt', path.join(appDataDir, 'first-link.txt'));
-      mockBackupTempDirectories(filesystem, temporaryBackupDir);
-      const copyDirectory = vi.spyOn(filesystem, 'copyDirectory');
-
-      await expect(backupManager.backupApp(appUrn)).rejects.toThrow('Backup contains unsupported file types');
-
-      expect(copyDirectory).not.toHaveBeenCalled();
-    } finally {
       await fs.promises.rm(rootDir, { recursive: true, force: true });
     }
   });

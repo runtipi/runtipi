@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { APP_REL_COMPOSE_FILENAME } from '@/common/constants';
+import { APP_GENERATED_COMPOSE_FILENAME, APP_REL_COMPOSE_FILENAME } from '@/common/constants';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { execFileAsync } from '@/common/helpers/exec-helpers';
 import type { ConfigurationService } from '@/core/config/configuration.service';
@@ -165,7 +165,13 @@ export class AppStoreFilesManager {
 
     // Copy app folder from repo
     this.logger.info(`Copying app ${appUrn} from repo ${this.storeConfig.slug}`);
-    if (!(await this.filesystem.copyDirectory(appRepoDir, appInstalledDir))) {
+    const generatedComposePath = path.join(appRepoDir, APP_GENERATED_COMPOSE_FILENAME);
+    const copied = await this.filesystem.copyDirectory(appRepoDir, appInstalledDir, {
+      filter: (source) => source !== generatedComposePath,
+    });
+
+    if (!copied) {
+      await this.filesystem.removeDirectory(appInstalledDir);
       throw new Error(`Failed to copy app ${appUrn} from repo ${this.storeConfig.slug}`);
     }
   }
