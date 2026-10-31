@@ -83,6 +83,7 @@ const setup = async () => {
 test.each([
   { name: 'missing', content: undefined },
   { name: 'populated', content: '[safe]\n\tdirectory = /another/repo\n[user]\n\tname = Test\n' },
+  { name: 'bloated', content: `[safe]\n${'\tdirectory = /data/repos\n'.repeat(100_000)}` },
   { name: 'malformed', content: '\0\0\0' },
 ])('clones and pulls repositories independently of $name global Git config', async ({ content }) => {
   const { helpers, dataDir, gitConfigFile, realFs } = await setup();
