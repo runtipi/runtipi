@@ -196,6 +196,10 @@ export class AppService {
   }
 
   public generateTlsCertificates = async (data: { localDomain?: string }) => {
-    await this.localTls.ensure(data.localDomain);
+    try {
+      await this.localTls.ensure(data.localDomain);
+    } catch (error) {
+      this.logger.error(error);
+    }
   };
 }
