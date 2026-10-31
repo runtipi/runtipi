@@ -11,7 +11,7 @@ RUN apk add --no-cache g++ make curl python3 openssl git tar pigz file
 
 ARG TARGETARCH
 # renovate: datasource=github-releases depName=docker/compose
-ARG DOCKER_COMPOSE_VERSION="v2.39.2"
+ARG DOCKER_COMPOSE_VERSION="v2.40.3"
 ENV TARGETARCH=${TARGETARCH}
 ENV NODE_ENV="development"
 
