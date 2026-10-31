@@ -11,6 +11,7 @@ FROM bun_base AS builder_base
 WORKDIR /deps
 
 ARG TARGETARCH
+# renovate: datasource=github-releases depName=docker/compose
 ARG DOCKER_COMPOSE_VERSION="v2.40.0"
 ENV TARGETARCH=${TARGETARCH}
 
