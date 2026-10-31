@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
@@ -38,6 +39,7 @@ test('backup deletion waits for the app lock and reconciles recovery before dele
     mock(),
     mock(),
     mock<AppJobService>(),
+    mock<AppOperationsService>(),
   );
   let recovered = false;
   migrations.reconcile.mockImplementation(async () => {

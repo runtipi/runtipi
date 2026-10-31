@@ -269,6 +269,34 @@ describe('AppHelpers', () => {
       expect(envUtils.createRandomString).toHaveBeenCalledWith('RANDOM_VAR', 16, undefined);
     });
 
+    it.each([
+      { existing: '', supplied: undefined, expected: 'generated-key' },
+      { existing: 'saved-key', supplied: undefined, expected: 'saved-key' },
+      { existing: 'saved-key', supplied: '', expected: 'saved-key' },
+      { existing: 'saved-key', supplied: 'explicit-key', expected: 'explicit-key' },
+    ])('resolves random fields without preserving blank values: $existing / $supplied', async ({ existing, supplied, expected }) => {
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValueOnce(envMap).mockReturnValueOnce(new Map([['APP_KEY', existing]]));
+      appFilesManager.getInstalledAppInfo.mockResolvedValue({
+        ...mockAppInfo,
+        form_fields: [{ type: 'random', label: 'Application key', env_variable: 'APP_KEY', required: false, min: 32 }],
+      });
+      envUtils.createRandomString.mockReturnValue('generated-key');
+
+      await appHelpers.generateEnvFile(testAppUrn, { APP_KEY: supplied });
+
+      expect(envMap.get('APP_KEY')).toBe(expected);
+    });
+
+    it('derives the app domain when an API client omits the default port', async () => {
+      const envMap = new Map<string, string>();
+      envUtils.envStringToMap.mockReturnValueOnce(envMap).mockReturnValueOnce(new Map());
+
+      await appHelpers.generateEnvFile(testAppUrn, {});
+
+      expect(envMap.get('APP_DOMAIN')).toBe('127.0.0.1:8080');
+    });
+
     it('should write the transformed env map to file', async () => {
       // Arrange
       const envMap = new Map<string, string>([['TEST_VAR', 'test-value']]);

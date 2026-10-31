@@ -176,6 +176,79 @@ export class DockerService {
     return effectiveComposeSchema.assert(JSON.parse(result.stdout)).services;
   }
 
+  public async getAppRuntime(appUrn: AppUrn) {
+    const containers = await this.docker.listContainers({
+      all: true,
+      filters: { label: [`com.docker.compose.project=${appUrn.replace(':', '_')}`] },
+    });
+
+    return Promise.all(
+      containers.map(async (container) => {
+        const inspected = await this.docker.getContainer(container.Id).inspect();
+
+        return {
+          name: inspected.Name.replace(/^\//, ''),
+          service: container.Labels['com.docker.compose.service'],
+          state: inspected.State.Status,
+          health: inspected.State.Health?.Status ?? null,
+          restartCount: inspected.RestartCount,
+          exitCode: inspected.State.ExitCode,
+          startedAt: inspected.State.StartedAt,
+          ports: container.Ports.map(({ IP, PrivatePort, PublicPort, Type }) => ({
+            hostIp: IP,
+            containerPort: PrivatePort,
+            hostPort: PublicPort,
+            protocol: Type,
+          })),
+        };
+      }),
+    );
+  }
+
+  public async getLogsSnapshot(maxLines: number, appUrn?: AppUrn) {
+    const { args } = appUrn ? await this.getBaseComposeArgsApp(appUrn) : await this.getBaseComposeArgsRuntipi();
+    args.push('logs', '--no-color', '--timestamps', '--tail', String(maxLines));
+
+    return new Promise<{ text: string; truncated: boolean }>((resolve, reject) => {
+      const child = spawn('docker-compose', args, { stdio: 'pipe' });
+      const chunks: Buffer[] = [];
+      let bytes = 0;
+      let truncated = false;
+      const maximum = 256 * 1024;
+      const timeout = setTimeout(() => {
+        child.kill('SIGKILL');
+        reject(new Error('Log snapshot timed out'));
+      }, 10000);
+
+      const append = (data: Buffer) => {
+        const remaining = maximum - bytes;
+        if (remaining > 0) {
+          chunks.push(data.subarray(0, remaining));
+          bytes += Math.min(data.length, remaining);
+        }
+        if (data.length > remaining) {
+          truncated = true;
+          child.kill('SIGTERM');
+        }
+      };
+
+      child.stdout.on('data', append);
+      child.stderr.on('data', append);
+      child.on('error', (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      });
+      child.on('close', (code) => {
+        clearTimeout(timeout);
+        if (code !== 0 && !truncated) {
+          reject(new Error('Unable to read logs'));
+          return;
+        }
+        resolve({ text: Buffer.concat(chunks).toString('utf8'), truncated });
+      });
+    });
+  }
+
   public getLogsStream = async (maxLines: number, appUrn?: AppUrn) => {
     try {
       const { args } = appUrn ? await this.getBaseComposeArgsApp(appUrn) : await this.getBaseComposeArgsRuntipi();

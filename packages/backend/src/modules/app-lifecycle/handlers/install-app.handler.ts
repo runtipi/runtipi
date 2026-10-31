@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -26,6 +27,7 @@ export class InstallAppHandler implements ILifecycleHandler<InstallAppParams> {
     private readonly validationService: AppValidationService,
     private readonly marketplaceService: MarketplaceService,
     private readonly startAppHandler: StartAppHandler,
+    private readonly operations: AppOperationsService,
   ) {}
 
   async execute(appUrn: AppUrn, params?: InstallAppParams): Promise<HandlerResult> {
@@ -78,22 +80,18 @@ export class InstallAppHandler implements ILifecycleHandler<InstallAppParams> {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue
-      .publish({ appUrn, command: 'install', requestId, form: { ...parsedForm, skipRun: skipRun ?? false } })
-      .then(async ({ success, message }) => {
-        if (success) {
-          await this.statusManager.emitSuccess({
-            appId: createdApp.id,
-            appUrn,
-            event: 'install_success',
-            status: skipRun ? 'stopped' : 'running',
-          });
-        } else {
-          await this.statusManager.deleteApp(createdApp.id);
-          this.statusManager.emitEvent({ appUrn, event: 'install_error', error: message });
-        }
-      });
+    return this.operations.submit(appUrn, 'install', requestId, async () => {
+      const result = await this.appEventsQueue.publish({ appUrn, command: 'install', requestId, form: { ...parsedForm, skipRun: skipRun ?? false } });
+      const { success, message } = result;
 
-    return { requestId };
+      if (success) {
+        await this.statusManager.emitSuccess({ appId: createdApp.id, appUrn, event: 'install_success', status: skipRun ? 'stopped' : 'running' });
+      } else {
+        await this.statusManager.deleteApp(createdApp.id);
+        this.statusManager.emitEvent({ appUrn, event: 'install_error', error: message });
+      }
+
+      return result;
+    });
   }
 }

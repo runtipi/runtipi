@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
@@ -12,6 +13,7 @@ export class StopAppHandler implements ILifecycleHandler {
     private readonly appRepository: AppsRepository,
     private readonly appEventsQueue: AppEventsQueue,
     private readonly statusManager: StatusManagerService,
+    private readonly operations: AppOperationsService,
   ) {}
 
   async execute(appUrn: AppUrn): Promise<HandlerResult> {
@@ -25,7 +27,9 @@ export class StopAppHandler implements ILifecycleHandler {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ command: 'stop', appUrn, requestId, form: app.config }).then(async ({ success, message }) => {
+    return this.operations.submit(appUrn, 'stop', requestId, async () => {
+      const result = await this.appEventsQueue.publish({ command: 'stop', appUrn, requestId, form: app.config });
+      const { success, message } = result;
       if (success) {
         await this.statusManager.emitSuccess({
           appId: app.id,
@@ -42,8 +46,8 @@ export class StopAppHandler implements ILifecycleHandler {
           error: message ?? 'Unknown error',
         });
       }
-    });
 
-    return { requestId };
+      return result;
+    });
   }
 }

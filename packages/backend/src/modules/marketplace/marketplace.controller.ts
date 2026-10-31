@@ -84,8 +84,7 @@ export class MarketplaceController {
   @UseGuards(AuthGuard)
   @ApiResponse({ type: PullDto })
   async pullAppStores() {
-    const res = await this.appStoreService.pullRepositories();
-    await this.marketplaceService.initialize();
+    const res = await this.marketplaceService.pullAppStores();
     return PullDto.parse(res, { reportOnly: true });
   }
 
@@ -93,8 +92,7 @@ export class MarketplaceController {
   @UseGuards(AuthGuard)
   @ApiResponse({ type: AppStoreDto })
   async createAppStore(@Body() body: CreateAppStoreBodyDto) {
-    const appStore = await this.appStoreService.createAppStore(body);
-    await this.marketplaceService.initialize();
+    const appStore = await this.marketplaceService.createAppStore(body);
 
     return AppStoreDto.parse(appStore, { reportOnly: true });
   }
@@ -121,8 +119,7 @@ export class MarketplaceController {
   @UseGuards(AuthGuard)
   @ApiResponse({ type: UpdateAppStoreDto })
   async updateAppStore(@Param('id') id: string, @Body() body: UpdateAppStoreBodyDto) {
-    await this.appStoreService.updateAppStore(id, body);
-    await this.marketplaceService.initialize();
+    await this.marketplaceService.updateAppStore(id, body);
 
     return UpdateAppStoreDto.parse({ success: true }, { reportOnly: true });
   }
@@ -130,8 +127,7 @@ export class MarketplaceController {
   @Delete(':id')
   @UseGuards(AuthGuard)
   async deleteAppStore(@Param('id') id: string) {
-    await this.appStoreService.deleteAppStore(id);
-    await this.marketplaceService.initialize();
+    await this.marketplaceService.deleteAppStore(id);
 
     return { success: true };
   }

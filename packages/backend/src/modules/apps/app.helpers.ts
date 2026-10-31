@@ -82,8 +82,14 @@ export class AppHelpers {
       const envVar = field.env_variable;
 
       if (field.type === 'random') {
-        if (existingAppEnvMap.has(envVar)) {
-          envMap.set(envVar, existingAppEnvMap.get(envVar) as string);
+        if (typeof formValue === 'string' && formValue.trim()) {
+          envMap.set(envVar, formValue);
+          continue;
+        }
+
+        const existingValue = existingAppEnvMap.get(envVar);
+        if (existingValue?.trim()) {
+          envMap.set(envVar, existingValue);
           continue;
         }
 
@@ -114,8 +120,9 @@ export class AppHelpers {
     envMap.set('APP_HOST', internalIp);
     envMap.set('APP_PROTOCOL', 'http');
 
-    if (config.port && form.port) {
-      envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
+    const port = form.port ?? config.port;
+    if (port) {
+      envMap.set('APP_DOMAIN', `${internalIp}:${port}`);
     }
 
     if (form.exposedLocal) {

@@ -14,7 +14,7 @@ import { RepoEventsQueue } from './modules/queue/entities/repo-events';
 import { SystemEventsQueue } from './modules/queue/entities/system-events';
 import { DOCKERODE } from './modules/docker/docker.constants';
 import Dockerode from 'dockerode';
-import { GithubService } from './utils/github/github.service';
+import { InstanceService } from './modules/system/instance.service';
 import YAML from 'yaml';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class AppService {
     private readonly marketplaceService: MarketplaceService,
     private readonly databaseService: DatabaseService,
     private readonly appLifecycleService: AppLifecycleService,
-    private readonly githubService: GithubService,
+    private readonly instance: InstanceService,
     private readonly localTls: LocalTlsService,
     @Inject(DOCKERODE) private docker: Dockerode,
   ) {}
@@ -82,20 +82,8 @@ export class AppService {
     }
   }
 
-  public async getVersion() {
-    const { version: currentVersion } = this.configuration.getConfig();
-
-    const [githubRelease, releasesSince] = await Promise.all([
-      this.githubService.getLatestRelease('runtipi', 'runtipi'),
-      this.githubService.getReleasesSince('runtipi', 'runtipi', currentVersion),
-    ]);
-
-    return {
-      current: currentVersion,
-      latest: githubRelease?.version || currentVersion,
-      body: githubRelease?.body ?? '',
-      releases: releasesSince,
-    };
+  public getVersion() {
+    return this.instance.getVersion();
   }
 
   public async copyAssets() {

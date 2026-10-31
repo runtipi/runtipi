@@ -130,24 +130,25 @@ describe('BackupManager backup uploads', () => {
     expect(pathExists).not.toHaveBeenCalled();
   });
 
-  it('writes uploads exclusively with private permissions before atomic publication', async () => {
+  it('publishes uploads with private permissions and correct content', async () => {
     const upload = Buffer.from('uploaded backup');
-    const writeFile = vi.spyOn(fs.promises, 'writeFile');
 
     await manager.uploadBackup(appUrn, filename, upload);
 
-    expect(writeFile).toHaveBeenCalledWith(expect.stringMatching(/\.runtipi-backup-.+\/.+\.tar\.gz$/), upload, {
-      flag: 'wx',
-      mode: 0o600,
-    });
+    expect((await fs.promises.stat(backupPath)).mode & 0o777).toBe(0o600);
+    await expect(fs.promises.readFile(backupPath)).resolves.toEqual(upload);
   });
 
   it('does not publish a partial write and allows retry', async () => {
     const writeError = Object.assign(new Error('disk full'), { code: 'ENOSPC' });
-    const realWriteFile = fs.promises.writeFile;
-    vi.spyOn(fs.promises, 'writeFile').mockImplementationOnce(async (filePath, data, options) => {
-      await realWriteFile(filePath, data, options);
-      throw writeError;
+    const createWriteStream = fs.createWriteStream;
+    vi.spyOn(fs, 'createWriteStream').mockImplementationOnce((filePath, options) => {
+      const stream = createWriteStream(filePath, options);
+      stream.once('open', () => {
+        fs.writeFileSync(filePath, 'partial upload');
+        stream.destroy(writeError);
+      });
+      return stream;
     });
 
     await expect(manager.uploadBackup(appUrn, filename, Buffer.from('uploaded backup'))).rejects.toBe(writeError);
@@ -171,7 +172,9 @@ describe('BackupManager backup uploads', () => {
 
   it('preserves the write failure when staging cleanup also fails', async () => {
     const error = new Error('disk full');
-    vi.spyOn(fs.promises, 'writeFile').mockRejectedValueOnce(error);
+    vi.spyOn(fs, 'createWriteStream').mockImplementationOnce(() => {
+      throw error;
+    });
     vi.spyOn(filesystem, 'removeDirectory').mockResolvedValue(false);
 
     await expect(manager.uploadBackup(appUrn, filename, Buffer.from('upload'))).rejects.toBe(error);

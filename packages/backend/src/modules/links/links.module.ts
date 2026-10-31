@@ -7,5 +7,6 @@ import { LinksService } from './links.service';
   imports: [],
   controllers: [LinksController],
   providers: [LinksService, LinksRepository],
+  exports: [LinksService],
 })
 export class LinksModule {}
