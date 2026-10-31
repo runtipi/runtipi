@@ -30,7 +30,8 @@ jobs:
       - name: Check formatting and lint
         run: bun run lint:ci
         env:
-          FORMAT_BASE: ${{ github.event.pull_request.base.sha || 'HEAD~1' }}
+          # PR checkouts are merge commits; compare against the base actually tested.
+          FORMAT_BASE: HEAD^1
 
       - name: Run tests
         run: bun run test
