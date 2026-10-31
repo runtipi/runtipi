@@ -178,6 +178,7 @@ export class ConfigurationService {
       envFilePath: this.envPath,
       internalIp: env.INTERNAL_IP,
       jwtSecret: env.JWT_SECRET,
+      cliSecret: fs.readFileSync(path.join(DATA_DIR, '.secrets', 'cli-secret'), 'utf8'),
       __prod__: NODE_ENV === 'production',
     };
   }
