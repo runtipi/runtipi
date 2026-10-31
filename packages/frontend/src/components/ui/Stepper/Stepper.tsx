@@ -24,6 +24,7 @@ interface StepTriggerProps {
 export const StepTrigger: React.FC<StepTriggerProps> = ({ step, title, disabled, onStepChange }) => {
   const currentStep = useContext(StepperContext);
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Breadcrumb items retain their list semantics
     <li
       className={clsx('breadcrumb-item d-flex align-items-center justify-content-center', currentStep === step && 'active', disabled && 'disabled')}
       onClick={() => onStepChange(step)}

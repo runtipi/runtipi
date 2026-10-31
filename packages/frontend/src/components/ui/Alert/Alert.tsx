@@ -24,8 +24,10 @@ const Alert = ({ className, dismissible, variant, ...props }: AlertProps) => (
 );
 Alert.displayName = 'Alert';
 
-const AlertHeading = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h4 className={clsx('alert-heading', className)} {...props} />
+const AlertHeading = ({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h4 className={clsx('alert-heading', className)} {...props}>
+    {children}
+  </h4>
 );
 AlertHeading.displayName = 'AlertHeading';
 

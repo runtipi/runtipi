@@ -66,7 +66,7 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
     eventSourceRef.current = eventSource;
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This hook should only run once on mount
+  // oxlint-disable react-hooks/exhaustive-deps -- This hook should only run once on mount
   useEffect(() => {
     initializeSSE();
 
@@ -86,4 +86,5 @@ export const useSSE = <T extends Topic>(props: Props<T>) => {
       }
     };
   }, []);
+  // oxlint-enable react-hooks/exhaustive-deps
 };

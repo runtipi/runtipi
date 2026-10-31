@@ -135,7 +135,7 @@ export const OtpInput = ({ value, valueLength, onChange, className }: Props) => 
   };
 
   return (
-    // biome-ignore lint/a11y/noAutofocus: Required for better UX
+    // oxlint-disable-next-line jsx-a11y/no-autofocus -- Required for better UX
     <div className="otp-group" autoFocus>
       {valueItems.map((digit, idx) => (
         <input
@@ -143,7 +143,7 @@ export const OtpInput = ({ value, valueLength, onChange, className }: Props) => 
           onChange={(e) => inputOnChange(e, idx)}
           onKeyDown={inputOnKeyDown}
           onFocus={inputOnFocus}
-          // biome-ignore lint/suspicious/noArrayIndexKey: The index is used as a key because the array is static
+          // oxlint-disable-next-line react/no-array-index-key -- The index is used as a key because the array is static
           key={idx}
           type="text"
           inputMode="numeric"
