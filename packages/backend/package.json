@@ -79,7 +79,7 @@
     "@total-typescript/shoehorn": "^0.1.2",
     "@types/bun": "^1.4.4",
     "@types/cookie-parser": "^1.4.10",
-    "@types/dockerode": "^3.3.47",
+    "@types/dockerode": "^4.0.2",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash.clonedeep": "^4.5.9",
