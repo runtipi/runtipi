@@ -22,8 +22,17 @@
     },
     {
       "matchManagers": ["bun"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchManagers": ["bun"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "bun minor and patch dependencies"
+    },
+    {
+      "matchPackageNames": ["@types/psl"],
+      "allowedVersions": "<1.11.0",
+      "description": "Keep standalone declarations until psl exposes its bundled types through its export map."
     },
     {
       "matchDatasources": ["github-releases"],

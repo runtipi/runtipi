@@ -29,7 +29,7 @@
     "@radix-ui/react-tabs": "^1.2.1",
     "@react-router/node": "^7.18.5",
     "@runtipi/common": "workspace:*",
-    "@sentry/react": "^10.78.0",
+    "@sentry/react": "^10.77.1",
     "@sentry/vite-plugin": "^5.4.1",
     "@stepperize/core": "^4.0.0",
     "@tabler/core": "1.7.1",
