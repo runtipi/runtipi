@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { sql } from 'drizzle-orm';
+import { getTableConfig } from 'drizzle-orm/pg-core';
 import { Pool } from 'pg';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import * as schema from '@/core/database/drizzle/schema';
@@ -46,6 +47,29 @@ describe.skipIf(!databaseUrl)('OIDC persistence against PostgreSQL', () => {
 
     return { owner, other, provider };
   };
+
+  test('migrated foreign keys and unique constraints match the names used by schema changes', async () => {
+    const { rows } = await pool.query<{ name: string }>(`
+      SELECT constraint_name.conname AS name
+      FROM pg_constraint AS constraint_name
+      JOIN pg_class AS table_name ON table_name.oid = constraint_name.conrelid
+      JOIN pg_namespace AS namespace ON namespace.oid = table_name.relnamespace
+      WHERE namespace.nspname = 'public'
+        AND table_name.relname IN ('oidc_providers', 'oidc_trusted_subs')
+        AND constraint_name.contype IN ('f', 'u')
+    `);
+    const expectedNames = [schema.oidcProviders, schema.oidcTrustedSubs].flatMap((table) => {
+      const config = getTableConfig(table);
+
+      return [
+        ...config.foreignKeys.map((key) => key.getName()),
+        ...config.uniqueConstraints.map((constraint) => constraint.getName()),
+        ...config.columns.filter((column) => column.isUnique).map((column) => column.uniqueName),
+      ];
+    });
+
+    expect(rows.map((row) => row.name).sort()).toEqual(expectedNames.sort());
+  });
 
   test('public and administrative projections keep client secrets server-side', async () => {
     const { owner } = await setup();

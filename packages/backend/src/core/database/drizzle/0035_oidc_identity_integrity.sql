@@ -1,2 +1,0 @@
-ALTER TABLE "oidc_providers" ADD COLUMN "version" integer DEFAULT 1 NOT NULL;--> statement-breakpoint
-CREATE UNIQUE INDEX "oidc_trusted_subs_provider_sub_unique" ON "oidc_trusted_subs" USING btree ("provider_id","sub");

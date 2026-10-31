@@ -243,15 +243,8 @@
     {
       "idx": 34,
       "version": "7",
-      "when": 1793453370407,
+      "when": 1793454560272,
       "tag": "0034_oidc",
-      "breakpoints": true
-    },
-    {
-      "idx": 35,
-      "version": "7",
-      "when": 1793453370408,
-      "tag": "0035_oidc_identity_integrity",
       "breakpoints": true
     }
   ]

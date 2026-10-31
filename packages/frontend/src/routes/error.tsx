@@ -13,6 +13,7 @@ export default function BackendErrorPage() {
   }
 
   const destination = params.get('redirect_to') === 'settings' ? '/settings?tab=security' : '/login';
+  const message = error === 'AUTH_ERROR_OIDC' ? t('AUTH_ERROR_OIDC') : t('AUTH_ERROR_UNKNOWN');
 
-  return <ErrorPage error={new Error(t(error))} onReset={() => navigate(destination, { replace: true })} />;
+  return <ErrorPage error={new Error(message)} onReset={() => navigate(destination, { replace: true })} />;
 }

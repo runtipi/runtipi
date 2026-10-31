@@ -720,6 +720,7 @@
   "UPDATE": "Update",
   "DELETE": "Delete",
   "AUTH_ERROR_OIDC": "Unable to complete sign-in. Try again from the login page.",
+  "AUTH_ERROR_UNKNOWN": "Unable to complete authentication. Please try again.",
   "SETTINGS_SECURITY_OAUTH_LINK_TITLE": "Link an account with {{provider}}",
   "SETTINGS_SECURITY_OAUTH_LINK_DESCRIPTION": "Confirm your Runtipi password before choosing the external account that may sign in to your dashboard. Local two-factor authentication remains required when enabled.",
   "SETTINGS_SECURITY_OAUTH_SECRET_UNCHANGED": "Leave blank to keep the current secret"
