@@ -18,3 +18,5 @@
 !**/react-router.config.ts
 !**/nest-cli.json
 !**/.swcrc
+
+**/node_modules/**

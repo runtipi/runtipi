@@ -13,20 +13,25 @@ export const TimeZoneSelector = (props: IProps) => {
   const { options, parseTimezone } = useTimezoneSelect({ labelStyle: 'abbrev', timezones: allTimezones });
   const { t } = useTranslation();
 
+  const selectedTimezone = parseTimezone(timeZone || 'Etc/GMT') || parseTimezone('Etc/GMT');
+  let displayedOptions = options;
+
+  if (!options.some((option) => option.value === selectedTimezone.value)) {
+    displayedOptions = [selectedTimezone, ...options];
+  }
+
   const onTimezoneChange = (e: string) => {
     if (!e) return;
     onChange(e);
   };
 
-  const zone = parseTimezone(timeZone || 'Etc/GMT').value || 'Etc/GMT';
-
   return (
-    <Select value={zone} onValueChange={onTimezoneChange}>
+    <Select value={selectedTimezone.value} onValueChange={onTimezoneChange}>
       <SelectTrigger className="mb-3" name="timezone" label={t('TIMEZONE_SELECTOR_LABEL')}>
         <SelectValue placeholder={t('TIMEZONE_SELECTOR_PLACEHOLDER')} />
       </SelectTrigger>
       <SelectContent className="select-content">
-        {options.map((option) => (
+        {displayedOptions.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}
           </SelectItem>

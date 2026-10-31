@@ -4,7 +4,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { createAppInStore } from '@/tests/utils/create-app-in-store';
 import { AppLifecycleService } from '../app-lifecycle/app-lifecycle.service';
 import { eq } from 'drizzle-orm';
-import { BackupsService } from '../backups/backups.service';
 import { AppStoreService } from '../app-stores/app-store.service';
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { updateAppInStore } from '@/tests/utils/update-app-in-store';
@@ -15,7 +14,6 @@ export class DebugService {
   constructor(
     @Inject(DATABASE) private db: Database,
     private appLifecycleService: AppLifecycleService,
-    private backupService: BackupsService,
     private appstoreService: AppStoreService,
     private marketplaceService: MarketplaceService,
   ) {}
@@ -71,7 +69,7 @@ export class DebugService {
   }
 
   public async backupAllApps() {
-    await this.backupService.backupAllApps();
+    await this.appLifecycleService.backupAllApps();
   }
 
   public async incrementAllAppVersions() {

@@ -82,6 +82,31 @@ type NormalizedComposeService = DynamicComposeSchemaYaml['services'][string] & {
   labels: Record<string, string | number | boolean>;
 };
 
+export const mergeArchitectureOverrides = (input: DynamicComposeSchemaYaml, architecture?: string) => {
+  const inputCopy = JSON.parse(JSON.stringify(input)) as DynamicComposeSchemaYaml;
+
+  if (!architecture || !inputCopy['x-runtipi']?.overrides) {
+    return inputCopy;
+  }
+
+  const architectureOverrides = inputCopy['x-runtipi'].overrides.find((override) => override.architecture === architecture);
+  if (!architectureOverrides) {
+    return inputCopy;
+  }
+
+  for (const [serviceName, overrideService] of Object.entries(architectureOverrides.services)) {
+    const existingService = inputCopy.services[serviceName];
+    if (existingService) {
+      const arrayMode = { arrayMerge: (_target: unknown[], source: unknown[]) => source };
+      inputCopy.services[serviceName] = deepmerge(existingService, overrideService, arrayMode);
+    } else {
+      inputCopy.services[serviceName] = overrideService;
+    }
+  }
+
+  return inputCopy;
+};
+
 export class DockerComposeBuilder {
   private buildService = (
     service: DynamicComposeSchemaYaml['services'][string],
@@ -151,24 +176,7 @@ export class DockerComposeBuilder {
     const { appName, appStoreId } = extractAppUrn(appUrn);
     const appId = `${appName}-${appStoreId}`;
 
-    const inputCopy = JSON.parse(JSON.stringify(input)) as DynamicComposeSchemaYaml;
-
-    // Merge architecture-specific overrides
-    if (architecture && inputCopy['x-runtipi']?.overrides) {
-      const architectureOverrides = inputCopy['x-runtipi'].overrides.find((o) => o.architecture === architecture);
-      if (architectureOverrides) {
-        for (const [serviceName, overrideService] of Object.entries(architectureOverrides.services)) {
-          if (inputCopy.services[serviceName]) {
-            const arrayMode = {
-              arrayMerge: (_target: unknown[], source: unknown[]) => source,
-            };
-            inputCopy.services[serviceName] = deepmerge(inputCopy.services[serviceName], overrideService, arrayMode);
-          } else {
-            inputCopy.services[serviceName] = overrideService;
-          }
-        }
-      }
-    }
+    const inputCopy = mergeArchitectureOverrides(input, architecture);
 
     const services = Object.values(inputCopy.services).filter(Boolean);
     const hasMultipleServices = services.length > 1;
@@ -190,9 +198,11 @@ export class DockerComposeBuilder {
     // @ts-expect-error - not needed in the generated compose file
     delete inputCopy['x-runtipi'];
 
+    const dockerNetworkName = process.env.RUNTIPI_DOCKER_NETWORK || 'runtipi_tipi_main_network';
+
     inputCopy.networks = inputCopy.networks || {};
     inputCopy.networks.tipi_main_network = {
-      name: 'runtipi_tipi_main_network',
+      name: dockerNetworkName,
       external: true,
     };
 

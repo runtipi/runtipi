@@ -8,6 +8,7 @@ import { EnvUtils } from '@/modules/env/env.utils';
 import dotenv from 'dotenv';
 import { DATA_DIR } from '../constants';
 import { type } from 'arktype';
+import { getCliSecret } from './permissions-helpers';
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
 export const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
@@ -37,6 +38,8 @@ const getArchitecture = () => {
 };
 
 export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
+  await getCliSecret(DATA_DIR);
+
   const logger = new LoggerService('backend', path.join(path.join(DATA_DIR, 'logs')), process.env.LOG_LEVEL as LogLevel);
   logger.info('Generating system env file');
 
@@ -133,6 +136,10 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   envMap.set(
     'PERSIST_TRAEFIK_CONFIG',
     typeof settings.persistTraefikConfig === 'boolean' ? String(settings.persistTraefikConfig) : envMap.get('PERSIST_TRAEFIK_CONFIG') || 'false',
+  );
+  envMap.set(
+    'RUNTIPI_TRUSTED_PROXY_IPS',
+    typeof settings.trustedProxyIps === 'string' ? settings.trustedProxyIps : envMap.get('RUNTIPI_TRUSTED_PROXY_IPS') || '',
   );
   envMap.set(
     'QUEUE_TIMEOUT_IN_MINUTES',

@@ -76,8 +76,8 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
     onError: (e: TranslatableError) => {
       toast.error(t(e.message, e.intlParams));
     },
-    onMutate: () => {
-      navigate(location.state?.from || '/apps');
+    onSuccess: () => {
+      navigate(`/apps/${storeId}/${appId}`);
     },
   });
 

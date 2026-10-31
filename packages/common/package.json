@@ -47,7 +47,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
     "@changesets/cli": "^2.29.3",
-    "vitest": "^4.0.4"
+    "vitest": "^4.1.12"
   },
   "peerDependencies": {
     "arktype": ">=2",

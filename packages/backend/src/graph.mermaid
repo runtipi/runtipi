@@ -131,18 +131,18 @@ graph LR
   DockerModule-->LoggerModule
   DockerModule-->FilesystemModule
   AppLifecycleModule-->MarketplaceModule
-  AppLifecycleModule-->BackupsModule
-  BackupsModule-->AppLifecycleModule
-  BackupsModule-->AppsModule
-  BackupsModule-->QueueModule
-  BackupsModule-->ArchiveModule
+  AppLifecycleModule-->BackupManagerModule
+  BackupManagerModule-->AppsModule
+  BackupManagerModule-->ArchiveModule
   ArchiveModule-->SentryModule
   ArchiveModule-->ConfigurationModule
   ArchiveModule-->DatabaseModule
   ArchiveModule-->CacheModule
   ArchiveModule-->LoggerModule
   ArchiveModule-->FilesystemModule
-  BackupsModule-->SSEModule
+  BackupsModule-->AppLifecycleModule
+  BackupsModule-->AppsModule
+  BackupsModule-->BackupManagerModule
   SSEModule-->DockerModule
   SSEModule-->SentryModule
   SSEModule-->ConfigurationModule

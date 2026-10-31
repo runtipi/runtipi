@@ -15,6 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AppStoreService } from '../app-stores/app-store.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -53,6 +54,7 @@ export class MarketplaceController {
   }
 
   @Get('apps/:urn/image')
+  @SkipThrottle()
   async getImage(@Param('urn') urn: string, @Res() res: Response, @Req() req: Request) {
     const { image, etag } = await this.marketplaceService.getAppImage(castAppUrn(urn));
 

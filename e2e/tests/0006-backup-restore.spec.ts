@@ -1,10 +1,10 @@
 import path from 'node:path';
 import { expect, test } from '@playwright/test';
 import { eq } from 'drizzle-orm';
-import { app } from '../packages/backend/src/core/database/drizzle/schema';
-import { installApp, loginUser } from './fixtures/fixtures';
-import { clearDatabase, db } from './helpers/db';
-import { deleteFile, readFile, writeFile } from './helpers/settings';
+import { app } from '../../packages/backend/src/core/database/drizzle/schema';
+import { installApp, loginUser } from '../fixtures/fixtures';
+import { clearDatabase, db } from '../helpers/db';
+import { deleteFile, readFile, writeFile } from '../helpers/settings';
 
 test.beforeEach(async ({ page, context }) => {
   await clearDatabase();
@@ -52,7 +52,7 @@ test('user can backup and restore an app', async ({ page, isMobile }) => {
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.getByText('Review the new configuration of the app')).toBeVisible();
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByText('It is highly recommended to backup')).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Backup', exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Update' }).click();
 
   await expect(page.getByText('App whoami updated successfully')).toBeVisible({ timeout: 100000 });

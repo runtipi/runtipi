@@ -1,6 +1,7 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { createAppUrn } from '@/common/helpers/app-helpers';
 import { pLimit } from '@/common/helpers/file-helpers';
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
@@ -17,6 +18,7 @@ export class AppsService {
     private readonly appFilesManager: AppFilesManager,
     private readonly logger: LoggerService,
     private readonly marketplaceService: MarketplaceService,
+    private readonly config: ConfigurationService,
   ) {}
 
   private async populateAppInfo(apps: AppList) {
@@ -60,6 +62,10 @@ export class AppsService {
   }
 
   public async getGuestDashboardApps() {
+    if (!this.config.get('userSettings').guestDashboard) {
+      return [];
+    }
+
     this.logger.debug('Getting guest dashboard apps');
     const apps = await this.appsRepository.getGuestDashboardApps();
     this.logger.debug(`Got ${apps.length} guest dashboard apps`);

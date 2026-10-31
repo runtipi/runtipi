@@ -9,6 +9,7 @@ import type { AppUrn } from '@runtipi/common/types';
 import { AppLifecycleCommand } from './command';
 import { dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { type } from 'arktype';
+import { AppMigrationService } from '../services/app-migration.service';
 
 export class InstallAppCommand extends AppLifecycleCommand {
   public async execute(appUrn: AppUrn, form: AppEventFormInput): Promise<{ success: boolean; message: string }> {
@@ -18,6 +19,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
     const dockerService = this.moduleRef.get(DockerService, { strict: false });
     const appHelpers = this.moduleRef.get(AppHelpers, { strict: false });
     const envUtils = this.moduleRef.get(EnvUtils, { strict: false });
+    const appMigrationService = this.moduleRef.get(AppMigrationService, { strict: false });
 
     const composeToInstall = await marketplaceService.getSourceDockerComposeYaml(appUrn);
     const compose = dynamicComposeSchemaYaml(composeToInstall.content);
@@ -42,7 +44,7 @@ export class InstallAppCommand extends AppLifecycleCommand {
 
       // Copy data dir
       const appEnv = await appFilesManager.getAppEnv(appUrn);
-      const envMap = envUtils.envStringToMap(appEnv.content);
+      const envMap = envUtils.envStringToMap(appEnv.content ?? '');
 
       logger.info(`Copying data dir for app ${appUrn}`);
       await marketplaceService.copyDataDir(appUrn, envMap);
@@ -54,6 +56,8 @@ export class InstallAppCommand extends AppLifecycleCommand {
       } catch (_) {
         logger.warn(`No prior containers to remove for app ${appUrn}`);
       }
+
+      await appMigrationService.baselineCurrentMigrations(appUrn);
 
       const config = await appFilesManager.getInstalledAppInfo(appUrn);
 

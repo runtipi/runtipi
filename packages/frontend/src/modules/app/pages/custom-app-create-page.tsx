@@ -21,11 +21,11 @@ export default () => {
   const { composeExtras, setComposeExtras } = useMultiServiceStore();
 
   const appNameSchema = type('string').narrow((name, ctx) => {
-    if (name.length < 1) ctx.reject({ message: t('CUSTOM_APP_NAME_REQUIRED') });
-    if (name.length > 50) ctx.reject({ message: t('CUSTOM_APP_NAME_MAX_LENGTH') });
-    if (!/^[a-z0-9-]+$/.test(name)) ctx.reject({ message: t('CUSTOM_APP_NAME_VALIDATION_HELP') });
-    if (name.startsWith('-') || name.endsWith('-')) ctx.reject({ message: t('CUSTOM_APP_NAME_NO_HYPHEN_EDGES') });
-    if (RESERVED_APP_NAMES.includes(name.toLowerCase())) ctx.reject({ message: t('CUSTOM_APP_NAME_RESERVED') });
+    if (name.length < 1) return ctx.reject({ message: t('CUSTOM_APP_NAME_REQUIRED') });
+    if (name.length > 50) return ctx.reject({ message: t('CUSTOM_APP_NAME_MAX_LENGTH') });
+    if (!/^[a-z0-9-]+$/.test(name)) return ctx.reject({ message: t('CUSTOM_APP_NAME_VALIDATION_HELP') });
+    if (name.startsWith('-') || name.endsWith('-')) return ctx.reject({ message: t('CUSTOM_APP_NAME_NO_HYPHEN_EDGES') });
+    if (RESERVED_APP_NAMES.includes(name.toLowerCase())) return ctx.reject({ message: t('CUSTOM_APP_NAME_RESERVED') });
     return true;
   });
 

@@ -38,6 +38,10 @@ export class LinksService {
    * @returns An array of links that are visible on the guest dashboard.
    */
   public async getGuestDashboardLinks() {
+    if (!this.config.get('userSettings').guestDashboard) {
+      return [];
+    }
+
     return this.linksRepository.getGuestDashboardLinks();
   }
 }

@@ -1,6 +1,6 @@
 import { TranslatableError } from '@/common/error/translatable-error';
 import { AppsRepository } from '@/modules/apps/apps.repository';
-import { DOCKERODE } from '@/modules/docker/docker.module';
+import { DOCKERODE } from '@/modules/docker/docker.constants';
 import { Test } from '@nestjs/testing';
 import type { AppUrn } from '@runtipi/common/types';
 import { fromAny, fromPartial } from '@total-typescript/shoehorn';
@@ -65,6 +65,35 @@ describe('SubnetManagerService', () => {
       // assert
       expect(result).toBe(newSubnet);
       expect(appsRepository.updateAppById).toHaveBeenCalledWith(1, { subnet: newSubnet });
+    });
+
+    it('should allocate a subnet without persisting it when persistence is disabled', async () => {
+      // arrange
+      const appUrn = 'app:test/app' as AppUrn;
+      const newSubnet = '10.128.10.0/24';
+      appsRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 1, subnet: null }));
+
+      // act
+      const result = await service.allocateSubnet(appUrn, { persist: false });
+
+      // assert
+      expect(result).toBe(newSubnet);
+      expect(appsRepository.updateAppById).not.toHaveBeenCalled();
+    });
+
+    it('should reuse an existing subnet without writing it again', async () => {
+      // arrange
+      const appUrn = 'app:test/app' as AppUrn;
+      const existingSubnet = '10.128.10.0/24';
+      appsRepository.getAppByUrn.mockResolvedValue(fromPartial({ id: 1, subnet: existingSubnet }));
+
+      // act
+      const result = await service.allocateSubnet(appUrn);
+
+      // assert
+      expect(result).toBe(existingSubnet);
+      expect(appsRepository.updateAppById).not.toHaveBeenCalled();
+      expect(dockerMock.listNetworks).not.toHaveBeenCalled();
     });
 
     it('should skip already allocated subnets when allocating a new one', async () => {

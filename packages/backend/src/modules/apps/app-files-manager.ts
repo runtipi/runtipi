@@ -1,7 +1,7 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { APP_GENERATED_COMPOSE_FILENAME, APP_REL_COMPOSE_FILENAME } from '@/common/constants';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
-import { execFileAsync } from '@/common/helpers/exec-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
@@ -9,6 +9,8 @@ import { Injectable } from '@nestjs/common';
 import { appInfoSchema, convertLegacyToYaml, dynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
+
+export type AppMigration = { id: string; path: string };
 
 @Injectable()
 export class AppFilesManager {
@@ -35,6 +37,42 @@ export class AppFilesManager {
     };
   }
 
+  public getAppDataHostPath(appUrn: AppUrn) {
+    const { appStoreId, appName } = extractAppUrn(appUrn);
+    const { appDataPath } = this.configuration.getConfig().userSettings;
+
+    return path.join(appDataPath, 'app-data', appStoreId, appName);
+  }
+
+  public async getAppMigrations(appUrn: AppUrn): Promise<AppMigration[]> {
+    const { appInstalledDir } = this.getAppPaths(appUrn);
+    const directory = this.filesystem.getSafeFilePath(path.join(appInstalledDir, 'migrations'));
+    const stats = await fs.promises.lstat(directory).catch((error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    });
+
+    if (!stats) return [];
+    if (!stats.isDirectory()) throw new Error(`App migrations must be a directory: ${directory}`);
+
+    const entries = await fs.promises.readdir(directory, { withFileTypes: true });
+    const migrations: AppMigration[] = [];
+
+    for (const entry of entries) {
+      if (entry.name.endsWith('.yaml')) throw new Error(`Use the .yml extension for app migrations: ${entry.name}`);
+      if (!entry.name.endsWith('.yml')) continue;
+
+      const id = entry.name.slice(0, -4);
+      if (!entry.isFile() || !/^[a-z0-9][a-z0-9._-]{0,63}$/.test(id)) {
+        throw new Error(`Invalid app migration file: ${entry.name}`);
+      }
+
+      migrations.push({ id, path: path.join(directory, entry.name) });
+    }
+
+    return migrations.sort((left, right) => (left.id < right.id ? -1 : 1));
+  }
+
   /**
    * Get the app info from the installed apps apps
    * @param id - The app id
@@ -42,9 +80,10 @@ export class AppFilesManager {
   public async getInstalledAppInfo(appUrn: AppUrn) {
     try {
       const { appInstalledDir } = this.getAppPaths(appUrn);
+      const configPath = path.join(appInstalledDir, 'config.json');
 
-      if (await this.filesystem.pathExists(path.join(appInstalledDir, 'config.json'))) {
-        const configFile = await this.filesystem.readTextFile(path.join(appInstalledDir, 'config.json'));
+      if (await this.filesystem.isFile(configPath)) {
+        const configFile = await this.filesystem.readTextFile(configPath);
 
         const config = JSON.parse(configFile ?? '{}');
         const parsedConfig = appInfoSchema({ ...config, urn: appUrn });
@@ -56,7 +95,8 @@ export class AppFilesManager {
         }
 
         if (parsedConfig.available) {
-          const description = (await this.filesystem.readTextFile(path.join(appInstalledDir, 'metadata', 'description.md'))) ?? '';
+          const descriptionPath = path.join(appInstalledDir, 'metadata', 'description.md');
+          const description = (await this.filesystem.isFile(descriptionPath)) ? ((await this.filesystem.readTextFile(descriptionPath)) ?? '') : '';
 
           return { ...parsedConfig, description };
         }
@@ -78,14 +118,14 @@ export class AppFilesManager {
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
     try {
-      if (await this.filesystem.pathExists(dockerComposePath)) {
+      if (await this.filesystem.isFile(dockerComposePath)) {
         const content = await this.filesystem.readTextFile(dockerComposePath);
         return { path: dockerComposePath, content };
       }
 
       // Check for legacy generated file (docker-compose.yml without x-runtipi)
       const legacyPath = path.join(appInstalledDir, APP_REL_COMPOSE_FILENAME);
-      if (await this.filesystem.pathExists(legacyPath)) {
+      if (await this.filesystem.isFile(legacyPath)) {
         const legacyContent = await this.filesystem.readYamlFile(legacyPath);
         // If it DOES NOT have x-runtipi, it is the old generated file
         if (legacyContent && typeof legacyContent === 'object' && !('x-runtipi' in legacyContent)) {
@@ -114,7 +154,7 @@ export class AppFilesManager {
     let content = null;
 
     try {
-      if (await this.filesystem.pathExists(appYamlPath)) {
+      if (await this.filesystem.isFile(appYamlPath)) {
         content = await this.filesystem.readYamlFile(appYamlPath);
       }
     } catch (error) {
@@ -136,7 +176,7 @@ export class AppFilesManager {
     const dockerComposeLegacyPath = path.join(appInstalledDir, 'docker-compose.json');
 
     try {
-      if (await this.filesystem.pathExists(dockerComposeLegacyPath)) {
+      if (await this.filesystem.isFile(dockerComposeLegacyPath)) {
         const jsonContent = await this.filesystem.readJsonFile(dockerComposeLegacyPath);
 
         const compose = dynamicComposeSchemaYaml(convertLegacyToYaml(jsonContent));
@@ -164,12 +204,14 @@ export class AppFilesManager {
     const { appInstalledDir } = this.getAppPaths(appUrn);
     const dockerComposePath = path.join(appInstalledDir, APP_GENERATED_COMPOSE_FILENAME);
 
-    await this.filesystem.writeTextFile(dockerComposePath, composeFile);
+    if (!(await this.filesystem.writeTextFile(dockerComposePath, composeFile))) {
+      throw new Error(`Failed to write generated docker compose file for app ${appUrn}`);
+    }
   }
 
   public async deleteAppFolder(appUrn: AppUrn) {
     const { appInstalledDir } = this.getAppPaths(appUrn);
-    await this.filesystem.removeDirectory(appInstalledDir);
+    return this.filesystem.removeDirectory(appInstalledDir);
   }
 
   public async deleteAppDataDir(appUrn: AppUrn) {
@@ -189,9 +231,83 @@ export class AppFilesManager {
   public async setAppDataDirPermissions(appUrn: AppUrn) {
     const { appDataDir } = this.getAppPaths(appUrn);
 
-    await execFileAsync('chmod', ['-Rf', 'a+rwx', appDataDir]).catch(() => {
-      this.logger.error(`Error setting permissions for app ${appUrn}`);
-    });
+    try {
+      if (process.platform === 'linux') {
+        await this.setAppDataDirPermissionsOnLinux(appDataDir);
+      } else {
+        await this.setAppDataDirPermissionsOutsideLinux(appDataDir);
+      }
+    } catch (error) {
+      this.logger.error(`Error setting permissions for app ${appUrn}`, error);
+    }
+  }
+
+  private async setAppDataDirPermissionsOnLinux(entryPath: string): Promise<void> {
+    const openFlags = fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK;
+    let entryHandle: fs.promises.FileHandle;
+
+    try {
+      entryHandle = await fs.promises.open(entryPath, openFlags);
+    } catch (error) {
+      const errorCode = (error as NodeJS.ErrnoException).code;
+      if (errorCode === 'ELOOP' || errorCode === 'ENXIO' || errorCode === 'ENOENT') {
+        return;
+      }
+      throw error;
+    }
+
+    try {
+      const entryStats = await entryHandle.stat();
+      if (!entryStats.isFile() && !entryStats.isDirectory()) {
+        return;
+      }
+
+      const writableMode = entryStats.mode | 0o777;
+      await entryHandle.chmod(writableMode);
+
+      if (!entryStats.isDirectory()) {
+        return;
+      }
+
+      const entryHandlePath = `/proc/self/fd/${entryHandle.fd}`;
+      const directory = await fs.promises.opendir(entryHandlePath);
+      for await (const entry of directory) {
+        const childPath = path.join(entryHandlePath, entry.name);
+        await this.setAppDataDirPermissionsOnLinux(childPath);
+      }
+    } finally {
+      await entryHandle.close();
+    }
+  }
+
+  private async setAppDataDirPermissionsOutsideLinux(entryPath: string): Promise<void> {
+    let entryStats: fs.Stats;
+
+    try {
+      entryStats = await fs.promises.lstat(entryPath);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return;
+      }
+      throw error;
+    }
+
+    if (entryStats.isSymbolicLink() || (!entryStats.isFile() && !entryStats.isDirectory())) {
+      return;
+    }
+
+    const writableMode = entryStats.mode | 0o777;
+    await fs.promises.chmod(entryPath, writableMode);
+
+    if (!entryStats.isDirectory()) {
+      return;
+    }
+
+    const entries = await fs.promises.readdir(entryPath);
+    for (const entry of entries) {
+      const childPath = path.join(entryPath, entry);
+      await this.setAppDataDirPermissionsOutsideLinux(childPath);
+    }
   }
 
   public async getAppEnv(appUrn: AppUrn) {
@@ -199,9 +315,12 @@ export class AppFilesManager {
 
     const envPath = path.join(appDataDir, 'app.env');
 
-    let env = '';
-    if (await this.filesystem.pathExists(envPath)) {
-      env = (await this.filesystem.readTextFile(envPath)) ?? '';
+    let env: string | null = null;
+    if (await this.filesystem.isFile(envPath)) {
+      env = await this.filesystem.readTextFile(envPath);
+      if (env === null) {
+        throw new Error(`Failed to read app environment for ${appUrn}`);
+      }
     }
 
     return { path: envPath, content: env };
@@ -212,7 +331,7 @@ export class AppFilesManager {
 
     const envPath = path.join(appDataDir, 'app.env');
 
-    await this.filesystem.writeTextFile(envPath, env);
+    return this.filesystem.writeTextFile(envPath, env);
   }
 
   /**
@@ -227,7 +346,7 @@ export class AppFilesManager {
     const userEnvFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'app.env');
     let content = null;
 
-    if (await this.filesystem.pathExists(userEnvFile)) {
+    if (await this.filesystem.isFile(userEnvFile)) {
       content = await this.filesystem.readTextFile(userEnvFile);
     }
 
@@ -246,7 +365,7 @@ export class AppFilesManager {
     const userComposeFile = path.join(directories.dataDir, 'user-config', appStoreId, appName, 'docker-compose.yml');
     let content = null;
 
-    if (await this.filesystem.pathExists(userComposeFile)) {
+    if (await this.filesystem.isFile(userComposeFile)) {
       content = await this.filesystem.readTextFile(userComposeFile);
     }
 
@@ -264,7 +383,7 @@ export class AppFilesManager {
 
     let content = null;
     try {
-      if (await this.filesystem.pathExists(configPath)) {
+      if (await this.filesystem.isFile(configPath)) {
         content = await this.filesystem.readJsonFile(configPath);
       }
     } catch (error) {

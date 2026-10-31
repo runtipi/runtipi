@@ -314,7 +314,7 @@ export const AppActions = ({ app, info, localDomain, metadata, sslPort }: IProps
     case 'backing_up':
     case 'restoring':
       buttons.push(LoadingButton);
-      listItems.push(CancelListItem);
+      if (app?.status !== 'updating' && app?.status !== 'backing_up') listItems.push(CancelListItem);
       break;
     case 'missing':
       buttons.push(InstallButton);

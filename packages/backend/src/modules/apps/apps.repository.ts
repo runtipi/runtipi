@@ -1,6 +1,13 @@
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { DATABASE, type Database } from '@/core/database/database.module';
-import { app } from '@/core/database/drizzle/schema';
+import {
+  app,
+  appMigration,
+  appRestoreJournal,
+  type MigrationLedgerState,
+  type RestoreDirectory,
+  type MigrationRecovery,
+} from '@/core/database/drizzle/schema';
 import type { AppStatus, NewApp } from '@/core/database/drizzle/types';
 import { Inject, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
@@ -65,6 +72,136 @@ export class AppsRepository {
     }
 
     return createdApp;
+  }
+
+  public async getMigrationState(appUrn: AppUrn) {
+    const installedApp = await this.getAppByUrn(appUrn);
+
+    if (!installedApp) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+
+    const migrations = await this.db
+      .select({ migrationId: appMigration.migrationId })
+      .from(appMigration)
+      .where(eq(appMigration.appId, installedApp.id))
+      .orderBy(asc(appMigration.migrationId));
+    const migrationIds = migrations.map((migration) => migration.migrationId);
+
+    return { initialized: installedApp.migrationsBaselined, migrationIds };
+  }
+
+  public async completeMigrations(appUrn: AppUrn, migrationIds: string[], appUpdate: Partial<NewApp> = {}) {
+    if (migrationIds.length === 0) {
+      return;
+    }
+
+    const installedApp = await this.getAppByUrn(appUrn);
+
+    if (!installedApp) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+
+    await this.db.transaction(async (tx) => {
+      const values = migrationIds.map((migrationId) => ({ appId: installedApp.id, migrationId }));
+      await tx.insert(appMigration).values(values).onConflictDoNothing();
+      await tx
+        .update(app)
+        .set({ ...appUpdate, migrationRecovery: null, updatedAt: Math.floor(Date.now() / 1000) })
+        .where(eq(app.id, installedApp.id));
+    });
+  }
+
+  public async setMigrationRecovery(appUrn: AppUrn, recovery: MigrationRecovery | null) {
+    const { appStoreId, appName } = extractAppUrn(appUrn);
+    const updated = await this.db
+      .update(app)
+      .set({ migrationRecovery: recovery })
+      .where(and(eq(app.appName, appName), eq(app.appStoreSlug, appStoreId)))
+      .returning({ id: app.id });
+    if (updated.length === 0) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+  }
+
+  public async baselineMigrations(appUrn: AppUrn, migrationIds: string[]) {
+    const installedApp = await this.getAppByUrn(appUrn);
+
+    if (!installedApp) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+
+    await this.db.transaction(async (tx) => {
+      const markedApps = await tx
+        .update(app)
+        .set({ migrationsBaselined: true })
+        .where(and(eq(app.id, installedApp.id), eq(app.migrationsBaselined, false)))
+        .returning({ id: app.id });
+      const markedApp = markedApps[0];
+
+      if (!markedApp || migrationIds.length === 0) {
+        return;
+      }
+
+      const values = migrationIds.map((migrationId) => ({ appId: installedApp.id, migrationId }));
+      await tx.insert(appMigration).values(values).onConflictDoNothing();
+    });
+  }
+
+  public async finishRestore(appUrn: AppUrn, state: MigrationLedgerState, phase: 'recovered' | 'committed') {
+    const installedApp = await this.getAppByUrn(appUrn);
+    if (!installedApp) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+
+    await this.db.transaction(async (tx) => {
+      await tx.delete(appMigration).where(eq(appMigration.appId, installedApp.id));
+      if (state.migrationIds.length > 0) {
+        await tx.insert(appMigration).values(state.migrationIds.map((migrationId) => ({ appId: installedApp.id, migrationId })));
+      }
+
+      const recovery = phase === 'committed' ? { migrationRecovery: null } : {};
+      await tx
+        .update(app)
+        .set({ migrationsBaselined: state.initialized, ...recovery })
+        .where(eq(app.id, installedApp.id));
+      await tx.update(appRestoreJournal).set({ phase }).where(eq(appRestoreJournal.appId, installedApp.id));
+    });
+  }
+
+  public async getRestoreJournal(appUrn: AppUrn) {
+    const installedApp = await this.getAppByUrn(appUrn);
+
+    if (!installedApp) {
+      return undefined;
+    }
+
+    return this.db.query.appRestoreJournal.findFirst({ where: eq(appRestoreJournal.appId, installedApp.id) });
+  }
+
+  public async createRestoreJournal(
+    appUrn: AppUrn,
+    previousState: MigrationLedgerState,
+    targetState: MigrationLedgerState,
+    directories: RestoreDirectory[],
+  ) {
+    const installedApp = await this.getAppByUrn(appUrn);
+
+    if (!installedApp) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+
+    await this.db.insert(appRestoreJournal).values({ appId: installedApp.id, previousState, targetState, directories });
+  }
+
+  public async clearRestoreJournal(appUrn: AppUrn) {
+    const installedApp = await this.getAppByUrn(appUrn);
+
+    if (!installedApp) {
+      throw new Error(`App ${appUrn} is not installed`);
+    }
+
+    await this.db.delete(appRestoreJournal).where(eq(appRestoreJournal.appId, installedApp.id));
   }
 
   /**

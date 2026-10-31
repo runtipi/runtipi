@@ -12,13 +12,23 @@ type BaseHeaderProps = {
   allowAutoThemes: boolean;
   showNav?: boolean;
   showCertificateButton?: boolean;
+  logoutDisabled?: boolean;
   onLogout?: () => void;
   onLogin?: () => void;
   navbarContent?: ReactNode;
 };
 
 export const BaseHeader = (props: BaseHeaderProps) => {
-  const { isLoggedIn, allowAutoThemes, showNav = false, showCertificateButton = false, onLogout, onLogin, navbarContent } = props;
+  const {
+    isLoggedIn,
+    allowAutoThemes,
+    showNav = false,
+    showCertificateButton = false,
+    logoutDisabled = false,
+    onLogout,
+    onLogin,
+    navbarContent,
+  } = props;
 
   const setDarkMode = useUIStore((state) => state.setDarkMode);
   const theme = useUIStore((state) => state.theme);
@@ -41,7 +51,15 @@ export const BaseHeader = (props: BaseHeaderProps) => {
     <header className="text-white navbar navbar-expand-md navbar-dark navbar-overlap d-print-none" data-bs-theme="dark">
       <div className="container-xl">
         {showNav && (
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu"
+            aria-expanded="false"
+            aria-label={t('HEADER_MAIN_NAVIGATION')}
+          >
             <span className="navbar-toggler-icon" />
           </button>
         )}
@@ -123,8 +141,10 @@ export const BaseHeader = (props: BaseHeaderProps) => {
             <button
               type="button"
               onClick={handleLogoutClick}
+              disabled={logoutDisabled}
+              aria-disabled={logoutDisabled}
               tabIndex={0}
-              className="logOut nav-link px-0 cursor-pointer"
+              className={clsx('logOut nav-link px-0 cursor-pointer', { disabled: logoutDisabled })}
               data-testid="logout-button"
             >
               {isLoggedIn ? <IconLogout size={20} /> : <IconLogin size={20} />}

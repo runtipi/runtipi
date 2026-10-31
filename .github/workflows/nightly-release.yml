@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch an action and get the run ID
-        uses: codex-/return-dispatch@v3
+        uses: codex-/return-dispatch@v4
         id: return_dispatch
         with:
           token: ${{ secrets.PAT_CLI }}
@@ -64,7 +64,7 @@ jobs:
           workflow: nightly.yml
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        uses: Codex-/await-remote-run@v1.13.0
+        uses: Codex-/await-remote-run@v3.0.0
         with:
           token: ${{ secrets.PAT_CLI }}
           repo: cli

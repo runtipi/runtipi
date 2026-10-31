@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcknowledgeWelcomeData, AcknowledgeWelcomeResponses, AppContextData, AppContextResponses, AppEventsData, AppEventsResponses, AppLogsEventsData, AppLogsEventsResponses, BackupAllAppsData, BackupAllAppsResponses, BackupAppData, BackupAppResponses, ChangePasswordData, ChangePasswordResponses, ChangeUsernameData, ChangeUsernameResponses, CheckData, CheckErrors, CheckResponses, CreateAppStoreData, CreateAppStoreResponses, CreateCustomAppData, CreateCustomAppResponses, CreateLinkData, CreateLinkResponses, DeleteAppBackupData, DeleteAppBackupResponses, DeleteAppStoreData, DeleteAppStoreResponses, DeleteLinkData, DeleteLinkResponses, DisableTotpData, DisableTotpResponses, DisableUserConfigData, DisableUserConfigResponses, DownloadBackupData, DownloadBackupResponses, DownloadLocalCertificateData, DownloadLocalCertificateResponses, EditLinkData, EditLinkResponses, EnableUserConfigData, EnableUserConfigResponses, GetAllAppStoresData, GetAllAppStoresResponses, GetAppBackupsData, GetAppBackupsResponses, GetAppComposeDiffData, GetAppComposeDiffResponses, GetAppConfigDiffData, GetAppConfigDiffResponses, GetAppData, GetAppResponses, GetEditableAppConfigData, GetEditableAppConfigResponses, GetEnabledAppStoresData, GetEnabledAppStoresResponses, GetGuestAppsData, GetGuestAppsResponses, GetGuestLinksData, GetGuestLinksResponses, GetImageData, GetImageResponses, GetInstalledAppsData, GetInstalledAppsResponses, GetLinksData, GetLinksResponses, GetRandomPortData, GetRandomPortResponses, GetTemplateDiffData, GetTemplateDiffResponses, GetTotpUriData, GetTotpUriResponses, GetTranslationData, GetTranslationResponses, GetUserConfigData, GetUserConfigResponses, IgnoreAppVersionData, IgnoreAppVersionResponses, IncrementAllAppVersionsData, IncrementAllAppVersionsResponses, InstallAppData, InstallAppResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, PullAppStoresData, PullAppStoresResponses, RegisterData, RegisterResponses, ResetAppData, ResetAppResponses, ResetPasswordData, ResetPasswordResponses, RestartAllAppsData, RestartAllAppsResponses, RestartAppData, RestartAppResponses, RestoreAppBackupData, RestoreAppBackupResponses, RuntipiLogsEventsData, RuntipiLogsEventsResponses, SearchAppsData, SearchAppsResponses, SeedDatabaseData, SeedDatabaseResponses, SetAllAppSubnetToNullData, SetAllAppSubnetToNullResponses, SetAllAppUpdateAvailableData, SetAllAppUpdateAvailableResponses, SetupTotpData, SetupTotpResponses, StartAllApps2Data, StartAllApps2Responses, StartAllAppsData, StartAllAppsResponses, StartAppData, StartAppResponses, StopAllAppsData, StopAllAppsResponses, StopAppData, StopAppResponses, SyncWithTemplateData, SyncWithTemplateResponses, SystemLoadData, SystemLoadResponses, TraefikData, TraefikResponses, UnignoreAppVersionData, UnignoreAppVersionResponses, UninstallAllAppsData, UninstallAllAppsResponses, UninstallAppData, UninstallAppResponses, UpdateAllAppsData, UpdateAllAppsResponses, UpdateAppData, UpdateAppMetadataData, UpdateAppMetadataResponses, UpdateAppResponses, UpdateAppSettingsData, UpdateAppSettingsResponses, UpdateAppStoreData, UpdateAppStoreResponses, UpdateCustomAppData, UpdateCustomAppResponses, UpdateEditableAppConfigData, UpdateEditableAppConfigResponses, UpdateUserConfigData, UpdateUserConfigResponses, UpdateUserSettingsData, UpdateUserSettingsResponses, UploadAppImageData, UploadAppImageResponses, UploadBackupData, UploadBackupResponses, UserContextData, UserContextResponses, VerifyTotpData, VerifyTotpResponses } from './types.gen';
+import type { AcknowledgeWelcomeData, AcknowledgeWelcomeResponses, AppContextData, AppContextResponses, AppEventsData, AppEventsResponses, AppLogsEventsData, AppLogsEventsResponses, BackupAllAppsData, BackupAllAppsResponses, BackupAppData, BackupAppResponses, CancelAppJobData, CancelAppJobResponses, ChangePasswordData, ChangePasswordResponses, ChangeUsernameData, ChangeUsernameResponses, CheckData, CheckErrors, CheckResponses, CreateAppStoreData, CreateAppStoreResponses, CreateCustomAppData, CreateCustomAppResponses, CreateLinkData, CreateLinkResponses, DeleteAppBackupData, DeleteAppBackupResponses, DeleteAppStoreData, DeleteAppStoreResponses, DeleteLinkData, DeleteLinkResponses, DisableTotpData, DisableTotpResponses, DisableUserConfigData, DisableUserConfigResponses, DownloadBackupData, DownloadBackupResponses, DownloadLocalCertificateData, DownloadLocalCertificateResponses, EditLinkData, EditLinkResponses, EnableUserConfigData, EnableUserConfigResponses, ForwardAuthData, ForwardAuthResponses, GetAllAppStoresData, GetAllAppStoresResponses, GetAppBackupsData, GetAppBackupsResponses, GetAppComposeDiffData, GetAppComposeDiffResponses, GetAppConfigDiffData, GetAppConfigDiffResponses, GetAppData, GetAppJobData, GetAppJobResponses, GetAppResponses, GetEditableAppConfigData, GetEditableAppConfigResponses, GetEnabledAppStoresData, GetEnabledAppStoresResponses, GetGuestAppsData, GetGuestAppsResponses, GetGuestLinksData, GetGuestLinksResponses, GetImageData, GetImageResponses, GetInstalledAppsData, GetInstalledAppsResponses, GetLinksData, GetLinksResponses, GetRandomPortData, GetRandomPortResponses, GetTemplateDiffData, GetTemplateDiffResponses, GetTotpUriData, GetTotpUriResponses, GetTranslationData, GetTranslationResponses, GetUserConfigData, GetUserConfigResponses, IgnoreAppVersionData, IgnoreAppVersionResponses, IncrementAllAppVersionsData, IncrementAllAppVersionsResponses, InstallAppData, InstallAppResponses, LoginData, LoginResponses, LogoutData, LogoutResponses, PullAppStoresData, PullAppStoresResponses, RegisterData, RegisterResponses, ResetAppData, ResetAppResponses, ResetPasswordData, ResetPasswordResponses, RestartAllAppsData, RestartAllAppsResponses, RestartAppData, RestartAppResponses, RestoreAppBackupData, RestoreAppBackupResponses, RuntipiLogsEventsData, RuntipiLogsEventsResponses, SearchAppsData, SearchAppsResponses, SeedDatabaseData, SeedDatabaseResponses, SetAllAppSubnetToNullData, SetAllAppSubnetToNullResponses, SetAllAppUpdateAvailableData, SetAllAppUpdateAvailableResponses, SetupTotpData, SetupTotpResponses, StartAllApps2Data, StartAllApps2Responses, StartAllAppsData, StartAllAppsResponses, StartAppData, StartAppResponses, StopAllAppsData, StopAllAppsResponses, StopAppData, StopAppResponses, SyncWithTemplateData, SyncWithTemplateResponses, SystemLoadData, SystemLoadResponses, TraefikData, TraefikResponses, UnignoreAppVersionData, UnignoreAppVersionResponses, UninstallAllAppsData, UninstallAllAppsResponses, UninstallAppData, UninstallAppResponses, UpdateAllAppsData, UpdateAllAppsResponses, UpdateAppData, UpdateAppMetadataData, UpdateAppMetadataResponses, UpdateAppResponses, UpdateAppSettingsData, UpdateAppSettingsResponses, UpdateAppStoreData, UpdateAppStoreResponses, UpdateCustomAppData, UpdateCustomAppResponses, UpdateEditableAppConfigData, UpdateEditableAppConfigResponses, UpdateUserConfigData, UpdateUserConfigResponses, UpdateUserSettingsData, UpdateUserSettingsResponses, UploadAppImageData, UploadAppImageResponses, UploadBackupData, UploadBackupResponses, UserContextData, UserContextResponses, VerifyTotpData, VerifyTotpResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -112,6 +112,17 @@ export const logout = <ThrowOnError extends boolean = false>(options?: Options<L
     return (options?.client ?? client).post<LogoutResponses, unknown, ThrowOnError>({
         url: '/api/auth/logout',
         ...options
+    });
+};
+
+export const forwardAuth = <ThrowOnError extends boolean = false>(options: Options<ForwardAuthData, ThrowOnError>) => {
+    return (options.client ?? client).post<ForwardAuthResponses, unknown, ThrowOnError>({
+        url: '/api/auth/forward-auth',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 
@@ -308,6 +319,20 @@ export const updateAppStore = <ThrowOnError extends boolean = false>(options: Op
     });
 };
 
+export const getAppJob = <ThrowOnError extends boolean = false>(options: Options<GetAppJobData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetAppJobResponses, unknown, ThrowOnError>({
+        url: '/api/app-lifecycle/{urn}/job',
+        ...options
+    });
+};
+
+export const cancelAppJob = <ThrowOnError extends boolean = false>(options: Options<CancelAppJobData, ThrowOnError>) => {
+    return (options.client ?? client).post<CancelAppJobResponses, unknown, ThrowOnError>({
+        url: '/api/app-lifecycle/{urn}/jobs/{requestId}/cancel',
+        ...options
+    });
+};
+
 export const installApp = <ThrowOnError extends boolean = false>(options: Options<InstallAppData, ThrowOnError>) => {
     return (options.client ?? client).post<InstallAppResponses, unknown, ThrowOnError>({
         url: '/api/app-lifecycle/{urn}/install',
@@ -408,61 +433,6 @@ export const restartAllApps = <ThrowOnError extends boolean = false>(options?: O
     });
 };
 
-export const backupApp = <ThrowOnError extends boolean = false>(options: Options<BackupAppData, ThrowOnError>) => {
-    return (options.client ?? client).post<BackupAppResponses, unknown, ThrowOnError>({
-        url: '/api/backups/{urn}/backup',
-        ...options
-    });
-};
-
-export const restoreAppBackup = <ThrowOnError extends boolean = false>(options: Options<RestoreAppBackupData, ThrowOnError>) => {
-    return (options.client ?? client).post<RestoreAppBackupResponses, unknown, ThrowOnError>({
-        url: '/api/backups/{urn}/restore',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
-
-export const deleteAppBackup = <ThrowOnError extends boolean = false>(options: Options<DeleteAppBackupData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteAppBackupResponses, unknown, ThrowOnError>({
-        url: '/api/backups/{urn}',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
-
-export const getAppBackups = <ThrowOnError extends boolean = false>(options: Options<GetAppBackupsData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetAppBackupsResponses, unknown, ThrowOnError>({
-        url: '/api/backups/{urn}',
-        ...options
-    });
-};
-
-export const downloadBackup = <ThrowOnError extends boolean = false>(options: Options<DownloadBackupData, ThrowOnError>) => {
-    return (options.client ?? client).get<DownloadBackupResponses, unknown, ThrowOnError>({
-        url: '/api/backups/{urn}/{filename}/download',
-        ...options
-    });
-};
-
-export const uploadBackup = <ThrowOnError extends boolean = false>(options: Options<UploadBackupData, ThrowOnError>) => {
-    return (options.client ?? client).post<UploadBackupResponses, unknown, ThrowOnError>({
-        ...formDataBodySerializer,
-        url: '/api/backups/{urn}/upload',
-        ...options,
-        headers: {
-            'Content-Type': null,
-            ...options.headers
-        }
-    });
-};
-
 export const appEvents = <ThrowOnError extends boolean = false>(options?: Options<AppEventsData, ThrowOnError>) => {
     return (options?.client ?? client).get<AppEventsResponses, unknown, ThrowOnError>({
         url: '/api/sse/app',
@@ -522,6 +492,61 @@ export const editLink = <ThrowOnError extends boolean = false>(options: Options<
         ...options,
         headers: {
             'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const backupApp = <ThrowOnError extends boolean = false>(options: Options<BackupAppData, ThrowOnError>) => {
+    return (options.client ?? client).post<BackupAppResponses, unknown, ThrowOnError>({
+        url: '/api/backups/{urn}/backup',
+        ...options
+    });
+};
+
+export const restoreAppBackup = <ThrowOnError extends boolean = false>(options: Options<RestoreAppBackupData, ThrowOnError>) => {
+    return (options.client ?? client).post<RestoreAppBackupResponses, unknown, ThrowOnError>({
+        url: '/api/backups/{urn}/restore',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const deleteAppBackup = <ThrowOnError extends boolean = false>(options: Options<DeleteAppBackupData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteAppBackupResponses, unknown, ThrowOnError>({
+        url: '/api/backups/{urn}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+export const getAppBackups = <ThrowOnError extends boolean = false>(options: Options<GetAppBackupsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetAppBackupsResponses, unknown, ThrowOnError>({
+        url: '/api/backups/{urn}',
+        ...options
+    });
+};
+
+export const downloadBackup = <ThrowOnError extends boolean = false>(options: Options<DownloadBackupData, ThrowOnError>) => {
+    return (options.client ?? client).get<DownloadBackupResponses, unknown, ThrowOnError>({
+        url: '/api/backups/{urn}/{filename}/download',
+        ...options
+    });
+};
+
+export const uploadBackup = <ThrowOnError extends boolean = false>(options: Options<UploadBackupData, ThrowOnError>) => {
+    return (options.client ?? client).post<UploadBackupResponses, unknown, ThrowOnError>({
+        ...formDataBodySerializer,
+        url: '/api/backups/{urn}/upload',
+        ...options,
+        headers: {
+            'Content-Type': null,
             ...options.headers
         }
     });

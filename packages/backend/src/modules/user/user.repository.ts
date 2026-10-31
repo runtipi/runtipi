@@ -2,7 +2,9 @@ import { DATABASE, type Database } from '@/core/database/database.module';
 import { user } from '@/core/database/drizzle/schema';
 import type { NewUser } from '@/core/database/drizzle/types';
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm/sql';
+import { eq, sql } from 'drizzle-orm/sql';
+
+const FIRST_OPERATOR_LOCK_ID = 7_301_001;
 
 @Injectable()
 export class UserRepository {
@@ -76,5 +78,22 @@ export class UserRepository {
   public async createUser(data: NewUser) {
     const newUsers = await this.db.insert(user).values(data).returning();
     return newUsers[0];
+  }
+
+  public async createFirstOperator(data: Omit<NewUser, 'operator'>) {
+    return this.db.transaction(async (tx) => {
+      await tx.execute(sql`SELECT pg_advisory_xact_lock(${FIRST_OPERATOR_LOCK_ID})`);
+
+      const existingOperators = await tx.select().from(user).where(eq(user.operator, true));
+      if (existingOperators.length > 0) {
+        return null;
+      }
+
+      const newUsers = await tx
+        .insert(user)
+        .values({ ...data, operator: true })
+        .returning();
+      return newUsers[0] ?? null;
+    });
   }
 }

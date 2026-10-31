@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v4
@@ -86,7 +86,7 @@ jobs:
     if: ${{ always() && (needs.build-images.result == 'success' || needs.build-images.result == 'skipped') }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Create .env.local
         run: |
@@ -112,7 +112,18 @@ jobs:
 
       - name: Create .env.e2e file
         run: |
-          echo "SERVER_IP=$(hostname -I | awk '{print $1}')" > .env.e2e
+          postgres_ip=$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' runtipi-db)
+
+          if [ -z "$postgres_ip" ]; then
+            echo "Unable to determine the runtipi-db container IP"
+            docker inspect --format '{{json .NetworkSettings.Networks}}' runtipi-db
+            exit 1
+          fi
+
+          timeout 30 bash -c "until </dev/tcp/$postgres_ip/5432; do sleep 1; done"
+
+          echo "SERVER_IP=127.0.0.1" > .env.e2e
+          echo "E2E_POSTGRES_HOST=$postgres_ip" >> .env.e2e
           echo "POSTGRES_PASSWORD=$(grep POSTGRES_PASSWORD runtipi/.env | cut -d '=' -f2)" >> .env.e2e
           echo "BASE_PATH=./runtipi" >> .env.e2e
           echo "HOME=/root" >> .env.e2e
@@ -126,7 +137,7 @@ jobs:
 
       - name: Cache Playwright binaries
         id: cache-playwright-binaries
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: /root/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
@@ -185,4 +196,4 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

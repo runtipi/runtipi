@@ -34,7 +34,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     ...userContext,
     refreshUserContext: refreshUserContext,
     setUserContext: (newUserContext: Partial<UserContextDto>) => {
-      queryClient.setQueryData(['userContext'], { ...userContext, ...newUserContext });
+      queryClient.setQueryData(queryKey, { ...userContext, ...newUserContext });
     },
   };
 

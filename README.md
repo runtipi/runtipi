@@ -1,7 +1,7 @@
 # Runtipi — A personal homeserver for everyone
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-56-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-57-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License](https://img.shields.io/github/license/runtipi/runtipi)](https://github.com/runtipi/runtipi/blob/master/LICENSE)
@@ -12,11 +12,10 @@
 [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20Tipi%20Guru-006BFF)](https://gurubase.io/g/tipi)
 
 > [!NOTE]
-> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion in the forums or on Discord!
+> Runtipi is built with TypeScript, NestJS and React! If you want to collaborate on a cool project, join the discussion in our Discord!
 
 #### Join the community
 
-[![Forums](https://img.shields.io/discourse/users?server=https%3A%2F%2Fforums.runtipi.io)](https://forums.runtipi.io/)
 [![Discord](https://img.shields.io/discord/976934649643294750?label=discord&logo=discord)](https://discord.gg/Bu9qEPnHsc)
 
 ![Preview](https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png)
@@ -38,7 +37,6 @@ Thanks to our generous sponsors for supporting the development of Runtipi:
 ## Getting started
 
 Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/installation?utm_source=github&utm_campaign=readme) for installation instructions, documentation and guides.
-If you need more personalized help, visit our [Forums](https://forums.runtipi.io/) to get help from the community.
 
 ## Demo
 
@@ -53,9 +51,11 @@ You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.
 
 ## ❤ Contributing
 
-Runtipi is made to be very easy to plug in new apps. We welcome and appreciate new contributions.
+Runtipi is designed to make adding new apps very easy. We welcome and appreciate new contributions.
 
-If you want to add a new app or feature, you can follow the [Contribution guide](https://www.runtipi.io/docs/contributing/adding-a-new-app) for instructions on how to do so.
+If you want to add a new app, you can follow the [Creating apps guide](https://runtipi.io/docs/developers/creating-apps) for instructions on how to do so.
+
+If you want to add a new feature, take a look at [how to set Runtipi up locally](https://runtipi.io/docs/developers/contributing/running-locally) so you can develop and test your changes before creating a PR.
 
 We are looking for contributions of all kinds. If you know design, development, or have ideas for new features, please get in touch.
 
@@ -158,6 +158,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/skajmer"><img src="https://avatars.githubusercontent.com/u/64442855?v=4?s=100" width="100px;" alt="skajmer"/><br /><sub><b>skajmer</b></sub></a><br /><a href="#translation-skajmer" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AlphaRyz3"><img src="https://avatars.githubusercontent.com/u/71471476?v=4?s=100" width="100px;" alt="AlphaRyze"/><br /><sub><b>AlphaRyze</b></sub></a><br /><a href="#translation-AlphaRyz3" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jnth"><img src="https://avatars.githubusercontent.com/u/7796167?v=4?s=100" width="100px;" alt="Jonathan Virga"/><br /><sub><b>Jonathan Virga</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=jnth" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/existentialcoder"><img src="https://avatars.githubusercontent.com/u/32480876?v=4?s=100" width="100px;" alt="Shravan Balasubramanian"/><br /><sub><b>Shravan Balasubramanian</b></sub></a><br /><a href="https://github.com/runtipi/runtipi/commits?author=existentialcoder" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

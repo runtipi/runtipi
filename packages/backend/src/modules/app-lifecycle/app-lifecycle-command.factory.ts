@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import type Dockerode from 'dockerode';
-import { DOCKERODE } from '../docker/docker.module';
-import type { appEventSchema } from '../queue/entities/app-events';
+import { DOCKERODE } from '../docker/docker.constants';
+import type { appEventSchema, appEventResultSchema } from '../queue/entities/app-events';
 import { BackupAppCommand } from './commands/backup-app-command';
 import { GenerateAppEnvCommand } from './commands/generate-env-command';
 import { InstallAppCommand } from './commands/install-app-command';
@@ -13,15 +13,44 @@ import { StartAppCommand } from './commands/start-app-command';
 import { StopAppCommand } from './commands/stop-app-command';
 import { UninstallAppCommand } from './commands/uninstall-app-command';
 import { UpdateAppCommand } from './commands/update-app-command';
+import { APP_ASYNC_MUTEX } from '@/utils/mutex/mutex.module';
+import type { AsyncMutex } from '@/utils/mutex/async-mutex';
+import { AppJobService, type AppJobContext } from './services/app-job.service';
+import { AppMigrationService } from './services/app-migration.service';
 
 @Injectable()
 export class AppLifecycleCommandFactory {
   constructor(
     private readonly moduleRef: ModuleRef,
     @Inject(DOCKERODE) private readonly docker: Dockerode,
+    @Inject(APP_ASYNC_MUTEX) private readonly mutex: AsyncMutex,
+    private readonly jobs: AppJobService,
+    private readonly migrations: AppMigrationService,
   ) {}
 
-  createCommand(eventData: typeof appEventSchema.infer) {
+  async execute(eventData: typeof appEventSchema.infer, context?: AppJobContext): Promise<typeof appEventResultSchema.infer> {
+    if (!context) this.jobs.assertIdle(eventData.appUrn);
+
+    const release = await this.mutex.acquire(eventData.appUrn);
+
+    try {
+      if (!context) this.jobs.assertIdle(eventData.appUrn);
+
+      try {
+        await this.migrations.reconcile(eventData.appUrn);
+      } catch (error) {
+        if (eventData.command !== 'uninstall') throw error;
+
+        await this.migrations.discardRecovery(eventData.appUrn, error);
+      }
+
+      return await this.createCommand(eventData, context).execute(eventData.appUrn, eventData.form);
+    } finally {
+      release();
+    }
+  }
+
+  private createCommand(eventData: typeof appEventSchema.infer, context?: AppJobContext) {
     const command = eventData.command;
 
     switch (command) {
@@ -34,17 +63,17 @@ export class AppLifecycleCommandFactory {
       case 'restart':
         return new RestartAppCommand(this.moduleRef, this.docker);
       case 'uninstall':
-        return new UninstallAppCommand(this.moduleRef, this.docker);
+        return new UninstallAppCommand(this.moduleRef, this.docker, eventData.removeBackups);
       case 'reset':
         return new ResetAppCommand(this.moduleRef, this.docker);
       case 'backup':
-        return new BackupAppCommand(this.moduleRef, this.docker);
+        return new BackupAppCommand(this.moduleRef, this.docker, eventData.wasRunningBeforeBackup, context);
       case 'restore':
         return new RestoreAppCommand(this.moduleRef, this.docker, eventData.filename);
       case 'generate_env':
         return new GenerateAppEnvCommand(this.moduleRef, this.docker);
       case 'update':
-        return new UpdateAppCommand(this.moduleRef, this.docker, eventData.performBackup);
+        return new UpdateAppCommand(this.moduleRef, this.docker, eventData.performBackup, eventData.wasRunningBeforeUpdate, context);
       default:
         throw new Error(`Unknown command: ${command}`);
     }

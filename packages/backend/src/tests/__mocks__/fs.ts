@@ -1,15 +1,24 @@
+import type { CopyOptions } from 'node:fs';
+import path from 'node:path';
 import { fs, vol } from 'memfs';
 import type { IMkdirOptions } from 'memfs/lib/node/types/options';
 
-const copyFolderRecursiveSync = (src: string, dest: string) => {
-  const exists = vol.existsSync(src);
-  const stats = vol.statSync(src);
-  const isDirectory = exists && stats.isDirectory();
+const copyFolderRecursiveSync = (src: string, dest: string, options: CopyOptions = {}) => {
+  const stats = vol.lstatSync(src);
+
+  if (stats.isSymbolicLink() && !options.dereference) {
+    const target = vol.readlinkSync(src).toString();
+    const copiedTarget = options.verbatimSymlinks ? target : path.resolve(path.dirname(src), target);
+    vol.symlinkSync(copiedTarget, dest);
+    return;
+  }
+
+  const isDirectory = vol.statSync(src).isDirectory();
   if (isDirectory) {
     vol.mkdirSync(dest, { recursive: true });
 
     for (const childItemName of vol.readdirSync(src)) {
-      copyFolderRecursiveSync(`${src}/${childItemName}`, `${dest}/${childItemName}`);
+      copyFolderRecursiveSync(`${src}/${childItemName}`, `${dest}/${childItemName}`, options);
     }
   } else {
     vol.copyFileSync(src, dest);

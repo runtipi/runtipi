@@ -117,6 +117,19 @@ export class FilesystemService {
     }
   }
 
+  async writePrivateTextFile(filePath: string, content: string) {
+    try {
+      await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
+      const safeFilePath = this.getSafeFilePath(filePath);
+      await fs.promises.writeFile(safeFilePath, content, { encoding: 'utf8', mode: 0o600 });
+      await fs.promises.chmod(safeFilePath, 0o600);
+      return true;
+    } catch (error) {
+      this.logger.error(`Error writing private file ${filePath}:`, error);
+      return false;
+    }
+  }
+
   async writeBinaryFile(filePath: string, data: Buffer): Promise<boolean> {
     try {
       await fs.promises.mkdir(this.getSafeFilePath(filePath.split('/').slice(0, -1).join('/')), { recursive: true });
@@ -189,6 +202,10 @@ export class FilesystemService {
       await fs.promises.unlink(this.getSafeFilePath(filePath));
       return true;
     } catch (error) {
+      const errorCode = (error as NodeJS.ErrnoException).code;
+      if (errorCode === 'ENOENT') {
+        return true;
+      }
       this.logger.error(`Error removing file ${filePath}:`, error);
       return false;
     }
@@ -204,11 +221,35 @@ export class FilesystemService {
   }
 
   async isDirectory(dirPath: string): Promise<boolean> {
-    return (await fs.promises.lstat(this.getSafeFilePath(dirPath))).isDirectory();
+    try {
+      return (await fs.promises.lstat(this.getSafeFilePath(dirPath))).isDirectory();
+    } catch {
+      return false;
+    }
+  }
+
+  async isFile(filePath: string): Promise<boolean> {
+    try {
+      return (await fs.promises.lstat(this.getSafeFilePath(filePath))).isFile();
+    } catch {
+      return false;
+    }
   }
 
   async createTempDirectory(prefix: string): Promise<string | null> {
-    return fs.promises.mkdtemp(prefix);
+    const directory = await fs.promises.mkdtemp(prefix);
+    try {
+      await fs.promises.chmod(directory, 0o700);
+      const stats = await fs.promises.stat(directory);
+      const mode = stats.mode & 0o777;
+      if (mode !== 0o700) {
+        throw new Error(`Temporary directory ${directory} is not private`);
+      }
+    } catch (error) {
+      await fs.promises.rmdir(directory).catch(() => undefined);
+      throw error;
+    }
+    return directory;
   }
 
   async getStats(filePath: string) {
