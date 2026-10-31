@@ -81,6 +81,7 @@ services:
       - ${RUNTIPI_USER_CONFIG_PATH:-.internal}/user-config:/data/user-config
       - ${RUNTIPI_APP_DATA_PATH:-.internal}/app-data:/app-data
       - ${RUNTIPI_BACKUPS_PATH:-.internal}/backups:/data/backups
+      - runtipi_auth:/data/.secrets
       # Static
       - ./.env:/data/.env
       - ./.internal/cache:/cache
@@ -145,4 +146,5 @@ networks:
     name: runtipi_tipi_main_network
 
 volumes:
+  runtipi_auth:
   pgdata:
