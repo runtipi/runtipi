@@ -45,8 +45,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.1",
-    "@changesets/cli": "^2.29.3",
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/cli": "^2.31.1",
     "vitest": "^4.1.12"
   },
   "peerDependencies": {
@@ -54,6 +54,6 @@
     "typescript": ">=5"
   },
   "dependencies": {
-    "yaml": "^2.8.2"
+    "yaml": "^2.9.1"
   }
 }
