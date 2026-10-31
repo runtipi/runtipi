@@ -6,15 +6,27 @@ on:
         required: true
         type: string
         description: "Version to test (e.g. v1.6.0-beta.1)"
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+      SENTRY_AUTH_TOKEN:
+        required: true
   workflow_dispatch:
 
 jobs:
   build-images:
+    permissions:
+      contents: write
+      packages: write
     if: ${{ !inputs.version }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v4
@@ -80,6 +92,8 @@ jobs:
           files: bin/runtipi-cli-*
 
   e2e:
+    permissions:
+      contents: read
     timeout-minutes: 60
     runs-on: ubuntu-latest
     needs: [build-images]
@@ -87,6 +101,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Create .env.local
         run: |
