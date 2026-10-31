@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Используется из {{total}} ГБ",
   "DASHBOARD_DISK_SPACE_TITLE": "Место на диске",
   "DASHBOARD_MEMORY_TITLE": "Использовано памяти",
+  "DASHBOARD_MEMORY_ESTIMATED": "примерно",
   "DASHBOARD_TITLE": "Обзор",
   "DASHBOARD_IP_WARNING_TITLE": "Небезопасная конфигурация",
   "DASHBOARD_IP_WARNING": "Внимание! Похоже, что вы получаете доступ к своему экземпляру через публичный IP-адрес. Это делает вашу панель и все установленные вами приложения уязвимыми для атакующих",

@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "已使用 {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "磁盘空间",
   "DASHBOARD_MEMORY_TITLE": "已用内存",
+  "DASHBOARD_MEMORY_ESTIMATED": "估算",
   "DASHBOARD_TITLE": "控制面板",
   "DASHBOARD_IP_WARNING_TITLE": "不安全的配置",
   "DASHBOARD_IP_WARNING": "警告，您可能处于风险中！您似乎正在通过公共IP地址访问您的实例。这使您的仪表板和所有您安装的应用程序容易受到攻击者的攻击",

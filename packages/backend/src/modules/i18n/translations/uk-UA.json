@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Використано з {{total}} Гб",
   "DASHBOARD_DISK_SPACE_TITLE": "Місце на диску",
   "DASHBOARD_MEMORY_TITLE": "Використано пам'яті",
+  "DASHBOARD_MEMORY_ESTIMATED": "приблизно",
   "DASHBOARD_TITLE": "Огляд",
   "DASHBOARD_IP_WARNING_TITLE": "Небезпечна конфігурація",
   "DASHBOARD_IP_WARNING": "Попередження, ви можете опинитися під загрозою! Здається що ви отримуєте доступ до свого екземпляра за допомогою публічної IP-адреси. Це робить вашу головну панель та всі додатки, які ви встановлюєте вразливими до зловмисників",

@@ -30,6 +30,9 @@ const envSchema = type({
   LOCAL_DOMAIN: 'string',
   DNS_IP: 'string = "9.9.9.9"',
   RUNTIPI_APP_DATA_PATH: 'string',
+  RUNTIPI_HOST_MEMORY_TOTAL: type('number | string.numeric.parse')
+    .narrow((value) => Number.isSafeInteger(value) && value >= 0)
+    .default(0),
   RUNTIPI_FORWARD_AUTH_URL: 'string',
   DEMO_MODE: 'string',
   GUEST_DASHBOARD: 'string',
@@ -137,6 +140,7 @@ export class ConfigurationService {
         appDir: APP_DIR,
       },
       logLevel,
+      hostMemoryTotal: env.RUNTIPI_HOST_MEMORY_TOTAL,
       version: env.TIPI_VERSION,
       isProduction: NODE_ENV === 'production',
       userSettings: {

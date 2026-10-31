@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Utilisé sur {{total}} Go",
   "DASHBOARD_DISK_SPACE_TITLE": "Espace disque",
   "DASHBOARD_MEMORY_TITLE": "Mémoire utilisée",
+  "DASHBOARD_MEMORY_ESTIMATED": "estimé",
   "DASHBOARD_TITLE": "Tableau de bord",
   "DASHBOARD_IP_WARNING_TITLE": "Configuration non sécurisée",
   "DASHBOARD_IP_WARNING": "Attention, vous pourriez courir un risque ! Il semble que vous accédez à votre instance via une adresse IP publique. Cela rend votre tableau de bord et toutes les applications que vous installez vulnérables aux attaquants",

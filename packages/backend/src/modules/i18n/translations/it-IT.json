@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Utilizzati su un totale di {{total}} GB",
   "DASHBOARD_DISK_SPACE_TITLE": "Spazio su disco",
   "DASHBOARD_MEMORY_TITLE": "Memoria usata",
+  "DASHBOARD_MEMORY_ESTIMATED": "stimata",
   "DASHBOARD_TITLE": "Dashboard",
   "DASHBOARD_IP_WARNING_TITLE": "Configurazione non sicura",
   "DASHBOARD_IP_WARNING": "Attenzione, potresti essere a rischio! Sembra che stai accedendo alla tua istanza tramite un indirizzo IP pubblico. Questo rende la tua dashboard e tutte le applicazioni che installi vulnerabili agli attaccanti",

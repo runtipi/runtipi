@@ -394,6 +394,7 @@
   "DASHBOARD_DISK_SPACE_SUBTITLE": "Toplam {{total}} GB üzerinden kullanılan",
   "DASHBOARD_DISK_SPACE_TITLE": "Disk Alanı",
   "DASHBOARD_MEMORY_TITLE": "Bellek (RAM) Kullanımı",
+  "DASHBOARD_MEMORY_ESTIMATED": "tahmini",
   "DASHBOARD_TITLE": "Kontrol Paneli",
   "DASHBOARD_IP_WARNING_TITLE": "Güvenlik Riski Taşıyan Yapılandırma",
   "DASHBOARD_IP_WARNING": "Dikkat! Sisteme doğrudan genel (statik/kamusal) bir IP üzerinden erişiyorsunuz gibi görünüyor. Bu durum hem kontrol panelinizi hem de yüklü uygulamalarınızı dış dünyadan gelebilecek saldırılara açık bırakır.",
