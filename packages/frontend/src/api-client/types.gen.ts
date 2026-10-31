@@ -630,15 +630,7 @@ export type CreateCustomAppDto = {
                     internal_port?: number | string;
                     is_main?: boolean;
                 };
-                [key: string]: unknown | string | {
-                    [key: string]: number | string | boolean;
-                } | Array<string> | {
-                    [key: string]: unknown;
-                } | Array<string> | Array<unknown> | {
-                    add_to_main_network?: boolean;
-                    internal_port?: number | string;
-                    is_main?: boolean;
-                } | undefined;
+                [key: string]: unknown;
             };
         };
         'x-runtipi': {
@@ -660,15 +652,7 @@ export type CreateCustomAppDto = {
                             internal_port?: number | string;
                             is_main?: boolean;
                         };
-                        [key: string]: unknown | string | {
-                            [key: string]: number | string | boolean;
-                        } | Array<string> | {
-                            [key: string]: unknown;
-                        } | Array<string> | Array<unknown> | {
-                            add_to_main_network?: boolean;
-                            internal_port?: number | string;
-                            is_main?: boolean;
-                        } | undefined;
+                        [key: string]: unknown;
                     };
                 };
             }>;
@@ -676,65 +660,7 @@ export type CreateCustomAppDto = {
         networks?: {
             [key: string]: unknown;
         };
-        [key: string]: unknown | {
-            [key: string]: {
-                image: string;
-                labels?: {
-                    [key: string]: number | string | boolean;
-                } | Array<string>;
-                networks?: {
-                    [key: string]: unknown;
-                } | Array<string>;
-                ports?: Array<unknown>;
-                'x-runtipi'?: {
-                    add_to_main_network?: boolean;
-                    internal_port?: number | string;
-                    is_main?: boolean;
-                };
-                [key: string]: unknown | string | {
-                    [key: string]: number | string | boolean;
-                } | Array<string> | {
-                    [key: string]: unknown;
-                } | Array<string> | Array<unknown> | {
-                    add_to_main_network?: boolean;
-                    internal_port?: number | string;
-                    is_main?: boolean;
-                } | undefined;
-            };
-        } | {
-            schema_version: 1 | 2;
-            overrides?: Array<{
-                architecture: 'amd64' | 'arm64';
-                services: {
-                    [key: string]: {
-                        image: string;
-                        labels?: {
-                            [key: string]: number | string | boolean;
-                        } | Array<string>;
-                        networks?: {
-                            [key: string]: unknown;
-                        } | Array<string>;
-                        ports?: Array<unknown>;
-                        'x-runtipi'?: {
-                            add_to_main_network?: boolean;
-                            internal_port?: number | string;
-                            is_main?: boolean;
-                        };
-                        [key: string]: unknown | string | {
-                            [key: string]: number | string | boolean;
-                        } | Array<string> | {
-                            [key: string]: unknown;
-                        } | Array<string> | Array<unknown> | {
-                            add_to_main_network?: boolean;
-                            internal_port?: number | string;
-                            is_main?: boolean;
-                        } | undefined;
-                    };
-                };
-            }>;
-        } | {
-            [key: string]: unknown;
-        } | undefined;
+        [key: string]: unknown;
     };
     name: string;
 };
@@ -762,15 +688,7 @@ export type UpdateCustomAppDto = {
                     internal_port?: number | string;
                     is_main?: boolean;
                 };
-                [key: string]: unknown | string | {
-                    [key: string]: number | string | boolean;
-                } | Array<string> | {
-                    [key: string]: unknown;
-                } | Array<string> | Array<unknown> | {
-                    add_to_main_network?: boolean;
-                    internal_port?: number | string;
-                    is_main?: boolean;
-                } | undefined;
+                [key: string]: unknown;
             };
         };
         'x-runtipi': {
@@ -792,15 +710,7 @@ export type UpdateCustomAppDto = {
                             internal_port?: number | string;
                             is_main?: boolean;
                         };
-                        [key: string]: unknown | string | {
-                            [key: string]: number | string | boolean;
-                        } | Array<string> | {
-                            [key: string]: unknown;
-                        } | Array<string> | Array<unknown> | {
-                            add_to_main_network?: boolean;
-                            internal_port?: number | string;
-                            is_main?: boolean;
-                        } | undefined;
+                        [key: string]: unknown;
                     };
                 };
             }>;
@@ -808,65 +718,7 @@ export type UpdateCustomAppDto = {
         networks?: {
             [key: string]: unknown;
         };
-        [key: string]: unknown | {
-            [key: string]: {
-                image: string;
-                labels?: {
-                    [key: string]: number | string | boolean;
-                } | Array<string>;
-                networks?: {
-                    [key: string]: unknown;
-                } | Array<string>;
-                ports?: Array<unknown>;
-                'x-runtipi'?: {
-                    add_to_main_network?: boolean;
-                    internal_port?: number | string;
-                    is_main?: boolean;
-                };
-                [key: string]: unknown | string | {
-                    [key: string]: number | string | boolean;
-                } | Array<string> | {
-                    [key: string]: unknown;
-                } | Array<string> | Array<unknown> | {
-                    add_to_main_network?: boolean;
-                    internal_port?: number | string;
-                    is_main?: boolean;
-                } | undefined;
-            };
-        } | {
-            schema_version: 1 | 2;
-            overrides?: Array<{
-                architecture: 'amd64' | 'arm64';
-                services: {
-                    [key: string]: {
-                        image: string;
-                        labels?: {
-                            [key: string]: number | string | boolean;
-                        } | Array<string>;
-                        networks?: {
-                            [key: string]: unknown;
-                        } | Array<string>;
-                        ports?: Array<unknown>;
-                        'x-runtipi'?: {
-                            add_to_main_network?: boolean;
-                            internal_port?: number | string;
-                            is_main?: boolean;
-                        };
-                        [key: string]: unknown | string | {
-                            [key: string]: number | string | boolean;
-                        } | Array<string> | {
-                            [key: string]: unknown;
-                        } | Array<string> | Array<unknown> | {
-                            add_to_main_network?: boolean;
-                            internal_port?: number | string;
-                            is_main?: boolean;
-                        } | undefined;
-                    };
-                };
-            }>;
-        } | {
-            [key: string]: unknown;
-        } | undefined;
+        [key: string]: unknown;
     };
 };
 
@@ -904,7 +756,6 @@ export type OidcProvidersLoginDto = {
 export type GetOidcProvidersDto = {
     providers: Array<{
         clientId: string;
-        clientSecret: string;
         discovery: string;
         displayName: string;
         issuer: string;
@@ -923,7 +774,6 @@ export type CreateOidcProviderDto = {
 
 export type GetOidcProviderDto = {
     clientId: string;
-    clientSecret: string;
     discovery: string;
     displayName: string;
     issuer: string;
@@ -932,21 +782,29 @@ export type GetOidcProviderDto = {
 
 export type EditOidcProviderDto = {
     clientId: string;
-    clientSecret: string;
     discovery: string;
     displayName: string;
     issuer: string;
+    clientSecret?: string;
+};
+
+export type StartOidcLoginBody = {
+    redirectUrl?: string;
 };
 
 export type GetOidcProviderUrlDto = {
-    slug: string;
     url: string;
+};
+
+export type LinkOidcProviderBody = {
+    password: string;
 };
 
 export type TrustedSubsDto = {
     subs: Array<{
         createdAt: number;
         providerDisplayName: string;
+        providerSlug: string;
         slug: string;
         sub: string;
     }>;
@@ -1807,19 +1665,19 @@ export type CheckErrors = {
         info?: {
             [key: string]: {
                 status: string;
-                [key: string]: unknown | string;
+                [key: string]: unknown;
             };
         };
         error?: {
             [key: string]: {
                 status: string;
-                [key: string]: unknown | string;
+                [key: string]: unknown;
             };
         };
         details?: {
             [key: string]: {
                 status: string;
-                [key: string]: unknown | string;
+                [key: string]: unknown;
             };
         };
     };
@@ -1836,19 +1694,19 @@ export type CheckResponses = {
         info?: {
             [key: string]: {
                 status: string;
-                [key: string]: unknown | string;
+                [key: string]: unknown;
             };
         };
         error?: {
             [key: string]: {
                 status: string;
-                [key: string]: unknown | string;
+                [key: string]: unknown;
             };
         };
         details?: {
             [key: string]: {
                 status: string;
-                [key: string]: unknown | string;
+                [key: string]: unknown;
             };
         };
     };
@@ -2027,127 +1885,6 @@ export type SyncWithTemplateResponses = {
 
 export type SyncWithTemplateResponse = SyncWithTemplateResponses[keyof SyncWithTemplateResponses];
 
-export type GetLoginProvidersData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/oidc/providers/login';
-};
-
-export type GetLoginProvidersResponses = {
-    default: OidcProvidersLoginDto;
-};
-
-export type GetLoginProvidersResponse = GetLoginProvidersResponses[keyof GetLoginProvidersResponses];
-
-export type GetUserProvidersData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/oidc/providers/user';
-};
-
-export type GetUserProvidersResponses = {
-    default: GetOidcProvidersDto;
-};
-
-export type GetUserProvidersResponse = GetUserProvidersResponses[keyof GetUserProvidersResponses];
-
-export type CreateProviderData = {
-    body: CreateOidcProviderDto;
-    path?: never;
-    query?: never;
-    url: '/api/oidc/providers/new';
-};
-
-export type CreateProviderResponses = {
-    default: GetOidcProviderDto;
-};
-
-export type CreateProviderResponse = CreateProviderResponses[keyof CreateProviderResponses];
-
-export type EditProviderData = {
-    body: EditOidcProviderDto;
-    path: {
-        slug: string;
-    };
-    query?: never;
-    url: '/api/oidc/providers/{slug}/edit';
-};
-
-export type EditProviderResponses = {
-    default: GetOidcProviderDto;
-};
-
-export type EditProviderResponse = EditProviderResponses[keyof EditProviderResponses];
-
-export type DeleteProviderData = {
-    body?: never;
-    path: {
-        slug: string;
-    };
-    query?: never;
-    url: '/api/oidc/providers/{slug}/delete';
-};
-
-export type DeleteProviderResponses = {
-    200: unknown;
-};
-
-export type GetProviderAuthUrlData = {
-    body?: never;
-    path: {
-        slug: string;
-    };
-    query?: never;
-    url: '/api/oidc/providers/{slug}/url';
-};
-
-export type GetProviderAuthUrlResponses = {
-    default: GetOidcProviderUrlDto;
-};
-
-export type GetProviderAuthUrlResponse = GetProviderAuthUrlResponses[keyof GetProviderAuthUrlResponses];
-
-export type HandleProviderCallbackData = {
-    body?: never;
-    path: {
-        slug: string;
-    };
-    query?: never;
-    url: '/api/oidc/providers/{slug}/callback';
-};
-
-export type HandleProviderCallbackResponses = {
-    200: unknown;
-};
-
-export type GetTrustedSubsData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/oidc/subs/trusted';
-};
-
-export type GetTrustedSubsResponses = {
-    200: TrustedSubsDto;
-};
-
-export type GetTrustedSubsResponse = GetTrustedSubsResponses[keyof GetTrustedSubsResponses];
-
-export type DeleteTrustedSubData = {
-    body?: never;
-    path: {
-        slug: string;
-    };
-    query?: never;
-    url: '/api/oidc/subs/{slug}/delete';
-};
-
-export type DeleteTrustedSubResponses = {
-    200: unknown;
-};
-
 export type SeedDatabaseData = {
     body?: never;
     path?: never;
@@ -2223,4 +1960,140 @@ export type UninstallAllAppsData = {
 
 export type UninstallAllAppsResponses = {
     201: unknown;
+};
+
+export type GetLoginProvidersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/providers/login';
+};
+
+export type GetLoginProvidersResponses = {
+    default: OidcProvidersLoginDto;
+};
+
+export type GetLoginProvidersResponse = GetLoginProvidersResponses[keyof GetLoginProvidersResponses];
+
+export type GetUserProvidersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/providers/user';
+};
+
+export type GetUserProvidersResponses = {
+    default: GetOidcProvidersDto;
+};
+
+export type GetUserProvidersResponse = GetUserProvidersResponses[keyof GetUserProvidersResponses];
+
+export type CreateProviderData = {
+    body: CreateOidcProviderDto;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/providers/new';
+};
+
+export type CreateProviderResponses = {
+    default: GetOidcProviderDto;
+};
+
+export type CreateProviderResponse = CreateProviderResponses[keyof CreateProviderResponses];
+
+export type EditProviderData = {
+    body: EditOidcProviderDto;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/edit';
+};
+
+export type EditProviderResponses = {
+    default: GetOidcProviderDto;
+};
+
+export type EditProviderResponse = EditProviderResponses[keyof EditProviderResponses];
+
+export type DeleteProviderData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/delete';
+};
+
+export type DeleteProviderResponses = {
+    200: unknown;
+};
+
+export type GetProviderAuthUrlData = {
+    body: StartOidcLoginBody;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/url';
+};
+
+export type GetProviderAuthUrlResponses = {
+    default: GetOidcProviderUrlDto;
+};
+
+export type GetProviderAuthUrlResponse = GetProviderAuthUrlResponses[keyof GetProviderAuthUrlResponses];
+
+export type LinkProviderData = {
+    body: LinkOidcProviderBody;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/link';
+};
+
+export type LinkProviderResponses = {
+    default: GetOidcProviderUrlDto;
+};
+
+export type LinkProviderResponse = LinkProviderResponses[keyof LinkProviderResponses];
+
+export type HandleProviderCallbackData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/providers/{slug}/callback';
+};
+
+export type HandleProviderCallbackResponses = {
+    200: unknown;
+};
+
+export type GetTrustedSubsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/oidc/subs/trusted';
+};
+
+export type GetTrustedSubsResponses = {
+    default: TrustedSubsDto;
+};
+
+export type GetTrustedSubsResponse = GetTrustedSubsResponses[keyof GetTrustedSubsResponses];
+
+export type DeleteTrustedSubData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/oidc/subs/{slug}/delete';
+};
+
+export type DeleteTrustedSubResponses = {
+    200: unknown;
 };

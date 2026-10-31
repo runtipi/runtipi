@@ -1,7 +1,10 @@
 import { ErrorPage } from '@/components/error/error-page';
-import { Navigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 export default function BackendErrorPage() {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
   const params = new URLSearchParams(window.location.search);
   const error = params.get('error');
 
@@ -9,5 +12,7 @@ export default function BackendErrorPage() {
     return <Navigate to="/" />;
   }
 
-  return <ErrorPage error={new Error(error)} onReset={() => window.location.reload()} />;
+  const destination = params.get('redirect_to') === 'settings' ? '/settings?tab=security' : '/login';
+
+  return <ErrorPage error={new Error(t(error))} onReset={() => navigate(destination, { replace: true })} />;
 }

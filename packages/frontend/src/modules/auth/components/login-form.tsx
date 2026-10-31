@@ -22,9 +22,10 @@ interface IProps {
   loginType: string;
   oauthProviders: { slug: string; displayName: string }[];
   onOAuthClick: (provider: { slug: string }) => void;
+  oauthLoading: boolean;
 }
 
-export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oauthProviders, onOAuthClick }) => {
+export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oauthProviders, onOAuthClick, oauthLoading }) => {
   const { t } = useTranslation();
 
   const {
@@ -80,7 +81,14 @@ export const LoginForm: React.FC<IProps> = ({ loading, onSubmit, loginType, oaut
           <div className="hr-text">{t('AUTH_FORM_OAUTH_DIVIDER')}</div>
           <div className="d-flex gap-3 flex-column">
             {oauthProviders.map((provider) => (
-              <Button key={provider.slug} onClick={() => onOAuthClick(provider)} intent="dark" variant="outline" className="w-100">
+              <Button
+                key={provider.slug}
+                disabled={oauthLoading}
+                onClick={() => onOAuthClick(provider)}
+                intent="dark"
+                variant="outline"
+                className="w-100"
+              >
                 <IconBrandOauth size={16} className="me-2" />
                 <span>{provider.displayName}</span>
               </Button>

@@ -93,6 +93,20 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_INVALID_CREDENTIALS', {}, HttpStatus.BAD_REQUEST);
     }
 
+    return this.createLoginSession(user.id);
+  };
+
+  public async confirmPassword(userId: number, password: string) {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user || !(await this.passwordService.verify(password, user.password))) {
+      throw new TranslatableError('AUTH_ERROR_INVALID_CREDENTIALS', {}, HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  public async createLoginSession(userId: number) {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
+
     if (user.totpEnabled) {
       const totpSessionId = crypto.randomUUID();
       this.cache.set(totpSessionId, user.id.toString(), TOTP_SESSION_EXPIRATION);
@@ -104,7 +118,7 @@ export class AuthService {
     return {
       sessionId,
     };
-  };
+  }
 
   /**
    * Verify TOTP code and return a JWT token

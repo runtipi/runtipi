@@ -8,7 +8,8 @@
     "dev": "react-router dev",
     "bundle": "react-router build",
     "preview": "vite preview",
-    "typecheck": "react-router typegen && bun check"
+    "typecheck": "react-router typegen && bun check",
+    "test": "vitest run"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
@@ -92,6 +93,9 @@
     "typescript": "^7.0.2",
     "vite": "^7.3.7",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.12"
+    "vitest": "^4.1.12",
+    "@types/jsdom": "^21.1.7",
+    "jsdom": "^26.1.0",
+    "msw": "^2.8.2"
   }
 }

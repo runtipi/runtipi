@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { OIDCProvidersLoginDto } from '../dto/oidc.dto';
-import { OIDCService } from '../oidc.service';
+import { OIDCController } from '../oidc.controller';
 import { OIDCRepository } from '../oidc.repository';
 import { Test } from '@nestjs/testing';
 import { mock } from 'vitest-mock-extended';
@@ -28,11 +28,11 @@ test('provider discovery exposes only login labels and slugs', async () => {
   const repository = mock<OIDCRepository>();
   repository.getOIDCProviders.mockResolvedValue([provider]);
 
-  const module = await Test.createTestingModule({ providers: [OIDCService, { provide: OIDCRepository, useValue: repository }] })
+  const module = await Test.createTestingModule({ providers: [OIDCController, { provide: OIDCRepository, useValue: repository }] })
     .useMocker(mock)
     .compile();
 
-  const result = await module.get(OIDCService).getOIDCProvidersLogin();
+  const result = await module.get(OIDCController).getLoginProviders();
 
   expect(JSON.parse(JSON.stringify(result))).toEqual({ providers: [{ slug: 'example', displayName: 'Example' }] });
 });

@@ -2279,6 +2279,104 @@
         ]
       }
     },
+    "/api/debug/seed": {
+      "post": {
+        "operationId": "seedDatabase",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/set-all-app-update-available": {
+      "post": {
+        "operationId": "setAllAppUpdateAvailable",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/set-all-subnets-to-null": {
+      "post": {
+        "operationId": "setAllAppSubnetToNull",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/start-all-apps": {
+      "post": {
+        "operationId": "startAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/backup-all-apps": {
+      "post": {
+        "operationId": "backupAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/increment-all-app-versions": {
+      "post": {
+        "operationId": "incrementAllAppVersions",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
+    "/api/debug/uninstall-all-apps": {
+      "post": {
+        "operationId": "uninstallAllApps",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Debug"
+        ]
+      }
+    },
     "/api/oidc/providers/login": {
       "get": {
         "operationId": "getLoginProviders",
@@ -2428,6 +2526,56 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartOIDCLoginBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOIDCProviderURLDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "OIDC"
+        ]
+      }
+    },
+    "/api/oidc/providers/{slug}/link": {
+      "post": {
+        "operationId": "linkProvider",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkOIDCProviderBody"
+              }
+            }
+          }
+        },
         "responses": {
           "default": {
             "description": "",
@@ -2473,7 +2621,7 @@
         "operationId": "getTrustedSubs",
         "parameters": [],
         "responses": {
-          "200": {
+          "default": {
             "description": "",
             "content": {
               "application/json": {
@@ -2509,104 +2657,6 @@
         },
         "tags": [
           "OIDC"
-        ]
-      }
-    },
-    "/api/debug/seed": {
-      "post": {
-        "operationId": "seedDatabase",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
-        ]
-      }
-    },
-    "/api/debug/set-all-app-update-available": {
-      "post": {
-        "operationId": "setAllAppUpdateAvailable",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
-        ]
-      }
-    },
-    "/api/debug/set-all-subnets-to-null": {
-      "post": {
-        "operationId": "setAllAppSubnetToNull",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
-        ]
-      }
-    },
-    "/api/debug/start-all-apps": {
-      "post": {
-        "operationId": "startAllApps",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
-        ]
-      }
-    },
-    "/api/debug/backup-all-apps": {
-      "post": {
-        "operationId": "backupAllApps",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
-        ]
-      }
-    },
-    "/api/debug/increment-all-app-versions": {
-      "post": {
-        "operationId": "incrementAllAppVersions",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
-        ]
-      }
-    },
-    "/api/debug/uninstall-all-apps": {
-      "post": {
-        "operationId": "uninstallAllApps",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Debug"
         ]
       }
     }
@@ -5917,7 +5967,8 @@
               "required": [
                 "displayName",
                 "slug"
-              ]
+              ],
+              "additionalProperties": false
             }
           }
         },
@@ -5937,21 +5988,18 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "clientSecret": {
-                  "type": "string",
-                  "minLength": 1
-                },
                 "discovery": {
                   "type": "string",
-                  "format": "uri"
+                  "pattern": "^https://"
                 },
                 "displayName": {
                   "type": "string",
+                  "maxLength": 100,
                   "minLength": 1
                 },
                 "issuer": {
                   "type": "string",
-                  "format": "uri"
+                  "pattern": "^https://"
                 },
                 "slug": {
                   "type": "string",
@@ -5960,12 +6008,12 @@
               },
               "required": [
                 "clientId",
-                "clientSecret",
                 "discovery",
                 "displayName",
                 "issuer",
                 "slug"
-              ]
+              ],
+              "additionalProperties": false
             }
           }
         },
@@ -5986,18 +6034,21 @@
           },
           "discovery": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://"
           },
           "displayName": {
             "type": "string",
+            "maxLength": 100,
             "minLength": 1
           },
           "issuer": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://"
           },
           "slug": {
             "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "maxLength": 64,
             "minLength": 1
           }
         },
@@ -6017,21 +6068,18 @@
             "type": "string",
             "minLength": 1
           },
-          "clientSecret": {
-            "type": "string",
-            "minLength": 1
-          },
           "discovery": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://"
           },
           "displayName": {
             "type": "string",
+            "maxLength": 100,
             "minLength": 1
           },
           "issuer": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://"
           },
           "slug": {
             "type": "string",
@@ -6040,7 +6088,6 @@
         },
         "required": [
           "clientId",
-          "clientSecret",
           "discovery",
           "displayName",
           "issuer",
@@ -6054,45 +6101,62 @@
             "type": "string",
             "minLength": 1
           },
-          "clientSecret": {
-            "type": "string",
-            "minLength": 1
-          },
           "discovery": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://"
           },
           "displayName": {
             "type": "string",
+            "maxLength": 100,
             "minLength": 1
           },
           "issuer": {
             "type": "string",
-            "format": "uri"
+            "pattern": "^https://"
+          },
+          "clientSecret": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
           "clientId",
-          "clientSecret",
           "discovery",
           "displayName",
           "issuer"
         ]
       },
+      "StartOIDCLoginBody": {
+        "type": "object",
+        "properties": {
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
       "GetOIDCProviderURLDto": {
         "type": "object",
         "properties": {
-          "slug": {
-            "type": "string"
-          },
           "url": {
             "type": "string",
             "format": "uri"
           }
         },
         "required": [
-          "slug",
           "url"
+        ]
+      },
+      "LinkOIDCProviderBody": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "password"
         ]
       },
       "TrustedSubsDto": {
@@ -6109,6 +6173,9 @@
                 "providerDisplayName": {
                   "type": "string"
                 },
+                "providerSlug": {
+                  "type": "string"
+                },
                 "slug": {
                   "type": "string"
                 },
@@ -6119,9 +6186,11 @@
               "required": [
                 "createdAt",
                 "providerDisplayName",
+                "providerSlug",
                 "slug",
                 "sub"
-              ]
+              ],
+              "additionalProperties": false
             }
           }
         },

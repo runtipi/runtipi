@@ -1,20 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import {
-  deleteTrustedSubMutation,
-  getTrustedSubsOptions,
-  getProviderAuthUrlMutation,
-  getUserProvidersOptions,
-} from '@/api-client/@tanstack/react-query.gen';
+import { deleteTrustedSubMutation, getTrustedSubsOptions, getUserProvidersOptions } from '@/api-client/@tanstack/react-query.gen';
 import { DeleteOAuthProviderDialog } from '../delete-oauth-provider-dialog/delete-oauth-provider-dialog';
 import { EditOAuthProviderDialog } from '../edit-oauth-provider-dialog/edit-oauth-provider-dialog';
+import { LinkOAuthProviderDialog } from '../link-oauth-provider-dialog/link-oauth-provider-dialog';
 import toast from 'react-hot-toast';
 import type { TranslatableError } from '@/types/error.types';
-import type { GetProviderAuthUrlResponse } from '@/api-client';
 import { Button } from '@/components/ui/Button';
 import { DateFormat } from '@/components/date-format/date-format';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { IconDots } from '@tabler/icons-react';
 import { DropdownMenuSeparator } from '@/components/ui/DropdownMenu/DropdownMenu';
 import './oauth-actions.css';
@@ -30,19 +25,6 @@ export const OAuthActions = () => {
 
   const { data: trustedSubs } = useSuspenseQuery({
     ...getTrustedSubsOptions(),
-  });
-
-  const getProviderURL = useMutation({
-    ...getProviderAuthUrlMutation(),
-    onSuccess: (res: GetProviderAuthUrlResponse) => {
-      toast.success(t('SETTINGS_SECURITY_OAUTH_AUTHORIZE_REDIRECT'));
-      setTimeout(() => {
-        window.location.href = res.url;
-      }, 500);
-    },
-    onError: (e: TranslatableError) => {
-      toast.error(t(e.message, e.intlParams));
-    },
   });
 
   const deleteSub = useMutation({
@@ -72,12 +54,13 @@ export const OAuthActions = () => {
     <div className="mt-2 card">
       <div className="card-body">
         {oauthProviders.providers.map((provider, index) => {
-          if (!provider.slug) return null;
-
-          const callbackUrl = `${window.location.origin}/api/oidc/providers/${provider.slug}/callback`;
+          const callbackUrl = `${window.location.origin}/api/oidc/providers/${encodeURIComponent(provider.slug)}/callback`;
           const isExpanded = expandedProvider === provider.slug;
-          const providerSubs = trustedSubs.subs.filter((s) => s.slug.startsWith(provider.slug));
+          const providerSubs = trustedSubs.subs.filter((s) => s.providerSlug === provider.slug);
           const isLast = index === oauthProviders.providers.length - 1;
+          let trustedLabel = t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_MANY', { count: providerSubs.length });
+          if (providerSubs.length === 0) trustedLabel = t('SETTINGS_SECURITY_OAUTH_NO_TRUSTED_USERS');
+          if (providerSubs.length === 1) trustedLabel = t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_ONE');
 
           return (
             <div key={provider.slug} className={clsx(!isLast && 'mb-3')}>
@@ -90,13 +73,7 @@ export const OAuthActions = () => {
                     <p style={{ marginBottom: '0.2rem' }}>
                       <strong>{provider.displayName}</strong>
                     </p>
-                    <div className="text-muted">
-                      {providerSubs.length === 0
-                        ? t('SETTINGS_SECURITY_OAUTH_NO_TRUSTED_USERS')
-                        : providerSubs.length === 1
-                          ? t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_ONE')
-                          : t('SETTINGS_SECURITY_OAUTH_TRUSTED_USER_MANY', { count: providerSubs.length })}
-                    </div>
+                    <div className="text-muted">{trustedLabel}</div>
                   </div>
                 </div>
 
@@ -112,9 +89,7 @@ export const OAuthActions = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuGroup>
-                        <DropdownMenuItem onClick={() => getProviderURL.mutate({ path: { slug: provider.slug } })}>
-                          {t('SETTINGS_SECURITY_OAUTH_AUTHORIZE')}
-                        </DropdownMenuItem>
+                        <LinkOAuthProviderDialog provider={provider} />
                         <EditOAuthProviderDialog provider={provider} />
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
@@ -135,15 +110,14 @@ export const OAuthActions = () => {
                     </dd>
                     <dt className="col-sm-2 mb-2 mb-md-0 fw-normal">{t('SETTINGS_SECURITY_OAUTH_CALLBACK_URL')}</dt>
                     <dd className="col-sm-10 mb-0">
-                      <code
+                      <button
+                        type="button"
                         title="Click to copy"
                         onClick={() => copyToClipboard(callbackUrl)}
-                        onKeyDown={(e) => e.key === 'Enter' && copyToClipboard(callbackUrl)}
-                        style={{ cursor: 'pointer' }}
-                        className="oauth-actions-code"
+                        className="oauth-actions-code border-0 bg-transparent text-start"
                       >
-                        {callbackUrl}
-                      </code>
+                        <code>{callbackUrl}</code>
+                      </button>
                     </dd>
                   </dl>
 
