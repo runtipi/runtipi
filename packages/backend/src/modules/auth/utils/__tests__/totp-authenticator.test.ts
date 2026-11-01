@@ -1,14 +1,26 @@
 import { createDigest, createRandomBytes } from '@otplib/plugin-crypto';
 import { keyDecoder, keyEncoder } from '@otplib/plugin-thirty-two';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TotpAuthenticator } from '../totp-authenticator';
 
 describe('TotpAuthenticator', () => {
   const STEP_MS = 30_000;
 
-  // Generate a token for a specific timestep offset relative to the current one.
-  // Aligning to step boundaries instead of subtracting from Date.now() avoids
-  // flakiness when the test runs within a second of a step rollover.
+  // Fixed fake clock, so token generation and check run at the same instant and
+  // timestep rollovers can never change the expected offsets (otplib defaults
+  // `epoch: Date.now()` per call). Pinned 5s into a step, away from the boundary.
+  const FIXED_EPOCH = 1_700_000_015_000; // 5s into step 56_666_667 — far from any rollover
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(FIXED_EPOCH);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Generate a token for a specific timestep offset relative to the fixed clock.
   // create() does not inherit options, so the plugin functions must be re-passed.
   const tokenForStepOffset = (secret: string, offset: number): string => {
     const currentStep = Math.floor(Date.now() / STEP_MS);
