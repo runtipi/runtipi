@@ -51,7 +51,7 @@
   },
   "peerDependencies": {
     "arktype": ">=2",
-    "typescript": ">=5"
+    "typescript": ">=7.0.2"
   },
   "dependencies": {
     "yaml": "^2.9.1"
