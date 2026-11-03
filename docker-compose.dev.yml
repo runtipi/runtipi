@@ -3,7 +3,7 @@ services:
     depends_on:
       runtipi:
         condition: service_healthy
-    image: traefik:v3.6.5
+    image: traefik:v3.7.16
     restart: unless-stopped
     ports:
       - ${RUNTIPI_HTTP_PORT:-80}:80
@@ -30,7 +30,7 @@ services:
       POSTGRES_USER: tipi
       POSTGRES_DB: tipi
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d tipi -U tipi"]
+      test: ['CMD-SHELL', 'pg_isready -d tipi -U tipi']
       interval: 5s
       timeout: 10s
       retries: 120
@@ -59,7 +59,7 @@ services:
     stop_grace_period: 1h
     healthcheck:
       start_period: 10s
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 5s
       timeout: 3s
       retries: 20
@@ -139,7 +139,7 @@ services:
       # Middlewares
       traefik.http.middlewares.runtipi.forwardauth.address: ${RUNTIPI_FORWARD_AUTH_URL:-http://runtipi:3000/api/auth/traefik}
       traefik.http.middlewares.runtipi.forwardauth.authRequestHeaders: Cookie
-      traefik.http.middlewares.runtipi.forwardauth.maxResponseBodySize: "8192"
+      traefik.http.middlewares.runtipi.forwardauth.maxResponseBodySize: '8192'
 
 networks:
   tipi_main_network:
