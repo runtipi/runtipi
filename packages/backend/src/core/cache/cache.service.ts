@@ -39,6 +39,15 @@ export class CacheService {
     return value;
   }
 
+  public take(key: string) {
+    const row = this.db.prepare('DELETE FROM keyv WHERE key = ? RETURNING value').get(key) as { value: string } | undefined;
+    if (!row) return undefined;
+
+    const { value, expiration = 0 } = JSON.parse(row.value) as { value: string; expiration: number };
+
+    return expiration >= Date.now() ? value : undefined;
+  }
+
   public del(key: string) {
     const stmt = this.db.prepare('DELETE FROM keyv WHERE key = ?');
     stmt.run(key);

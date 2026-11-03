@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import { boolean, customType, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, varchar } from 'drizzle-orm/pg-core';
+import { boolean, customType, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
 export const appStatusEnum = pgEnum('app_status_enum', [
   'running',
@@ -22,8 +22,12 @@ export const link = pgTable('link', {
   title: varchar({ length: 20 }).notNull(),
   url: varchar().notNull(),
   iconUrl: varchar('icon_url'),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
   userId: integer('user_id')
     .notNull()
     .references(() => user.id),
@@ -63,8 +67,12 @@ export const app = pgTable('app', {
   id: serial().primaryKey().notNull(),
   status: appStatusEnum().default('stopped').notNull(),
   config: appConfig('config').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
   version: integer().default(1).notNull(),
   ignoredVersion: integer('ignored_version'),
   exposed: boolean().default(false).notNull(),
@@ -121,8 +129,12 @@ export const user = pgTable('user', {
   id: serial().primaryKey().notNull(),
   username: varchar().notNull(),
   password: varchar().notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
   operator: boolean().default(false).notNull(),
   totpSecret: text('totp_secret'),
   totpEnabled: boolean('totp_enabled').default(false).notNull(),
@@ -138,6 +150,44 @@ export const appStore = pgTable('app_store', {
   enabled: boolean().default(true).notNull(),
   url: varchar().notNull(),
   branch: varchar().default('main').notNull(),
-  createdAt: integer('created_at').notNull().default(sql`extract(epoch from now())`),
-  updatedAt: integer('updated_at').notNull().default(sql`extract(epoch from now())`),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
+  updatedAt: integer('updated_at')
+    .notNull()
+    .default(sql`extract(epoch from now())`),
 });
+
+export const oidcProviders = pgTable('oidc_providers', {
+  version: integer().notNull().default(1),
+  id: serial().notNull().unique(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  slug: varchar().notNull().primaryKey(),
+  displayName: varchar().notNull(),
+  clientId: varchar().notNull(),
+  clientSecret: varchar().notNull(),
+  issuer: varchar().notNull(),
+  discovery: varchar().notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
+});
+
+export const oidcTrustedSubs = pgTable(
+  'oidc_trusted_subs',
+  {
+    id: serial().notNull(),
+    slug: varchar().notNull().primaryKey(),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    providerId: integer('provider_id')
+      .notNull()
+      .references(() => oidcProviders.id, { onDelete: 'cascade' }),
+    sub: varchar().notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex('oidc_trusted_subs_provider_sub_unique').on(table.providerId, table.sub)],
+);

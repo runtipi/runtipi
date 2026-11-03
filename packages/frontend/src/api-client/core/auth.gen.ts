@@ -10,6 +10,13 @@ export interface Auth {
    */
   in?: 'header' | 'query' | 'cookie';
   /**
+   * A unique identifier for the security scheme.
+   *
+   * Defined only when there are multiple security schemes whose `Auth`
+   * shape would otherwise be identical.
+   */
+  key?: string;
+  /**
    * Header or query parameter name.
    *
    * @default 'Authorization'
@@ -23,8 +30,7 @@ export const getAuthToken = async (
   auth: Auth,
   callback: ((auth: Auth) => Promise<AuthToken> | AuthToken) | AuthToken,
 ): Promise<string | undefined> => {
-  const token =
-    typeof callback === 'function' ? await callback(auth) : callback;
+  const token = typeof callback === 'function' ? await callback(auth) : callback;
 
   if (!token) {
     return;

@@ -86,3 +86,6 @@ coverage
 .internal/
 
 .codex
+
+# jetbrains
+/.idea/

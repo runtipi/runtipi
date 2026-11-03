@@ -14,8 +14,8 @@ import type { Client, ClientOptions, Config, RequestOptions } from './types.gen'
 export const createQuerySerializer = <T = unknown>({
   parameters = {},
   ...args
-}: QuerySerializerOptions = {}) => {
-  const querySerializer = (queryParams: T) => {
+}: QuerySerializerOptions = {}): ((queryParams: T) => string) => {
+  const querySerializer = (queryParams: T): string => {
     const search: string[] = [];
     if (queryParams && typeof queryParams === 'object') {
       for (const name in queryParams) {
@@ -65,9 +65,7 @@ export const createQuerySerializer = <T = unknown>({
 /**
  * Infers parseAs value from provided Content-Type header.
  */
-export const getParseAs = (
-  contentType: string | null,
-): Exclude<Config['parseAs'], 'auto'> => {
+export const getParseAs = (contentType: string | null): Exclude<Config['parseAs'], 'auto'> => {
   if (!contentType) {
     // If no Content-Type header is provided, the best we can do is return the raw response body,
     // which is effectively the same as the 'stream' option.
@@ -80,10 +78,7 @@ export const getParseAs = (
     return;
   }
 
-  if (
-    cleanContent.startsWith('application/json') ||
-    cleanContent.endsWith('+json')
-  ) {
+  if (cleanContent.startsWith('application/json') || cleanContent.endsWith('+json')) {
     return 'json';
   }
 
@@ -92,9 +87,7 @@ export const getParseAs = (
   }
 
   if (
-    ['application/', 'audio/', 'image/', 'video/'].some((type) =>
-      cleanContent.startsWith(type),
-    )
+    ['application/', 'audio/', 'image/', 'video/'].some((type) => cleanContent.startsWith(type))
   ) {
     return 'blob';
   }
@@ -125,14 +118,12 @@ const checkForExistence = (
   return false;
 };
 
-export const setAuthParams = async ({
-  security,
-  ...options
-}: Pick<Required<RequestOptions>, 'security'> &
-  Pick<RequestOptions, 'auth' | 'query'> & {
+export async function setAuthParams(
+  options: Pick<RequestOptions, 'auth' | 'query' | 'security'> & {
     headers: Headers;
-  }) => {
-  for (const auth of security) {
+  },
+): Promise<void> {
+  for (const auth of options.security ?? []) {
     if (checkForExistence(options, auth.name)) {
       continue;
     }
@@ -161,7 +152,7 @@ export const setAuthParams = async ({
         break;
     }
   }
-};
+}
 
 export const buildUrl: Client['buildUrl'] = (options) =>
   getUrl({
@@ -201,10 +192,7 @@ export const mergeHeaders = (
       continue;
     }
 
-    const iterator =
-      header instanceof Headers
-        ? headersEntries(header)
-        : Object.entries(header);
+    const iterator = header instanceof Headers ? headersEntries(header) : Object.entries(header);
 
     for (const [key, value] of iterator) {
       if (value === null) {
@@ -214,7 +202,7 @@ export const mergeHeaders = (
           mergedHeaders.append(key, v as string);
         }
       } else if (value !== undefined) {
-        // assume object headers are meant to be JSON stringified, i.e. their
+        // assume object headers are meant to be JSON stringified, i.e., their
         // content value in OpenAPI specification is 'application/json'
         mergedHeaders.set(
           key,
@@ -228,15 +216,14 @@ export const mergeHeaders = (
 
 type ErrInterceptor<Err, Res, Req, Options> = (
   error: Err,
-  response: Res,
-  request: Req,
+  /** response may be undefined due to a network error where no response object is produced */
+  response: Res | undefined,
+  /** request may be undefined, because error may be from building the request object itself */
+  request: Req | undefined,
   options: Options,
 ) => Err | Promise<Err>;
 
-type ReqInterceptor<Req, Options> = (
-  request: Req,
-  options: Options,
-) => Req | Promise<Req>;
+type ReqInterceptor<Req, Options> = (request: Req, options: Options) => Req | Promise<Req>;
 
 type ResInterceptor<Res, Req, Options> = (
   response: Res,
@@ -270,10 +257,7 @@ class Interceptors<Interceptor> {
     return this.fns.indexOf(id);
   }
 
-  update(
-    id: number | Interceptor,
-    fn: Interceptor,
-  ): number | Interceptor | false {
+  update(id: number | Interceptor, fn: Interceptor): number | Interceptor | false {
     const index = this.getInterceptorIndex(id);
     if (this.fns[index]) {
       this.fns[index] = fn;
