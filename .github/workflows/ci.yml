@@ -36,6 +36,14 @@ jobs:
       - name: Run tests
         run: bun run test
 
+      - name: Install Node.js 26
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '26.12.1'
+
+      - name: Run tests on Node.js 26
+        run: bun run test --force
+
   build:
     runs-on: ubuntu-latest
     steps:
