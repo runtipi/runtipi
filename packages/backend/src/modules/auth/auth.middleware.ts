@@ -5,6 +5,7 @@ import { Injectable, type NestMiddleware } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import { UserRepository } from '../user/user.repository';
+import { AuthService } from './auth.service';
 
 type ForwardAuthSession = {
   sessionId: string;
@@ -17,6 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
     private readonly cache: CacheService,
     private readonly config: ConfigurationService,
     private readonly userRepository: UserRepository,
+    private readonly authService: AuthService,
   ) {}
 
   private isTraefikAuthRequest(req: Request) {
@@ -40,7 +42,7 @@ export class AuthMiddleware implements NestMiddleware {
     }
   }
 
-  async use(req: Request, _: Response, next: NextFunction) {
+  async use(req: Request, res: Response, next: NextFunction) {
     const sessionId = req.cookies[SESSION_COOKIE_NAME];
     const forwardAuthSessionId = req.cookies[FORWARD_AUTH_COOKIE_NAME];
     const bearerToken = req.headers.authorization;
@@ -70,6 +72,8 @@ export class AuthMiddleware implements NestMiddleware {
         const user = await this.userRepository.getUserDtoById(Number(userId));
         req.user = user;
         req.authMethod = 'session';
+        // Sliding expiration: keep the session alive for as long as it keeps being used
+        this.authService.refreshSession(res, sessionId, req);
       }
 
       return next();
