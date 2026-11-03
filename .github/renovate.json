@@ -38,6 +38,12 @@
       "matchDatasources": ["github-releases"],
       "matchPackageNames": ["docker/compose"],
       "groupName": "bundled binary versions"
+    },
+    {
+      "matchManagers": ["bun"],
+      "matchDepTypes": ["peerDependencies"],
+      "rangeStrategy": "widen",
+      "description": "Preserve supported consumer versions when updating peer dependencies."
     }
   ]
 }
