@@ -3,7 +3,7 @@ services:
     depends_on:
       runtipi:
         condition: service_healthy
-    image: traefik:v3.6.5
+    image: traefik:v3.7.16
     restart: unless-stopped
     ports:
       - ${RUNTIPI_HTTP_PORT:-80}:80
