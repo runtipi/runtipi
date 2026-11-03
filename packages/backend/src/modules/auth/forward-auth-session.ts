@@ -14,7 +14,7 @@ export const forwardAuthSessionIndexKey = (sessionId: string, type: 'grant' | 's
  * @param token - The raw value stored in the cache
  * @returns The parsed session, or null when the record is missing or malformed
  */
-export const parseForwardAuthSession = (token: string): ForwardAuthSession | null => {
+export const parseForwardAuthSession = (token: string) => {
   try {
     const session = JSON.parse(token) as ForwardAuthSession;
     if (!session.sessionId || !session.host) {
