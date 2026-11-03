@@ -1,13 +1,16 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
+import { SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { LoggerService } from '@/core/logger/logger.service';
 import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import psl from 'psl';
 import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
@@ -27,6 +30,7 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
+    private logger: LoggerService,
   ) {}
 
   public getCookieDomain(domain?: string) {
@@ -40,6 +44,56 @@ export class AuthService {
     }
 
     return `.${parsed.input}`;
+  }
+
+  private getRequestHost(req: Request) {
+    const host = (req.headers['x-forwarded-host'] as string | undefined) ?? req.headers.host;
+    return host?.split(',')[0]?.trim().split(':')[0]?.toLowerCase();
+  }
+
+  /**
+   * Set the session cookie on the given response, clearing any legacy domain scoped cookie first.
+   *
+   * @param res - The express response to set the cookie on
+   * @param sessionId - The session ID to store in the cookie
+   * @param req - The express request, used to derive the cookie domain and protocol
+   */
+  public setSessionCookie(res: Response, sessionId: string, req: Request) {
+    const host = this.getRequestHost(req);
+    const secure = req.headers['x-forwarded-proto'] === 'https';
+    const maxAge = this.sessionManager.getSessionMaxAgeInSeconds() * 1000;
+
+    this.logger.debug('Setting session cookie', { host, secure });
+
+    if (this.config.get('userSettings').experimental.insecureCookie) {
+      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
+      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge });
+      return;
+    }
+
+    const legacyDomain = this.getCookieDomain(host);
+    if (legacyDomain) {
+      res.clearCookie(SESSION_COOKIE_NAME, { domain: legacyDomain });
+    }
+
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      secure,
+      sameSite: 'lax',
+      maxAge,
+    });
+  }
+
+  /**
+   * Refresh an existing session and re-issue its cookie (sliding expiration).
+   *
+   * @param res - The express response to set the cookie on
+   * @param sessionId - The ID of the session to refresh
+   * @param req - The express request, used to re-issue the cookie
+   */
+  public refreshSession(res: Response, sessionId: string, req: Request) {
+    this.sessionManager.refreshSession(sessionId);
+    this.setSessionCookie(res, sessionId, req);
   }
 
   /**

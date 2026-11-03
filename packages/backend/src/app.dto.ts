@@ -26,6 +26,8 @@ export const settingsSchema = type({
   persistTraefikConfig: 'boolean',
   port: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
   postgresPort: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
+  // Sliding session lifetime: sessions are refreshed on every authenticated request, so this is an inactivity window
+  sessionMaxAgeInDays: type('number.integer | string.integer.parse').to('1 <= number <= 365'),
   sslPort: type('number.integer | string.integer.parse').to('0 <= number <= 65535'),
   timeZone: 'string.trim',
   experimental_insecureCookie: 'boolean?',

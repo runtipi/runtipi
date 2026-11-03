@@ -1,12 +1,21 @@
 import crypto from 'node:crypto';
 import { CacheService } from '@/core/cache/cache.service';
+import { ConfigurationService } from '@/core/config/configuration.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SessionManager {
-  private COOKIE_MAX_AGE = 60 * 60 * 24; // 1 day
+  constructor(
+    private cache: CacheService,
+    private config: ConfigurationService,
+  ) {}
 
-  constructor(private cache: CacheService) {}
+  /**
+   * @returns the maximum age of a session in seconds, as configured by the sessionMaxAgeInDays setting.
+   */
+  public getSessionMaxAgeInSeconds() {
+    return this.config.get('userSettings').sessionMaxAgeInDays * 24 * 60 * 60;
+  }
 
   /**
    * Create a new session for the given user.
@@ -16,11 +25,34 @@ export class SessionManager {
   public async createSession(userId: number) {
     const sessionId = crypto.randomUUID();
     const sessionKey = `session:${sessionId}`;
+    const maxAge = this.getSessionMaxAgeInSeconds();
 
-    this.cache.set(sessionKey, userId.toString(), this.COOKIE_MAX_AGE * 7);
-    this.cache.set(`session:${userId}:${sessionId}`, sessionKey, this.COOKIE_MAX_AGE * 7);
+    this.cache.set(sessionKey, userId.toString(), maxAge);
+    this.cache.set(`session:${userId}:${sessionId}`, sessionKey, maxAge);
 
     return sessionId;
+  }
+
+  /**
+   * Extend the expiration of an existing session (sliding expiration).
+   *
+   * Called for every authenticated request so that a session only expires after a
+   * period of inactivity instead of at a fixed point in time.
+   *
+   * @param sessionId - The ID of the session to refresh.
+   */
+  public refreshSession(sessionId: string) {
+    const sessionKey = `session:${sessionId}`;
+    const userId = this.cache.get(sessionKey);
+
+    if (!userId) {
+      return;
+    }
+
+    const maxAge = this.getSessionMaxAgeInSeconds();
+
+    this.cache.set(sessionKey, userId, maxAge);
+    this.cache.set(`session:${userId}:${sessionId}`, sessionKey, maxAge);
   }
 
   public generateSalt() {
