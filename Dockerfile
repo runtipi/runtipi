@@ -12,7 +12,7 @@ WORKDIR /deps
 
 ARG TARGETARCH
 # renovate: datasource=github-releases depName=docker/compose
-ARG DOCKER_COMPOSE_VERSION="v2.40.3"
+ARG DOCKER_COMPOSE_VERSION="v5.6.1"
 ENV TARGETARCH=${TARGETARCH}
 
 RUN apk add --no-cache curl python3 make g++ git
@@ -29,7 +29,7 @@ RUN chmod +x docker-binary
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git tar pigz file
+RUN apk add --no-cache curl openssl git tar pigz file docker-cli-buildx
 
 # ---- BUILDER ----
 FROM builder_base AS builder

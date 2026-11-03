@@ -106,7 +106,7 @@
         "tsconfig-paths": "^4.2.0",
         "tsx": "^4.23.15",
         "typescript": "^7.0.2",
-        "unplugin-swc": "^1.6.0",
+        "unplugin-swc": "^2.0.0",
         "vite-tsconfig-paths": "6.1.1",
         "vitest": "^4.1.12",
         "vitest-mock-extended": "^3.1.1",
@@ -2909,7 +2909,7 @@
 
     "unplugin": ["unplugin@3.7.0", "", { "dependencies": { "@jridgewell/remapping": "^2.3.5", "@rolldown/pluginutils": "^1.0.1", "picomatch": "^4.0.7", "webpack-virtual-modules": "^0.6.2" }, "peerDependencies": { "@farmfe/core": "*", "@rsbuild/core": "*", "@rspack/core": "*", "bun-types-no-globals": "*", "esbuild": "*", "rolldown": "*", "rollup": "*", "unloader": "*", "vite": "*", "webpack": "*" }, "optionalPeers": ["@farmfe/core", "@rsbuild/core", "@rspack/core", "bun-types-no-globals", "esbuild", "rolldown", "rollup", "unloader", "vite", "webpack"] }, "sha512-GrM2uq3DQo3hvLU2FjeYhooJ8BY9N6j1Fbzgx7Pta3VVJevsD3VP4dPjZkZOS0mLvN8w9zzr9OlP+31bSMyuLw=="],
 
-    "unplugin-swc": ["unplugin-swc@1.6.0", "", { "dependencies": { "@rollup/pluginutils": "^5.4.0", "load-tsconfig": "^0.2.5", "unplugin": "^3.3.0" }, "peerDependencies": { "@swc/core": "^1.2.108" } }, "sha512-aOdzxAwJvz1GeQ8vwSNA2N8AreHYBrpwxqnwzxmB7LCdeZiXOBDj0rgjZod+lMxFsJGm8k6lF/1iKF/9wacLbw=="],
+    "unplugin-swc": ["unplugin-swc@2.0.0", "", { "dependencies": { "@rollup/pluginutils": "^5.4.0", "load-tsconfig": "^0.2.5", "unplugin": "^3.3.0" }, "peerDependencies": { "@swc/core": "^1.2.108" } }, "sha512-hMdGJEtkwiJhzuXXx4Nb1XYDeD9KG4+P7KZOaErJTpZNYhTo1sbWIsXb+u410zXyaqH00veNX4UxOr6TpUwNiQ=="],
 
     "until-async": ["until-async@3.0.2", "", {}, "sha512-IiSk4HlzAMqTUseHHe3VhIGyuFmN90zMTpD3Z3y8jeQbzLIq500MVM7Jq2vUAnTKAFPJrqwkzr6PoTcPhGcOiw=="],
 
