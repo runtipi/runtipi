@@ -29,7 +29,7 @@ RUN chmod +x docker-binary
 # ---- RUNNER BASE ----
 FROM node_base AS runner_base
 
-RUN apk add --no-cache curl openssl git tar pigz file
+RUN apk add --no-cache curl openssl git tar pigz file docker-cli-buildx
 
 # ---- BUILDER ----
 FROM builder_base AS builder
