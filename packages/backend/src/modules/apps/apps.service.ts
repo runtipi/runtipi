@@ -5,6 +5,7 @@ import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
+import type { AppStatus } from '@/core/database/drizzle/types';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppsRepository } from './apps.repository';
@@ -55,8 +56,8 @@ export class AppsService {
   /**
    * Get the installed apps
    */
-  public async getInstalledApps() {
-    const apps = await this.appsRepository.getApps();
+  public async getInstalledApps(status?: AppStatus) {
+    const apps = await this.appsRepository.getApps(status);
 
     return this.populateAppInfo(apps);
   }

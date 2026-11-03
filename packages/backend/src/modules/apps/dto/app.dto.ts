@@ -51,6 +51,10 @@ const getRandomPortSchema = type({
   port: 'number',
 });
 
+const getInstalledAppsQuerySchema = type({
+  status: type.enumerated(...APP_STATUS).optional(),
+});
+
 const getComposeDiff = type({
   current: 'string | null',
   new: 'string | null',
@@ -73,6 +77,10 @@ export class GetAppDto extends createArkDto(getAppSchema, {
 }) {}
 export class GetRandomPortDto extends createArkDto(getRandomPortSchema, {
   name: 'GetRandomPortDto',
+}) {}
+export class GetInstalledAppsQueryDto extends createArkDto(getInstalledAppsQuerySchema, {
+  name: 'GetInstalledAppsQueryDto',
+  input: true,
 }) {}
 export class GetConfigDiffDto extends createArkDto(getConfigDiffSchema, {
   name: 'GetConfigDiffDto',
