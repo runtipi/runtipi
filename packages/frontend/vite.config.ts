@@ -44,5 +44,6 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    target: ['chrome107', 'edge107', 'firefox104', 'safari16'],
   },
 });
