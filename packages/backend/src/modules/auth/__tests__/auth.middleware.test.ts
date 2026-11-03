@@ -200,4 +200,56 @@ describe('AuthMiddleware', () => {
     expect(authService.refreshSession).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledOnce();
   });
+
+  it('refreshes both lifetimes for a validated forward-auth request', async () => {
+    const req = {
+      cookies: {
+        [FORWARD_AUTH_COOKIE_NAME]: 'forward-session-id',
+      },
+      headers: { 'x-forwarded-host': 'app.example.com' },
+      path: '/auth/traefik',
+    } as unknown as Request;
+    const res = {} as Response;
+
+    cache.get.mockImplementation((key: string) => {
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'session:session-id') return '1';
+      return undefined;
+    });
+    userRepository.getUserDtoById.mockResolvedValue(user);
+
+    await middleware.use(req, res, next);
+
+    expect(req.user).toEqual(user);
+    expect(req.authMethod).toBe('forward-auth');
+    expect(authService.refreshForwardAuthSession).toHaveBeenCalledWith(res, req, 'forward-session-id', {
+      sessionId: 'session-id',
+      host: 'app.example.com',
+    });
+    expect(authService.refreshSession).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('does not refresh a forward-auth session issued for another app host', async () => {
+    const req = {
+      cookies: {
+        [FORWARD_AUTH_COOKIE_NAME]: 'forward-session-id',
+      },
+      headers: { 'x-forwarded-host': 'other.example.com' },
+      path: '/auth/traefik',
+    } as unknown as Request;
+
+    cache.get.mockImplementation((key: string) => {
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'session:session-id') return '1';
+      return undefined;
+    });
+    userRepository.getUserDtoById.mockResolvedValue(user);
+
+    await middleware.use(req, {} as Response, next);
+
+    expect(req.authMethod).toBeUndefined();
+    expect(authService.refreshForwardAuthSession).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledOnce();
+  });
 });

@@ -6,11 +6,7 @@ import type { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import { UserRepository } from '../user/user.repository';
 import { AuthService } from './auth.service';
-
-type ForwardAuthSession = {
-  sessionId: string;
-  host: string;
-};
+import { forwardAuthSessionKey, parseForwardAuthSession } from './forward-auth-session';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -29,19 +25,6 @@ export class AuthMiddleware implements NestMiddleware {
     return (req.headers['x-forwarded-host'] as string | undefined)?.split(',')[0]?.trim().split(':')[0]?.toLowerCase();
   }
 
-  private getForwardAuthSession(token: string): ForwardAuthSession | null {
-    try {
-      const session = JSON.parse(token) as ForwardAuthSession;
-      if (!session.sessionId || !session.host) {
-        return null;
-      }
-
-      return { sessionId: session.sessionId, host: session.host.toLowerCase() };
-    } catch {
-      return null;
-    }
-  }
-
   async use(req: Request, res: Response, next: NextFunction) {
     const sessionId = req.cookies[SESSION_COOKIE_NAME];
     const forwardAuthSessionId = req.cookies[FORWARD_AUTH_COOKIE_NAME];
@@ -49,7 +32,7 @@ export class AuthMiddleware implements NestMiddleware {
     const isTraefikAuthRequest = this.isTraefikAuthRequest(req);
 
     if (forwardAuthSessionId && isTraefikAuthRequest) {
-      const forwardAuthSession = this.getForwardAuthSession(this.cache.get(`forward-auth-session:${forwardAuthSessionId}`) ?? '');
+      const forwardAuthSession = parseForwardAuthSession(this.cache.get(forwardAuthSessionKey(forwardAuthSessionId)) ?? '');
       const forwardedHost = this.getForwardedHost(req);
       const userId =
         forwardAuthSession && forwardedHost && forwardAuthSession.host === forwardedHost
@@ -57,10 +40,13 @@ export class AuthMiddleware implements NestMiddleware {
           : undefined;
       const numericUserId = Number(userId);
 
-      if (!Number.isNaN(numericUserId)) {
+      if (forwardAuthSession && !Number.isNaN(numericUserId)) {
         const user = await this.userRepository.getUserDtoById(numericUserId);
         req.user = user;
         req.authMethod = 'forward-auth';
+        // Sliding expiration: keep the dashboard session and the forward-auth session alive while the
+        // app keeps being used. The dashboard cookie is not set, as this request is made on the app host.
+        this.authService.refreshForwardAuthSession(res, req, forwardAuthSessionId, forwardAuthSession);
       }
 
       return next();

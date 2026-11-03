@@ -11,7 +11,6 @@ import { mock } from 'vitest-mock-extended';
 import { AuthController } from '../auth.controller';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
-import { SessionManager } from '../session.manager';
 
 const cliUser = {
   id: 1,
@@ -28,7 +27,6 @@ describe('AuthController reset-password security', () => {
   const logger = mock<LoggerService>();
   const config = mock<ConfigurationService>();
   const cache = mock<CacheService>();
-  const sessionManager = mock<SessionManager>();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -50,10 +48,6 @@ describe('AuthController reset-password security', () => {
         {
           provide: CacheService,
           useValue: cache,
-        },
-        {
-          provide: SessionManager,
-          useValue: sessionManager,
         },
       ],
     }).compile();
@@ -95,7 +89,7 @@ describe('AuthController reset-password security', () => {
     cache.del.mockReset();
     cache.getByPrefix.mockReset();
     config.get.mockReset();
-    sessionManager.getSessionMaxAgeInSeconds.mockReturnValue(604_800);
+    authService.createForwardAuthSession.mockReset();
   });
 
   it('does not expose a public password reset status endpoint', async () => {
@@ -225,7 +219,7 @@ describe('AuthController reset-password security', () => {
     expect(response.headers.location).toBe('https://example.com/login?redirect_url=https%3A%2F%2Fapp.example.com%2F&app=app');
   });
 
-  it('exchanges a one-time grant for a host-only forward-auth cookie on the app host', async () => {
+  it('exchanges a one-time grant for a forward-auth session on the app host', async () => {
     cache.get.mockImplementation((key: string) => {
       if (key === 'forward-auth-grant:grant-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
       if (key === 'session:session-id') return '1';
@@ -240,14 +234,8 @@ describe('AuthController reset-password security', () => {
 
     expect(response.status).toBe(302);
     expect(response.headers.location).toBe('https://app.example.com/');
-    expect(response.headers['set-cookie']?.[0]).toContain(`${FORWARD_AUTH_COOKIE_NAME}=`);
-    expect(response.headers['set-cookie']?.[0]).not.toContain('Domain=');
     expect(cache.del).toHaveBeenCalledWith('forward-auth-grant:grant-id');
-    expect(cache.set).toHaveBeenCalledWith(
-      expect.stringMatching(/^forward-auth-session:/),
-      JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' }),
-      604_800,
-    );
+    expect(authService.createForwardAuthSession).toHaveBeenCalledWith(expect.anything(), expect.anything(), 'session-id', 'app.example.com');
   });
 
   it('authorizes traefik auth checks with a forward-auth cookie', async () => {

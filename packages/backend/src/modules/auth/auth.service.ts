@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
-import { SESSION_COOKIE_NAME } from '@/common/constants';
+import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
@@ -14,6 +14,7 @@ import type { Request, Response } from 'express';
 import psl from 'psl';
 import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
+import { type ForwardAuthSession, forwardAuthSessionIndexKey, forwardAuthSessionKey } from './forward-auth-session';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
 
@@ -94,6 +95,58 @@ export class AuthService {
   public refreshSession(res: Response, sessionId: string, req: Request) {
     this.sessionManager.refreshSession(sessionId);
     this.setSessionCookie(res, sessionId, req);
+  }
+
+  /**
+   * Store a forward-auth session in the cache and set its cookie.
+   *
+   * @param res - The express response to set the cookie on
+   * @param req - The express request, used to derive the protocol
+   * @param forwardAuthSessionId - The ID of the forward-auth session
+   * @param session - The dashboard session and app host the forward-auth session belongs to
+   */
+  private setForwardAuthSession(res: Response, req: Request, forwardAuthSessionId: string, session: ForwardAuthSession) {
+    const maxAge = this.sessionManager.getSessionMaxAgeInSeconds();
+    const sessionKey = forwardAuthSessionKey(forwardAuthSessionId);
+
+    this.cache.set(sessionKey, JSON.stringify(session), maxAge);
+    this.cache.set(forwardAuthSessionIndexKey(session.sessionId, 'session', forwardAuthSessionId), sessionKey, maxAge);
+
+    res.cookie(FORWARD_AUTH_COOKIE_NAME, forwardAuthSessionId, {
+      httpOnly: true,
+      secure: req.headers['x-forwarded-proto'] === 'https',
+      sameSite: 'lax',
+      maxAge: maxAge * 1000,
+    });
+  }
+
+  /**
+   * Create a forward-auth session for an app host, after a one-time grant was exchanged.
+   *
+   * @param res - The express response to set the cookie on
+   * @param req - The express request, used to derive the protocol
+   * @param sessionId - The dashboard session the app access was derived from
+   * @param host - The app host the session is valid for
+   */
+  public createForwardAuthSession(res: Response, req: Request, sessionId: string, host: string) {
+    this.setForwardAuthSession(res, req, crypto.randomUUID(), { sessionId, host });
+  }
+
+  /**
+   * Refresh the sessions behind a forward-auth request (sliding expiration).
+   *
+   * Renews the dashboard session the app access was derived from and the forward-auth
+   * session itself, so an app the user keeps using does not time the login out. The
+   * dashboard cookie is deliberately not set: these requests are made on the app host.
+   *
+   * @param res - The express response to set the cookie on
+   * @param req - The express request, used to derive the protocol
+   * @param forwardAuthSessionId - The ID of the forward-auth session
+   * @param session - The dashboard session and app host the forward-auth session belongs to
+   */
+  public refreshForwardAuthSession(res: Response, req: Request, forwardAuthSessionId: string, session: ForwardAuthSession) {
+    this.sessionManager.refreshSession(session.sessionId);
+    this.setForwardAuthSession(res, req, forwardAuthSessionId, session);
   }
 
   /**
