@@ -54,7 +54,7 @@ const publishStore = async (dir: string, content: string) => {
   );
 };
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 afterEach(() => {
   server.resetHandlers();
   vi.unstubAllEnvs();
