@@ -8,7 +8,7 @@ import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { SessionManager } from './session.manager';
+import { type ForwardAuthSession, forwardAuthSessionIndexKey, forwardAuthSessionKey, parseForwardAuthSession } from './forward-auth-session';
 import {
   ChangePasswordBody,
   ChangeUsernameBody,
@@ -32,14 +32,7 @@ const AUTH_THROTTLE_LIMIT = 20;
 const FORWARD_AUTH_GRANT_EXPIRATION = 60;
 const FORWARD_AUTH_GRANT_PARAM = 'runtipi_forward_auth';
 
-const forwardAuthSessionKey = (id: string) => `forward-auth-session:${id}`;
 const forwardAuthGrantKey = (id: string) => `forward-auth-grant:${id}`;
-const forwardAuthSessionIndexKey = (sessionId: string, type: 'grant' | 'session', id: string) => `forward-auth-by-session:${sessionId}:${type}:${id}`;
-
-type ForwardAuthSession = {
-  sessionId: string;
-  host: string;
-};
 
 @Controller('auth')
 export class AuthController {
@@ -47,7 +40,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly logger: LoggerService,
     private readonly cache: CacheService,
-    private readonly sessionManager: SessionManager,
   ) {}
 
   private getRequestHost(req: Request) {
@@ -99,25 +91,6 @@ export class AuthController {
     return url.toString();
   }
 
-  private setForwardAuthCookie(res: Response, sessionId: string, req: Request, redirectHost: string) {
-    const proto = req.headers['x-forwarded-proto'] as string | undefined;
-    const secure = proto === 'https';
-    const sessionMaxAge = this.sessionManager.getSessionMaxAgeInSeconds();
-
-    const forwardAuthSessionId = crypto.randomUUID();
-    const forwardAuthSession: ForwardAuthSession = { sessionId, host: redirectHost };
-    const sessionKey = forwardAuthSessionKey(forwardAuthSessionId);
-    this.cache.set(sessionKey, JSON.stringify(forwardAuthSession), sessionMaxAge);
-    this.cache.set(forwardAuthSessionIndexKey(sessionId, 'session', forwardAuthSessionId), sessionKey, sessionMaxAge);
-
-    res.cookie(FORWARD_AUTH_COOKIE_NAME, forwardAuthSessionId, {
-      httpOnly: true,
-      secure,
-      sameSite: 'lax',
-      maxAge: sessionMaxAge * 1000,
-    });
-  }
-
   private consumeForwardAuthGrant(req: Request, res: Response) {
     const uri = req.headers['x-forwarded-uri'] as string | undefined;
     const proto = req.headers['x-forwarded-proto'] as string | undefined;
@@ -134,7 +107,7 @@ export class AuthController {
       return null;
     }
 
-    const forwardAuthSession = this.getForwardAuthSession(this.cache.get(forwardAuthGrantKey(grantId)) ?? '');
+    const forwardAuthSession = parseForwardAuthSession(this.cache.get(forwardAuthGrantKey(grantId)) ?? '');
     this.cache.del(forwardAuthGrantKey(grantId));
 
     if (forwardAuthSession) {
@@ -151,22 +124,9 @@ export class AuthController {
     }
 
     redirectUrl.searchParams.delete(FORWARD_AUTH_GRANT_PARAM);
-    this.setForwardAuthCookie(res, forwardAuthSession.sessionId, req, forwardedHost);
+    this.authService.createForwardAuthSession(res, req, forwardAuthSession.sessionId, forwardedHost);
 
     return redirectUrl.toString();
-  }
-
-  private getForwardAuthSession(token: string): ForwardAuthSession | null {
-    try {
-      const session = JSON.parse(token) as ForwardAuthSession;
-      if (!session.sessionId || !session.host) {
-        return null;
-      }
-
-      return { sessionId: session.sessionId, host: session.host.toLowerCase() };
-    } catch {
-      return null;
-    }
   }
 
   private async revokeForwardAuthForSession(sessionId: string) {
