@@ -122,11 +122,12 @@
       "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.5",
         "@changesets/cli": "^2.31.1",
+        "typescript": "^7.0.2",
         "vitest": "^4.1.12",
       },
       "peerDependencies": {
         "arktype": ">=2",
-        "typescript": ">=7.0.2",
+        "typescript": ">=5",
       },
     },
     "packages/frontend": {
