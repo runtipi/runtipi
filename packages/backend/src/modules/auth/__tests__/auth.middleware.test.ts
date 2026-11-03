@@ -6,6 +6,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type MockProxy, mock } from 'vitest-mock-extended';
 import { AuthMiddleware } from '../auth.middleware';
+import { AuthService } from '../auth.service';
 
 describe('AuthMiddleware', () => {
   const user = {
@@ -20,6 +21,7 @@ describe('AuthMiddleware', () => {
   let cache: MockProxy<CacheService>;
   let config: MockProxy<ConfigurationService>;
   let userRepository: MockProxy<UserRepository>;
+  let authService: MockProxy<AuthService>;
   let middleware: AuthMiddleware;
   let next: NextFunction;
 
@@ -27,7 +29,8 @@ describe('AuthMiddleware', () => {
     cache = mock<CacheService>();
     config = mock<ConfigurationService>();
     userRepository = mock<UserRepository>();
-    middleware = new AuthMiddleware(cache, config, userRepository);
+    authService = mock<AuthService>();
+    middleware = new AuthMiddleware(cache, config, userRepository, authService);
     next = vi.fn();
   });
 
@@ -155,6 +158,98 @@ describe('AuthMiddleware', () => {
     expect(req.user).toBeUndefined();
     expect(req.authMethod).toBeUndefined();
     expect(userRepository.getUserDtoById).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('refreshes the session and cookie of an authenticated request', async () => {
+    const req = {
+      cookies: {
+        [SESSION_COOKIE_NAME]: 'session-id',
+      },
+      headers: {},
+      path: '/api/system/load',
+    } as unknown as Request;
+    const res = {} as Response;
+
+    cache.get.mockReturnValue('1');
+    userRepository.getUserDtoById.mockResolvedValue(user);
+
+    await middleware.use(req, res, next);
+
+    expect(req.user).toEqual(user);
+    expect(req.authMethod).toBe('session');
+    expect(authService.refreshSession).toHaveBeenCalledWith(res, 'session-id', req);
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('does not refresh the session of an unauthenticated request', async () => {
+    const req = {
+      cookies: {
+        [SESSION_COOKIE_NAME]: 'session-id',
+      },
+      headers: {},
+      path: '/api/system/load',
+    } as unknown as Request;
+
+    cache.get.mockReturnValue(undefined);
+
+    await middleware.use(req, {} as Response, next);
+
+    expect(req.user).toBeUndefined();
+    expect(req.authMethod).toBeUndefined();
+    expect(authService.refreshSession).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('refreshes both lifetimes for a validated forward-auth request', async () => {
+    const req = {
+      cookies: {
+        [FORWARD_AUTH_COOKIE_NAME]: 'forward-session-id',
+      },
+      headers: { 'x-forwarded-host': 'app.example.com' },
+      path: '/auth/traefik',
+    } as unknown as Request;
+    const res = {} as Response;
+
+    cache.get.mockImplementation((key: string) => {
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'session:session-id') return '1';
+      return undefined;
+    });
+    userRepository.getUserDtoById.mockResolvedValue(user);
+
+    await middleware.use(req, res, next);
+
+    expect(req.user).toEqual(user);
+    expect(req.authMethod).toBe('forward-auth');
+    expect(authService.refreshForwardAuthSession).toHaveBeenCalledWith(res, req, 'forward-session-id', {
+      sessionId: 'session-id',
+      host: 'app.example.com',
+    });
+    expect(authService.refreshSession).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledOnce();
+  });
+
+  it('does not refresh a forward-auth session issued for another app host', async () => {
+    const req = {
+      cookies: {
+        [FORWARD_AUTH_COOKIE_NAME]: 'forward-session-id',
+      },
+      headers: { 'x-forwarded-host': 'other.example.com' },
+      path: '/auth/traefik',
+    } as unknown as Request;
+
+    cache.get.mockImplementation((key: string) => {
+      if (key === 'forward-auth-session:forward-session-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
+      if (key === 'session:session-id') return '1';
+      return undefined;
+    });
+    userRepository.getUserDtoById.mockResolvedValue(user);
+
+    await middleware.use(req, {} as Response, next);
+
+    expect(req.authMethod).toBeUndefined();
+    expect(authService.refreshForwardAuthSession).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalledOnce();
   });
 });

@@ -12,6 +12,7 @@ import { mock } from 'vitest-mock-extended';
 import { AuthController } from '../auth.controller';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
+import { SessionManager } from '../session.manager';
 
 it('throttles repeated login attempts before they reach the controller', async () => {
   let app: INestApplication | undefined;
@@ -46,6 +47,10 @@ it('throttles repeated login attempts before they reach the controller', async (
       {
         provide: CacheService,
         useValue: cache,
+      },
+      {
+        provide: SessionManager,
+        useValue: mock<SessionManager>(),
       },
     ],
   }).compile();
@@ -103,6 +108,10 @@ it('does not throttle repeated traefik auth checks', async () => {
       {
         provide: CacheService,
         useValue: cache,
+      },
+      {
+        provide: SessionManager,
+        useValue: mock<SessionManager>(),
       },
     ],
   }).compile();

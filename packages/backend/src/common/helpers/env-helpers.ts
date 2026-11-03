@@ -147,6 +147,10 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
   );
   envMap.set('MAX_BACKUPS', typeof settings.maxBackups === 'number' ? String(settings.maxBackups) : envMap.get('MAX_BACKUPS') || '0');
   envMap.set(
+    'SESSION_MAX_AGE_IN_DAYS',
+    typeof settings.sessionMaxAgeInDays === 'number' ? String(settings.sessionMaxAgeInDays) : envMap.get('SESSION_MAX_AGE_IN_DAYS') || '7',
+  );
+  envMap.set(
     'ADVANCED_SETTINGS',
     typeof settings.advancedSettings === 'boolean' ? String(settings.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',
   );
