@@ -41,7 +41,7 @@
     "@uiw/react-codemirror": "^4.25.12",
     "ajv": "^8.20.0",
     "arktype": "catalog:",
-    "better-ajv-errors": "^2.0.4",
+    "better-ajv-errors": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.17",
