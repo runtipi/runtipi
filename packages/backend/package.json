@@ -23,7 +23,7 @@
     "@nestjs/core": "^11.2.8",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.2.8",
-    "@nestjs/serve-static": "^5.0.5",
+    "@nestjs/serve-static": "^12.1.1",
     "@nestjs/swagger": "^11.4.7",
     "@nestjs/terminus": "^11.1.1",
     "@nestjs/throttler": "^6.7.1",

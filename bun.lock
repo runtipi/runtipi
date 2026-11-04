@@ -27,7 +27,7 @@
         "@nestjs/core": "^11.2.8",
         "@nestjs/mapped-types": "*",
         "@nestjs/platform-express": "^11.2.8",
-        "@nestjs/serve-static": "^5.0.5",
+        "@nestjs/serve-static": "^12.1.1",
         "@nestjs/swagger": "^11.4.7",
         "@nestjs/terminus": "^11.1.1",
         "@nestjs/throttler": "^6.7.1",
@@ -670,7 +670,7 @@
 
     "@nestjs/schematics": ["@nestjs/schematics@11.1.0", "", { "dependencies": { "@angular-devkit/core": "19.2.24", "@angular-devkit/schematics": "19.2.24", "comment-json": "5.0.0", "jsonc-parser": "3.3.1", "pluralize": "8.0.0" }, "peerDependencies": { "prettier": "^3.0.0", "typescript": ">=4.8.2" }, "optionalPeers": ["prettier"] }, "sha512-lVxGZ46tcdItFMoXr6vyKWlnOsm1SZm/GUqAEDvy2RL4Q4O+3bkziAhrO7Y8JLssFUUvNFEGqAizI52WAxhjDw=="],
 
-    "@nestjs/serve-static": ["@nestjs/serve-static@5.0.5", "", { "dependencies": { "path-to-regexp": "8.4.2" }, "peerDependencies": { "@fastify/static": "^8.0.4 || ^9.0.0", "@nestjs/common": "^11.0.2", "@nestjs/core": "^11.0.2", "express": "^5.0.1", "fastify": "^5.2.1" }, "optionalPeers": ["@fastify/static", "express", "fastify"] }, "sha512-AhYx3N9aMwR2cb0w5Nlb5nHNYiAcF74ea/D/xna+PxlXwjmwGN/PpC/5fuMtOwmPBMgOTxNPOnB8C9LDZBSgyw=="],
+    "@nestjs/serve-static": ["@nestjs/serve-static@12.1.1", "", { "dependencies": { "path-to-regexp": "8.4.2" }, "peerDependencies": { "@fastify/static": "^10.0.0", "@nestjs/common": "^12.0.0", "@nestjs/core": "^12.0.0", "@nestjs/platform-node": "^12.3.1", "express": "^5.0.1", "fastify": "^5.2.1" }, "optionalPeers": ["@fastify/static", "@nestjs/platform-node", "express", "fastify"] }, "sha512-6eY7bYx1pEyD9TPZkpniE0/nrhDHuWOCoBlJXCrO4SOqa/jJU0qweq3rj0v4VR3/w83mu/ddv8QXI/+m5d8I1w=="],
 
     "@nestjs/swagger": ["@nestjs/swagger@11.4.7", "", { "dependencies": { "@microsoft/tsdoc": "0.16.0", "@nestjs/mapped-types": "2.1.1", "js-yaml": "5.3.0", "lodash": "4.18.1", "path-to-regexp": "8.4.2", "swagger-ui-dist": "5.32.13" }, "peerDependencies": { "@fastify/static": "^8.0.0 || ^9.0.0 || ^10.0.0", "@nestjs/common": "^11.0.1", "@nestjs/core": "^11.0.1", "class-transformer": "*", "class-validator": "*", "reflect-metadata": "^0.1.12 || ^0.2.0" }, "optionalPeers": ["@fastify/static", "class-transformer", "class-validator"] }, "sha512-QyDYnmfP4IRucgmtQxMqzgRBdWtjFoDp8eFvvgf92+3wdLCL+Q0xOFO1948j/ntW/Wi7qT2dyck6ka8ADzPWQQ=="],
 
