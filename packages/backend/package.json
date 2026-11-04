@@ -105,7 +105,7 @@
     "unplugin-swc": "^2.0.0",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "^4.1.12",
-    "vitest-mock-extended": "^3.1.1",
+    "vitest-mock-extended": "^5.1.1",
     "wait-for-expect": "^4.0.0"
   }
 }
