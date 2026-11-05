@@ -48,7 +48,7 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@changesets/cli": "^3.0.3",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.12"
+    "vitest": "^5.1.0"
   },
   "peerDependencies": {
     "arktype": ">=2",
