@@ -44,8 +44,6 @@ export class AuthMiddleware implements NestMiddleware {
         const user = await this.userRepository.getUserDtoById(numericUserId);
         req.user = user;
         req.authMethod = 'forward-auth';
-        // Sliding expiration: keep the dashboard session and the forward-auth session alive while the
-        // app keeps being used. The dashboard cookie is not set, as this request is made on the app host.
         this.authService.refreshForwardAuthSession(res, req, forwardAuthSessionId, forwardAuthSession);
       }
 
@@ -58,7 +56,6 @@ export class AuthMiddleware implements NestMiddleware {
         const user = await this.userRepository.getUserDtoById(Number(userId));
         req.user = user;
         req.authMethod = 'session';
-        // Sliding expiration: keep the session alive for as long as it keeps being used
         this.authService.refreshSession(res, sessionId, req);
       }
 
