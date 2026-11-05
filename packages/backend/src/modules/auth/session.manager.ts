@@ -10,9 +10,6 @@ export class SessionManager {
     private config: ConfigurationService,
   ) {}
 
-  /**
-   * @returns the maximum age of a session in seconds, as configured by the sessionMaxAgeInDays setting.
-   */
   public getSessionMaxAgeInSeconds() {
     return this.config.get('userSettings').sessionMaxAgeInDays * 24 * 60 * 60;
   }
@@ -33,14 +30,6 @@ export class SessionManager {
     return sessionId;
   }
 
-  /**
-   * Extend the expiration of an existing session (sliding expiration).
-   *
-   * Called for every authenticated request so that a session only expires after a
-   * period of inactivity instead of at a fixed point in time.
-   *
-   * @param sessionId - The ID of the session to refresh.
-   */
   public refreshSession(sessionId: string) {
     const sessionKey = `session:${sessionId}`;
     const userId = this.cache.get(sessionKey);

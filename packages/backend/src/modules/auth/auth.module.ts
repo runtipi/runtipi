@@ -10,7 +10,6 @@ import { SessionManager } from './session.manager';
   imports: [UserModule, EncryptionModule, PasswordModule],
   controllers: [AuthController],
   providers: [AuthService, SessionManager],
-  // AuthMiddleware is applied in AppModule, so it can only inject providers that are exported here
   exports: [AuthService],
 })
 export class AuthModule {}
