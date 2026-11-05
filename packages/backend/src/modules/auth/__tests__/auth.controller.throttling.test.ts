@@ -13,6 +13,7 @@ import { AuthController } from '../auth.controller';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
 import { SessionManager } from '../session.manager';
+import { SessionCookies } from '../session-cookies';
 
 it('throttles repeated login attempts before they reach the controller', async () => {
   let app: INestApplication | undefined;
@@ -28,6 +29,7 @@ it('throttles repeated login attempts before they reach the controller', async (
     controllers: [AuthController],
     providers: [
       AuthGuard,
+      SessionCookies,
       {
         provide: APP_GUARD,
         useClass: ThrottlerGuard,
@@ -89,6 +91,7 @@ it('does not throttle repeated traefik auth checks', async () => {
     controllers: [AuthController],
     providers: [
       AuthGuard,
+      SessionCookies,
       {
         provide: APP_GUARD,
         useClass: ThrottlerGuard,
