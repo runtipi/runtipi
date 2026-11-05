@@ -5,11 +5,12 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { SessionManager } from './session.manager';
+import { SessionCookies } from './session-cookies';
 
 @Module({
   imports: [UserModule, EncryptionModule, PasswordModule],
   controllers: [AuthController],
-  providers: [AuthService, SessionManager],
-  exports: [AuthService],
+  providers: [AuthService, SessionManager, SessionCookies],
+  exports: [SessionManager, SessionCookies],
 })
 export class AuthModule {}

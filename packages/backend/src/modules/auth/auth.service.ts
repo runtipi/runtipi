@@ -1,20 +1,15 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
-import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_NAME } from '@/common/constants';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
-import { LoggerService } from '@/core/logger/logger.service';
 import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import type { Request, Response } from 'express';
-import psl from 'psl';
 import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
-import { type ForwardAuthSession, forwardAuthSessionIndexKey, forwardAuthSessionKey } from './forward-auth-session';
 import { SessionManager } from './session.manager';
 import { TotpAuthenticator } from './utils/totp-authenticator';
 
@@ -31,81 +26,7 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
-    private logger: LoggerService,
   ) {}
-
-  public getCookieDomain(domain?: string) {
-    if (!domain || !validator.isFQDN(domain)) {
-      return undefined;
-    }
-
-    const parsed = psl.parse(domain);
-    if (parsed.error) {
-      return undefined;
-    }
-
-    return `.${parsed.input}`;
-  }
-
-  private getRequestHost(req: Request) {
-    const host = (req.headers['x-forwarded-host'] as string | undefined) ?? req.headers.host;
-    return host?.split(',')[0]?.trim().split(':')[0]?.toLowerCase();
-  }
-
-  public setSessionCookie(res: Response, sessionId: string, req: Request) {
-    const host = this.getRequestHost(req);
-    const secure = req.headers['x-forwarded-proto'] === 'https';
-    const maxAge = this.sessionManager.getSessionMaxAgeInSeconds() * 1000;
-
-    this.logger.debug('Setting session cookie', { host, secure });
-
-    if (this.config.get('userSettings').experimental.insecureCookie) {
-      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
-      res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge });
-      return;
-    }
-
-    const legacyDomain = this.getCookieDomain(host);
-    if (legacyDomain) {
-      res.clearCookie(SESSION_COOKIE_NAME, { domain: legacyDomain });
-    }
-
-    res.cookie(SESSION_COOKIE_NAME, sessionId, {
-      httpOnly: true,
-      secure,
-      sameSite: 'lax',
-      maxAge,
-    });
-  }
-
-  public refreshSession(res: Response, sessionId: string, req: Request) {
-    this.sessionManager.refreshSession(sessionId);
-    this.setSessionCookie(res, sessionId, req);
-  }
-
-  private setForwardAuthSession(res: Response, req: Request, forwardAuthSessionId: string, session: ForwardAuthSession) {
-    const maxAge = this.sessionManager.getSessionMaxAgeInSeconds();
-    const sessionKey = forwardAuthSessionKey(forwardAuthSessionId);
-
-    this.cache.set(sessionKey, JSON.stringify(session), maxAge);
-    this.cache.set(forwardAuthSessionIndexKey(session.sessionId, 'session', forwardAuthSessionId), sessionKey, maxAge);
-
-    res.cookie(FORWARD_AUTH_COOKIE_NAME, forwardAuthSessionId, {
-      httpOnly: true,
-      secure: req.headers['x-forwarded-proto'] === 'https',
-      sameSite: 'lax',
-      maxAge: maxAge * 1000,
-    });
-  }
-
-  public createForwardAuthSession(res: Response, req: Request, sessionId: string, host: string) {
-    this.setForwardAuthSession(res, req, crypto.randomUUID(), { sessionId, host });
-  }
-
-  public refreshForwardAuthSession(res: Response, req: Request, forwardAuthSessionId: string, session: ForwardAuthSession) {
-    this.sessionManager.refreshSession(session.sessionId);
-    this.setForwardAuthSession(res, req, forwardAuthSessionId, session);
-  }
 
   /**
    * Given a username and password, login the user and return the session ID.
@@ -229,13 +150,6 @@ export class AuthService {
     return {
       sessionId,
     };
-  };
-
-  /**
-   * Logs out the currently logged in user.
-   */
-  public logout = async (sessionId: string) => {
-    await this.sessionManager.deleteSession(sessionId);
   };
 
   /**

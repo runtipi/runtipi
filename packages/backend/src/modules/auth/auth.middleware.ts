@@ -1,20 +1,19 @@
 import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_NAME } from '@/common/constants';
-import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { Injectable, type NestMiddleware } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import { UserRepository } from '../user/user.repository';
-import { AuthService } from './auth.service';
-import { forwardAuthSessionKey, parseForwardAuthSession } from './forward-auth-session';
+import { SessionCookies } from './session-cookies';
+import { SessionManager } from './session.manager';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
-    private readonly cache: CacheService,
+    private readonly sessions: SessionManager,
     private readonly config: ConfigurationService,
     private readonly userRepository: UserRepository,
-    private readonly authService: AuthService,
+    private readonly cookies: SessionCookies,
   ) {}
 
   private isTraefikAuthRequest(req: Request) {
@@ -32,33 +31,37 @@ export class AuthMiddleware implements NestMiddleware {
     const isTraefikAuthRequest = this.isTraefikAuthRequest(req);
 
     if (forwardAuthSessionId && isTraefikAuthRequest) {
-      const forwardAuthSession = parseForwardAuthSession(this.cache.get(forwardAuthSessionKey(forwardAuthSessionId)) ?? '');
-      const forwardedHost = this.getForwardedHost(req);
-      const userId =
-        forwardAuthSession && forwardedHost && forwardAuthSession.host === forwardedHost
-          ? this.cache.get(`session:${forwardAuthSession.sessionId}`)
-          : undefined;
-      const numericUserId = Number(userId);
-
-      if (forwardAuthSession && !Number.isNaN(numericUserId)) {
-        const user = await this.userRepository.getUserDtoById(numericUserId);
-        req.user = user;
-        req.authMethod = 'forward-auth';
-        this.authService.refreshForwardAuthSession(res, req, forwardAuthSessionId, forwardAuthSession);
+      const host = this.getForwardedHost(req);
+      const session = this.sessions.getForwardAuthSession(forwardAuthSessionId, host);
+      if (!session) {
+        return next();
       }
 
+      const user = await this.userRepository.getUserDtoById(session.userId);
+      if (!user || !this.sessions.refreshForwardAuthSession(forwardAuthSessionId, host)) {
+        return next();
+      }
+
+      req.user = user;
+      req.authMethod = 'forward-auth';
+      this.cookies.setForwardAuth(res, forwardAuthSessionId, req);
       return next();
     }
 
     if (sessionId && !isTraefikAuthRequest) {
-      const userId = this.cache.get(`session:${sessionId}`);
-      if (!Number.isNaN(Number(userId))) {
-        const user = await this.userRepository.getUserDtoById(Number(userId));
-        req.user = user;
-        req.authMethod = 'session';
-        this.authService.refreshSession(res, sessionId, req);
+      const userId = this.sessions.getSessionUserId(sessionId);
+      if (userId === undefined) {
+        return next();
       }
 
+      const user = await this.userRepository.getUserDtoById(userId);
+      if (!user || !this.sessions.refreshSession(sessionId)) {
+        return next();
+      }
+
+      req.user = user;
+      req.authMethod = 'session';
+      this.cookies.setSession(res, sessionId, req);
       return next();
     }
 
