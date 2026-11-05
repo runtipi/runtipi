@@ -91,7 +91,7 @@
     "@types/validator": "^13.15.10",
     "@types/web-push": "^3.6.4",
     "@vercel/ncc": "^0.45.0",
-    "@vitest/coverage-v8": "^4.1.12",
+    "@vitest/coverage-v8": "^5.1.0",
     "drizzle-kit": "^0.31.11",
     "memfs": "^4.80.0",
     "msw": "^3.0.3",
@@ -104,7 +104,7 @@
     "typescript": "^7.0.2",
     "unplugin-swc": "^2.0.0",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "^4.1.12",
+    "vitest": "^5.1.0",
     "vitest-mock-extended": "^3.1.1",
     "wait-for-expect": "^4.0.0"
   }
