@@ -44,7 +44,7 @@
     "dotenv-cli": "^11.1.0",
     "lefthook": "^2.2.2",
     "turbo": "^2.11.10",
-    "oxlint": "^1.90.0"
+    "oxlint": "^1.91.0"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.4"
