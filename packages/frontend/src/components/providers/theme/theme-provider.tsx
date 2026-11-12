@@ -1,12 +1,11 @@
 import { useUserContext } from '@/context/user-context';
-import type { ThemeMode } from '@/stores/ui-store';
+import { resolveStoredThemeMode, saveThemeMode } from '@/lib/theme/theme-mode-storage';
 import { useUIStore } from '@/stores/ui-store';
 import Cookies from 'js-cookie';
 import type React from 'react';
 import { useEffect, useLayoutEffect } from 'react';
 
 const THEME_COOKIE_OPTIONS = { path: '/', expires: 365 } as const;
-const THEME_MODE_STORAGE_KEY = 'themeMode';
 
 type Props = {
   children: React.ReactNode;
@@ -20,26 +19,6 @@ export const getSystemDarkPreference = (): boolean => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 
-const getStoredThemeMode = (): ThemeMode => {
-  try {
-    const stored = window.localStorage.getItem(THEME_MODE_STORAGE_KEY);
-    if (stored === 'system' || stored === 'light' || stored === 'dark') {
-      return stored;
-    }
-  } catch {
-    // localStorage unavailable (e.g. storage disabled) — fall back to the cookie
-  }
-
-  // Migration: users who picked light/dark before themeMode existed have a
-  // `theme` cookie. Map it to the matching explicit mode so their choice
-  // survives the upgrade. No cookie at all → follow the system.
-  const cookieTheme = Cookies.get('theme');
-  if (cookieTheme === 'dark' || cookieTheme === 'light') {
-    return cookieTheme;
-  }
-  return 'system';
-};
-
 export const ThemeProvider = (props: Props) => {
   const { children, initialTheme } = props;
   const theme = useUIStore((state) => state.theme);
@@ -47,14 +26,20 @@ export const ThemeProvider = (props: Props) => {
   const setResolvedSystemTheme = useUIStore((state) => state.setResolvedSystemTheme);
   const { themeBase, themeColor } = useUserContext();
 
-  // Boot: hydrate the mode from localStorage before first paint.
+  // Boot: hydrate the mode from storage before first paint.
   useLayoutEffect(() => {
-    const storedMode = getStoredThemeMode();
+    const storedMode = resolveStoredThemeMode();
     const { themeMode: currentMode, setThemeMode } = useUIStore.getState();
     if (storedMode !== currentMode) {
       setThemeMode(storedMode);
     }
   }, []);
+
+  // Persist the mode whenever it changes (including the boot hydration above),
+  // so the selected mode survives reloads instead of degrading to the resolved theme.
+  useEffect(() => {
+    saveThemeMode(themeMode);
+  }, [themeMode]);
 
   // Keep base/primary theme datasets in sync with instance settings.
   useEffect(() => {
