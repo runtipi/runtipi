@@ -118,7 +118,13 @@ export const BaseHeader = (props: BaseHeaderProps) => {
             <Tooltip className="tooltip" anchorSelect=".themeMode">
               {themeTooltip}
             </Tooltip>
-            <button type="button" onClick={handleThemeToggle} className="themeMode nav-link px-0 cursor-pointer" data-testid="theme-toggle">
+            <button
+              type="button"
+              onClick={handleThemeToggle}
+              className="themeMode nav-link px-0 cursor-pointer"
+              data-testid="theme-toggle"
+              aria-label={themeTooltip}
+            >
               {themeMode === 'dark' && <IconMoon data-testid="icon-moon" size={20} />}
               {themeMode === 'light' && <IconSun data-testid="icon-sun" size={20} />}
               {themeMode === 'system' && <IconSunMoon data-testid="icon-system" size={20} />}

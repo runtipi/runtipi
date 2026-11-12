@@ -3,13 +3,13 @@ import type { ThemeMode } from '@/stores/ui-store';
 
 export const THEME_MODE_STORAGE_KEY = 'themeMode';
 
-const isValidThemeMode = (value: unknown): value is ThemeMode => value === 'system' || value === 'light' || value === 'dark';
+const isValidThemeMode = (value: unknown) => value === 'system' || value === 'light' || value === 'dark';
 
 /**
  * Persist the selected theme mode so it survives reloads.
  * Fails silently when localStorage is unavailable (e.g. storage disabled).
  */
-export const saveThemeMode = (mode: ThemeMode): void => {
+export const saveThemeMode = (mode: ThemeMode) => {
   try {
     window.localStorage.setItem(THEME_MODE_STORAGE_KEY, mode);
   } catch {
@@ -20,7 +20,7 @@ export const saveThemeMode = (mode: ThemeMode): void => {
 /**
  * Read the persisted theme mode, or null when nothing (valid) is stored.
  */
-export const loadThemeMode = (): ThemeMode | null => {
+export const loadThemeMode = () => {
   try {
     const stored = window.localStorage.getItem(THEME_MODE_STORAGE_KEY);
     if (isValidThemeMode(stored)) {
@@ -40,10 +40,10 @@ export const loadThemeMode = (): ThemeMode | null => {
  *    theme modes existed — their choice is migrated to the matching mode,
  * 3. otherwise follow the system.
  */
-export const resolveStoredThemeMode = (): ThemeMode => {
+export const resolveStoredThemeMode = () => {
   return (
     loadThemeMode() ??
-    ((): ThemeMode => {
+    (() => {
       const cookieTheme = Cookies.get('theme');
       if (cookieTheme === 'dark' || cookieTheme === 'light') {
         return cookieTheme;

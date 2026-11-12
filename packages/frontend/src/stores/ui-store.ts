@@ -18,7 +18,7 @@ const THEME_MODE_CYCLE: Record<ThemeMode, ThemeMode> = {
   system: 'light',
 };
 
-export const getNextThemeMode = (mode: ThemeMode): ThemeMode => THEME_MODE_CYCLE[mode];
+export const getNextThemeMode = (mode: ThemeMode) => THEME_MODE_CYCLE[mode];
 
 export const useUIStore = create<UIStore>((set) => ({
   darkMode: false,

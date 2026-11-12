@@ -12,7 +12,7 @@ type Props = {
   initialTheme?: string;
 };
 
-export const getSystemDarkPreference = (): boolean => {
+export const getSystemDarkPreference = () => {
   if (typeof window === 'undefined' || !window.matchMedia) {
     return false;
   }
@@ -59,6 +59,11 @@ export const ThemeProvider = (props: Props) => {
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const onSystemChange = (event: MediaQueryListEvent) => {
+      // Read the mode from the store: this callback outlives the render that
+      // created it, so the captured `themeMode` may be stale.
+      if (useUIStore.getState().themeMode !== 'system') {
+        return;
+      }
       setResolvedSystemTheme(event.matches);
     };
 
