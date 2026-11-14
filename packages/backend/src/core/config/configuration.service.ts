@@ -50,6 +50,7 @@ const envSchema = type({
   THEME_BASE: 'string',
   THEME_COLOR: 'string',
   MAX_BACKUPS: type('number | string.numeric.parse').default(0),
+  SESSION_MAX_AGE_IN_DAYS: type('number.integer | string.integer.parse').to('1 <= number <= 365').default(7),
   // Experimental flags
   EXPERIMENTAL_INSECURE_COOKIE: 'string',
 });
@@ -165,6 +166,7 @@ export class ConfigurationService {
         advancedSettings: env.ADVANCED_SETTINGS.toLowerCase() === 'true',
         logLevel,
         maxBackups: env.MAX_BACKUPS,
+        sessionMaxAgeInDays: env.SESSION_MAX_AGE_IN_DAYS,
         themeBase: env.THEME_BASE,
         themeColor: env.THEME_COLOR,
         experimental: {
