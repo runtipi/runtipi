@@ -28,7 +28,7 @@ export class SessionManager {
 
   public async createSession(userId: number) {
     const sessionId = crypto.randomUUID();
-    this.storeSession(sessionId, userId);
+    this.cache.transaction(() => this.storeSession(sessionId, userId));
 
     return sessionId;
   }
@@ -42,18 +42,22 @@ export class SessionManager {
   }
 
   public refreshSession(sessionId: string) {
-    const userId = this.getSessionUserId(sessionId);
-    if (userId === undefined) {
-      return false;
-    }
+    return this.cache.transaction(() => {
+      const userId = this.getSessionUserId(sessionId);
+      if (userId === undefined) {
+        return false;
+      }
 
-    this.storeSession(sessionId, userId);
-    return true;
+      this.storeSession(sessionId, userId);
+      return true;
+    });
   }
 
   private readForwardAuthRecord(recordType: 'grant' | 'session', id: string) {
+    const value = this.cache.get(`forward-auth-${recordType}:${id}`);
+
     try {
-      const session = forwardAuthRecordSchema(JSON.parse(this.cache.get(`forward-auth-${recordType}:${id}`) ?? 'null'));
+      const session = forwardAuthRecordSchema(JSON.parse(value ?? 'null'));
       if (session instanceof type.errors || !session.sessionId || !session.host) {
         return;
       }
@@ -72,32 +76,36 @@ export class SessionManager {
   }
 
   public createForwardAuthGrant(sessionId: string, host: string) {
-    if (this.getSessionUserId(sessionId) === undefined) {
-      return;
-    }
+    return this.cache.transaction(() => {
+      if (this.getSessionUserId(sessionId) === undefined) {
+        return;
+      }
 
-    const grantId = crypto.randomUUID();
-    this.storeForwardAuthRecord('grant', grantId, { sessionId, host: host.toLowerCase() }, FORWARD_AUTH_GRANT_EXPIRATION);
+      const grantId = crypto.randomUUID();
+      this.storeForwardAuthRecord('grant', grantId, { sessionId, host: host.toLowerCase() }, FORWARD_AUTH_GRANT_EXPIRATION);
 
-    return grantId;
+      return grantId;
+    });
   }
 
   public consumeForwardAuthGrant(grantId: string, host: string) {
-    const session = this.readForwardAuthRecord('grant', grantId);
-    this.cache.del(`forward-auth-grant:${grantId}`);
+    return this.cache.transaction(() => {
+      const session = this.readForwardAuthRecord('grant', grantId);
+      this.cache.del(`forward-auth-grant:${grantId}`);
 
-    if (session) {
-      this.cache.del(`forward-auth-by-session:${session.sessionId}:grant:${grantId}`);
-    }
+      if (session) {
+        this.cache.del(`forward-auth-by-session:${session.sessionId}:grant:${grantId}`);
+      }
 
-    if (!session || session.host !== host.toLowerCase() || this.getSessionUserId(session.sessionId) === undefined) {
-      return;
-    }
+      if (!session || session.host !== host.toLowerCase() || this.getSessionUserId(session.sessionId) === undefined) {
+        return;
+      }
 
-    const forwardAuthSessionId = crypto.randomUUID();
-    this.storeForwardAuthRecord('session', forwardAuthSessionId, session, this.getSessionMaxAgeInSeconds());
+      const forwardAuthSessionId = crypto.randomUUID();
+      this.storeForwardAuthRecord('session', forwardAuthSessionId, session, this.getSessionMaxAgeInSeconds());
 
-    return forwardAuthSessionId;
+      return forwardAuthSessionId;
+    });
   }
 
   public getForwardAuthSession(forwardAuthSessionId: string, host: string | undefined) {
@@ -115,31 +123,35 @@ export class SessionManager {
   }
 
   public refreshForwardAuthSession(forwardAuthSessionId: string, host: string | undefined) {
-    const session = this.getForwardAuthSession(forwardAuthSessionId, host);
-    if (!session) {
-      return false;
-    }
+    return this.cache.transaction(() => {
+      const session = this.getForwardAuthSession(forwardAuthSessionId, host);
+      if (!session) {
+        return false;
+      }
 
-    this.storeSession(session.sessionId, session.userId);
-    this.storeForwardAuthRecord(
-      'session',
-      forwardAuthSessionId,
-      { sessionId: session.sessionId, host: session.host },
-      this.getSessionMaxAgeInSeconds(),
-    );
-    return true;
+      this.storeSession(session.sessionId, session.userId);
+      this.storeForwardAuthRecord(
+        'session',
+        forwardAuthSessionId,
+        { sessionId: session.sessionId, host: session.host },
+        this.getSessionMaxAgeInSeconds(),
+      );
+      return true;
+    });
   }
 
   public deleteForwardAuthSession(forwardAuthSessionId: string) {
-    const session = this.readForwardAuthRecord('session', forwardAuthSessionId);
-    this.cache.del(`forward-auth-session:${forwardAuthSessionId}`);
+    return this.cache.transaction(() => {
+      const session = this.readForwardAuthRecord('session', forwardAuthSessionId);
+      this.cache.del(`forward-auth-session:${forwardAuthSessionId}`);
 
-    if (session) {
-      this.cache.del(`forward-auth-by-session:${session.sessionId}:session:${forwardAuthSessionId}`);
-    }
+      if (session) {
+        this.cache.del(`forward-auth-by-session:${session.sessionId}:session:${forwardAuthSessionId}`);
+      }
+    });
   }
 
-  public async deleteSession(sessionId: string) {
+  private deleteStoredSession(sessionId: string) {
     const userId = this.getSessionUserId(sessionId);
     this.cache.del(`session:${sessionId}`);
 
@@ -147,7 +159,7 @@ export class SessionManager {
       this.cache.del(`session:${userId}:${sessionId}`);
     }
 
-    const entries = await this.cache.getByPrefix(`forward-auth-by-session:${sessionId}:`);
+    const entries = this.cache.getByPrefix(`forward-auth-by-session:${sessionId}:`);
 
     for (const entry of entries) {
       this.cache.del(entry.key);
@@ -155,16 +167,19 @@ export class SessionManager {
     }
   }
 
-  public async destroyAllSessionsByUserId(userId: number) {
-    const prefix = `session:${userId}:`;
-    const sessions = await this.cache.getByPrefix(prefix);
+  public deleteSession(sessionId: string) {
+    this.cache.transaction(() => this.deleteStoredSession(sessionId));
+  }
 
-    await Promise.all(
-      sessions.map(({ key }) => {
-        this.cache.del(key);
-        return this.deleteSession(key.slice(prefix.length));
-      }),
-    );
+  public destroyAllSessionsByUserId(userId: number) {
+    this.cache.transaction(() => {
+      const prefix = `session:${userId}:`;
+      const sessions = this.cache.getByPrefix(prefix);
+
+      for (const { key } of sessions) {
+        this.deleteStoredSession(key.slice(prefix.length));
+      }
+    });
   }
 
   public generateSalt() {
