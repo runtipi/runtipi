@@ -1,4 +1,5 @@
 import path from 'path';
+import { Features } from 'lightningcss';
 import { reactRouter } from '@react-router/dev/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig, type PluginOption } from 'vite';
@@ -28,6 +29,12 @@ if (NODE_ENV === 'production') {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins,
+  css: {
+    lightningcss: {
+      // Lowering light-dark() freezes inherited Tabler colors to the root theme.
+      exclude: Features.LightDark,
+    },
+  },
   resolve: {
     alias,
   },
