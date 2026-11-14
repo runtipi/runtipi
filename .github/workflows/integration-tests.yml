@@ -11,10 +11,13 @@ permissions:
 
 jobs:
   integration-tests:
+    strategy:
+      matrix:
+        postgres: [14, 18]
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:18
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: postgres
         ports:

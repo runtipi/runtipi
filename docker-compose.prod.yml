@@ -20,7 +20,7 @@ services:
 
   runtipi-db:
     container_name: runtipi-db
-    image: postgres:18
+    image: postgres:14
     restart: unless-stopped
     stop_grace_period: 1m
     volumes:
