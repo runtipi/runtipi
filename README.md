@@ -43,6 +43,18 @@ Visit our website [runtipi.io](https://www.runtipi.io/docs/getting-started/insta
 
 You can find more documentation and tutorials / FAQ on [runtipi.io](https://www.runtipi.io/docs/introduction?utm_source=github&utm_campaign=readme)
 
+### Testing a branch build
+
+In GitHub Actions, open **Branch Release**, select **Run workflow**, and enter the repository branch in the `branch` input. The workflow resolves the branch once and publishes Linux AMD64 and ARM64 images and CLI binaries for that commit. The CLI comes from the submodule revision pinned by the selected branch.
+
+The image tag and GitHub prerelease use `v<package-version>-branch.<full-commit-sha>`. Once the workflow succeeds, copy the exact command from its summary or release notes and run it from your Runtipi installation directory:
+
+```sh
+sudo ./runtipi-cli update v4.1.0-branch.<full-commit-sha>
+```
+
+These builds are experimental prereleases and can also be selected by `update prerelease`. Use an explicit version to install a particular build. The CLI's existing major-version upgrade restrictions still apply; follow the breaking-update instructions when crossing a major version.
+
 ## ❤ Contributing
 
 Runtipi is designed to make adding new apps very easy. We welcome and appreciate new contributions.
