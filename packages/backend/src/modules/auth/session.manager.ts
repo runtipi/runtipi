@@ -177,6 +177,7 @@ export class SessionManager {
       const sessions = this.cache.getByPrefix(prefix);
 
       for (const { key } of sessions) {
+        this.cache.del(key);
         this.deleteStoredSession(key.slice(prefix.length));
       }
     });

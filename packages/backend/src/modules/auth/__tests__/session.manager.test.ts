@@ -132,3 +132,17 @@ test('removing one app session preserves the login and other apps', async () => 
   expect(sessions.getForwardAuthSession(secondApp, 'other.example.com')?.userId).toBe(1);
   expect(sessions.getSessionUserId(sessionId)).toBe(1);
 });
+
+test('bulk revocation removes expired session indexes without touching another user', async () => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  const { cache, sessions } = createSessionStore(1);
+  await sessions.createSession(1);
+  await sessions.createSession(1);
+  const otherSession = await sessions.createSession(2);
+
+  vi.setSystemTime(Date.now() + DAY + 1);
+  sessions.destroyAllSessionsByUserId(1);
+
+  expect(cache.getByPrefix('session:1:')).toEqual([]);
+  expect(cache.getByPrefix('session:2:')).toEqual([{ key: `session:2:${otherSession}`, val: `session:${otherSession}` }]);
+});
