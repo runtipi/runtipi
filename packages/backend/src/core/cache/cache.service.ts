@@ -46,8 +46,9 @@ export class CacheService {
 
   public async getByPrefix(prefix: string) {
     try {
-      const query = this.db.prepare('SELECT * FROM keyv WHERE key LIKE ?');
-      const rows = query.all(`${prefix}%`) as { key: string; value: string }[];
+      const escapedPrefix = prefix.replace(/[!%_]/g, '!$&');
+      const query = this.db.prepare("SELECT * FROM keyv WHERE key LIKE ? ESCAPE '!'");
+      const rows = query.all(`${escapedPrefix}%`) as { key: string; value: string }[];
 
       return rows.map((row) => ({ key: row.key, val: JSON.parse(row.value).value }));
     } catch (error) {
