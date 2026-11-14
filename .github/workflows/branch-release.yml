@@ -35,12 +35,7 @@ jobs:
         run: |
           SHA=$(git rev-parse HEAD)
           CLI_SHA=$(git rev-parse HEAD:cli)
-          BASE_VERSION=$(jq -r '.version' package.json)
-          if [[ ! "$BASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
-            echo "Invalid package version: $BASE_VERSION" >&2
-            exit 1
-          fi
-          VERSION="v${BASE_VERSION%%[-+]*}-branch.${SHA}"
+          VERSION="sha-${SHA}"
 
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "cli-sha=$CLI_SHA" >> "$GITHUB_OUTPUT"
@@ -141,8 +136,6 @@ jobs:
       - name: Publish branch prerelease
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
         with:
-          # Protected tags require a token whose actor is permitted by the Tags ruleset.
-          token: ${{ secrets.PAT_CLI }}
           tag_name: ${{ needs.resolve.outputs.version }}
           target_commitish: ${{ needs.resolve.outputs.sha }}
           name: Branch build ${{ needs.resolve.outputs.version }}
@@ -160,6 +153,8 @@ jobs:
             sudo ./runtipi-cli update ${{ needs.resolve.outputs.version }}
             ```
 
+            Requires a CLI that supports `sha-` identifiers. For older CLIs, download and extract the matching CLI archive from this release, replace `runtipi-cli`, then run `sudo ./runtipi-cli start`.
+
       - name: Write installation command to summary
         env:
           VERSION: ${{ needs.resolve.outputs.version }}
@@ -169,4 +164,6 @@ jobs:
 
           Install from your Runtipi directory:
           \`sudo ./runtipi-cli update $VERSION\`
+
+          Older CLIs must first be replaced with the matching CLI archive from this release.
           EOF
