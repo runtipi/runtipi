@@ -6,6 +6,7 @@ on:
       - 'v*.*.*'
       - 'v*.*.*-beta.*'
       - 'v*.*.*-alpha.*'
+      - '!v*.*.*-branch.*'
 
 jobs:
   determine-release-type:
