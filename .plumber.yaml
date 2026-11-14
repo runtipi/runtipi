@@ -1,0 +1,26 @@
+# Plumber overlay: inherits every control from the CLI's built-in
+# baseline, only the differences for this repository are written here.
+# Run 'plumber config resolve' to see the full effective config.
+extends: plumber:default
+version: '2.0'
+
+github:
+  controls:
+    githubActionMustComeFromAuthorizedSources:
+      # Keep the curated default list and trust the release tooling
+      # this repository uses on top of it, all pinned by commit SHA.
+      includePlumberDefaults: true
+      trustedGithubActions:
+        - Codex-/await-remote-run
+        - codex-/return-dispatch
+        - pyTooling/Actions
+        - softprops/action-gh-release
+
+    # develop and master are protected. The release/* branches are
+    # frozen history, keep the requirement on the branches releases
+    # are actually cut from.
+    branchMustBeProtected:
+      defaultMustBeProtected: true
+      namePatterns:
+        - develop
+        - master
