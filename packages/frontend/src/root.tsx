@@ -10,8 +10,6 @@ import { TranslatableError } from './types/error.types';
 
 client.interceptors.response.use(async (res) => {
   if (res.status === 401 && window.location.pathname !== '/login') {
-    // The session is gone. Redirect to the login page instead of surfacing the 401
-    // as a generic error, which would otherwise render a dead "Retry" page.
     window.location.href = '/login';
   }
 
