@@ -1,4 +1,4 @@
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync, type StatementSync } from 'node:sqlite';
 import { Injectable } from '@nestjs/common';
 
 export const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
@@ -6,6 +6,7 @@ export const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 @Injectable()
 export class CacheService {
   private db: DatabaseSync;
+  private setStatement: StatementSync;
 
   constructor() {
     this.db = new DatabaseSync('/cache/cache.sqlite');
@@ -15,11 +16,12 @@ export class CacheService {
     if (!tableCheck) {
       this.db.exec('CREATE TABLE keyv (key TEXT PRIMARY KEY, value TEXT)');
     }
+
+    this.setStatement = this.db.prepare('INSERT OR REPLACE INTO keyv (key, value) VALUES (?, ?)');
   }
 
   public set(key: string, value: string, expiration = ONE_DAY_IN_SECONDS) {
-    const stmt = this.db.prepare('INSERT OR REPLACE INTO keyv (key, value) VALUES (?, ?)');
-    stmt.run(key, JSON.stringify({ value, expiration: Math.max(Date.now() + expiration * 1000, expiration) }));
+    this.setStatement.run(key, JSON.stringify({ value, expiration: Math.max(Date.now() + expiration * 1000, expiration) }));
   }
 
   public get(key: string) {
@@ -46,8 +48,8 @@ export class CacheService {
 
   public async getByPrefix(prefix: string) {
     try {
-      const query = this.db.prepare('SELECT * FROM keyv WHERE key LIKE ?');
-      const rows = query.all(`${prefix}%`) as { key: string; value: string }[];
+      const query = this.db.prepare("SELECT * FROM keyv WHERE key LIKE ? ESCAPE '!'");
+      const rows = query.all(`${prefix.replace(/[!%_]/g, '!$&')}%`) as { key: string; value: string }[];
 
       return rows.map((row) => ({ key: row.key, val: JSON.parse(row.value).value }));
     } catch (error) {

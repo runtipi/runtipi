@@ -9,7 +9,8 @@ import { createSessionStore } from './session-test-utils';
 
 const setup = (days = 7) => {
   const store = createSessionStore(days);
-  const cookies = new SessionCookies(store.config, store.sessions, mock<LoggerService>());
+  const logger = mock<LoggerService>();
+  const cookies = new SessionCookies(store.config, store.sessions, logger);
   const app = express();
   app.get('/session', (req, res) => {
     cookies.setSession(res, 'session-id', req);
@@ -24,7 +25,7 @@ const setup = (days = 7) => {
     res.sendStatus(204);
   });
 
-  return { ...store, app };
+  return { ...store, app, logger };
 };
 
 test.each(['example.duckdns.org', 'example.whatever', 'sub.sub.duckdns.org'])(
@@ -85,4 +86,18 @@ test('logout expires host-only and legacy cookies', async () => {
     expect.stringContaining(`${SESSION_COOKIE_NAME}=; Domain=.example.com;`),
     expect.stringContaining(`${FORWARD_AUTH_COOKIE_NAME}=; Domain=.example.com;`),
   ]);
+});
+
+test('warns once while continuing to renew insecure dashboard cookies', async () => {
+  const { app, settings, logger } = setup();
+  settings.experimental.insecureCookie = true;
+
+  for (let requestNumber = 0; requestNumber < 3; requestNumber++) {
+    const response = await request(app).get('/session').set('X-Forwarded-Proto', 'https');
+
+    expect(response.headers['set-cookie']).toEqual([expect.stringContaining(`${SESSION_COOKIE_NAME}=session-id; Max-Age=604800;`)]);
+    expect(response.headers['set-cookie']?.[0]).not.toMatch(/Secure|SameSite/);
+  }
+
+  expect(logger.warn).toHaveBeenCalledExactlyOnceWith('WARNING: Using insecure cookies. This is not recommended for production environments.');
 });

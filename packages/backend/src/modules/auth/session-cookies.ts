@@ -9,6 +9,8 @@ import { SessionManager } from './session.manager';
 
 @Injectable()
 export class SessionCookies {
+  private warnedAboutInsecureCookie = false;
+
   constructor(
     private config: ConfigurationService,
     private sessions: SessionManager,
@@ -32,7 +34,11 @@ export class SessionCookies {
     const maxAge = this.sessions.getSessionMaxAgeInSeconds() * 1000;
 
     if (this.config.get('userSettings').experimental.insecureCookie) {
-      this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
+      if (!this.warnedAboutInsecureCookie) {
+        this.logger.warn('WARNING: Using insecure cookies. This is not recommended for production environments.');
+        this.warnedAboutInsecureCookie = true;
+      }
+
       res.cookie(SESSION_COOKIE_NAME, sessionId, { httpOnly: true, secure: false, sameSite: false, maxAge });
       return;
     }
