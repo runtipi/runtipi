@@ -887,8 +887,10 @@ describe('App lifecycle', () => {
 
   describe('update app config', () => {
     it('should successfully update app configuration', async () => {
-      // arrange
-      const appInfo = await createAppInStore('test', { id: 'config-test' });
+      const appInfo = await createAppInStore('test', {
+        id: 'config-test',
+        form_fields: [{ type: 'text', label: 'Test field', env_variable: 'TEST_FIELD', required: false }],
+      });
 
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: {} });
 
@@ -897,17 +899,18 @@ describe('App lifecycle', () => {
         expect(app?.status).toBe('running');
       });
 
-      // act
-      await appLifecycleService.updateAppSettings({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
+      await appLifecycleService.updateAppSettings({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value', REMOVED_FIELD: 'stale-value' } });
 
-      // assert
       const app = await appsRepository.getAppByUrn(appInfo.urn);
       expect(app?.config).toHaveProperty('TEST_FIELD', 'new-value');
+      expect(app?.config).not.toHaveProperty('REMOVED_FIELD');
     });
 
     it('should mark app as pending restart when config changes', async () => {
-      // arrange
-      const appInfo = await createAppInStore('test', { id: 'config-restart-test' });
+      const appInfo = await createAppInStore('test', {
+        id: 'config-restart-test',
+        form_fields: [{ type: 'text', label: 'Test field', env_variable: 'TEST_FIELD', required: false }],
+      });
 
       await appLifecycleService.installApp({ appUrn: appInfo.urn, form: { TEST_FIELD: 'old-value' } });
 
@@ -916,10 +919,8 @@ describe('App lifecycle', () => {
         expect(app?.status).toBe('running');
       });
 
-      // act
       await appLifecycleService.updateAppSettings({ appUrn: appInfo.urn, form: { TEST_FIELD: 'new-value' } });
 
-      // assert
       const app = await appsRepository.getAppByUrn(appInfo.urn);
       expect(app?.pendingRestart).toBe(true);
     });

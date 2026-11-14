@@ -8,7 +8,6 @@ import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import psl from 'psl';
 import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
@@ -28,19 +27,6 @@ export class AuthService {
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
   ) {}
-
-  public getCookieDomain(domain?: string) {
-    if (!domain || !validator.isFQDN(domain)) {
-      return undefined;
-    }
-
-    const parsed = psl.parse(domain);
-    if (parsed.error) {
-      return undefined;
-    }
-
-    return `.${parsed.input}`;
-  }
 
   /**
    * Given a username and password, login the user and return the session ID.
@@ -164,13 +150,6 @@ export class AuthService {
     return {
       sessionId,
     };
-  };
-
-  /**
-   * Logs out the currently logged in user.
-   */
-  public logout = async (sessionId: string) => {
-    await this.sessionManager.deleteSession(sessionId);
   };
 
   /**

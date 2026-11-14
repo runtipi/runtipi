@@ -100,39 +100,4 @@ describe('AuthService', () => {
     expect(cacheService.del).toHaveBeenCalledWith('totp-attempts:session-id');
     expect(cacheService.del).toHaveBeenCalledWith('session-id');
   });
-
-  describe('getCookieDomain', () => {
-    it('should return undefined if the domain is localhost', async () => {
-      const domain = 'localhost';
-      const result = await authService.getCookieDomain(domain);
-      expect(result).toBeUndefined();
-    });
-
-    it('should return undefined if the domain is an IP address', async () => {
-      const domain = '192.168.3.20';
-      const result = await authService.getCookieDomain(domain);
-      expect(result).toBeUndefined();
-    });
-
-    it('should return with subdomain', async () => {
-      const domain = 'example.duckdns.org';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe(`.${domain}`);
-    });
-
-    it('should return input if domain is not using a standard tld', async () => {
-      const domain = 'example.whatever';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe(`.${domain}`);
-    });
-
-    it('should return all subdomains when using multiple levels of subdomains', async () => {
-      const domain = 'sub.sub.duckdns.org';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe('.sub.sub.duckdns.org');
-    });
-  });
 });

@@ -1,4 +1,3 @@
-import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -7,6 +6,8 @@ import jwt from 'jsonwebtoken';
 import { expect, test, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { AuthMiddleware } from '../auth.middleware';
+import { SessionManager } from '../session.manager';
+import { SessionCookies } from '../session-cookies';
 
 test.each([
   { name: 'legacy JWT secret', key: 'legacy-encryption-secret', algorithm: 'HS256' as const, authenticated: false },
@@ -21,7 +22,7 @@ test.each([
   const operator = fromPartial<Awaited<ReturnType<UserRepository['getFirstOperator']>>>({ id: 1, operator: true });
   userRepository.getFirstOperator.mockResolvedValue(operator);
 
-  const middleware = new AuthMiddleware(mock<CacheService>(), config, userRepository);
+  const middleware = new AuthMiddleware(mock<SessionManager>(), config, userRepository, mock<SessionCookies>());
   const token = jwt.sign({ sub: 'cli' }, key, { algorithm, expiresIn: '1h' });
   const request = fromPartial<Request>({ cookies: {}, headers: { authorization: `Bearer ${token}` } });
   const next = vi.fn();

@@ -487,7 +487,15 @@ test('retains the recovery snapshot when the current app folder cannot be remove
 
 test('persists the deployed normalized settings and version in one update', async () => {
   const { command, appFilesManager, appsRepository } = createCommand({ performBackup: false });
-  appFilesManager.getInstalledAppInfo.mockResolvedValue(fromPartial({ exposable: false, port: 8080, tipi_version: 2 }));
+
+  appFilesManager.getInstalledAppInfo.mockResolvedValue(
+    fromPartial({
+      exposable: false,
+      port: 8080,
+      tipi_version: 2,
+      form_fields: [{ type: 'text', label: 'Custom field', env_variable: 'CUSTOM', required: false }],
+    }),
+  );
 
   await command.execute(appUrn, { exposed: true, domain: 'app.example.com', CUSTOM: 'value' });
 
@@ -639,6 +647,16 @@ test('keeps the migrated deployment when the commit succeeds but its response is
     performBackup: false,
     wasRunningBeforeUpdate: true,
   });
+
+  appFilesManager.getInstalledAppInfo.mockResolvedValue(
+    fromPartial({
+      exposable: true,
+      port: 8080,
+      tipi_version: 2,
+      form_fields: [{ type: 'text', label: 'Custom field', env_variable: 'CUSTOM', required: false }],
+    }),
+  );
+
   const completedMigrations: string[] = [];
   appMigrationService.prepareMigrations.mockResolvedValue([{ id: 'database-v2', path: '/data/apps/test/migrations/database-v2.yml' }]);
   appMigrationService.commitMigrations.mockImplementation(async (_appUrn, migrations, update) => {

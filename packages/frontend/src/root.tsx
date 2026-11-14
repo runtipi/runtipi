@@ -9,6 +9,10 @@ import { Providers } from './components/providers/providers';
 import { TranslatableError } from './types/error.types';
 
 client.interceptors.response.use(async (res) => {
+  if (res.status === 401 && window.location.pathname !== '/login') {
+    window.location.href = '/login';
+  }
+
   if (res.status >= 400) {
     const data = await res.json();
     const error = new TranslatableError(data.message);

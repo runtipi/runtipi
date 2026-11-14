@@ -1,48 +1,63 @@
-import { CacheService } from '@/core/cache/cache.service';
-import { describe, expect, it, vi } from 'vitest';
+import { expect, test } from 'vitest';
+import { createTestCache } from './cache-test-utils';
+import { createSessionStore } from '@/modules/auth/__tests__/session-test-utils';
 
-vi.mock('node:sqlite', async (importOriginal) => {
-  const { DatabaseSync } = await importOriginal<typeof import('node:sqlite')>();
+test.each(['%', '_', '!', '!%_'])('matches %s literally in cache prefixes', (prefix) => {
+  const { cache } = createTestCache();
+  cache.set(`${prefix}:first`, 'first');
+  cache.set(`${prefix}:second`, 'second');
+  cache.set('other:first', 'unrelated');
+  cache.set('x:first', 'unrelated');
 
-  class TestDatabaseSync extends DatabaseSync {
-    constructor() {
-      super(':memory:');
-    }
-  }
-
-  return { DatabaseSync: TestDatabaseSync };
+  expect(cache.getByPrefix(`${prefix}:`)).toEqual([
+    { key: `${prefix}:first`, val: 'first' },
+    { key: `${prefix}:second`, val: 'second' },
+  ]);
+  expect(cache.getByPrefix('missing:')).toEqual([]);
 });
 
-describe('CacheService', () => {
-  it('returns entries with the requested literal prefix', async () => {
-    const cache = new CacheService();
-    cache.set('forward-auth-by-session:session-a:grant:grant-a', 'forward-auth-grant:grant-a');
-    cache.set('forward-auth-by-session:session-a:session:forward-session-a', 'forward-auth-session:forward-session-a');
-    cache.set('forward-auth-by-session:session-b:session:forward-session-b', 'forward-auth-session:forward-session-b');
+test.each(['%', '_', '!'])('logout with %s preserves other users’ app sessions and pending grants', async (sessionId) => {
+  const { cache, sessions } = createSessionStore();
+  const otherSessionId = await sessions.createSession(2);
+  const grant = sessions.createForwardAuthGrant(otherSessionId, 'app.example.com')!;
+  const appSession = sessions.consumeForwardAuthGrant(grant, 'app.example.com')!;
+  const pendingGrant = sessions.createForwardAuthGrant(otherSessionId, 'pending.example.com')!;
 
-    const entries = await cache.getByPrefix('forward-auth-by-session:session-a:');
+  await sessions.deleteSession(sessionId);
 
-    expect(entries).toHaveLength(2);
-    expect(entries).toEqual(
-      expect.arrayContaining([
-        { key: 'forward-auth-by-session:session-a:grant:grant-a', val: 'forward-auth-grant:grant-a' },
-        { key: 'forward-auth-by-session:session-a:session:forward-session-a', val: 'forward-auth-session:forward-session-a' },
-      ]),
-    );
-  });
+  expect(sessions.getForwardAuthSession(appSession, 'app.example.com')?.userId).toBe(2);
+  expect(sessions.consumeForwardAuthGrant(pendingGrant, 'pending.example.com')).toBeDefined();
 
-  it.each([
-    ['percent wildcard', '%', 'session-a'],
-    ['underscore wildcards', '_'.repeat(36), '11111111-1111-4111-8111-111111111111'],
-    ['escape marker followed by a percent wildcard', '!%', '!session-a'],
-  ])('treats %s as literal text', async (_, requestedSessionId, storedSessionId) => {
-    const cache = new CacheService();
-    const literalKey = `forward-auth-by-session:${requestedSessionId}:session:literal-forward-session`;
-    cache.set(literalKey, 'forward-auth-session:literal-forward-session');
-    cache.set(`forward-auth-by-session:${storedSessionId}:session:forward-session`, 'forward-auth-session:forward-session');
+  await sessions.deleteSession(otherSessionId);
 
-    const entries = await cache.getByPrefix(`forward-auth-by-session:${requestedSessionId}:`);
+  expect(sessions.getForwardAuthSession(appSession, 'app.example.com')).toBeUndefined();
+  expect(cache.getByPrefix(`forward-auth-by-session:${otherSessionId}:`)).toEqual([]);
+});
 
-    expect(entries).toEqual([{ key: literalKey, val: 'forward-auth-session:literal-forward-session' }]);
-  });
+test('transactions commit their result and roll back failed writes and deletes', () => {
+  const { cache } = createTestCache();
+  cache.set('existing', 'original');
+
+  expect(
+    cache.transaction(() => {
+      cache.set('committed', 'value');
+      return 42;
+    }),
+  ).toBe(42);
+  expect(cache.get('committed')).toBe('value');
+
+  expect(() =>
+    cache.transaction(() => {
+      cache.del('existing');
+      cache.set('uncommitted', 'value');
+      throw new Error('failure');
+    }),
+  ).toThrow('failure');
+
+  expect(cache.get('existing')).toBe('original');
+  expect(cache.get('uncommitted')).toBeUndefined();
+
+  cache.transaction(() => cache.set('after-rollback', 'value'));
+
+  expect(cache.get('after-rollback')).toBe('value');
 });
