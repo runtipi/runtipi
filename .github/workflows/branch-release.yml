@@ -1,0 +1,169 @@
+name: Branch Release
+run-name: Branch release for ${{ inputs.branch }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to build from this repository
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: branch-release-${{ inputs.branch }}
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.version.outputs.sha }}
+      cli-sha: ${{ steps.version.outputs.cli-sha }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: refs/heads/${{ inputs.branch }}
+          persist-credentials: false
+
+      - name: Resolve version and source commits
+        id: version
+        run: |
+          SHA=$(git rev-parse HEAD)
+          CLI_SHA=$(git rev-parse HEAD:cli)
+          VERSION="sha-${SHA}"
+
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "cli-sha=$CLI_SHA" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  build-images:
+    needs: resolve
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout resolved commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push images
+        uses: ./.github/actions/build-image
+        with:
+          version: ${{ needs.resolve.outputs.version }}
+          sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          tags: ghcr.io/runtipi/runtipi:${{ needs.resolve.outputs.version }}
+          labels: org.opencontainers.image.revision=${{ needs.resolve.outputs.sha }}
+
+  build-cli:
+    needs: resolve
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            asset: runtipi-cli-linux-x86_64
+          - arch: arm64
+            asset: runtipi-cli-linux-aarch64
+    steps:
+      - name: Checkout CLI pinned by the branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: runtipi/cli
+          ref: ${{ needs.resolve.outputs.cli-sha }}
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: go.mod
+
+      - name: Build and package CLI
+        env:
+          GOOS: linux
+          GOARCH: ${{ matrix.arch }}
+          CGO_ENABLED: '0'
+          VERSION: ${{ needs.resolve.outputs.version }}
+          COMMIT: ${{ needs.resolve.outputs.cli-sha }}
+          ASSET: ${{ matrix.asset }}
+        run: |
+          BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          go build -trimpath -o "$ASSET" \
+            -ldflags="-X main.version=$VERSION -X main.commit=$COMMIT -X main.buildDate=$BUILD_DATE -s -w" \
+            ./cmd/runtipi
+          tar -czf "$ASSET.tar.gz" "$ASSET"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}.tar.gz
+
+  publish-release:
+    needs: [resolve, build-images, build-cli]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download CLI archives
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: runtipi-cli-linux-*
+          merge-multiple: true
+          path: cli
+
+      - name: Publish branch prerelease
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
+        with:
+          tag_name: ${{ needs.resolve.outputs.version }}
+          target_commitish: ${{ needs.resolve.outputs.sha }}
+          name: Branch build ${{ needs.resolve.outputs.version }}
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          files: cli/runtipi-cli-linux-*.tar.gz
+          body: |
+            Branch: `${{ inputs.branch }}`
+            Commit: `${{ needs.resolve.outputs.sha }}`
+            Image: `ghcr.io/runtipi/runtipi:${{ needs.resolve.outputs.version }}`
+
+            Install from your Runtipi directory:
+            ```sh
+            sudo ./runtipi-cli update ${{ needs.resolve.outputs.version }}
+            ```
+
+            Requires a CLI that supports `sha-` identifiers. For older CLIs, download and extract the matching CLI archive from this release, replace `runtipi-cli`, then run `sudo ./runtipi-cli start`.
+
+      - name: Write installation command to summary
+        env:
+          VERSION: ${{ needs.resolve.outputs.version }}
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          Image: \`ghcr.io/runtipi/runtipi:$VERSION\`
+
+          Install from your Runtipi directory:
+          \`sudo ./runtipi-cli update $VERSION\`
+
+          Older CLIs must first be replaced with the matching CLI archive from this release.
+          EOF

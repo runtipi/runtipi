@@ -1,5 +1,5 @@
-import { Authenticator } from '@otplib/core';
-import { createDigest, createRandomBytes } from '@otplib/plugin-crypto';
-import { keyDecoder, keyEncoder } from '@otplib/plugin-thirty-two';
+import { createGuardrails } from '@otplib/core';
+import { Authenticator } from '@otplib/v12-adapter';
 
-export const TotpAuthenticator = new Authenticator({ createDigest, createRandomBytes, keyEncoder, keyDecoder });
+// Existing enrollments used ten-byte secrets; new secrets use the adapter's stronger default.
+export const TotpAuthenticator = new Authenticator({ guardrails: createGuardrails({ MIN_SECRET_BYTES: 10 }) });
