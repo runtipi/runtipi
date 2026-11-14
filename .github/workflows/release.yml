@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch an action and get the run ID
-        uses: codex-/return-dispatch@85e564d60eaec3cc4aca885373d510cfe4bd5b19 # v4
+        uses: codex-/return-dispatch@dd352db2be5d18e1b8e1731826d4a4c394e38b5f # v4
         id: return_dispatch
         with:
           token: ${{ secrets.PAT_CLI }}
