@@ -2,6 +2,7 @@ import type { Architecture } from '@/common/constants';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
 import { notEmpty, pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
+import type { AppStore } from '@/core/database/drizzle/types';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
@@ -34,8 +35,8 @@ export class MarketplaceService {
   private miniSearch: MiniSearch<AppList[number]> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
-  private initializeGeneration = 0;
-  private publishedInitializeGeneration = 0;
+  private generation = 0;
+  private publishedGeneration = 0;
 
   constructor(
     private readonly configuration: ConfigurationService,
@@ -46,17 +47,20 @@ export class MarketplaceService {
 
   async createAppStore(input: Parameters<AppStoreService['createAppStore']>[0]) {
     const result = await this.appStoreService.createAppStore(input);
+    this.setStore(result);
     await this.refreshAfterMutation();
     return result;
   }
 
   async updateAppStore(id: string, input: Parameters<AppStoreService['updateAppStore']>[1]) {
-    await this.appStoreService.updateAppStore(id, input);
+    const result = await this.appStoreService.updateAppStore(id, input);
+    this.setStore(result);
     await this.refreshAfterMutation();
   }
 
   async deleteAppStore(id: string) {
     await this.appStoreService.deleteAppStore(id);
+    this.stores.delete(id);
     await this.refreshAfterMutation();
   }
 
@@ -65,7 +69,15 @@ export class MarketplaceService {
     return { success: true };
   }
 
+  private setStore(config: AppStore) {
+    this.stores.set(config.slug, new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config));
+  }
+
   private async refreshAfterMutation() {
+    // A committed mutation must supersede older reads even if its follow-up reload fails.
+    this.publishedGeneration = ++this.generation;
+    this.invalidateCache();
+
     try {
       await this.initialize();
     } catch (error) {
@@ -74,9 +86,9 @@ export class MarketplaceService {
   }
 
   async initialize() {
-    const generation = ++this.initializeGeneration;
+    const generation = ++this.generation;
     const stores = await this.appStoreService.getAllAppStores();
-    if (generation < this.publishedInitializeGeneration) return;
+    if (generation < this.publishedGeneration) return;
 
     const nextStores = new Map<string, AppStoreFilesManager>();
     for (const config of stores) {
@@ -101,7 +113,7 @@ export class MarketplaceService {
       }
     }
 
-    this.publishedInitializeGeneration = generation;
+    this.publishedGeneration = generation;
     this.stores = nextStores;
     this.invalidateCache();
 

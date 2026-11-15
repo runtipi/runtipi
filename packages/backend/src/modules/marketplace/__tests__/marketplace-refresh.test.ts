@@ -66,7 +66,14 @@ test('an older initialization cannot restore a disabled store and keeps the cata
   expect(await marketplace.searchApps({ search: 'Demo' })).toMatchObject({ data: [], total: 0 });
 });
 
-test.each(['create', 'update', 'delete'] as const)('a successful store %s stays successful when another store cannot refresh', async (mutation) => {
+test.each([
+  ['create', 'pull'],
+  ['update', 'pull'],
+  ['delete', 'pull'],
+  ['create', 'read'],
+  ['update', 'read'],
+  ['delete', 'read'],
+] as const)('a successful store %s stays successful when the follow-up %s fails', async (mutation, failure) => {
   await createAppInStore('target', { id: 'demo', name: 'Demo', supported_architectures: ['amd64'] });
   const target = createMockAppStore({ slug: 'target' });
   const broken = createMockAppStore({ slug: 'broken' });
@@ -93,9 +100,16 @@ test.each(['create', 'update', 'delete'] as const)('a successful store %s stays 
   config.getConfig.mockReturnValue(fromPartial({ architecture: 'amd64', directories: { dataDir: DATA_DIR, appDataDir: '/app-data' } }));
   const repos = mock<ReposHelpers>();
   repos.cloneRepo.mockResolvedValue({ success: true, message: 'Cloned' });
-  repos.pullRepo.mockImplementation(async (_url, slug) => ({ success: slug !== 'broken', message: 'Refresh result' }));
+  repos.pullRepo.mockResolvedValue({ success: true, message: 'Updated' });
   const stores = new AppStoreService(logger, mock<RepoEventsQueue>(), repos, config, repository);
   const marketplace = new MarketplaceService(config, new FilesystemService(logger), logger, stores);
+  await marketplace.initialize();
+  await marketplace.getAvailableApps();
+  repos.pullRepo.mockImplementation(async (_url, slug) => ({ success: slug !== 'broken', message: 'Refresh result' }));
+  if (failure === 'read') {
+    if (mutation === 'delete') repository.getAllAppStores.mockResolvedValueOnce(saved);
+    repository.getAllAppStores.mockRejectedValueOnce(new Error('Database unavailable'));
+  }
 
   if (mutation === 'create') {
     await expect(marketplace.createAppStore({ name: 'Target', url: 'https://example.com/target' })).resolves.toEqual(target);
@@ -164,4 +178,47 @@ test.each(['before', 'after'])('a newer failed read settling %s an older valid r
     failedRead.reject(new Error('Database unavailable'));
     await Promise.allSettled([update, newer, result]);
   }
+});
+
+test.each(['disable', 'delete'])('a delayed enable snapshot cannot undo a committed %s when its refresh read fails', async (mutation) => {
+  await createAppInStore('store', { id: 'demo', name: 'Demo', supported_architectures: ['amd64'] });
+  let saved = [createMockAppStore({ slug: 'store', enabled: false })];
+  const stores = mock<AppStoreService>();
+  stores.getAllAppStores.mockImplementation(async () => saved);
+  stores.updateAppStore.mockImplementation(async (_id, settings) => {
+    const updated = { ...saved[0]!, ...settings };
+    saved = [updated];
+    return updated;
+  });
+  stores.deleteAppStore.mockImplementation(async () => {
+    saved = [];
+    return { success: true };
+  });
+  const config = mock<ConfigurationService>();
+  config.getConfig.mockReturnValue(fromPartial({ architecture: 'amd64', directories: { dataDir: DATA_DIR, appDataDir: '/app-data' } }));
+  const logger = mock<LoggerService>();
+  const marketplace = new MarketplaceService(config, new FilesystemService(logger), logger, stores);
+  await marketplace.initialize();
+  expect(await marketplace.getAvailableAppUrns()).toEqual([]);
+
+  const started = Promise.withResolvers<void>();
+  const read = Promise.withResolvers<typeof saved>();
+  stores.getAllAppStores.mockImplementationOnce(() => {
+    started.resolve();
+    return read.promise;
+  });
+  const enable = marketplace.updateAppStore('store', { name: 'Store', enabled: true });
+  await started.promise;
+  const enabledSnapshot = saved;
+  stores.getAllAppStores.mockRejectedValueOnce(new Error('Database unavailable'));
+  try {
+    if (mutation === 'disable') await marketplace.updateAppStore('store', { name: 'Store', enabled: false });
+    else await marketplace.deleteAppStore('store');
+  } finally {
+    read.resolve(enabledSnapshot);
+    await enable;
+  }
+
+  expect(await marketplace.getAvailableAppUrns()).toEqual([]);
+  expect(await marketplace.searchApps({ search: 'Demo' })).toMatchObject({ data: [], total: 0 });
 });
