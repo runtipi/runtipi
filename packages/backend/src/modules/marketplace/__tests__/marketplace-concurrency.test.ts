@@ -100,3 +100,69 @@ test.each([
     await result;
   }
 });
+
+test('a cached search retains its matching index when another store is disabled concurrently', async () => {
+  const { stores, original, marketplace } = await setup();
+  const other = createMockAppStore({ slug: 'other', enabled: true });
+  stores.getAllAppStores.mockResolvedValueOnce([original, other]);
+  await marketplace.initialize();
+  expect(await marketplace.searchApps({ search: 'Demo' })).toMatchObject({ total: 1 });
+
+  const disabled = { ...other, enabled: false };
+  stores.updateAppStore.mockResolvedValueOnce(disabled);
+  stores.getAllAppStores.mockResolvedValueOnce([original, disabled]);
+  const mutation = marketplace.updateAppStore('other', { name: other.name, enabled: false });
+  const search = marketplace.searchApps({ search: 'Demo' });
+  try {
+    expect(await search).toMatchObject({ data: [{ urn: 'demo:store' }], total: 1 });
+  } finally {
+    await mutation;
+  }
+  expect(await marketplace.searchApps({ search: 'Demo' })).toMatchObject({ data: [{ urn: 'demo:store' }], total: 1 });
+});
+
+test('overlapping requests after cache expiry share one catalog load', async () => {
+  const { filesystem, marketplace } = await setup();
+  const started = Promise.withResolvers<void>();
+  const gate = Promise.withResolvers<void>();
+  const pending: ReturnType<MarketplaceService['getAvailableApps']>[] = [];
+  vi.useFakeTimers({ toFake: ['Date'] });
+  try {
+    vi.setSystemTime(new Date('2026-11-15T12:00:00Z'));
+    await marketplace.getAvailableApps();
+    const read = filesystem.readTextFile.bind(filesystem);
+    let metadataReads = 0;
+    vi.spyOn(filesystem, 'readTextFile').mockImplementation(async (path) => {
+      const content = await read(path);
+      if (path.endsWith('/demo/config.json')) {
+        metadataReads++;
+        started.resolve();
+        await gate.promise;
+      }
+      return content;
+    });
+
+    vi.setSystemTime(new Date('2026-11-15T12:16:00Z'));
+    pending.push(marketplace.getAvailableApps());
+    await started.promise;
+    for (let index = 1; index <= 4; index++) {
+      vi.setSystemTime(Date.now() + 50);
+      pending.push(marketplace.getAvailableApps());
+    }
+    gate.resolve();
+
+    for (const apps of await Promise.all(pending)) expect(apps).toMatchObject([{ urn: 'demo:store' }]);
+    expect(metadataReads).toBe(1);
+  } finally {
+    gate.resolve();
+    await Promise.allSettled(pending);
+    vi.useRealTimers();
+  }
+});
+
+test('a failed shared catalog load can be retried', async () => {
+  const { filesystem, marketplace } = await setup();
+  vi.spyOn(filesystem, 'listFiles').mockRejectedValueOnce(new Error('Directory read failed'));
+  await expect(marketplace.getAvailableApps()).rejects.toThrow('Directory read failed');
+  expect(await marketplace.getAvailableApps()).toMatchObject([{ urn: 'demo:store' }]);
+});

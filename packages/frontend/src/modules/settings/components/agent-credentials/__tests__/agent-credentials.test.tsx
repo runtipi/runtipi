@@ -53,7 +53,7 @@ test('shows the token once and retains neither the token nor the password in que
   expect(screen.getByLabelText('SETTINGS_SECURITY_FORM_CURRENT_PASSWORD')).toHaveValue('');
   for (const client of ['Claude Code', 'Codex', 'Cursor', 'VS Code']) {
     await user.click(screen.getByRole('tab', { name: client }));
-    expect(screen.getByRole('textbox', { name: 'SETTINGS_AGENT_CONFIG_LABEL' })).not.toHaveValue(expect.stringContaining('fixture-token'));
+    expect(screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'SETTINGS_AGENT_CONFIG_LABEL' }).value).not.toContain('fixture-token');
     await user.click(screen.getByRole('button', { name: 'SETTINGS_AGENT_COPY_CONFIG' }));
     expect(await navigator.clipboard.readText()).not.toContain('fixture-token');
   }

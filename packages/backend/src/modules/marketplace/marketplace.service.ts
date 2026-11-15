@@ -12,6 +12,7 @@ import { AppStoreFilesManager } from '../app-stores/app-store-files-manager';
 import { AppStoreService, RESERVED_APP_STORE_SLUGS } from '../app-stores/app-store.service';
 
 type AppList = Awaited<ReturnType<InstanceType<typeof MarketplaceService>['getAllAppFromStores']>>;
+type CatalogSnapshot = { apps: AppList; search: MiniSearch<AppList[number]>; createdAt: number };
 
 const sortApps = (a: AppList[number], b: AppList[number]) => a.urn.localeCompare(b.urn);
 const filterApp =
@@ -31,10 +32,9 @@ const filterApp =
 @Injectable()
 export class MarketplaceService {
   private stores: Map<string, AppStoreFilesManager> = new Map();
-  private appsAvailable: AppList | null = null;
-  private miniSearch: MiniSearch<AppList[number]> | null = null;
+  private catalog: CatalogSnapshot | null = null;
+  private catalogLoad: Promise<CatalogSnapshot> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
-  private cacheLastUpdated = 0;
   private generation = 0;
   private publishedGeneration = 0;
   private cacheGeneration = 0;
@@ -197,29 +197,17 @@ export class MarketplaceService {
    */
   private invalidateCache() {
     this.cacheGeneration++;
-    this.appsAvailable = null;
-    if (this.miniSearch) {
-      this.miniSearch.removeAll();
-    }
+    this.catalog = null;
   }
 
-  /**
-   * Get all available apps from all stores
-   * @returns All available apps
-   */
-  public async getAvailableApps(): Promise<AppList> {
-    if (this.cacheLastUpdated && Date.now() - this.cacheLastUpdated > this.cacheTimeout) {
-      this.invalidateCache();
-    }
-
-    while (!this.appsAvailable) {
+  private async loadCatalog() {
+    while (true) {
       const generation = this.cacheGeneration;
-      const apps = await this.getAllAppFromStores();
+      const available = await this.getAllAppFromStores();
       if (generation !== this.cacheGeneration) continue;
 
-      this.appsAvailable = this.filterApps(apps);
-
-      this.miniSearch = new MiniSearch<(typeof this.appsAvailable)[number]>({
+      const apps = this.filterApps(available);
+      const search = new MiniSearch<AppList[number]>({
         fields: ['name', 'short_desc', 'categories'],
         storeFields: ['urn'],
         idField: 'urn',
@@ -229,12 +217,31 @@ export class MarketplaceService {
           prefix: true,
         },
       });
-      this.miniSearch.addAll(this.appsAvailable);
+      search.addAll(apps);
 
-      this.cacheLastUpdated = Date.now();
+      const snapshot: CatalogSnapshot = { apps, search, createdAt: Date.now() };
+      this.catalog = snapshot;
+      return snapshot;
     }
+  }
 
-    return this.appsAvailable;
+  private async getCatalog() {
+    while (true) {
+      if (this.catalog && Date.now() - this.catalog.createdAt > this.cacheTimeout) this.invalidateCache();
+      if (this.catalog) return this.catalog;
+
+      const load = this.catalogLoad ?? this.loadCatalog();
+      this.catalogLoad = load;
+      try {
+        await load;
+      } finally {
+        if (this.catalogLoad === load) this.catalogLoad = null;
+      }
+    }
+  }
+
+  public async getAvailableApps(): Promise<AppList> {
+    return (await this.getCatalog()).apps;
   }
 
   /**
@@ -245,7 +252,8 @@ export class MarketplaceService {
   public async searchApps(params: { search?: string | null; category?: string | null; pageSize?: number; cursor?: string | null; storeId?: string }) {
     const { search, category, pageSize, cursor, storeId } = params;
 
-    let filteredApps = await this.getAvailableApps();
+    const catalog = await this.getCatalog();
+    let filteredApps = catalog.apps;
 
     if (storeId) {
       filteredApps = filteredApps.filter((app) => {
@@ -258,8 +266,8 @@ export class MarketplaceService {
       filteredApps = filteredApps.filter((app) => app.categories.some((c) => c === category));
     }
 
-    if (search && this.miniSearch) {
-      const result = this.miniSearch.search(search);
+    if (search) {
+      const result = catalog.search.search(search);
       const searchIds = result.map((app) => app.id);
       filteredApps = filteredApps.filter((app) => searchIds.includes(app.urn)).sort((a, b) => searchIds.indexOf(a.urn) - searchIds.indexOf(b.urn));
     }
