@@ -101,13 +101,7 @@ export class McpAppsService {
     const accessUrls = this.accessUrls(result);
     if (!result.app) return { ...result, compatibility: this.compatibility(result.info), accessUrl: null, accessUrls, runtime: null };
 
-    const [appEnv, runtime] = await Promise.all([
-      this.files.getAppEnv(urn),
-      this.docker.getAppRuntime(urn).then(
-        (containers) => ({ available: true, containers }),
-        () => ({ available: false, containers: [], message: 'Container status could not be read. Retry or inspect get_logs.' }),
-      ),
-    ]);
+    const [appEnv, runtime] = await Promise.all([this.files.getAppEnv(urn), this.runtime(urn)]);
     const generated = Object.fromEntries(this.env.envStringToMap(appEnv.content ?? ''));
     const updateMinimum = 'minTipiVersion' in result.metadata ? result.metadata.minTipiVersion : undefined;
     const warnings = result.info.form_fields
@@ -125,6 +119,23 @@ export class McpAppsService {
       warnings,
       pendingRestartInfo: this.restartInfo(result.app.pendingRestart),
     };
+  }
+
+  private async runtime(urn: AppUrn) {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const containers = await Promise.race([
+        this.docker.getAppRuntime(urn),
+        new Promise<never>((_resolve, reject) => {
+          timer = setTimeout(() => reject(new Error('Container status timed out')), 5000);
+        }),
+      ]);
+      return { available: true, containers };
+    } catch {
+      return { available: false, containers: [], message: 'Container status could not be read. Retry or inspect get_logs.' };
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   private visibleEnvironment(environment: object, includeSecrets: boolean) {

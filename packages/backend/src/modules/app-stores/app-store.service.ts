@@ -22,10 +22,7 @@ export class AppStoreService {
     this.repoQueue.onEvent(async (data, reply) => {
       switch (data.command) {
         case 'update_all': {
-          const stores = await this.appStoreRepository.getEnabledAppStores();
-          for (const store of stores) {
-            await this.repoHelpers.pullRepo(store.url, store.slug);
-          }
+          await this.pullRepositories();
           await reply({ success: true, message: 'All repos updated' });
           break;
         }
@@ -56,7 +53,8 @@ export class AppStoreService {
 
     for (const repo of repositories) {
       this.logger.debug(`Pulling repo ${repo.url}`);
-      await this.repoHelpers.pullRepo(repo.url, repo.slug);
+      const result = await this.repoHelpers.pullRepo(repo.url, repo.slug);
+      if (!result.success) throw new Error(`Could not refresh app store ${repo.slug}`);
     }
 
     return { success: true };

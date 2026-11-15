@@ -27,7 +27,7 @@ describe('app configuration tools through the SDK client', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({ providers: [McpAppConfigurationTools, McpAppsService, EnvUtils] })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     apps = module.get(AppsService);

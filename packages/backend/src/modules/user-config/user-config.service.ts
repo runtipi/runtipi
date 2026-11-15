@@ -31,11 +31,24 @@ export class UserConfigService {
   }
 
   async updateUserConfig(appUrn: AppUrn, updateUserConfigDto: UpdateUserConfigDto) {
-    const userComposeFile = await this.appFilesManager.getUserComposeFile(appUrn);
-    await this.filesystem.writeTextFile(userComposeFile.path, updateUserConfigDto.dockerCompose);
+    const app = await this.appsRepository.getAppByUrn(appUrn);
+    if (!app) throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
 
+    const userComposeFile = await this.appFilesManager.getUserComposeFile(appUrn);
     const userEnvFile = await this.appFilesManager.getUserEnv(appUrn);
-    await this.filesystem.writeTextFile(userEnvFile.path, updateUserConfigDto.appEnv);
+    const composeChanged = (userComposeFile.content ?? '') !== updateUserConfigDto.dockerCompose;
+    const envChanged = (userEnvFile.content ?? '') !== updateUserConfigDto.appEnv;
+    if (!composeChanged && !envChanged) return;
+
+    // A failed write can still leave partial changes that require a restart.
+    if (app.userConfigEnabled) await this.appsRepository.updateAppById(app.id, { pendingRestart: true });
+
+    if (composeChanged && !(await this.filesystem.writeTextFile(userComposeFile.path, updateUserConfigDto.dockerCompose))) {
+      throw new Error('Could not save the compose override');
+    }
+    if (envChanged && !(await this.filesystem.writeTextFile(userEnvFile.path, updateUserConfigDto.appEnv))) {
+      throw new Error('Could not save the environment override');
+    }
   }
 
   async enableUserConfig(appUrn: AppUrn): Promise<void> {

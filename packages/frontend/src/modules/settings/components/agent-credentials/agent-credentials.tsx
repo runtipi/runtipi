@@ -7,7 +7,7 @@ import { createAgentCredential, listAgentCredentials, revokeAgentCredential } fr
 import { AgentClientConfigTabs } from './agent-client-config-tabs';
 
 const queryKey = ['agent-credentials'];
-type Issuance = { status: 'idle' | 'pending' | 'failed' } | { status: 'ready'; token: string };
+type Issuance = { status: 'idle' | 'pending' | 'failed' } | { status: 'ready'; token: string; credentialId: string };
 
 export const AgentCredentials = () => {
   const { t } = useTranslation();
@@ -30,8 +30,11 @@ export const AgentCredentials = () => {
 
   const revoke = useMutation({
     mutationFn: revokeAgentCredential,
-    onSuccess: () => {
-      setIssuance({ status: 'idle' });
+    onSuccess: (_result, credentialId) => {
+      setIssuance((current) => {
+        if (current.status === 'ready' && current.credentialId === credentialId) return { status: 'idle' };
+        return current;
+      });
       void queryClient.invalidateQueries({ queryKey });
     },
   });
@@ -52,7 +55,7 @@ export const AgentCredentials = () => {
       const result = await createAgentCredential(body, controller.signal);
       if (controller.signal.aborted) return;
 
-      setIssuance({ status: 'ready', token: result.token });
+      setIssuance({ status: 'ready', token: result.token, credentialId: result.credential.id });
       setName('');
       void queryClient.invalidateQueries({ queryKey });
     } catch {

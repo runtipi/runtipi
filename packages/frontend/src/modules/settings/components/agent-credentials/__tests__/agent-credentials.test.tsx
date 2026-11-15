@@ -135,3 +135,58 @@ test('aborts an outstanding issuance request when the settings panel unmounts', 
   await waitFor(() => expect(aborted).toBe(true));
   queryClient.clear();
 });
+
+test('revoking a different credential preserves the displayed token', async () => {
+  const old = { id: 'old', name: 'Old agent', createdAt: 1, expiresAt: 2000000000, lastUsedAt: null };
+  server.use(
+    http.get('http://localhost/api/agent-credentials', () => HttpResponse.json({ credentials: [old, { ...old, id: 'new', name: 'New agent' }] })),
+    http.post('http://localhost/api/agent-credentials', () => HttpResponse.json({ credential: { id: 'new' }, token: 'new-secret' }, { status: 201 })),
+    http.delete('http://localhost/api/agent-credentials/:id', () => HttpResponse.json({ success: true })),
+  );
+  const { user, queryClient, unmount } = await setup();
+  await user.click(screen.getByRole('button', { name: 'SETTINGS_AGENT_CREATE' }));
+  expect(await screen.findByLabelText('SETTINGS_AGENT_TOKEN')).toHaveValue('new-secret');
+  const revoke = screen.getAllByRole('button', { name: 'SETTINGS_AGENT_REVOKE_NAMED' });
+  await user.click(revoke[0]!);
+  await waitFor(() => expect(revoke[0]).toBeEnabled());
+  expect(screen.getByLabelText('SETTINGS_AGENT_TOKEN')).toHaveValue('new-secret');
+
+  await user.click(revoke[1]!);
+  await waitFor(() => expect(screen.queryByLabelText('SETTINGS_AGENT_TOKEN')).not.toBeInTheDocument());
+  unmount();
+  queryClient.clear();
+});
+
+test('revocation does not clear a pending credential creation', async () => {
+  let complete!: () => void;
+  const pending = new Promise<void>((resolve) => {
+    complete = resolve;
+  });
+  let received = false;
+  server.use(
+    http.get('http://localhost/api/agent-credentials', () =>
+      HttpResponse.json({ credentials: [{ id: 'old', name: 'Old agent', expiresAt: 2000000000 }] }),
+    ),
+    http.post('http://localhost/api/agent-credentials', async () => {
+      received = true;
+      await pending;
+      return HttpResponse.json({ credential: { id: 'new' }, token: 'new-secret' }, { status: 201 });
+    }),
+    http.delete('http://localhost/api/agent-credentials/:id', () => HttpResponse.json({ success: true })),
+  );
+  const { user, queryClient, unmount } = await setup();
+  try {
+    await user.click(screen.getByRole('button', { name: 'SETTINGS_AGENT_CREATE' }));
+    await waitFor(() => expect(received).toBe(true));
+    const revoke = await screen.findByRole('button', { name: 'SETTINGS_AGENT_REVOKE_NAMED' });
+    await user.click(revoke);
+    await waitFor(() => expect(revoke).toBeEnabled());
+    expect(screen.getByLabelText('SETTINGS_AGENT_NAME')).toBeDisabled();
+    complete();
+    expect(await screen.findByLabelText('SETTINGS_AGENT_TOKEN')).toHaveValue('new-secret');
+  } finally {
+    complete();
+    unmount();
+    queryClient.clear();
+  }
+});

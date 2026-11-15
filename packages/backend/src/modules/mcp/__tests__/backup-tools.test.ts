@@ -19,7 +19,7 @@ describe('backup tools through the SDK client', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({ providers: [McpBackupTools] })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     lifecycle = module.get(AppLifecycleService);

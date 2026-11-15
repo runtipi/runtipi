@@ -52,3 +52,26 @@ test('writes the default app domain when the API client omits the port', async (
   const text = files.writeAppEnv.mock.calls[0]![1];
   expect(env.envStringToMap(text).get('APP_DOMAIN')).toBe('127.0.0.1:8080');
 });
+
+test.each(['random', 'text'] as const)('rejects injected assignments in supplied %s fields before writing', async (type) => {
+  const { helpers, files } = setup();
+  files.getInstalledAppInfo.mockResolvedValue(
+    fromPartial({ port: 8080, form_fields: [{ type, env_variable: 'APP_KEY', label: 'Key', required: false }] }),
+  );
+
+  await expect(helpers.generateEnvFile(urn, { APP_KEY: 'value\nAPP_PORT=9000' })).rejects.toThrow('line breaks');
+  expect(files.writeAppEnv).not.toHaveBeenCalled();
+});
+
+test('rejects injection in metadata defaults before writing', async () => {
+  const { helpers, files } = setup();
+  files.getInstalledAppInfo.mockResolvedValue(
+    fromPartial({
+      port: 8080,
+      form_fields: [{ type: 'text', env_variable: 'APP_KEY', label: 'Key', required: false, default: 'value\rAPP_PORT=9000' }],
+    }),
+  );
+
+  await expect(helpers.generateEnvFile(urn, {})).rejects.toThrow('line breaks');
+  expect(files.writeAppEnv).not.toHaveBeenCalled();
+});

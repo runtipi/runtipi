@@ -42,7 +42,11 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
         async (req, reply) => {
           let rpcSuccess = false;
           let rpcResultMessage = '';
-          const completion = this.waitForConsumer ? this.completionFor(req.body.requestId) : undefined;
+          const completion = this.waitForConsumer ? this.completions.get(req.body.requestId) : undefined;
+          if (this.waitForConsumer && !completion) {
+            await reply({ success: false, message: 'This queued request has expired. Submit a new operation.' });
+            return;
+          }
           let consumerResult: Infer<R> | undefined;
 
           const respond = async (result: InferIn<R>) => {
@@ -125,8 +129,17 @@ export class Queue<T extends ArkTypeSchema, R extends ArkTypeSchema<{ success: b
         return response;
       });
       if (completion) {
-        // A transport timeout cannot cancel a delivered command; only the consumer confirms completion.
-        void rpc.catch((error) => this.reportPublishError(error));
+        // Fence unstarted requests so late delivery cannot execute after a caller retries.
+        void rpc.catch((error) => {
+          const failure = this.reportPublishError(error);
+          if (!completion.started) {
+            completion.started = true;
+            completion.settledAt = Date.now();
+            const result = this.resultSchema(failure as never);
+            if (!(result instanceof type.errors)) completion.resolve(result);
+            this.pruneCompletions();
+          }
+        });
         return await completion.promise;
       }
 

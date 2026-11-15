@@ -23,7 +23,7 @@ describe('account tools through the SDK client', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({ providers: [McpAccountTools, { provide: LoggerService, useValue: mock<LoggerService>() }] })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     links = module.get(LinksService);

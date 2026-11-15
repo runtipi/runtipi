@@ -2,7 +2,7 @@ import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/cli
 import { McpServer, createMcpHandler } from '@modelcontextprotocol/server';
 import { Test } from '@nestjs/testing';
 import { fromPartial } from '@total-typescript/shoehorn';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { LoggerService } from '@/core/logger/logger.service';
 import type { AgentIdentity } from '@/modules/agent-credentials/agent-credentials.service';
@@ -29,7 +29,7 @@ describe('app tools through the SDK client', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({ providers: [McpAppTools, McpAppsService, EnvUtils] })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     apps = module.get(AppsService);
@@ -57,6 +57,7 @@ describe('app tools through the SDK client', () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     await client?.close();
     await handler?.close();
   });
@@ -115,5 +116,21 @@ describe('app tools through the SDK client', () => {
     const result = await client.callTool({ name: 'search_apps', arguments: { query: 'a', search: 'b' } });
     expect(result.isError).toBe(true);
     expect(marketplace.searchApps).not.toHaveBeenCalled();
+  });
+  it('returns metadata when optional Docker diagnostics never respond', async () => {
+    apps.getApp.mockResolvedValueOnce(
+      fromPartial({
+        app: { status: 'running', port: 8235, openPort: true, pendingRestart: false },
+        info: { urn: 'demo:store', name: 'Demo', form_fields: [] },
+        metadata: { localSubdomain: 'demo-store' },
+      }),
+    );
+    docker.getAppRuntime.mockReturnValueOnce(new Promise(() => {}));
+    vi.useFakeTimers();
+    const result = client.callTool({ name: 'get_app', arguments: { urn: 'demo:store' } });
+    await vi.waitFor(() => expect(docker.getAppRuntime).toHaveBeenCalled());
+    await vi.advanceTimersByTimeAsync(5000);
+
+    expect((await result).structuredContent).toMatchObject({ info: { name: 'Demo' }, runtime: { available: false, containers: [] } });
   });
 });

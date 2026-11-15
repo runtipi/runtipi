@@ -13,11 +13,12 @@ export type AppJobContext = {
 };
 
 type JobResult = { success: boolean; message: string; rollbackSucceeded?: boolean };
-type JobEntry = { job: AppJob; controller: AbortController; completion?: Promise<void> };
+type JobEntry = { job: AppJob; controller: AbortController; completion: Promise<void>; finish: () => void };
 
 @Injectable()
 export class AppJobService implements OnModuleDestroy {
   private readonly jobs = new Map<AppUrn, JobEntry>();
+  private readonly history = new Map<string, AppJob>();
   private readonly runTask = pLimit(3);
   private closing = false;
 
@@ -32,8 +33,10 @@ export class AppJobService implements OnModuleDestroy {
   }
 
   getJob(appUrn: AppUrn, requestId?: string) {
-    const job = this.jobs.get(appUrn)?.job;
-    if (!job || (requestId && job.requestId !== requestId)) return null;
+    this.pruneHistory();
+    let job = this.jobs.get(appUrn)?.job;
+    if (requestId && job?.requestId !== requestId) job = this.history.get(requestId);
+    if (!job || job.appUrn !== appUrn) return null;
 
     return { ...job };
   }
@@ -53,13 +56,13 @@ export class AppJobService implements OnModuleDestroy {
 
   async onModuleDestroy() {
     this.closing = true;
-    const entries = [...this.jobs].filter(([appUrn]) => this.isActive(appUrn)).map(([, entry]) => entry);
+    const entries = [...this.jobs].filter(([appUrn]) => this.isActive(appUrn));
 
-    for (const entry of entries) {
-      if (entry.job.cancellable) entry.controller.abort(new Error('The server is shutting down'));
+    for (const [appUrn, entry] of entries) {
+      if (entry.job.cancellable) this.cancel(appUrn, entry.job.requestId);
     }
 
-    await Promise.all(entries.map((entry) => entry.completion));
+    await Promise.all(entries.map(([, entry]) => entry.completion));
   }
 
   assertIdle(appUrn: AppUrn) {
@@ -85,7 +88,21 @@ export class AppJobService implements OnModuleDestroy {
       updatedAt: now,
       message: '',
     };
-    const entry: JobEntry = { job, controller: new AbortController() };
+
+    let resolve!: () => void;
+    const completion = new Promise<void>((done) => {
+      resolve = done;
+    });
+    const entry: JobEntry = {
+      job,
+      controller: new AbortController(),
+      completion,
+      finish: () => {
+        this.history.set(job.requestId, { ...job });
+        this.pruneHistory();
+        resolve();
+      },
+    };
 
     this.jobs.set(appUrn, entry);
     this.publish(appUrn);
@@ -97,14 +114,10 @@ export class AppJobService implements OnModuleDestroy {
       this.publish(appUrn);
     };
 
-    entry.completion = this.runTask(async () => {
-      try {
-        if (entry.controller.signal.aborted) {
-          job.status = 'cancelled';
-          job.message = 'Job cancelled before it started';
-          return;
-        }
+    void this.runTask(async () => {
+      if (entry.controller.signal.aborted) return;
 
+      try {
         job.status = 'running';
         progress('preparing');
 
@@ -135,11 +148,23 @@ export class AppJobService implements OnModuleDestroy {
         job.cancellable = false;
         job.phase = 'finished';
         job.updatedAt = Date.now();
+        entry.finish();
         this.publish(appUrn);
       }
-    });
+    }).catch((error) => this.logger.error('Job notification failed', error));
 
     return { requestId: job.requestId };
+  }
+
+  private pruneHistory() {
+    for (const [id, job] of this.history) {
+      if (Date.now() - job.updatedAt > 60 * 60 * 1000) this.history.delete(id);
+    }
+
+    while (this.history.size > 1000) {
+      const oldest = this.history.keys().next().value;
+      if (oldest) this.history.delete(oldest);
+    }
   }
 
   cancel(appUrn: AppUrn, requestId: string) {
@@ -161,6 +186,7 @@ export class AppJobService implements OnModuleDestroy {
       entry.job.cancellable = false;
       entry.job.phase = 'finished';
       entry.job.message = 'Job cancelled before it started';
+      entry.finish();
     }
 
     this.publish(appUrn);

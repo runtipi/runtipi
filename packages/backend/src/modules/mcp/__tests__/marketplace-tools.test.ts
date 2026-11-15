@@ -19,7 +19,7 @@ describe('marketplace tools through the SDK client', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({ providers: [McpMarketplaceTools] })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     marketplace = module.get(MarketplaceService);

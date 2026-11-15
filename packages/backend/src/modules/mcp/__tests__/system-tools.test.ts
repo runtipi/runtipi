@@ -19,7 +19,7 @@ describe('system tools through the SDK client', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({ providers: [McpSystemTools] })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     docker = module.get(DockerService);

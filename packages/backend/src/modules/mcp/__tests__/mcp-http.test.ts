@@ -6,7 +6,7 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { Test } from '@nestjs/testing';
 import { type INestApplication, UnauthorizedException } from '@nestjs/common';
 import { fromPartial } from '@total-typescript/shoehorn';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import request from 'supertest';
 import { type } from 'arktype';
@@ -27,11 +27,11 @@ describe('MCP HTTP boundary', () => {
   let endpoint: URL;
   let transferDirectory: string;
   const credentials = mock<AgentCredentialsService>();
+  const config = mock<ConfigurationService>();
   const backups = mock<BackupsService>();
   const customApps = mock<CustomAppService>();
 
   beforeAll(async () => {
-    const config = mock<ConfigurationService>();
     config.get.calledWith('userSettings').mockReturnValue(
       fromPartial<ReturnType<ConfigurationService['getConfig']>['userSettings']>({
         domain: 'tipi.example.com',
@@ -73,6 +73,8 @@ describe('MCP HTTP boundary', () => {
     await app.listen(0, '127.0.0.1');
     endpoint = new URL('/api/mcp', await app.getUrl());
   });
+
+  afterEach(() => vi.unstubAllEnvs());
 
   afterAll(async () => {
     await app?.close();
@@ -221,6 +223,26 @@ describe('MCP HTTP boundary', () => {
       expect(response.status).toBe(503);
     } finally {
       vi.unstubAllEnvs();
+    }
+  });
+  it.each(['[fd00::1]', '[fd00:0:0:0:0:0:0:1]'])('accepts configured IPv6 hosts in canonical form: %s', async (host) => {
+    config.get.calledWith('userSettings').mockReturnValue(fromPartial({ internalIp: 'fd00::1' }));
+    backups.getBackupFilePath.mockResolvedValue(path.join(transferDirectory, 'backup.tar.gz'));
+    try {
+      const response = await request(app.getHttpServer())
+        .get('/api/mcp/transfers/backups/app:store/backup.tar.gz')
+        .set('Host', `${host}:80`)
+        .set('Authorization', 'Bearer test-agent-token');
+      expect(response.status).toBe(200);
+      const rejected = await request(app.getHttpServer())
+        .get('/api/mcp/transfers/backups/app:store/backup.tar.gz')
+        .set('Host', '[fd00::2]:80')
+        .set('Authorization', 'Bearer test-agent-token');
+      expect(rejected.status).toBe(403);
+    } finally {
+      config.get
+        .calledWith('userSettings')
+        .mockReturnValue(fromPartial({ domain: 'tipi.example.com', localDomain: 'tipi.local', internalIp: '127.0.0.1' }));
     }
   });
 });

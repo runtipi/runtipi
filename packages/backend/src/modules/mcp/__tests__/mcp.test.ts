@@ -31,7 +31,7 @@ test('discovers public capabilities with valid schemas and excludes CLI recovery
       McpSystemTools,
     ],
   })
-    .useMocker(mock)
+    .useMocker(() => mock())
     .compile();
   const handler = createMcpHandler(() => module.get(McpToolsService).createServer(identity));
   const client = new Client({ name: 'test-agent', version: '1.0.0' });

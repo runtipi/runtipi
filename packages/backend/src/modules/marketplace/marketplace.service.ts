@@ -59,9 +59,8 @@ export class MarketplaceService {
   }
 
   async pullAppStores() {
-    const result = await this.appStoreService.pullRepositories();
     await this.initialize();
-    return result;
+    return { success: true };
   }
 
   async initialize() {

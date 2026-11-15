@@ -62,7 +62,11 @@ export class AppService {
 
       this.repoQueue.publish({ command: 'clone_all' });
 
-      await this.marketplaceService.initialize();
+      try {
+        await this.marketplaceService.initialize();
+      } catch (error) {
+        this.logger.error('Marketplace refresh failed during startup', error);
+      }
 
       // Every 15 minutes, check for updates to the apps repo
       if (__prod__) {

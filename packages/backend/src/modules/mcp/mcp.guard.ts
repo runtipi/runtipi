@@ -1,3 +1,4 @@
+import { isIP } from 'node:net';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { AgentCredentialsService, type AgentIdentity } from '@/modules/agent-credentials/agent-credentials.service';
 import { type CanActivate, type ExecutionContext, ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
@@ -26,7 +27,20 @@ export class McpGuard implements CanActivate {
       '[::1]',
       ...(process.env.RUNTIPI_MCP_ALLOWED_HOSTS ?? '').split(','),
     ];
-    const allowedHosts = new Set(configuredHosts.filter(Boolean).map((host) => host.trim().toLowerCase()));
+    const allowedHosts = new Set(
+      configuredHosts.filter(Boolean).map((host) => {
+        const value = host.trim().toLowerCase();
+        if (isIP(value) === 6) return new URL(`http://[${value}]`).hostname;
+        if (value.startsWith('[')) {
+          try {
+            return new URL(`http://${value}`).hostname;
+          } catch {
+            return '';
+          }
+        }
+        return value;
+      }),
+    );
 
     const isAllowedHost = (host: string) => allowedHosts.has(host) || (process.env.NODE_ENV !== 'production' && host.endsWith('.localhost'));
 

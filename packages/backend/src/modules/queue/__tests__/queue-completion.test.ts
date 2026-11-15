@@ -45,7 +45,12 @@ test.each(['RPC_TIMEOUT', 'RPC_CLOSED'])('keeps admission through %s until the c
     await work;
     await reply({ success: true, message: 'Worker finished' });
   });
-  rpc.send.mockRejectedValue(Object.assign(new AMQPError(), { code, message: 'Transport failed' }));
+  let failDispatch!: (error: Error) => void;
+  rpc.send.mockReturnValue(
+    new Promise((_resolve, reject) => {
+      failDispatch = reject;
+    }),
+  );
 
   const request = await operations.admit(urn, async () =>
     operations.submit(urn, 'stop', message.requestId, async () => {
@@ -55,9 +60,10 @@ test.each(['RPC_TIMEOUT', 'RPC_CLOSED'])('keeps admission through %s until the c
     }),
   );
   await vi.waitFor(() => expect(rpc.send).toHaveBeenCalled());
+  const consumer = deliver(message, vi.fn().mockRejectedValue(new Error('Reply channel closed')));
+  failDispatch(Object.assign(new AMQPError(), { code, message: 'Transport failed' }));
   expect(operations.get(urn, request.requestId)).toMatchObject({ status: 'running' });
   await expect(operations.admit(urn, async () => undefined)).rejects.toThrow('active lifecycle operation');
-  const consumer = deliver(message, vi.fn().mockRejectedValue(new Error('Reply channel closed')));
   await expect(operations.admit(urn, async () => undefined)).rejects.toThrow('active lifecycle operation');
 
   finish();
@@ -104,4 +110,30 @@ test('invalid submissions fail before dispatch and ordinary queues still return 
   const ordinary = setup(false);
   ordinary.rpc.send.mockRejectedValue(Object.assign(new AMQPError(), { code: 'RPC_TIMEOUT', message: 'Timed out' }));
   await expect(ordinary.queue.publish(event())).resolves.toEqual({ success: false, message: 'Timed out' });
+});
+
+test.each(['RPC_TIMEOUT', 'RPC_CLOSED'])('fences unstarted %s requests, permits retries, and rejects late delivery', async (code) => {
+  const { queue, rpc, operations, deliver } = setup();
+  const execute = vi.fn(async (_data, reply) => reply({ success: true, message: 'Done' }));
+  queue.onEvent(execute);
+  rpc.send.mockRejectedValue(Object.assign(new AMQPError(), { code, message: 'Dispatch failed' }));
+  const message = event();
+  const request = await operations.admit(urn, async () => operations.submit(urn, 'stop', message.requestId, () => queue.publish(message)));
+
+  await expect(operations.waitFor(request.requestId)).resolves.toMatchObject({ success: false });
+  await expect(operations.admit(urn, async () => undefined)).resolves.toBeUndefined();
+  await deliver(message);
+  expect(execute).not.toHaveBeenCalled();
+});
+
+test('rejects an untracked delivery after a backend restart', async () => {
+  const { queue, deliver } = setup();
+  const execute = vi.fn();
+  queue.onEvent(execute);
+  const reply = vi.fn().mockResolvedValue(undefined);
+
+  await deliver(event(), reply);
+
+  expect(reply).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+  expect(execute).not.toHaveBeenCalled();
 });
