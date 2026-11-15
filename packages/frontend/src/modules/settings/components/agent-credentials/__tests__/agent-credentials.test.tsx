@@ -13,7 +13,7 @@ import { AgentCredentials } from '../agent-credentials';
 const server = setupServer(http.get('http://localhost/api/agent-credentials', () => HttpResponse.json({ credentials: [] })));
 beforeAll(() => {
   client.setConfig({ baseUrl: 'http://localhost' });
-  server.listen({ onUnhandledRequest: 'error' });
+  server.listen({ onUnhandledFrame: 'error' });
 });
 afterEach(() => {
   cleanup();
