@@ -1,6 +1,6 @@
 import { getLogo } from '@/lib/theme/theme';
-import { useUIStore } from '@/stores/ui-store';
-import { IconBrandGithub, IconCertificate, IconHeart, IconLogin, IconLogout, IconMoon, IconSun } from '@tabler/icons-react';
+import { getNextThemeMode, useUIStore } from '@/stores/ui-store';
+import { IconBrandGithub, IconCertificate, IconHeart, IconLogin, IconLogout, IconMoon, IconSun, IconSunMoon } from '@tabler/icons-react';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,14 +30,20 @@ export const BaseHeader = (props: BaseHeaderProps) => {
     navbarContent,
   } = props;
 
-  const setDarkMode = useUIStore((state) => state.setDarkMode);
-  const theme = useUIStore((state) => state.theme);
+  const themeMode = useUIStore((state) => state.themeMode);
+  const setThemeMode = useUIStore((state) => state.setThemeMode);
 
   const { t } = useTranslation();
 
   const downloadCertificate = () => {
     window.open('/api/system/certificate');
   };
+
+  const handleThemeToggle = () => {
+    setThemeMode(getNextThemeMode(themeMode));
+  };
+
+  const themeTooltip = themeMode === 'dark' ? t('HEADER_DARK_MODE') : themeMode === 'light' ? t('HEADER_LIGHT_MODE') : t('HEADER_SYSTEM_MODE');
 
   const handleLogoutClick = () => {
     if (isLoggedIn && onLogout) {
@@ -109,31 +115,19 @@ export const BaseHeader = (props: BaseHeaderProps) => {
                 </button>
               </>
             )}
-            <Tooltip className="tooltip" anchorSelect=".darkMode">
-              {t('HEADER_DARK_MODE')}
+            <Tooltip className="tooltip" anchorSelect=".themeMode">
+              {themeTooltip}
             </Tooltip>
             <button
               type="button"
-              onClick={() => setDarkMode(true)}
-              className={clsx('darkMode nav-link px-0 cursor-pointer', {
-                'visually-hidden': theme === 'dark',
-              })}
-              data-testid="dark-mode-toggle"
+              onClick={handleThemeToggle}
+              className="themeMode nav-link px-0 cursor-pointer"
+              data-testid="theme-toggle"
+              aria-label={themeTooltip}
             >
-              <IconMoon data-testid="icon-moon" size={20} />
-            </button>
-            <Tooltip className="tooltip" anchorSelect=".lightMode">
-              {t('HEADER_LIGHT_MODE')}
-            </Tooltip>
-            <button
-              type="button"
-              onClick={() => setDarkMode(false)}
-              className={clsx('lightMode nav-link px-0 cursor-pointer ', {
-                'visually-hidden': theme === 'light',
-              })}
-              data-testid="light-mode-toggle"
-            >
-              <IconSun data-testid="icon-sun" size={20} />
+              {themeMode === 'dark' && <IconMoon data-testid="icon-moon" size={20} />}
+              {themeMode === 'light' && <IconSun data-testid="icon-sun" size={20} />}
+              {themeMode === 'system' && <IconSunMoon data-testid="icon-system" size={20} />}
             </button>
             <Tooltip className="tooltip" anchorSelect=".logOut">
               {isLoggedIn ? t('HEADER_LOGOUT') : t('HEADER_LOGIN')}
