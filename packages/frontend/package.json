@@ -93,7 +93,7 @@
     "globals": "^17.14.0",
     "jsdom": "^31.0.0",
     "lightningcss": "^1.33.0",
-    "msw": "^2.15.0",
+    "msw": "^3.0.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vite-tsconfig-paths": "^6.1.1",
