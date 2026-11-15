@@ -1,3 +1,4 @@
+import { DockerService } from '@/modules/docker/docker.service';
 import { RestoreAppHandler } from '@/modules/app-lifecycle/handlers/restore-app.handler';
 import { InstallAppHandler } from '@/modules/app-lifecycle/handlers/install-app.handler';
 import { AppValidationService } from '@/modules/app-lifecycle/services/app-validation.service';
@@ -30,9 +31,8 @@ const deferred = () => {
   });
   return { promise, resolve };
 };
-const setup = () => {
+const setup = (sse: SSEService = mock<SSEService>()) => {
   const logger = mock<LoggerService>();
-  const sse = mock<SSEService>();
   const jobs = new AppJobService(logger, sse);
   const lifecycle = new AppOperationsService(jobs, logger);
   const operations = new McpOperationsService(lifecycle);
@@ -53,25 +53,38 @@ const setup = () => {
 afterEach(() => vi.useRealTimers());
 
 test('dashboard work blocks the agent and an old SSE event cannot complete its later request', async () => {
-  const { operations, lifecycle, queue, stop, sse } = setup();
-  const dashboard = deferred();
-  const agent = deferred();
-  queue.publish.mockReturnValueOnce(dashboard.promise).mockReturnValueOnce(agent.promise);
-  const dashboardRequest = await lifecycle.admit(urn, () => stop.execute(urn));
+  vi.useFakeTimers();
+  const sse = new SSEService(mock<LoggerService>(), mock<DockerService>());
+  const { operations, lifecycle, queue, stop } = setup(sse);
+  const delivered: unknown[] = [];
+  const subscription = sse.getTopicObservable('app').subscribe((event) => {
+    if (typeof event.data === 'string') delivered.push(JSON.parse(event.data));
+  });
 
-  await expect(operations.start(identity, urn, 'stop', () => lifecycle.admit(urn, () => stop.execute(urn)))).rejects.toThrow(
-    'active lifecycle operation',
-  );
-  dashboard.resolve({ success: true, message: 'Dashboard stop completed' });
-  await lifecycle.waitFor(dashboardRequest.requestId);
-  const tracked = await operations.start(identity, urn, 'stop', () => lifecycle.admit(urn, () => stop.execute(urn)));
+  try {
+    const dashboard = deferred();
+    const agent = deferred();
+    queue.publish.mockReturnValueOnce(dashboard.promise).mockReturnValueOnce(agent.promise);
+    const dashboardRequest = await lifecycle.admit(urn, () => stop.execute(urn));
 
-  sse.emit('app', { event: 'stop_success', appUrn: urn });
-  expect(operations.get(42, tracked.operationId)).toMatchObject({ status: 'running', phase: 'stop', requestId: tracked.requestId });
+    await expect(operations.start(identity, urn, 'stop', () => lifecycle.admit(urn, () => stop.execute(urn)))).rejects.toThrow(
+      'active lifecycle operation',
+    );
+    dashboard.resolve({ success: true, message: 'Dashboard stop completed' });
+    await lifecycle.waitFor(dashboardRequest.requestId);
+    const tracked = await operations.start(identity, urn, 'stop', () => lifecycle.admit(urn, () => stop.execute(urn)));
 
-  agent.resolve({ success: true, message: 'Agent stop completed' });
-  await lifecycle.waitFor(tracked.requestId);
-  expect(operations.get(42, tracked.operationId)).toMatchObject({ status: 'succeeded', phase: 'finished', message: 'Agent stop completed' });
+    delivered.length = 0;
+    sse.emit('app', { event: 'stop_success', appUrn: urn });
+    expect(delivered).toEqual([{ event: 'stop_success', appUrn: urn }]);
+    expect(operations.get(42, tracked.operationId)).toMatchObject({ status: 'running', phase: 'stop', requestId: tracked.requestId });
+
+    agent.resolve({ success: true, message: 'Agent stop completed' });
+    await lifecycle.waitFor(tracked.requestId);
+    expect(operations.get(42, tracked.operationId)).toMatchObject({ status: 'succeeded', phase: 'finished', message: 'Agent stop completed' });
+  } finally {
+    subscription.unsubscribe();
+  }
 });
 
 test('completion waits for database post-processing and reports its failure', async () => {

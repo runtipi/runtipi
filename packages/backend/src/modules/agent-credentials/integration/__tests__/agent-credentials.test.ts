@@ -14,7 +14,7 @@ import { McpAccountTools } from '@/modules/mcp/account-tools';
 import { ToolRegistry } from '@/modules/mcp/tool-registry';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { agentCredential, user } from '@/core/database/drizzle/schema';
 import { PasswordService } from '@/core/password/password.service';
@@ -175,12 +175,28 @@ describe('persistent agent credentials', () => {
     });
     const creating = credentials.create(ownerId, { name: 'Racing agent', password, expiresInDays: 1 });
     await entered;
-    const changing = users.updateUser(ownerId, { totpEnabled: true });
-    resume(true);
+    let changed = false;
+    const changing = (async () => {
+      await users.updateUser(ownerId, { totpEnabled: true });
+      await users.updateUser(ownerId, { totpEnabled: false });
+      changed = true;
+    })();
+
+    try {
+      await vi.waitFor(async () => {
+        if (changed) return;
+        const waiting = await db.execute(sql`SELECT EXISTS (
+          SELECT 1 FROM pg_stat_activity
+          WHERE datname = current_database() AND wait_event_type = 'Lock' AND query LIKE 'update "user"%'
+        ) AS blocked`);
+        expect(waiting.rows[0]?.blocked).toBe(true);
+      });
+    } finally {
+      resume(true);
+      verify.mockRestore();
+    }
     const created = await creating;
     await changing;
-    verify.mockRestore();
-    await users.updateUser(ownerId, { totpEnabled: false });
 
     await expect(credentials.authenticate(`Bearer ${created.token}`)).rejects.toThrow('Invalid or expired');
   });

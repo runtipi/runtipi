@@ -49,10 +49,6 @@ describe('AuthService', () => {
     vi.restoreAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(authService).toBeDefined();
-  });
-
   it('stores TOTP login sessions for five minutes', async () => {
     userRepository.getUserByUsername.mockResolvedValue(totpUser);
     passwordService.verify.mockResolvedValue(true);

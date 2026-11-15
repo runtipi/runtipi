@@ -93,6 +93,16 @@ test('allows a failed issuance to be retried without caching its submitted passw
         .map((entry) => entry.state),
     ),
   ).not.toContain('fixture-password');
+  server.use(
+    http.post('http://localhost/api/agent-credentials', () =>
+      HttpResponse.json({ credential: { id: 'retried-credential' }, token: 'retried-token' }, { status: 201 }),
+    ),
+  );
+  await user.type(screen.getByLabelText('SETTINGS_SECURITY_FORM_CURRENT_PASSWORD'), 'corrected-password');
+  await user.click(screen.getByRole('button', { name: 'SETTINGS_AGENT_CREATE' }));
+  expect(await screen.findByLabelText('SETTINGS_AGENT_TOKEN')).toHaveValue('retried-token');
+  expect(screen.queryByText('SETTINGS_AGENT_CREATE_ERROR')).not.toBeInTheDocument();
+
   unmount();
   queryClient.clear();
 });
