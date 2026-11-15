@@ -44,6 +44,12 @@
       "matchDepTypes": ["peerDependencies"],
       "rangeStrategy": "widen",
       "description": "Preserve supported consumer versions when updating peer dependencies."
+    },
+    {
+      "matchPackageNames": ["typescript"],
+      "matchFileNames": ["packages/backend/package.json"],
+      "allowedVersions": "<7",
+      "description": "Nest CLI requires the programmatic compiler API absent from TypeScript 7.0."
     }
   ]
 }

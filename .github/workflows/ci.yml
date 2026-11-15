@@ -55,6 +55,9 @@ jobs:
       - name: Install dependencies
         uses: './.github/actions/install-dependencies'
 
+      - name: Verify Nest CLI build
+        run: bun run --cwd packages/backend nest build
+
       - name: Build client
         run: bun run bundle
 
