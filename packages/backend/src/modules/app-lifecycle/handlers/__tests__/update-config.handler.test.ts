@@ -7,8 +7,8 @@ import type { AppUrn } from '@runtipi/common/types';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { expect, test } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { AppValidationService } from '../services/app-validation.service';
-import { UpdateConfigHandler } from './update-config.handler';
+import { AppValidationService } from '../../services/app-validation.service';
+import { UpdateConfigHandler } from '../update-config.handler';
 
 const appUrn = 'app:test' as AppUrn;
 
@@ -50,4 +50,28 @@ test('rejects invalid settings without writing or publishing', async () => {
 
   expect(repository.updateAppById).not.toHaveBeenCalled();
   expect(events.publish).not.toHaveBeenCalled();
+});
+
+test.each([
+  { changed: false, pending: false, expected: false },
+  { changed: true, pending: false, expected: true },
+  { changed: false, pending: true, expected: true },
+])('tracks actual runtime changes independently of JSON object order: $changed / $pending', async ({ changed, pending, expected }) => {
+  const { handler, repository } = setup();
+  const saved = {
+    openPort: false,
+    skipEnv: false,
+    skipPull: false,
+    skipRun: false,
+    exposed: false,
+    exposedLocal: false,
+    enableAuth: false,
+    APP_KEY: 'saved-key',
+  };
+  const form = { ...Object.fromEntries(Object.entries(saved).reverse()), APP_KEY: changed ? 'replacement-key' : 'saved-key' };
+  repository.getAppByUrn.mockResolvedValueOnce(fromPartial({ id: 1, config: saved, pendingRestart: pending }));
+
+  await handler.execute(appUrn, { form });
+
+  expect(repository.updateAppById).toHaveBeenCalledWith(1, expect.objectContaining({ pendingRestart: expected }));
 });

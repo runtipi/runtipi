@@ -5,6 +5,7 @@ import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { PasswordConfirmationService } from '@/core/password/password-confirmation.service';
 import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -26,6 +27,7 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
+    private passwordConfirmation: PasswordConfirmationService,
   ) {}
 
   /**
@@ -168,7 +170,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await this.passwordService.verify(password, user.password);
+    const valid = await this.passwordConfirmation.verify(user.id, password, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -205,7 +207,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await this.passwordService.verify(currentPassword, user.password);
+    const valid = await this.passwordConfirmation.verify(user.id, currentPassword, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -242,7 +244,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const isPasswordValid = await this.passwordService.verify(password, user.password);
+    const isPasswordValid = await this.passwordConfirmation.verify(user.id, password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }
@@ -308,7 +310,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_TOTP_NOT_ENABLED');
     }
 
-    const isPasswordValid = await this.passwordService.verify(password, user.password);
+    const isPasswordValid = await this.passwordConfirmation.verify(user.id, password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }

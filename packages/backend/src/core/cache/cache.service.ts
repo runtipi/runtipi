@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { DatabaseSync, type StatementSync } from 'node:sqlite';
 import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
@@ -32,6 +33,49 @@ export class CacheService implements OnModuleDestroy {
     }
 
     return value;
+  }
+
+  public reserveAttempt(key: string, limit: number, windowSeconds: number): string | undefined {
+    this.db.exec('BEGIN IMMEDIATE');
+
+    try {
+      const row = this.db.prepare('SELECT value FROM keyv WHERE key = ?').get(key) as { value: string } | undefined;
+      const now = Date.now();
+      let state = { value: '0', expiration: now + windowSeconds * 1000, generation: randomUUID() };
+
+      if (row) {
+        const stored = JSON.parse(row.value);
+        if (!Number.isFinite(stored.expiration) || typeof stored.generation !== 'string' || !/^\d+$/.test(stored.value)) {
+          throw new Error('Invalid attempt budget');
+        }
+        if (stored.expiration > now) state = stored;
+      }
+
+      if (Number(state.value) >= limit) {
+        this.db.exec('COMMIT');
+        return undefined;
+      }
+
+      state.value = String(Number(state.value) + 1);
+      this.db.prepare('INSERT OR REPLACE INTO keyv (key, value) VALUES (?, ?)').run(key, JSON.stringify(state));
+      this.db.exec('COMMIT');
+
+      return state.generation;
+    } catch (error) {
+      this.db.exec('ROLLBACK');
+      throw error;
+    }
+  }
+
+  public refundAttempt(key: string, generation: string) {
+    this.db
+      .prepare(
+        `
+      UPDATE keyv SET value = json_set(value, '$.value', CAST(CAST(json_extract(value, '$.value') AS INTEGER) - 1 AS TEXT))
+      WHERE key = ? AND json_extract(value, '$.generation') = ? AND CAST(json_extract(value, '$.value') AS INTEGER) > 0
+    `,
+      )
+      .run(key, generation);
   }
 
   public del(key: string) {

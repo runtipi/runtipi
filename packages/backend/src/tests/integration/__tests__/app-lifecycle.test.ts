@@ -54,6 +54,8 @@ import { AppMigrationService } from '@/modules/app-lifecycle/services/app-migrat
 import type { DynamicComposeSchemaYaml } from '@runtipi/common/schemas';
 import { BackupAppHandler } from '@/modules/app-lifecycle/handlers/backup-app.handler';
 import { RestoreAppHandler } from '@/modules/app-lifecycle/handlers/restore-app.handler';
+import { AppOperationsService } from '@/modules/app-lifecycle/services/app-operations.service';
+import { ReposHelpers } from '@/modules/app-stores/repos.helpers';
 import { AppJobService } from '@/modules/app-lifecycle/services/app-job.service';
 
 // memfs has no /proc filesystem; native Linux coverage uses real files in separate suites.
@@ -104,6 +106,7 @@ describe('App lifecycle', () => {
   const queueFactory = new QueueFactory(loggerService, configurationService);
   const appEventsQueue = queueFactory.createQueue({
     queueName: 'app-events-queue',
+    waitForConsumer: true,
     workers: 1,
     eventSchema: appEventSchema,
   });
@@ -118,6 +121,7 @@ describe('App lifecycle', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         AppJobService,
+        AppOperationsService,
         AppLifecycleService,
         MarketplaceService,
         AppStoreService,
@@ -188,7 +192,7 @@ describe('App lifecycle', () => {
         },
       ],
     })
-      .useMocker(mock)
+      .useMocker(() => mock())
       .compile();
 
     appLifecycleService = moduleRef.get(AppLifecycleService);
@@ -200,6 +204,7 @@ describe('App lifecycle', () => {
     backupManager = moduleRef.get(BackupManager);
     appJobService = moduleRef.get(AppJobService);
 
+    moduleRef.get(ReposHelpers).pullRepo = async () => ({ success: true, message: 'Pulled fixture repository' });
     databaseService.db = db;
     dockerService.composeMigration.mockResolvedValue({ success: true, stdout: '', stderr: '' });
     dockerService.stopAppMigrations.mockResolvedValue(undefined);

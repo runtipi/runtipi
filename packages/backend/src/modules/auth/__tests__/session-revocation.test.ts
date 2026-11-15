@@ -1,5 +1,6 @@
 import { SESSION_COOKIE_NAME } from '@/common/constants';
 import { ConfigurationService } from '@/core/config/configuration.service';
+import { PasswordConfirmationService } from '@/core/password/password-confirmation.service';
 import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { Test } from '@nestjs/testing';
@@ -60,6 +61,7 @@ test.each([
 
   const passwords = moduleRef.get(PasswordService);
   passwords.verify = async () => true;
+  moduleRef.get(PasswordConfirmationService).verify = async () => true;
   passwords.hash = async () => 'new-hash';
 
   const middleware = moduleRef.get(AuthMiddleware);
