@@ -37,6 +37,7 @@ export class MarketplaceService {
   private cacheLastUpdated = 0;
   private generation = 0;
   private publishedGeneration = 0;
+  private cacheGeneration = 0;
 
   constructor(
     private readonly configuration: ConfigurationService,
@@ -85,7 +86,7 @@ export class MarketplaceService {
     }
   }
 
-  async initialize() {
+  private async reloadStores() {
     const generation = ++this.generation;
     const stores = await this.appStoreService.getAllAppStores();
     if (generation < this.publishedGeneration) return;
@@ -116,6 +117,10 @@ export class MarketplaceService {
     this.publishedGeneration = generation;
     this.stores = nextStores;
     this.invalidateCache();
+  }
+
+  async initialize() {
+    await this.reloadStores();
 
     try {
       await this.appStoreService.pullRepositories();
@@ -165,19 +170,16 @@ export class MarketplaceService {
    * @returns All available apps
    */
   private async getAllAppFromStores() {
-    const appUrns = await this.getAvailableAppUrns();
-
+    const stores = [...this.stores.values()].filter((store) => store.storeConfig.enabled);
     const limit = pLimit(10);
     const apps = await Promise.all(
-      appUrns.map(async (appUrn) => {
-        return limit(() => {
-          const { store } = this.getStoreFromUrn(appUrn);
-          return store.getAppInfoFromAppStore(appUrn);
-        });
+      stores.map(async (store) => {
+        const urns = await store.getAvailableAppUrns();
+        return Promise.all(urns.map((urn) => limit(() => store.getAppInfoFromAppStore(urn))));
       }),
     );
 
-    return apps.filter(notEmpty);
+    return apps.flat().filter(notEmpty);
   }
 
   /**
@@ -194,6 +196,7 @@ export class MarketplaceService {
    * Invalidate the cache
    */
   private invalidateCache() {
+    this.cacheGeneration++;
     this.appsAvailable = null;
     if (this.miniSearch) {
       this.miniSearch.removeAll();
@@ -209,8 +212,10 @@ export class MarketplaceService {
       this.invalidateCache();
     }
 
-    if (!this.appsAvailable?.length) {
+    while (!this.appsAvailable) {
+      const generation = this.cacheGeneration;
       const apps = await this.getAllAppFromStores();
+      if (generation !== this.cacheGeneration) continue;
 
       this.appsAvailable = this.filterApps(apps);
 
