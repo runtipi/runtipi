@@ -70,22 +70,31 @@ test('shutdown settles queued cancellations and waits for running work to finish
   const work = new Promise<void>((resolve) => {
     release = resolve;
   });
+  const started = Promise.withResolvers<void>();
+  let running = 0;
   for (let index = 0; index < 3; index++) {
     jobs.submit(castAppUrn(`active-${index}:store`), 'backup', async () => {
+      if (++running === 3) started.resolve();
       await work;
       return { success: true, message: 'Done' };
     });
   }
+  await started.promise;
+
   const urn = castAppUrn('queued:store');
   const execute = vi.fn();
   const queued = jobs.submit(urn, 'backup', execute);
-  const shutdown = jobs.onModuleDestroy();
+  const settled = vi.fn();
+  const shutdown = jobs.onModuleDestroy().then(settled);
   try {
     expect(jobs.getJob(urn, queued.requestId)).toMatchObject({ status: 'cancelled' });
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(settled).not.toHaveBeenCalled();
   } finally {
     release();
     await shutdown;
   }
+  expect(settled).toHaveBeenCalledOnce();
   await expect(jobs.getCompletion(urn, queued.requestId)).resolves.toBeUndefined();
   expect(execute).not.toHaveBeenCalled();
 });

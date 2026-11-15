@@ -51,11 +51,19 @@ export class AppStoreService {
   public async pullRepositories() {
     const repositories = await this.appStoreRepository.getEnabledAppStores();
 
+    const failures: string[] = [];
     for (const repo of repositories) {
       this.logger.debug(`Pulling repo ${repo.url}`);
-      const result = await this.repoHelpers.pullRepo(repo.url, repo.slug);
-      if (!result.success) throw new Error(`Could not refresh app store ${repo.slug}`);
+      try {
+        const result = await this.repoHelpers.pullRepo(repo.url, repo.slug);
+        if (!result.success) failures.push(repo.slug);
+      } catch (error) {
+        this.logger.error(`Could not refresh app store ${repo.slug}`, error);
+        failures.push(repo.slug);
+      }
     }
+
+    if (failures.length) throw new Error(`Could not refresh app store${failures.length === 1 ? '' : 's'} ${failures.join(', ')}`);
 
     return { success: true };
   }

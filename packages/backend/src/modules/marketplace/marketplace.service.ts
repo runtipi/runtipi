@@ -90,8 +90,11 @@ export class MarketplaceService {
       }
     }
 
-    await this.appStoreService.pullRepositories();
-    this.invalidateCache();
+    try {
+      await this.appStoreService.pullRepositories();
+    } finally {
+      this.invalidateCache();
+    }
 
     this.logger.debug('Marketplace service initialized with stores', Array.from(this.stores.keys()).join(', '));
   }
