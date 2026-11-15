@@ -51,5 +51,8 @@
   },
   "overrides": {
     "arktype": "^2.2.9"
+  },
+  "patchedDependencies": {
+    "better-ajv-errors@4.0.0": "patches/better-ajv-errors@4.0.0.patch"
   }
 }
