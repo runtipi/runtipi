@@ -11,6 +11,6 @@ import { SessionCookies } from './session-cookies';
   imports: [UserModule, EncryptionModule, PasswordModule],
   controllers: [AuthController],
   providers: [AuthService, SessionManager, SessionCookies],
-  exports: [SessionManager, SessionCookies],
+  exports: [AuthService, SessionManager, SessionCookies],
 })
 export class AuthModule {}

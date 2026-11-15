@@ -1,5 +1,5 @@
 import { DATABASE, type Database } from '@/core/database/database.module';
-import { user } from '@/core/database/drizzle/schema';
+import { agentCredential, user } from '@/core/database/drizzle/schema';
 import type { NewUser } from '@/core/database/drizzle/types';
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm/sql';
@@ -47,13 +47,27 @@ export class UserRepository {
    * @param {Partial<NewUser>} data - The data to update the user with
    */
   public async updateUser(id: number, data: Partial<NewUser>) {
-    const updatedUsers = await this.db
+    const changesSecurity = data.username !== undefined || data.password !== undefined || data.totpEnabled !== undefined;
+    if (changesSecurity) {
+      return this.db.transaction(async (tx) => {
+        const [updated] = await tx
+          .update(user)
+          .set(data)
+          .where(eq(user.id, Number(id)))
+          .returning();
+        await tx.delete(agentCredential).where(eq(agentCredential.userId, Number(id)));
+
+        return updated;
+      });
+    }
+
+    const [updated] = await this.db
       .update(user)
       .set(data)
       .where(eq(user.id, Number(id)))
       .returning();
 
-    return updatedUsers[0];
+    return updated;
   }
 
   /**

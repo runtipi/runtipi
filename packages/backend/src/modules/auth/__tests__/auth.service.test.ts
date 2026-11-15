@@ -1,3 +1,4 @@
+import { PasswordConfirmationService } from '@/core/password/password-confirmation.service';
 import { CacheService } from '@/core/cache/cache.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { PasswordService } from '@/core/password/password.service';
@@ -31,13 +32,14 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [AuthService, PasswordConfirmationService],
     })
       .useMocker(mock)
       .compile();
 
     authService = moduleRef.get(AuthService);
     cacheService = moduleRef.get(CacheService);
+    cacheService.reserveAttempt.mockReturnValue('test-window');
     userRepository = moduleRef.get(UserRepository);
     passwordService = moduleRef.get(PasswordService);
     encryptionService = moduleRef.get(EncryptionService);
@@ -45,10 +47,6 @@ describe('AuthService', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  it('should be defined', () => {
-    expect(authService).toBeDefined();
   });
 
   it('stores TOTP login sessions for five minutes', async () => {

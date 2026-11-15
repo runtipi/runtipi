@@ -1,3 +1,4 @@
+import { McpModule } from './modules/mcp/mcp.module';
 import path from 'node:path';
 import { CacheModule } from '@/core/cache/cache.module';
 import { ConfigurationModule } from '@/core/config/configuration.module';
@@ -70,6 +71,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   GithubModule,
   CustomAppsModule,
   AppConfigModule,
+  McpModule,
 ];
 
 const { NODE_ENV } = process.env;

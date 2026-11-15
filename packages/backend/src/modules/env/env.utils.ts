@@ -76,7 +76,10 @@ export class EnvUtils {
    * @param {Map<string, string>} envMap - Map of environment variables
    */
   public envMapToString = (envMap: Map<string, string>) => {
-    const envArray = Array.from(envMap).map(([key, value]) => `${key}=${value}`);
+    const envArray = Array.from(envMap).map(([key, value]) => {
+      if (/[\r\n]/.test(key) || /[\r\n]/.test(value)) throw new Error('Generated environment entries must not contain line breaks');
+      return `${key}=${value}`;
+    });
     return envArray.join('\n');
   };
 
@@ -87,7 +90,7 @@ export class EnvUtils {
    */
   public envStringToMap = (envString: string) => {
     const envMap = new Map<string, string>();
-    const envArray = envString.split('\n');
+    const envArray = envString.split(/\r?\n/);
 
     for (const env of envArray) {
       if (env.startsWith('#')) continue;

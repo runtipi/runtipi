@@ -4,7 +4,7 @@ import { createAppUrn } from '@/common/helpers/app-helpers';
 import type { AppUrn } from '@runtipi/common/types';
 import { afterEach, expect, test, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
-import { AppJobService } from './app-job.service';
+import { AppJobService } from '../app-job.service';
 
 const appUrn = 'demo:store' as AppUrn;
 
@@ -146,7 +146,7 @@ test('queued cancellation does not run the job or release a replacement job for 
 
   expect(task).toHaveBeenCalledTimes(3);
   expect(jobs.getJob(appUrn)?.requestId).toBe(next.requestId);
-  expect(jobs.getJob(appUrn, queued.requestId)).toBeNull();
+  expect(jobs.getJob(appUrn, queued.requestId)).toMatchObject({ status: 'cancelled' });
   expect(sse.emit).toHaveBeenLastCalledWith('app', {
     event: 'job_progress',
     appUrn,
@@ -157,7 +157,7 @@ test('queued cancellation does not run the job or release a replacement job for 
   await vi.waitFor(() => expect(jobs.isActive(appUrn)).toBe(false));
 });
 
-test('retains the latest result per app and rejects replaced request IDs', async () => {
+test('retains completed request results independently of the latest job', async () => {
   const { jobs } = createJobs();
   const task = async () => ({ success: true, message: 'done' });
   const first = jobs.submit(appUrn, 'backup', task);
@@ -167,7 +167,7 @@ test('retains the latest result per app and rejects replaced request IDs', async
   await vi.waitFor(() => expect(jobs.isActive(appUrn)).toBe(false));
 
   expect(jobs.getJob(appUrn)?.requestId).toBe(second.requestId);
-  expect(jobs.getJob(appUrn, first.requestId)).toBeNull();
+  expect(jobs.getJob(appUrn, first.requestId)).toMatchObject({ status: 'succeeded', message: 'done' });
   expect(jobs.getJob('another:store' as AppUrn, first.requestId)).toBeNull();
   expect(new AppJobService(mock<LoggerService>(), mock<SSEService>()).getJob(appUrn)).toBeNull();
 });

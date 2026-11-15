@@ -71,13 +71,13 @@ const setup = async () => {
   vi.stubEnv('PATH', dataDir);
 
   const configuration = mock<ConfigurationService>();
-  configuration.get.mockReturnValue(fromPartial({ dataDir }));
+  configuration.get.calledWith('directories').mockReturnValue(fromPartial({ dataDir }));
 
   const logger = mock<LoggerService>();
   const filesystem = new FilesystemService(logger);
   const helpers = new ReposHelpers(logger, configuration, filesystem);
 
-  return { helpers, dataDir, gitConfigFile, realFs };
+  return { helpers, dataDir, gitConfigFile, realFs, configuration, filesystem };
 };
 
 test.each([
@@ -125,4 +125,27 @@ test('reports clone failures when the remote is unavailable', async () => {
   server.use(http.get(`${repoUrl}/info/refs`, () => new HttpResponse(null, { status: 503 })));
 
   await expect(helpers.cloneRepo(repoUrl, 'store')).resolves.toEqual({ success: false, message: expect.stringContaining('503') });
+});
+
+test('reports fetch failure without treating an existing development checkout as a successful refresh', async () => {
+  const { helpers, dataDir, configuration } = await setup();
+  configuration.get.calledWith('__prod__').mockReturnValue(false);
+  await publishStore(path.join(dataDir, 'remote'), 'saved config');
+  await helpers.cloneRepo(repoUrl, 'store');
+  server.use(http.get(`${repoUrl}/info/refs`, () => new HttpResponse(null, { status: 503 })));
+
+  await expect(helpers.pullRepo(repoUrl, 'store')).resolves.toMatchObject({ success: false });
+  expect(await fs.promises.readFile(path.join(dataDir, 'repos', 'store', 'config.json'), 'utf8')).toBe('saved config');
+});
+
+test('reports failed production recovery when the existing checkout cannot be removed', async () => {
+  const { helpers, dataDir, configuration, filesystem } = await setup();
+  configuration.get.calledWith('__prod__').mockReturnValue(true);
+  await publishStore(path.join(dataDir, 'remote'), 'saved config');
+  await helpers.cloneRepo(repoUrl, 'store');
+  server.use(http.get(`${repoUrl}/info/refs`, () => new HttpResponse(null, { status: 503 })));
+  vi.spyOn(filesystem, 'removeDirectory').mockResolvedValueOnce(false);
+
+  await expect(helpers.pullRepo(repoUrl, 'store')).resolves.toMatchObject({ success: false });
+  expect(await fs.promises.readFile(path.join(dataDir, 'repos', 'store', 'config.json'), 'utf8')).toBe('saved config');
 });

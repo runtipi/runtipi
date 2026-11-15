@@ -1,3 +1,4 @@
+import { AgentCredentials } from '../components/agent-credentials/agent-credentials';
 import { IconKey, IconLock, IconUser } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ChangePasswordForm } from '../components/change-password-form/change-password-form';
@@ -32,6 +33,7 @@ export const SecurityContainer = (props: { totpEnabled: boolean; username?: stri
         {t('SETTINGS_SECURITY_2FA_SUBTITLE_2')}
       </p>
       <OtpForm totpEnabled={totpEnabled} />
+      <AgentCredentials />
     </div>
   );
 };

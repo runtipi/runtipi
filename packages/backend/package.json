@@ -18,6 +18,8 @@
     "typecheck": "bun check"
   },
   "dependencies": {
+    "@modelcontextprotocol/node": "2.1.2",
+    "@modelcontextprotocol/server": "2.4.0",
     "@nestjs/common": "^12.4.2",
     "@nestjs/config": "^12.1.1",
     "@nestjs/core": "^12.4.2",
@@ -68,6 +70,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
+    "@modelcontextprotocol/client": "2.4.0",
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^12.4.2",

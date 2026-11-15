@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import type { ConfigurationService } from '@/core/config/configuration.service';
 import type { LoggerService } from '@/core/logger/logger.service';
-import { QueueFactory } from './queue.factory';
+import { QueueFactory } from '../queue.factory';
 
 const rabbit = vi.hoisted(() => ({
   createConsumer: vi.fn(),
@@ -37,16 +37,18 @@ describe('QueueFactory', () => {
     });
   });
 
-  it('declares durable RPC and consumer queues', async () => {
+  it.each([false, true])('declares durable queues and avoids RPC retries when consumer tracking is %s', async (waitForConsumer) => {
     const queueFactory = new QueueFactory(loggerService, configurationService);
 
     const queue = await queueFactory.createQueue({
       queueName: 'app-events-queue',
+      waitForConsumer,
       eventSchema: type({ event: 'string' }),
     });
 
     expect(rabbit.createRPCClient).toHaveBeenCalledWith(
       expect.objectContaining({
+        maxAttempts: waitForConsumer ? 1 : 3,
         queues: [{ autoDelete: false, durable: true, queue: 'app-events-queue' }],
       }),
     );
