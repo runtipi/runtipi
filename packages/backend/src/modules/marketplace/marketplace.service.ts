@@ -34,6 +34,7 @@ export class MarketplaceService {
   private miniSearch: MiniSearch<AppList[number]> | null = null;
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
+  private initializeGeneration = 0;
 
   constructor(
     private readonly configuration: ConfigurationService,
@@ -44,18 +45,18 @@ export class MarketplaceService {
 
   async createAppStore(input: Parameters<AppStoreService['createAppStore']>[0]) {
     const result = await this.appStoreService.createAppStore(input);
-    await this.initialize();
+    await this.refreshAfterMutation();
     return result;
   }
 
   async updateAppStore(id: string, input: Parameters<AppStoreService['updateAppStore']>[1]) {
     await this.appStoreService.updateAppStore(id, input);
-    await this.initialize();
+    await this.refreshAfterMutation();
   }
 
   async deleteAppStore(id: string) {
     await this.appStoreService.deleteAppStore(id);
-    await this.initialize();
+    await this.refreshAfterMutation();
   }
 
   async pullAppStores() {
@@ -63,19 +64,28 @@ export class MarketplaceService {
     return { success: true };
   }
 
+  private async refreshAfterMutation() {
+    try {
+      await this.initialize();
+    } catch (error) {
+      this.logger.warn('App store mutation succeeded, but marketplace refresh failed', error);
+    }
+  }
+
   async initialize() {
-    this.stores.clear();
-
+    const generation = ++this.initializeGeneration;
     const stores = await this.appStoreService.getAllAppStores();
+    if (generation !== this.initializeGeneration) return;
 
+    const nextStores = new Map<string, AppStoreFilesManager>();
     for (const config of stores) {
       const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, config);
-      this.stores.set(config.slug, store);
+      nextStores.set(config.slug, store);
     }
 
     // TODO: This is a temporary fix to ensure that internal app stores are always present.
     for (const reservedSlug of RESERVED_APP_STORE_SLUGS) {
-      if (!this.stores.has(reservedSlug)) {
+      if (!nextStores.has(reservedSlug)) {
         const store = new AppStoreFilesManager(this.configuration, this.filesystem, this.logger, {
           branch: 'main',
           createdAt: Math.floor(Date.now() / 1000),
@@ -86,9 +96,12 @@ export class MarketplaceService {
           url: 'https://example.com',
           updatedAt: Math.floor(Date.now() / 1000),
         });
-        this.stores.set(reservedSlug, store);
+        nextStores.set(reservedSlug, store);
       }
     }
+
+    this.stores = nextStores;
+    this.invalidateCache();
 
     try {
       await this.appStoreService.pullRepositories();
