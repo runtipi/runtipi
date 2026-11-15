@@ -113,3 +113,55 @@ test.each(['create', 'update', 'delete'] as const)('a successful store %s stays 
 
   await expect(marketplace.pullAppStores()).rejects.toThrow('Could not refresh app store broken');
 });
+
+test.each(['before', 'after'])('a newer failed read settling %s an older valid read does not discard a committed disable', async (order) => {
+  await createAppInStore('store', { id: 'demo', name: 'Demo', supported_architectures: ['amd64'] });
+  let store = createMockAppStore({ slug: 'store', enabled: true });
+  const stores = mock<AppStoreService>();
+  stores.getAllAppStores.mockImplementation(async () => [store]);
+  stores.updateAppStore.mockImplementation(async (_id, settings) => {
+    store = { ...store, ...settings };
+    return store;
+  });
+  const config = mock<ConfigurationService>();
+  config.getConfig.mockReturnValue(fromPartial({ architecture: 'amd64', directories: { dataDir: DATA_DIR, appDataDir: '/app-data' } }));
+  const logger = mock<LoggerService>();
+  const marketplace = new MarketplaceService(config, new FilesystemService(logger), logger, stores);
+  await marketplace.initialize();
+  expect(await marketplace.searchApps({ search: 'Demo' })).toMatchObject({ total: 1 });
+
+  const started = Promise.withResolvers<void>();
+  const validRead = Promise.withResolvers<(typeof store)[]>();
+  stores.getAllAppStores.mockImplementationOnce(() => {
+    started.resolve();
+    return validRead.promise;
+  });
+  const update = marketplace.updateAppStore('store', { name: store.name, enabled: false });
+  await started.promise;
+  const failedRead = Promise.withResolvers<(typeof store)[]>();
+  stores.getAllAppStores.mockReturnValueOnce(failedRead.promise);
+  const newer = marketplace.initialize();
+  const result = newer.catch((error: unknown) => error);
+  try {
+    if (order === 'before') {
+      failedRead.reject(new Error('Database unavailable'));
+      await result;
+    }
+
+    validRead.resolve([store]);
+    await update;
+
+    if (order === 'after') {
+      failedRead.reject(new Error('Database unavailable'));
+      await result;
+    }
+
+    expect(await result).toMatchObject({ message: 'Database unavailable' });
+    expect(await marketplace.getAvailableAppUrns()).toEqual([]);
+    expect(await marketplace.searchApps({ search: 'Demo' })).toMatchObject({ data: [], total: 0 });
+  } finally {
+    validRead.resolve([store]);
+    failedRead.reject(new Error('Database unavailable'));
+    await Promise.allSettled([update, newer, result]);
+  }
+});

@@ -35,6 +35,7 @@ export class MarketplaceService {
   private cacheTimeout = 1000 * 60 * 15; // 15 minutes
   private cacheLastUpdated = 0;
   private initializeGeneration = 0;
+  private publishedInitializeGeneration = 0;
 
   constructor(
     private readonly configuration: ConfigurationService,
@@ -75,7 +76,7 @@ export class MarketplaceService {
   async initialize() {
     const generation = ++this.initializeGeneration;
     const stores = await this.appStoreService.getAllAppStores();
-    if (generation !== this.initializeGeneration) return;
+    if (generation < this.publishedInitializeGeneration) return;
 
     const nextStores = new Map<string, AppStoreFilesManager>();
     for (const config of stores) {
@@ -100,6 +101,7 @@ export class MarketplaceService {
       }
     }
 
+    this.publishedInitializeGeneration = generation;
     this.stores = nextStores;
     this.invalidateCache();
 
