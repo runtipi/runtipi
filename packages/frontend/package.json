@@ -47,7 +47,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dompurify": "^3.4.17",
-    "framer-motion": "^12.43.0",
+    "framer-motion": "^14.14.0",
     "i18next": "^26.7.2",
     "i18next-browser-languagedetector": "^8.3.0",
     "i18next-http-backend": "^4.0.10",
