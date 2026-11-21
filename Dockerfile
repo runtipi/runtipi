@@ -43,7 +43,6 @@ WORKDIR /app
 
 COPY ./bun.lock ./
 COPY ./package.json ./
-COPY ./patches ./patches
 COPY ./packages/backend/package.json ./packages/backend/package.json
 COPY ./packages/frontend/package.json ./packages/frontend/package.json
 COPY ./packages/common/package.json ./packages/common/package.json
@@ -72,8 +71,7 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-# ServeStaticModule loads Express dynamically at runtime.
-RUN npm install --no-save --omit=dev argon2@0.45.1 class-transformer@0.5.1 express@5.3.0
+RUN npm install --no-save --omit=dev argon2@0.45.1 class-transformer@0.5.1
 
 COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./
