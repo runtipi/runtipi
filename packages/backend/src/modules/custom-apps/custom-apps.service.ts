@@ -159,6 +159,7 @@ export class CustomAppService {
       created_at: Date.now(),
       updated_at: Date.now(),
       force_pull: false,
+      update_notices: [],
     } satisfies AppInfo;
 
     const descriptionContent = `---\nname: ${name}\nshort_desc: User-created custom app\nversion: 1.0.0\n---\n\n# ${name}\n\nThis is a user-created custom application.\n`;

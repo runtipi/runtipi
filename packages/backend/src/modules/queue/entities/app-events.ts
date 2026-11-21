@@ -54,6 +54,11 @@ const updateAppCommandSchema = type({
   command: type.unit('update'),
   performBackup: type('boolean').default(true),
   wasRunningBeforeUpdate: type('boolean').default(false),
+  // Package revision and notice fingerprint reviewed and validated by the
+  // update handler; the command verifies the staged files still match both
+  // before deploying.
+  targetTipiVersion: 'number?',
+  noticesFingerprint: 'string?',
 });
 
 export const appEventSchema = type.or(

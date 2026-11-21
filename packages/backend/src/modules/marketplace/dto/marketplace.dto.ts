@@ -1,4 +1,4 @@
-import { APP_CATEGORIES, appInfoSchema } from '@runtipi/common/schemas';
+import { APP_CATEGORIES, appInfoSchema, updateNoticeSchema } from '@runtipi/common/schemas';
 import { type } from 'arktype';
 import { createArkDto } from 'nestjs-arktype';
 
@@ -9,6 +9,8 @@ const metadataSchema = type({
   minTipiVersion: type('string').or('null').optional(),
   latestDockerVersion: 'string?',
   composeSchemaVersion: 'number?',
+  updateNotices: updateNoticeSchema.array(),
+  updateNoticesFingerprint: 'string',
 });
 
 const searchAppQuerySchema = type({
@@ -70,6 +72,7 @@ const createAppStoreBodySchema = type({
 // App info
 export class AppInfoSimpleDto extends createArkDto(simpleAppInfoSchema, { name: 'AppInfoSimpleDto' }) {}
 export class AppInfoDto extends createArkDto(appInfoSchema, { name: 'AppInfoDto' }) {}
+export class UpdateNoticeDto extends createArkDto(updateNoticeSchema, { name: 'UpdateNoticeDto' }) {}
 export class MetadataDto extends createArkDto(metadataSchema, { name: 'MetadataDto' }) {}
 
 // Search apps

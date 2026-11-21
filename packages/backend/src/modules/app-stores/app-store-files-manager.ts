@@ -6,7 +6,7 @@ import type { ConfigurationService } from '@/core/config/configuration.service';
 import type { AppStore } from '@/core/database/drizzle/types';
 import type { FilesystemService } from '@/core/filesystem/filesystem.service';
 import type { LoggerService } from '@/core/logger/logger.service';
-import { appInfoSchema, convertLegacyToYaml } from '@runtipi/common/schemas';
+import { appInfoSchema, convertLegacyToYaml, getUpdateNoticeConfigErrors } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { type } from 'arktype';
 
@@ -56,6 +56,19 @@ export class AppStoreFilesManager {
     if (parsedConfig instanceof type.errors) {
       this.logger.error(`App ${appUrn} installed config error:`);
       this.logger.error(parsedConfig.summary);
+
+      return null;
+    }
+
+    // Cross-field update notice validation (unique ids, revision coherence).
+    // An invalid notice invalidates the config, like any other schema error:
+    // the app is hidden from the store and treated as unavailable.
+    const noticeErrors = getUpdateNoticeConfigErrors(parsedConfig);
+    if (noticeErrors.length > 0) {
+      this.logger.error(`App ${appUrn} config error: invalid update_notices`);
+      for (const error of noticeErrors) {
+        this.logger.error(error);
+      }
 
       return null;
     }
@@ -195,6 +208,7 @@ export class AppStoreFilesManager {
         latestVersion: config.tipi_version,
         minTipiVersion: config.min_tipi_version ?? null,
         latestDockerVersion: config.version,
+        updateNotices: config.update_notices,
       };
     }
 
@@ -202,6 +216,7 @@ export class AppStoreFilesManager {
       latestVersion: 0,
       latestDockerVersion: '0.0.0',
       minTipiVersion: null,
+      updateNotices: [],
       ...paths,
     };
   }

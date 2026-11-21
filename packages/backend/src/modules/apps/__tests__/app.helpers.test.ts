@@ -60,6 +60,7 @@ describe('AppHelpers', () => {
       force_pull: false,
       generate_vapid_keys: false,
       form_fields: [],
+      update_notices: [],
     };
 
     beforeEach(() => {

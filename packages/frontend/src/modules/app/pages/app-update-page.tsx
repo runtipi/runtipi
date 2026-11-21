@@ -12,7 +12,8 @@ import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Trans, useTranslation } from 'react-i18next';
-import { IconArrowRight, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconAlertTriangle, IconArrowRight, IconChevronLeft, IconChevronRight, IconInfoCircle } from '@tabler/icons-react';
+import type { UpdateNoticeDto } from '@/api-client/types.gen';
 import type { TranslatableError } from '@/types/error.types';
 import { redirect, useLocation, useNavigate, useParams } from 'react-router';
 import type { Route } from './+types/app-update-page';
@@ -37,6 +38,24 @@ const buildVersionLabel = (latestDocker?: string | null, latestVersion?: string 
   return [latestDocker?.toString().trim(), latestVersion ? `(${String(latestVersion)})` : undefined].filter(Boolean).join(' ');
 };
 
+/**
+ * Returns the notice content for the given language, falling back to the
+ * English reference fields for anything the translation omits. Tries the
+ * exact locale (e.g. `fr-FR`) then its base language (`fr`).
+ */
+const localizeNotice = (notice: UpdateNoticeDto, language: string) => {
+  const baseLanguage = language.split('-')[0] ?? language;
+  const translation = notice.translations?.[language] ?? notice.translations?.[baseLanguage] ?? undefined;
+
+  return {
+    ...notice,
+    title: translation?.title || notice.title,
+    message: translation?.message || notice.message,
+    before_update: translation?.before_update ?? notice.before_update,
+    after_update: translation?.after_update ?? notice.after_update,
+  };
+};
+
 const LoadingBlock = () => {
   const { t } = useTranslation();
   return <div className="mt-3 text-muted">{t('LOADING')}</div>;
@@ -44,7 +63,7 @@ const LoadingBlock = () => {
 
 export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
   const params = useParams<{ storeId: string; appId: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,6 +79,10 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
 
   const [backupApp, setBackupApp] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
+  // Acknowledgements are bound to the notice snapshot they were given for:
+  // if the target revision or the notice content changes (e.g. the catalog
+  // refreshed), they are discarded and the warnings must be reviewed again.
+  const [acknowledged, setAcknowledged] = useState<{ snapshotKey: string; ids: string[] }>({ snapshotKey: '', ids: [] });
 
   const configDiffQuery = useQuery({
     ...getAppConfigDiffOptions({ path: { urn: info.urn } }),
@@ -86,16 +109,73 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
     [metadata?.latestDockerVersion, metadata?.latestVersion],
   );
 
+  const rawUpdateNotices = metadata?.updateNotices;
+  const updateNotices = useMemo(
+    () => (rawUpdateNotices ?? []).map((notice) => localizeNotice(notice, i18n.language)),
+    [rawUpdateNotices, i18n.language],
+  );
+
+  const requiredNoticeIds = useMemo(() => updateNotices.filter((notice) => notice.require_confirmation).map((notice) => notice.id), [updateNotices]);
+  const hasWarningsStep = updateNotices.length > 0;
+  const noticesSnapshotKey = hasWarningsStep ? `${metadata?.latestVersion}:${metadata?.updateNoticesFingerprint}` : '';
+  const acknowledgedNoticeIds = acknowledged.snapshotKey === noticesSnapshotKey ? acknowledged.ids : [];
+  const allRequiredAcknowledged = requiredNoticeIds.every((id) => acknowledgedNoticeIds.includes(id));
+
+  const toggleAcknowledged = (noticeId: string, checked: boolean) => {
+    setAcknowledged((state) => {
+      // Start from an empty list when the snapshot changed, so old
+      // confirmations are not silently restored by checking one notice.
+      const ids = state.snapshotKey === noticesSnapshotKey ? state.ids : [];
+
+      return {
+        snapshotKey: noticesSnapshotKey,
+        ids: checked ? [...ids, noticeId] : ids.filter((id) => id !== noticeId),
+      };
+    });
+  };
+
   const steps = useMemo(() => {
     return [
+      ...(hasWarningsStep ? [{ id: 'warnings', title: t('APP_UPDATE_WARNINGS_TITLE') }] : []),
       { id: 'info', title: t('APP_UPDATE_INFORMATION_TITLE') },
       { id: 'config', title: t('APP_UPDATE_CONFIGURATION_TITLE') },
       ...(isComposeDifferent ? [{ id: 'compose', title: t('APP_UPDATE_COMPOSE_TITLE') }] : []),
       { id: 'backup', title: t('APP_UPDATE_BACKUP_TITLE') },
     ];
-  }, [isComposeDifferent, t]);
+  }, [hasWarningsStep, isComposeDifferent, t]);
 
   const isLastStep = currentStep === steps.length - 1;
+  const isWarningsStep = hasWarningsStep && currentStep === 0;
+
+  // The step triggers only render a visual "disabled" state; navigation is
+  // actually guarded here so unacknowledged warnings cannot be skipped.
+  const handleStepChange = (step: number) => {
+    if (hasWarningsStep && !allRequiredAcknowledged && step > 0) return;
+    setCurrentStep(step);
+  };
+
+  const handleNextStep = () => {
+    if (isWarningsStep && !allRequiredAcknowledged) return;
+    setCurrentStep((step) => step + 1);
+  };
+
+  const handleSubmit = () => {
+    update.mutate({
+      path: { urn: info.urn },
+      body: {
+        performBackup: backupApp,
+        // Only sent when the wizard displayed warnings; the backend recomputes
+        // the applicable notices and enforces the acknowledgement.
+        ...(hasWarningsStep
+          ? {
+              acknowledgedNoticeIds,
+              targetTipiVersion: metadata?.latestVersion,
+              noticesFingerprint: metadata?.updateNoticesFingerprint,
+            }
+          : {}),
+      },
+    });
+  };
 
   return (
     <div className="card" data-testid="app-update">
@@ -117,10 +197,66 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
           <Stepper currentStep={currentStep}>
             <StepTriggerList>
               {steps.map((step, index) => (
-                <StepTrigger key={step.id} step={index} title={step.title} onStepChange={setCurrentStep} />
+                <StepTrigger
+                  key={step.id}
+                  step={index}
+                  title={step.title}
+                  onStepChange={handleStepChange}
+                  disabled={hasWarningsStep && !allRequiredAcknowledged && index > 0}
+                />
               ))}
             </StepTriggerList>
             <div className="mt-1">
+              {hasWarningsStep && (
+                <StepContent step={0}>
+                  <div className="text-muted">{t('APP_UPDATE_WARNINGS_SUBTITLE')}</div>
+                  <ScrollArea maxheight={500} className="mt-3 border rounded p-3">
+                    <div className="d-flex flex-column gap-4">
+                      {updateNotices.map((notice) => (
+                        <div key={notice.id} data-testid={`update-notice-${notice.id}`}>
+                          <div className="d-flex align-items-center gap-2 mb-2">
+                            {notice.severity === 'warning' ? (
+                              <IconAlertTriangle className="text-warning" size={20} />
+                            ) : (
+                              <IconInfoCircle className="text-info" size={20} />
+                            )}
+                            <h3 className="h6 mb-0">{notice.title}</h3>
+                          </div>
+                          <p className="mb-2">{notice.message}</p>
+                          {notice.before_update.length > 0 && (
+                            <div className="mb-2">
+                              <div className="fw-bold">{t('APP_UPDATE_WARNINGS_BEFORE')}</div>
+                              <ul className="mb-0 ps-3">
+                                {notice.before_update.map((instruction) => (
+                                  <li key={instruction}>{instruction}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {notice.after_update.length > 0 && (
+                            <div>
+                              <div className="fw-bold">{t('APP_UPDATE_WARNINGS_AFTER')}</div>
+                              <ul className="mb-0 ps-3">
+                                {notice.after_update.map((instruction) => (
+                                  <li key={instruction}>{instruction}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {notice.require_confirmation && (
+                            <Switch
+                              checked={acknowledgedNoticeIds.includes(notice.id)}
+                              onCheckedChange={(checked) => toggleAcknowledged(notice.id, checked)}
+                              label={t('APP_UPDATE_WARNINGS_ACKNOWLEDGE')}
+                              className="mt-3 mb-0"
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </StepContent>
+              )}
               <StepContent step={steps.findIndex((s) => s.id === 'info')}>
                 <div className="text-muted">
                   <Trans
@@ -196,21 +332,23 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
               </Button>
             )}
             {!isLastStep && (
-              <Button variant="outline" onClick={() => setCurrentStep((step) => step + 1)}>
+              <Button
+                variant="outline"
+                onClick={handleNextStep}
+                disabled={isWarningsStep && !allRequiredAcknowledged}
+                data-testid="update-next-button"
+              >
                 {t('APP_UPDATE_FORM_NEXT')}
                 <IconChevronRight className="ms-2 text-muted" size={12} />
               </Button>
             )}
             {isLastStep && (
               <Button
-                onClick={() =>
-                  update.mutate({
-                    path: { urn: info.urn },
-                    body: { performBackup: backupApp },
-                  })
-                }
+                onClick={handleSubmit}
                 intent="success"
                 loading={update.isPending}
+                disabled={hasWarningsStep && !allRequiredAcknowledged}
+                data-testid="update-submit-button"
               >
                 {t('APP_UPDATE_FORM_SUBMIT')}
               </Button>
