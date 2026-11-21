@@ -72,7 +72,8 @@ ENV NODE_ENV="production"
 
 WORKDIR /app
 
-RUN npm install --no-save --omit=dev argon2@0.45.1 class-transformer@0.5.1
+# ServeStaticModule loads Express dynamically at runtime.
+RUN npm install --no-save --omit=dev argon2@0.45.1 class-transformer@0.5.1 express@5.3.0
 
 COPY --from=builder_base /deps/docker-binary /usr/local/bin/docker-compose
 COPY --from=builder /app/package.json ./
