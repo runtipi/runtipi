@@ -1,8 +1,9 @@
-import { restartAllAppsMutation, startAllAppsMutation, stopAllAppsMutation, updateAllAppsMutation } from '@/api-client/@tanstack/react-query.gen';
+import { restartAllAppsMutation, startAllAppsMutation, stopAllAppsMutation } from '@/api-client/@tanstack/react-query.gen';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { useDisclosure } from '@/lib/hooks/use-disclosure';
+import { useUpdateAllApps } from '@/modules/app/hooks/use-update-all-apps';
 import type { TranslatableError } from '@/types/error.types';
 import { IconDots, IconPlayerPause, IconPlayerPlay, IconRefresh, IconRotateClockwise } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
@@ -182,18 +183,9 @@ export const RestartAllButton = ({ availableUpdates }: Props) => {
     },
   });
 
-  const updateAllMutation = useMutation({
-    ...updateAllAppsMutation(),
-    onMutate: () => {
-      dialogDisclosure.close();
-      dropdownDisclosure.close();
-    },
-    onSuccess: () => {
-      toast.loading(t('MY_APPS_UPDATE_ALL_IN_PROGRESS'), { duration: 3000 });
-    },
-    onError: (e: TranslatableError) => {
-      toast.error(t(e.message, e.intlParams));
-    },
+  const updateAllMutation = useUpdateAllApps(() => {
+    dialogDisclosure.close();
+    dropdownDisclosure.close();
   });
 
   const handleActionClick = (action: BatchAction) => {

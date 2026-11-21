@@ -4,12 +4,16 @@ import { pLimit } from '@/common/helpers/file-helpers';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { Injectable } from '@nestjs/common';
+import { computeUpdateNoticesFingerprint } from '@/common/helpers/update-notices';
+import { selectUpdateNotices } from '@runtipi/common/schemas';
 import type { AppUrn } from '@runtipi/common/types';
 import { MarketplaceService } from '../marketplace/marketplace.service';
 import { AppFilesManager } from './app-files-manager';
 import { AppsRepository } from './apps.repository';
 
 type AppList = Awaited<ReturnType<AppsRepository['getApps']>>;
+
+type UpdateInfo = Awaited<ReturnType<MarketplaceService['getAppUpdateInfo']>>;
 
 @Injectable()
 export class AppsService {
@@ -21,6 +25,25 @@ export class AppsService {
     private readonly config: ConfigurationService,
   ) {}
 
+  /**
+   * Adds the update notices applicable to the update path of the given app.
+   * Notices introduced by the revision already installed are never returned,
+   * so they also reappear on every retry of a failed update.
+   */
+  private withApplicableNotices<T extends { latestVersion: number }>(
+    metadata: T,
+    app: { version: number } | null | undefined,
+    updateInfo: { updateNotices?: UpdateInfo['updateNotices'] },
+  ) {
+    const updateNotices = app ? selectUpdateNotices(updateInfo.updateNotices, app.version, metadata.latestVersion) : [];
+
+    return {
+      ...metadata,
+      updateNotices,
+      updateNoticesFingerprint: computeUpdateNoticesFingerprint(updateNotices),
+    };
+  }
+
   private async populateAppInfo(apps: AppList) {
     const limit = pLimit(10);
 
@@ -31,7 +54,7 @@ export class AppsService {
           const appInfo = await this.appFilesManager.getInstalledAppInfo(appUrn);
 
           const updateInfo = await this.marketplaceService.getAppUpdateInfo(appUrn).catch((_) => {
-            return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+            return { latestVersion: 0, latestDockerVersion: '0.0.0', updateNotices: [] };
           });
 
           if (!appInfo) {
@@ -40,10 +63,12 @@ export class AppsService {
           }
 
           const localSubdomain = app.localSubdomain || appUrn.split(':').join('-');
+          const metadata = this.withApplicableNotices({ ...updateInfo, localSubdomain }, app, updateInfo);
+
           return {
             app,
             info: appInfo,
-            metadata: { ...updateInfo, localSubdomain },
+            metadata,
           };
         });
       }),
@@ -76,7 +101,7 @@ export class AppsService {
   public async getApp(appUrn: AppUrn) {
     const app = await this.appsRepository.getAppByUrn(appUrn);
     const updateInfo = await this.marketplaceService.getAppUpdateInfo(appUrn).catch((_) => {
-      return { latestVersion: 0, latestDockerVersion: '0.0.0' };
+      return { latestVersion: 0, latestDockerVersion: '0.0.0', updateNotices: [] };
     });
 
     let info = await this.appFilesManager.getInstalledAppInfo(appUrn);
@@ -95,11 +120,15 @@ export class AppsService {
 
     const localSubdomain = app?.localSubdomain || appUrn.split(':').join('-');
 
-    const metadata = {
-      hasCustomConfig,
-      localSubdomain,
-      ...updateInfo,
-    };
+    const metadata = this.withApplicableNotices(
+      {
+        hasCustomConfig,
+        localSubdomain,
+        ...updateInfo,
+      },
+      app,
+      updateInfo,
+    );
 
     return { app: app ?? null, info, metadata };
   }

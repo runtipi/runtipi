@@ -25,7 +25,13 @@ import { BackupAppHandler } from './handlers/backup-app.handler';
 import { RestoreAppHandler } from './handlers/restore-app.handler';
 
 export type BulkCommand = 'start' | 'stop' | 'restart' | 'update';
-export type BulkResult = { urn: AppUrn; status: 'accepted'; requestId: string } | { urn: AppUrn; status: 'rejected'; message: string };
+export type BulkResult =
+  | { urn: AppUrn; status: 'accepted'; requestId: string }
+  | { urn: AppUrn; status: 'rejected'; message: string }
+  | { urn: AppUrn; status: 'skipped'; message: string };
+
+/** Reason reported for apps that the bulk update leaves for an individual, reviewed update. */
+export const UPDATE_NOTICES_REQUIRE_CONFIRMATION = 'UPDATE_NOTICES_REQUIRE_CONFIRMATION';
 
 @Injectable()
 export class AppLifecycleService {
@@ -96,8 +102,21 @@ export class AppLifecycleService {
     return this.operations.admit(params.appUrn, () => this.updateConfigHandler.execute(params.appUrn, { form: params.form }));
   }
 
-  public async updateApp(params: { appUrn: AppUrn; performBackup: boolean }) {
-    return this.operations.admit(params.appUrn, () => this.updateAppHandler.execute(params.appUrn, { performBackup: params.performBackup }));
+  public async updateApp(params: {
+    appUrn: AppUrn;
+    performBackup: boolean;
+    acknowledgedNoticeIds?: string[];
+    targetTipiVersion?: number;
+    noticesFingerprint?: string;
+  }) {
+    return this.operations.admit(params.appUrn, () =>
+      this.updateAppHandler.execute(params.appUrn, {
+        performBackup: params.performBackup,
+        acknowledgedNoticeIds: params.acknowledgedNoticeIds,
+        targetTipiVersion: params.targetTipiVersion,
+        noticesFingerprint: params.noticesFingerprint,
+      }),
+    );
   }
 
   public async backupApp(params: { appUrn: AppUrn }) {
@@ -130,7 +149,23 @@ export class AppLifecycleService {
     });
     const results: BulkResult[] = [];
 
-    for (const { info } of eligible) {
+    // Apps whose applicable update notices require manual confirmation are
+    // never updated by a bulk action; they must be updated individually so
+    // the notices are displayed and acknowledged in the update wizard.
+    const submittable =
+      command === 'update' ? eligible.filter(({ metadata }) => !metadata.updateNotices.some((notice) => notice.require_confirmation)) : eligible;
+
+    if (submittable.length !== eligible.length) {
+      const skipped = eligible.filter((app) => !submittable.includes(app));
+      this.logger.info(
+        `Skipping update of ${skipped.length} apps because their update notices require manual confirmation: ${skipped.map(({ info }) => info.urn).join(', ')}`,
+      );
+      for (const { info } of skipped) {
+        results.push({ urn: info.urn, status: 'skipped', message: UPDATE_NOTICES_REQUIRE_CONFIRMATION });
+      }
+    }
+
+    for (const { info } of submittable) {
       const appUrn = info.urn;
       try {
         const request = await this.submitBulkCommand(command, appUrn);

@@ -28,6 +28,7 @@ export const createMockAppInfo = (data: Partial<AppInfo> = {}): AppInfo => {
     short_desc: faker.lorem.sentence(),
     source: faker.internet.url(),
     tipi_version: faker.number.int(),
+    update_notices: [],
     version: faker.system.semver(),
     force_pull: false,
     supported_architectures: ['amd64', 'arm64'],

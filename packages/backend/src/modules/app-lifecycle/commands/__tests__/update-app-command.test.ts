@@ -30,6 +30,8 @@ const createCommand = (
     stubEnsureAppDir?: boolean;
     initialSubnet?: string | null;
     context?: AppJobContext;
+    targetTipiVersion?: number;
+    noticesFingerprint?: string;
   } = {},
 ) => {
   const logger = mock<LoggerService>();
@@ -114,7 +116,15 @@ const createCommand = (
   ]);
 
   const moduleRef = { get: (token: unknown) => services.get(token) } as ModuleRef;
-  const command = new UpdateAppCommand(moduleRef, docker, options.performBackup ?? true, options.wasRunningBeforeUpdate ?? false, options.context);
+  const command = new UpdateAppCommand(
+    moduleRef,
+    docker,
+    options.performBackup ?? true,
+    options.wasRunningBeforeUpdate ?? false,
+    options.context,
+    options.targetTipiVersion,
+    options.noticesFingerprint,
+  );
   const ensureAppDir =
     options.stubEnsureAppDir === false
       ? undefined
@@ -725,4 +735,28 @@ test.each(['unavailable', 'missing'] as const)('retains recovery resources when 
     'down --remove-orphans',
     'up --detach --force-recreate --remove-orphans',
   ]);
+});
+
+test('aborts before deploying when the staged revision does not match the reviewed revision', async () => {
+  const { command, backupManager, appsRepository } = createCommand({ targetTipiVersion: 3, stubEnsureAppDir: false });
+
+  // The staged files resolve to revision 2 while revision 3 was reviewed
+  const result = await command.execute(appUrn, {} as never);
+
+  expect(result.success).toBe(false);
+  expect(result.message).toContain('staged revision 2 does not match the reviewed revision 3');
+  expect(backupManager.backupApp).not.toHaveBeenCalled();
+  // The installed revision is left unchanged, so the notices still apply on retry
+  expect(appsRepository.updateAppById).not.toHaveBeenCalledWith(expect.any(Number), expect.objectContaining({ version: expect.any(Number) }));
+});
+
+test('aborts before deploying when the staged notices no longer match the reviewed fingerprint', async () => {
+  const { command } = createCommand({ noticesFingerprint: 'reviewed-fingerprint', stubEnsureAppDir: false });
+
+  // The staged config (revision 2) has no notices, so its fingerprint cannot
+  // match the fingerprint the user reviewed
+  const result = await command.execute(appUrn, {} as never);
+
+  expect(result.success).toBe(false);
+  expect(result.message).toContain('staged update notices do not match the reviewed notices');
 });

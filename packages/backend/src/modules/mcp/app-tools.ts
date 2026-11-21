@@ -243,7 +243,7 @@ export class McpAppTools {
 
           return {
             operations: results.map((result) => {
-              if (result.status === 'rejected') return result;
+              if (result.status !== 'accepted') return result;
               return this.operations.adopt(identity, result.urn, command, result.requestId);
             }),
           };

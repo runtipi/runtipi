@@ -10,8 +10,29 @@ import {
   type ServicesSchema,
 } from './compose-yaml.js';
 
-import { APP_CATEGORIES, ARCHITECTURES, FIELD_TYPES, RANDOM_ENCODINGS, appInfoSchema, formFieldSchema, frontmatterSchema } from './app-info.js';
-import type { AppCategory, AppInfo, AppInfoInput, FieldType, FormField, RandomEncoding } from './app-info.js';
+import {
+  APP_CATEGORIES,
+  ARCHITECTURES,
+  FIELD_TYPES,
+  RANDOM_ENCODINGS,
+  appInfoSchema,
+  formFieldSchema,
+  frontmatterSchema,
+  updateNoticeSchema,
+  updateNoticeTranslationSchema,
+} from './app-info.js';
+import type {
+  AppCategory,
+  AppInfo,
+  AppInfoInput,
+  FieldType,
+  FormField,
+  RandomEncoding,
+  UpdateNotice,
+  UpdateNoticeInput,
+  UpdateNoticeTranslation,
+} from './app-info.js';
+import { getUpdateNoticeConfigErrors, selectUpdateNotices } from './app-info.js';
 
 import { type SSE, type Topic, sseSchema } from './sse.js';
 import { appJobSchema, type AppJob } from './app-job.js';
@@ -33,8 +54,12 @@ export {
   FIELD_TYPES,
   ARCHITECTURES,
   appInfoSchema,
-  sseSchema,
   frontmatterSchema,
+  sseSchema,
+  updateNoticeSchema,
+  updateNoticeTranslationSchema,
+  getUpdateNoticeConfigErrors,
+  selectUpdateNotices,
   type ServiceInput,
   type DependsOn,
   type Service,
@@ -45,6 +70,9 @@ export {
   type FieldType,
   type RandomEncoding,
   type AppCategory,
+  type UpdateNotice,
+  type UpdateNoticeInput,
+  type UpdateNoticeTranslation,
   type SSE,
   type Topic,
   type DynamicComposeSchemaYaml,
