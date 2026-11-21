@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
@@ -20,6 +21,7 @@ export class RestoreAppHandler implements ILifecycleHandler<RestoreAppParams> {
     private readonly statusManager: StatusManagerService,
     private readonly appFilesManager: AppFilesManager,
     private readonly startAppHandler: StartAppHandler,
+    private readonly operations: AppOperationsService,
   ) {}
 
   async execute(appUrn: AppUrn, params?: RestoreAppParams): Promise<HandlerResult> {
@@ -39,7 +41,8 @@ export class RestoreAppHandler implements ILifecycleHandler<RestoreAppParams> {
 
     const requestId = generateRequestId();
 
-    this.appEventsQueue.publish({ appUrn, command: 'restore', requestId, filename, form: app.config }).then(async (result) => {
+    return this.operations.submit(appUrn, 'restore', requestId, async (progress) => {
+      const result = await this.appEventsQueue.publish({ appUrn, command: 'restore', requestId, filename, form: app.config });
       const { success, message } = result;
       const appStopped = 'appStopped' in result && result.appStopped === true;
 
@@ -51,7 +54,9 @@ export class RestoreAppHandler implements ILifecycleHandler<RestoreAppParams> {
         }
 
         if (appStatusBeforeRestore === 'running') {
-          await this.startAppHandler.execute(appUrn);
+          progress('starting');
+          const followup = await this.startAppHandler.execute(appUrn);
+          return this.operations.waitFor(followup.requestId);
         } else {
           await this.statusManager.emitSuccess({
             appId: app.id,
@@ -70,8 +75,8 @@ export class RestoreAppHandler implements ILifecycleHandler<RestoreAppParams> {
           error: message ?? 'Unknown error',
         });
       }
-    });
 
-    return { requestId };
+      return result;
+    });
   }
 }

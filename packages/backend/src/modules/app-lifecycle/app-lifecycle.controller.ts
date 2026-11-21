@@ -2,7 +2,7 @@ import { castAppUrn } from '@/common/helpers/app-helpers';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AppLifecycleService } from './app-lifecycle.service';
-import { AppFormBody, AppJobDto, LifecycleRequestDto, UninstallAppBody, UpdateAllAppsDto, UpdateAppBody } from './dto/app-lifecycle.dto';
+import { AppFormBody, AppJobDto, LifecycleRequestDto, UninstallAppBody, UpdateAppBody } from './dto/app-lifecycle.dto';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { AppJobService } from './services/app-job.service';
 
@@ -90,10 +90,8 @@ export class AppLifecycleController {
   }
 
   @Patch('update-all')
-  @ApiResponse({ type: UpdateAllAppsDto })
   async updateAllApps() {
-    const res = await this.appLifecycleService.updateAllApps();
-    return UpdateAllAppsDto.parse(res, { reportOnly: true });
+    return this.appLifecycleService.updateAllApps();
   }
 
   @Post('start-all')

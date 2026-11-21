@@ -1,5 +1,4 @@
 import { breakpoints } from '../props/prop-def.js';
-// biome-ignore lint/suspicious/noShadowRestrictedNames: No shadowing is happening here
 import { hasOwnProperty } from './has-own-property.js';
 import { isResponsiveObject } from './is-responsive-object.js';
 

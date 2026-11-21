@@ -1,0 +1,20 @@
+diff --git a/dist/browser-util.mjs b/dist/browser-util.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..da0a2a701f2f086a64a2cf8afeb9bc6b9fbab29f
+--- /dev/null
++++ b/dist/browser-util.mjs
+@@ -0,0 +1 @@
++export const styleText = (_format, text) => text;
+diff --git a/package.json b/package.json
+index 9a4680fac0c5a06166802d56e7ce8ce143b96f04..aec3100be98e97570e4518eee618c14ccb657b97 100644
+--- a/package.json
++++ b/package.json
+@@ -70,5 +70,8 @@
+     "test-ci": "vp test --coverage",
+     "prescreenshot": "npm run build",
+     "screenshot": "FORCE_COLOR=1 node screenshot | svg-term --out=./media/screenshot.svg --padding=5 --width=80 --height=13 --at=1000 --no-cursor --term xresources --profile=./media/deep.Xresources --window"
++  },
++  "browser": {
++    "node:util": "./dist/browser-util.mjs"
+   }
+ }

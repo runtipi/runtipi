@@ -82,7 +82,6 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
     reValidateMode: 'onChange',
   });
 
-  // biome-ignore lint/suspicious/noExplicitAny: We need any type here
   function saveBeforeAction<T extends (...args: any[]) => any>(action: T) {
     return (...args: Parameters<T>): ReturnType<T> => {
       if (isDirty && composeEditorOpen) {
@@ -105,7 +104,7 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
 
   useEffect(() => {
     form.setValue('services', services);
-  }, [services, form.setValue]);
+  }, [services, form]);
 
   const hasSectionErrors = (section: string, index: number): boolean => {
     const serviceErrors = form.formState.errors?.services?.[index];
@@ -125,8 +124,8 @@ export const MultiServiceForm = ({ onSubmit }: Props) => {
       case 'ports':
         return Boolean(
           serviceErrors.addPorts &&
-            Array.isArray(serviceErrors.addPorts) &&
-            serviceErrors.addPorts.some((port) => port?.hostPort || port?.containerPort || port?.interface),
+          Array.isArray(serviceErrors.addPorts) &&
+          serviceErrors.addPorts.some((port) => port?.hostPort || port?.containerPort || port?.interface),
         );
       case 'advanced':
         return Boolean(

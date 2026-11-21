@@ -43,7 +43,7 @@ export class AppHelpers {
     // App env is docker compose interpolation scope. Seed only public host vars so
     // core secrets (JWT_SECRET, POSTGRES_*, RABBITMQ_*) stay in Runtipi's own .env.
     const publicHostEnvKeys = new Set(['LOCAL_DOMAIN', 'TZ', 'INTERNAL_IP']);
-    for (const key of [...envMap.keys()]) {
+    for (const key of envMap.keys()) {
       if (!publicHostEnvKeys.has(key)) {
         envMap.delete(key);
       }
@@ -82,8 +82,14 @@ export class AppHelpers {
       const envVar = field.env_variable;
 
       if (field.type === 'random') {
-        if (existingAppEnvMap.has(envVar)) {
-          envMap.set(envVar, existingAppEnvMap.get(envVar) as string);
+        if (typeof formValue === 'string' && formValue.trim()) {
+          envMap.set(envVar, formValue);
+          continue;
+        }
+
+        const existingValue = existingAppEnvMap.get(envVar);
+        if (existingValue?.trim()) {
+          envMap.set(envVar, existingValue);
           continue;
         }
 
@@ -114,8 +120,9 @@ export class AppHelpers {
     envMap.set('APP_HOST', internalIp);
     envMap.set('APP_PROTOCOL', 'http');
 
-    if (config.port && form.port) {
-      envMap.set('APP_DOMAIN', `${internalIp}:${form.port}`);
+    const port = form.port ?? config.port;
+    if (port) {
+      envMap.set('APP_DOMAIN', `${internalIp}:${port}`);
     }
 
     if (form.exposedLocal) {

@@ -120,6 +120,7 @@ export type LoadDto = {
     cpuLoad: number;
     diskSize: number;
     diskUsed: number;
+    memorySource: 'cgroup' | 'containers' | 'host';
     memoryTotal: number;
     percentUsed: number;
     percentUsedMemory: number;
@@ -1533,14 +1534,7 @@ export type UpdateAllAppsData = {
 };
 
 export type UpdateAllAppsResponses = {
-    200: UpdateAllAppsDto;
-};
-
-export type UpdateAllAppsResponse = UpdateAllAppsResponses[keyof UpdateAllAppsResponses];
-
-export type UpdateAllAppsDto = {
-    updatedAppIds: Array<number>;
-    skippedAppUrns: Array<string>;
+    200: unknown;
 };
 
 export type StartAllAppsData = {

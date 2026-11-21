@@ -109,9 +109,10 @@ export default function AppUpdatePage({ loaderData }: Route.ComponentProps) {
     [metadata?.latestDockerVersion, metadata?.latestVersion],
   );
 
+  const rawUpdateNotices = metadata?.updateNotices;
   const updateNotices = useMemo(
-    () => (metadata?.updateNotices ?? []).map((notice) => localizeNotice(notice, i18n.language)),
-    [metadata?.updateNotices, i18n.language],
+    () => (rawUpdateNotices ?? []).map((notice) => localizeNotice(notice, i18n.language)),
+    [rawUpdateNotices, i18n.language],
   );
 
   const requiredNoticeIds = useMemo(() => updateNotices.filter((notice) => notice.require_confirmation).map((notice) => notice.id), [updateNotices]);

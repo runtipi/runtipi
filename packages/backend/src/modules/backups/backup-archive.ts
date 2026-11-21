@@ -14,10 +14,10 @@ export class BackupArchive {
   ) {}
 
   public validateRestoreArchiveEntries(entries: ArchiveEntry[]) {
-    const entryPaths = new Set<string>();
+    const entryPaths = new Map<string, string>();
 
     for (const entry of entries) {
-      if (entry.type !== '-' && entry.type !== 'd') {
+      if (entry.type !== '-' && entry.type !== 'd' && entry.type !== 'l') {
         throw new Error('Backup contains unsupported file types');
       }
 
@@ -26,9 +26,12 @@ export class BackupArchive {
       if (entryPaths.has(entryPath)) {
         throw new Error('Backup contains duplicate file paths');
       }
-      entryPaths.add(entryPath);
+      entryPaths.set(entryPath, entry.type);
 
       if (entryPath === '.') {
+        if (entry.type !== 'd') {
+          throw new Error('Backup contains unsupported file types');
+        }
         continue;
       }
 
@@ -38,6 +41,21 @@ export class BackupArchive {
       const isAppEntry = rootName === 'app-data' || rootName === 'app' || rootName === 'user-config';
       if (!isMetadata && !isAppEntry) {
         throw new Error('Backup contains unsupported file types');
+      }
+      if (isAppEntry && entryPath === rootName && entry.type !== 'd') {
+        throw new Error('Backup contains unsupported file types');
+      }
+    }
+
+    for (const entryPath of entryPaths.keys()) {
+      let parent = path.posix.dirname(entryPath);
+
+      while (parent !== '.') {
+        const parentType = entryPaths.get(parent);
+        if (parentType && parentType !== 'd') {
+          throw new Error('Backup contains unsupported file types');
+        }
+        parent = path.posix.dirname(parent);
       }
     }
   }
@@ -59,7 +77,6 @@ export class BackupArchive {
   public async validateRestoreDirectory(
     directory: string,
     options: { allowSymlinks: boolean; optional?: boolean; rejectHardLinks?: boolean },
-    rootDirectory = directory,
     runFsOperation = pLimit(16),
   ) {
     const directoryStats = await runFsOperation(() => fs.promises.lstat(directory)).catch((error: NodeJS.ErrnoException) => {
@@ -79,7 +96,6 @@ export class BackupArchive {
     }
 
     const entries = await runFsOperation(() => fs.promises.readdir(directory, { withFileTypes: true }));
-    const rootPath = await runFsOperation(() => fs.promises.realpath(rootDirectory));
     let nextEntryIndex = 0;
 
     const workers = Array.from({ length: Math.min(16, entries.length) }, async () => {
@@ -98,24 +114,11 @@ export class BackupArchive {
             throw new Error('Backup contains unsupported file types');
           }
 
-          const resolvedTarget = await runFsOperation(() => fs.promises.realpath(entryPath)).catch(() => {
-            throw new Error('Backup contains unsupported file types');
-          });
-
-          if (!this.isPathInsideOrEqual(rootPath, resolvedTarget)) {
-            throw new Error('Backup contains unsupported file types');
-          }
-
-          const targetStats = await runFsOperation(() => fs.promises.stat(resolvedTarget));
-          if (!targetStats.isFile() && !targetStats.isDirectory()) {
-            throw new Error('Backup contains unsupported file types');
-          }
-
           continue;
         }
 
         if (entry.isDirectory()) {
-          await this.validateRestoreDirectory(entryPath, options, rootDirectory, runFsOperation);
+          await this.validateRestoreDirectory(entryPath, options, runFsOperation);
           continue;
         }
 
@@ -138,12 +141,6 @@ export class BackupArchive {
     await Promise.all(workers);
   }
 
-  private isPathInsideOrEqual(parentPath: string, childPath: string): boolean {
-    const relativePath = path.relative(parentPath, childPath);
-
-    return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
-  }
-
   public async stageBackupDirectory(source: string, destination: string, name: string, filter?: fs.CopyOptions['filter']) {
     const quarantine = path.join(path.dirname(destination), '.backup-quarantine', path.basename(destination));
     try {
@@ -158,10 +155,9 @@ export class BackupArchive {
       throw new Error('Backup contains unsupported file types');
     }
 
-    await this.rewriteAbsoluteSymlinks(quarantine, source, quarantine);
     await this.validateRestoreDirectory(quarantine, { allowSymlinks: true, rejectHardLinks: true });
 
-    const copiedToArchive = await this.filesystem.copyDirectory(quarantine, destination, { dereference: true });
+    const copiedToArchive = await this.filesystem.copyDirectory(quarantine, destination, { dereference: false, verbatimSymlinks: true });
     if (!copiedToArchive) {
       throw new Error(`Failed to copy ${name} for backup`);
     }
@@ -305,36 +301,6 @@ export class BackupArchive {
       const entryDestination = path.join(destination, entry);
       const entryFilterSource = path.join(filterSource, entry);
       await this.copySourceToQuarantineOutsideLinux(entrySource, entryDestination, filter, entryFilterSource);
-    }
-  }
-
-  private async rewriteAbsoluteSymlinks(directory: string, sourceRoot: string, quarantineRoot: string): Promise<void> {
-    const entries = await fs.promises.readdir(directory, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const entryPath = path.join(directory, entry.name);
-      if (entry.isDirectory()) {
-        await this.rewriteAbsoluteSymlinks(entryPath, sourceRoot, quarantineRoot);
-        continue;
-      }
-
-      if (!entry.isSymbolicLink()) {
-        continue;
-      }
-
-      const target = await fs.promises.readlink(entryPath);
-      const relativeEntryPath = path.relative(quarantineRoot, entryPath);
-      const sourceEntryPath = path.join(sourceRoot, relativeEntryPath);
-      const sourceTarget = path.resolve(path.dirname(sourceEntryPath), target);
-      if (!this.isPathInsideOrEqual(sourceRoot, sourceTarget)) {
-        throw new Error('Backup contains unsupported file types');
-      }
-
-      const sourceRelativeTarget = path.relative(sourceRoot, sourceTarget);
-      const quarantineTarget = path.join(quarantineRoot, sourceRelativeTarget);
-      const relativeTarget = path.relative(path.dirname(entryPath), quarantineTarget) || '.';
-      await fs.promises.unlink(entryPath);
-      await fs.promises.symlink(relativeTarget, entryPath);
     }
   }
 }

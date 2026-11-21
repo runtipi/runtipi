@@ -6,12 +6,18 @@ on:
     branches:
       - develop
 
+permissions:
+  contents: read
+
 jobs:
   integration-tests:
+    strategy:
+      matrix:
+        postgres: [14, 18]
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: postgres
         ports:
@@ -32,10 +38,12 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Install dependencies
-        uses: "./.github/actions/install-dependencies"
+        uses: './.github/actions/install-dependencies'
 
       - name: Run integration tests
         run: bun run test:integration

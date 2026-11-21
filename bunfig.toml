@@ -1,3 +1,24 @@
 [install]
 minimumReleaseAge = 259200
 minimumReleaseAgeExcludes = ["@runtipi/*"]
+
+[fmt]
+printWidth = 150
+tabWidth = 2
+useTabs = false
+endOfLine = "lf"
+singleQuote = true
+singleAttributePerLine = false
+ignorePatterns = [
+  "docs/",
+  "cli/",
+  ".build/",
+  "**/dist/",
+  "**/public/",
+  "**/legacy/",
+  "**/.internal/",
+  "**/metadata.ts",
+  "**/api-client/",
+  "**/swagger.json",
+  "**/packages/backend/src/core/database/drizzle/meta/",
+]

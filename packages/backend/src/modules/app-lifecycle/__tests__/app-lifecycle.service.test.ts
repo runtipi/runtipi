@@ -1,3 +1,4 @@
+import { AppOperationsService } from '../services/app-operations.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { AppsRepository } from '@/modules/apps/apps.repository';
 import { AppsService } from '@/modules/apps/apps.service';
@@ -11,10 +12,11 @@ import { AppLifecycleCommandFactory } from '../app-lifecycle-command.factory';
 import { AppLifecycleService } from '../app-lifecycle.service';
 import { UpdateAppHandler } from '../handlers/update-app.handler';
 import { AppMigrationService } from '../services/app-migration.service';
-import { AppJobService } from '../services/app-job.service';
 
 const createService = () => {
-  const jobs = mock<AppJobService>();
+  const operations = Object.assign(mock<AppOperationsService>(), {
+    admit: async <T>(_urn: AppUrn, task: () => Promise<T>) => task(),
+  });
   const appsService = mock<AppsService>();
   const updateAppHandler = mock<UpdateAppHandler>();
 
@@ -39,7 +41,7 @@ const createService = () => {
     updateAppHandler,
     mock(),
     mock(),
-    jobs,
+    operations,
   );
 
   return { service, appsService, updateAppHandler };
@@ -70,7 +72,7 @@ test('backup deletion waits for the app lock and reconciles recovery before dele
     mock(),
     mock(),
     mock(),
-    mock<AppJobService>(),
+    Object.assign(mock<AppOperationsService>(), { admit: async (_urn: AppUrn, task: () => Promise<void>) => task() }),
   );
   let recovered = false;
   migrations.reconcile.mockImplementation(async () => {
@@ -128,6 +130,7 @@ test('updateAllApps skips apps whose notices require confirmation and reports th
   appsService.getInstalledApps.mockResolvedValue([
     {
       app: storedApp(1, 1),
+      info: { urn: 'app-1:store' },
       metadata: {
         latestVersion: 2,
         updateNotices: [
@@ -146,6 +149,7 @@ test('updateAllApps skips apps whose notices require confirmation and reports th
     },
     {
       app: storedApp(2, 1),
+      info: { urn: 'app-2:store' },
       metadata: { latestVersion: 2, updateNotices: [] },
     },
   ] as unknown as Awaited<ReturnType<AppsService['getInstalledApps']>>);
@@ -156,7 +160,10 @@ test('updateAllApps skips apps whose notices require confirmation and reports th
 
   // The app with a confirmation-required notice is never updated in bulk
   expect(updateAppHandler.execute).toHaveBeenCalledTimes(1);
-  expect(result).toEqual({ updatedAppIds: [2], skippedAppUrns: ['app-1:store'] });
+  expect(result).toEqual([
+    { urn: 'app-1:store', status: 'skipped', message: 'UPDATE_NOTICES_REQUIRE_CONFIRMATION' },
+    { urn: 'app-2:store', status: 'accepted', requestId: 'request-id' },
+  ]);
 });
 
 test('updateAllApps updates apps whose notices do not require confirmation', async () => {
@@ -165,6 +172,7 @@ test('updateAllApps updates apps whose notices do not require confirmation', asy
   appsService.getInstalledApps.mockResolvedValue([
     {
       app: { id: 1, status: 'running', version: 1, ignoredVersion: null, appName: 'app-1', appStoreSlug: 'store' },
+      info: { urn: 'app-1:store' },
       metadata: {
         latestVersion: 2,
         updateNotices: [
@@ -188,5 +196,5 @@ test('updateAllApps updates apps whose notices do not require confirmation', asy
   const result = await service.updateAllApps();
 
   expect(updateAppHandler.execute).toHaveBeenCalledTimes(1);
-  expect(result).toEqual({ updatedAppIds: [1], skippedAppUrns: [] });
+  expect(result).toEqual([{ urn: 'app-1:store', status: 'accepted', requestId: 'request-id' }]);
 });

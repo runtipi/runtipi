@@ -38,22 +38,23 @@
     "ci": "npm run build && npm run check-exports",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "local-release": "changeset version && changeset publish",
-    "tsc": "tsc",
-    "test": "bun test --coverage"
+    "test": "bun test --coverage",
+    "typecheck": "bun check"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.1",
-    "@changesets/cli": "^2.29.3",
-    "vitest": "^4.0.4"
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/cli": "^3.0.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
   },
   "peerDependencies": {
     "arktype": ">=2",
     "typescript": ">=5"
   },
   "dependencies": {
-    "yaml": "^2.8.2"
+    "yaml": "^2.9.1"
   }
 }

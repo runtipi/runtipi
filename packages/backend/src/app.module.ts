@@ -1,3 +1,4 @@
+import { McpModule } from './modules/mcp/mcp.module';
 import path from 'node:path';
 import { CacheModule } from '@/core/cache/cache.module';
 import { ConfigurationModule } from '@/core/config/configuration.module';
@@ -11,6 +12,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LocalTlsService } from './core/local-tls/local-tls.service';
 import { APP_DIR } from './common/constants';
 import { MainExceptionFilter } from './common/error/exception.filter';
 import { FilesystemModule } from './core/filesystem/filesystem.module';
@@ -69,6 +71,7 @@ const imports: (DynamicModule | typeof I18nModule)[] = [
   GithubModule,
   CustomAppsModule,
   AppConfigModule,
+  McpModule,
 ];
 
 const { NODE_ENV } = process.env;
@@ -87,6 +90,7 @@ if (NODE_ENV === 'production') {
   imports,
   providers: [
     AppService,
+    LocalTlsService,
     {
       provide: APP_PIPE,
       useClass: ArkValidationPipe,

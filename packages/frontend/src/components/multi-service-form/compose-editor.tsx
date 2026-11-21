@@ -132,7 +132,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
     [checkDirty, onChange, setIsDirty, t],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on mount
+  // oxlint-disable react-hooks/exhaustive-deps -- only want to run on mount
   useEffect(() => {
     if (format === 'yaml') {
       validateInput(yamlValue, 'yaml');
@@ -140,6 +140,7 @@ export const ComposeEditor = ({ onChange, initialFormat = 'yaml' }: Props) => {
       validateInput(jsonValue, 'json');
     }
   }, []);
+  // oxlint-enable react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

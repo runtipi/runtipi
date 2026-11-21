@@ -52,8 +52,8 @@ export const Welcome = ({ allowErrorMonitoring }: Props) => {
                 intent="primary"
                 className="mt-3"
                 onClick={() => acknowledge.mutate({ body: { allowErrorMonitoring: errorMonitoring } })}
-                loading={acknowledge.isPending || acknowledge.isPending}
-                disabled={acknowledge.isPending || acknowledge.isPending}
+                loading={acknowledge.isPending}
+                disabled={acknowledge.isPending}
               >
                 Save and enter
               </Button>

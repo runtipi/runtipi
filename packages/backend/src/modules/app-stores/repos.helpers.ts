@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -71,9 +70,6 @@ export class ReposHelpers {
     }
 
     await fs.promises.chmod(dirPath, 0o755);
-    execFileSync('git', ['config', '--global', '--add', 'safe.directory', dirPath], {
-      stdio: 'ignore',
-    });
   }
 
   /**
@@ -126,7 +122,8 @@ export class ReposHelpers {
    */
   public async pullRepo(repoUrl: string, slug: string) {
     try {
-      await this.cloneRepo(repoUrl, slug);
+      const cloned = await this.cloneRepo(repoUrl, slug);
+      if (!cloned.success) return cloned;
 
       const [remoteUrl] = this.getRepoBaseUrlAndBranch(repoUrl);
 
@@ -147,7 +144,8 @@ export class ReposHelpers {
       });
       if (!currentBranch) {
         this.logger.warn(`No current branch found for repo ${repoUrl}. Deleting and re-cloning.`);
-        await this.deleteRepo(slug);
+        const removed = await this.deleteRepo(slug);
+        if (!removed.success) return removed;
         return this.cloneRepo(repoUrl, slug);
       }
       const remoteBranchRef = `origin/${currentBranch}`;
@@ -185,10 +183,11 @@ export class ReposHelpers {
 
       this.logger.debug(`Pulled repo ${repoUrl} to ${repoPath}`);
       return { success: true, message: '' };
-    } catch (_) {
-      if (this.configuration.get('__prod__')) {
-        await this.deleteRepo(slug);
-      }
+    } catch (error) {
+      if (!this.configuration.get('__prod__')) return this.handleRepoError(error);
+
+      const removed = await this.deleteRepo(slug);
+      if (!removed.success) return removed;
       return this.cloneRepo(repoUrl, slug);
     }
   }
@@ -207,7 +206,7 @@ export class ReposHelpers {
       }
 
       this.logger.info(`Deleting repo ${id} from ${repoPath}`);
-      await this.filesystem.removeDirectory(repoPath);
+      if (!(await this.filesystem.removeDirectory(repoPath))) throw new Error(`Could not remove app store ${id}`);
 
       this.logger.info(`Deleted repo ${id} from ${repoPath}`);
       return { success: true, message: '' };

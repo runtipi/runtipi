@@ -1,3 +1,4 @@
+import { DatabaseSync } from 'node:sqlite';
 import { Global, Module } from '@nestjs/common';
 import { CacheService } from './cache.service';
 
@@ -5,7 +6,7 @@ import { CacheService } from './cache.service';
 @Module({
   imports: [],
   controllers: [],
-  providers: [CacheService],
+  providers: [{ provide: CacheService, useFactory: () => new CacheService(new DatabaseSync('/cache/cache.sqlite')) }],
   exports: [CacheService],
 })
 export class CacheModule {}

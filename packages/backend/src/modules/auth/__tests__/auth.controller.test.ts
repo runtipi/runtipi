@@ -1,16 +1,18 @@
-import { CacheService } from '@/core/cache/cache.service';
-import { ConfigurationService } from '@/core/config/configuration.service';
 import { LoggerService } from '@/core/logger/logger.service';
 import { FORWARD_AUTH_COOKIE_NAME, SESSION_COOKIE_NAME } from '@/common/constants';
 import { Test } from '@nestjs/testing';
 import { type INestApplication, type NestMiddleware } from '@nestjs/common';
 import { ArkValidationPipe } from 'nestjs-arktype';
+import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { mock } from 'vitest-mock-extended';
 import { AuthController } from '../auth.controller';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
+import { SessionManager } from '../session.manager';
+import { SessionCookies } from '../session-cookies';
+import { createSessionStore } from './session-test-utils';
 
 const cliUser = {
   id: 1,
@@ -21,12 +23,12 @@ const cliUser = {
   hasSeenWelcome: true,
 };
 
-describe('AuthController reset-password security', () => {
+describe('AuthController', () => {
   let app: INestApplication;
   const authService = mock<AuthService>();
   const logger = mock<LoggerService>();
-  const config = mock<ConfigurationService>();
-  const cache = mock<CacheService>();
+  const store = createSessionStore();
+  let sessionId: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -42,27 +44,25 @@ describe('AuthController reset-password security', () => {
           useValue: logger,
         },
         {
-          provide: ConfigurationService,
-          useValue: config,
+          provide: SessionManager,
+          useValue: store.sessions,
         },
         {
-          provide: CacheService,
-          useValue: cache,
+          provide: SessionCookies,
+          useValue: new SessionCookies(store.config, store.sessions, logger),
         },
       ],
     }).compile();
 
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ArkValidationPipe());
+    app.use(cookieParser());
     app.use(((req, _res, next) => {
-      req.cookies = {};
-      if (req.headers.cookie?.includes(`${SESSION_COOKIE_NAME}=session-id`)) {
-        req.cookies[SESSION_COOKIE_NAME] = 'session-id';
+      if (req.cookies[SESSION_COOKIE_NAME] === sessionId) {
         req.user = cliUser;
         req.authMethod = 'session';
       }
-      if (req.headers.cookie?.includes(`${FORWARD_AUTH_COOKIE_NAME}=forward-session-id`)) {
-        req.cookies[FORWARD_AUTH_COOKIE_NAME] = 'forward-session-id';
+      if (req.cookies[FORWARD_AUTH_COOKIE_NAME]) {
         req.user = cliUser;
         req.authMethod = 'forward-auth';
       }
@@ -79,16 +79,12 @@ describe('AuthController reset-password security', () => {
     await app.close();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     authService.changeOperatorPassword.mockReset();
     authService.cancelPasswordChangeRequest.mockReset();
     authService.checkPasswordChangeRequest.mockReset();
-    authService.getCookieDomain.mockReset();
-    authService.logout.mockReset();
-    cache.set.mockReset();
-    cache.del.mockReset();
-    cache.getByPrefix.mockReset();
-    config.get.mockReset();
+    store.cache.clear();
+    sessionId = await store.sessions.createSession(1);
   });
 
   it('does not expose a public password reset status endpoint', async () => {
@@ -125,20 +121,23 @@ describe('AuthController reset-password security', () => {
   });
 
   it('revokes forward-auth grants and app-host sessions on logout', async () => {
-    cache.getByPrefix.mockResolvedValue([
-      { key: 'forward-auth-by-session:session-id:grant:grant-id', val: 'forward-auth-grant:grant-id' },
-      { key: 'forward-auth-by-session:session-id:session:forward-session-id', val: 'forward-auth-session:forward-session-id' },
-    ]);
+    const forwardAuthSessionId = store.createForwardAuthSession(sessionId);
+    const grantId = store.sessions.createForwardAuthGrant(sessionId, 'pending.example.com')!;
 
-    const response = await request(app.getHttpServer()).post('/auth/logout').set('Cookie', `${SESSION_COOKIE_NAME}=session-id`);
+    const response = await request(app.getHttpServer()).post('/auth/logout').set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}`);
 
     expect(response.status).toBe(204);
-    expect(cache.getByPrefix).toHaveBeenCalledWith('forward-auth-by-session:session-id:');
-    expect(cache.del).toHaveBeenCalledWith('forward-auth-by-session:session-id:grant:grant-id');
-    expect(cache.del).toHaveBeenCalledWith('forward-auth-grant:grant-id');
-    expect(cache.del).toHaveBeenCalledWith('forward-auth-by-session:session-id:session:forward-session-id');
-    expect(cache.del).toHaveBeenCalledWith('forward-auth-session:forward-session-id');
-    expect(authService.logout).toHaveBeenCalledWith('session-id');
+    expect(store.sessions.getSessionUserId(sessionId)).toBeUndefined();
+    expect(store.sessions.getForwardAuthSession(forwardAuthSessionId, 'app.example.com')).toBeUndefined();
+    expect(store.sessions.consumeForwardAuthGrant(grantId, 'pending.example.com')).toBeUndefined();
+    expect(response.headers['set-cookie']).toContainEqual(expect.stringContaining(`${SESSION_COOKIE_NAME}=;`));
+  });
+
+  it('completes logout when the browser no longer has a session cookie', async () => {
+    const response = await request(app.getHttpServer()).post('/auth/logout');
+
+    expect(response.status).toBe(204);
+    expect(response.headers['set-cookie']).toContainEqual(expect.stringContaining(`${SESSION_COOKIE_NAME}=;`));
   });
 
   it('returns a one-time app-host redirect for safe forward-auth redirects', async () => {
@@ -146,7 +145,7 @@ describe('AuthController reset-password security', () => {
       .post('/auth/forward-auth')
       .set('Host', 'Example.COM')
       .set('Origin', 'http://example.com')
-      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}`)
       .send({ redirectUrl: 'https://app.example.com' });
 
     expect(response.status).toBe(201);
@@ -154,11 +153,8 @@ describe('AuthController reset-password security', () => {
     const redirectUrl = new URL(response.body.redirectUrl);
     expect(redirectUrl.origin).toBe('https://app.example.com');
     expect(redirectUrl.searchParams.get('runtipi_forward_auth')).toBeTruthy();
-    expect(cache.set).toHaveBeenCalledWith(
-      expect.stringMatching(/^forward-auth-grant:/),
-      JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' }),
-      60,
-    );
+    const grantId = redirectUrl.searchParams.get('runtipi_forward_auth')!;
+    expect(store.sessions.consumeForwardAuthGrant(grantId, 'app.example.com')).toBeDefined();
   });
 
   it('creates separate grants for different app hosts', async () => {
@@ -166,40 +162,33 @@ describe('AuthController reset-password security', () => {
       .post('/auth/forward-auth')
       .set('Host', 'example.com')
       .set('Origin', 'http://example.com')
-      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}`)
       .send({ redirectUrl: 'https://app-one.example.com' });
 
     const secondResponse = await request(app.getHttpServer())
       .post('/auth/forward-auth')
       .set('Host', 'example.com')
       .set('Origin', 'http://example.com')
-      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}`)
       .send({ redirectUrl: 'https://app-two.example.com' });
 
     expect(firstResponse.status).toBe(201);
     expect(secondResponse.status).toBe(201);
     expect(new URL(firstResponse.body.redirectUrl).hostname).toBe('app-one.example.com');
     expect(new URL(secondResponse.body.redirectUrl).hostname).toBe('app-two.example.com');
-    expect(cache.set).toHaveBeenCalledWith(
-      expect.stringMatching(/^forward-auth-grant:/),
-      JSON.stringify({ sessionId: 'session-id', host: 'app-one.example.com' }),
-      60,
-    );
-    expect(cache.set).toHaveBeenCalledWith(
-      expect.stringMatching(/^forward-auth-grant:/),
-      JSON.stringify({ sessionId: 'session-id', host: 'app-two.example.com' }),
-      60,
-    );
+    const firstGrant = new URL(firstResponse.body.redirectUrl).searchParams.get('runtipi_forward_auth')!;
+    const secondGrant = new URL(secondResponse.body.redirectUrl).searchParams.get('runtipi_forward_auth')!;
+    expect(firstGrant).not.toBe(secondGrant);
+    expect(store.sessions.consumeForwardAuthGrant(firstGrant, 'app-one.example.com')).toBeDefined();
+    expect(store.sessions.consumeForwardAuthGrant(secondGrant, 'app-two.example.com')).toBeDefined();
   });
 
   it('rejects forward-auth for unsafe redirects', async () => {
-    authService.getCookieDomain.mockReturnValue('.example.com');
-
     const response = await request(app.getHttpServer())
       .post('/auth/forward-auth')
       .set('Host', 'example.com')
       .set('Origin', 'http://example.com')
-      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`)
+      .set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}`)
       .send({ redirectUrl: 'https://evil.com' });
 
     expect(response.status).toBe(401);
@@ -212,41 +201,43 @@ describe('AuthController reset-password security', () => {
       .set('X-Forwarded-Uri', '/')
       .set('X-Forwarded-Proto', 'https')
       .set('X-Forwarded-Host', 'app.example.com')
-      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id`);
+      .set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}`);
 
     expect(response.status).toBe(302);
     expect(response.headers.location).toBe('https://example.com/login?redirect_url=https%3A%2F%2Fapp.example.com%2F&app=app');
   });
 
   it('exchanges a one-time grant for a host-only forward-auth cookie on the app host', async () => {
-    cache.get.mockImplementation((key: string) => {
-      if (key === 'forward-auth-grant:grant-id') return JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' });
-      if (key === 'session:session-id') return '1';
-      return undefined;
-    });
+    const grantId = store.sessions.createForwardAuthGrant(sessionId, 'app.example.com')!;
+    const uri = `/?runtipi_forward_auth=${grantId}`;
 
     const response = await request(app.getHttpServer())
       .get('/auth/traefik')
-      .set('X-Forwarded-Uri', '/?runtipi_forward_auth=grant-id')
+      .set('X-Forwarded-Uri', uri)
       .set('X-Forwarded-Proto', 'https')
       .set('X-Forwarded-Host', 'app.example.com');
 
     expect(response.status).toBe(302);
     expect(response.headers.location).toBe('https://app.example.com/');
-    expect(response.headers['set-cookie']?.[0]).toContain(`${FORWARD_AUTH_COOKIE_NAME}=`);
+    expect(response.headers['set-cookie']).toEqual([expect.stringContaining(`${FORWARD_AUTH_COOKIE_NAME}=`)]);
+    expect(response.headers['set-cookie']?.[0]).toContain('HttpOnly; Secure; SameSite=Lax');
     expect(response.headers['set-cookie']?.[0]).not.toContain('Domain=');
-    expect(cache.del).toHaveBeenCalledWith('forward-auth-grant:grant-id');
-    expect(cache.set).toHaveBeenCalledWith(
-      expect.stringMatching(/^forward-auth-session:/),
-      JSON.stringify({ sessionId: 'session-id', host: 'app.example.com' }),
-      86_400,
-    );
+
+    const replay = await request(app.getHttpServer())
+      .get('/auth/traefik')
+      .set('X-Forwarded-Uri', uri)
+      .set('X-Forwarded-Proto', 'https')
+      .set('X-Forwarded-Host', 'app.example.com');
+
+    expect(replay.headers.location).toContain('https://example.com/login?');
+    expect(replay.headers['set-cookie']).toBeUndefined();
   });
 
   it('authorizes traefik auth checks with a forward-auth cookie', async () => {
+    const forwardAuthSessionId = store.createForwardAuthSession(sessionId);
     const response = await request(app.getHttpServer())
       .get('/auth/traefik')
-      .set('Cookie', `${SESSION_COOKIE_NAME}=session-id; ${FORWARD_AUTH_COOKIE_NAME}=forward-session-id`);
+      .set('Cookie', `${SESSION_COOKIE_NAME}=${sessionId}; ${FORWARD_AUTH_COOKIE_NAME}=${forwardAuthSessionId}`);
 
     expect(response.status).toBe(200);
   });

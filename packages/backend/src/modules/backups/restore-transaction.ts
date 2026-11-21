@@ -210,7 +210,7 @@ export class RestoreTransaction {
         replacements.push(replacement);
 
         if (directory.source) {
-          const copied = await this.filesystem.copyDirectory(directory.source, staged);
+          const copied = await this.filesystem.copyDirectory(directory.source, staged, { dereference: false, verbatimSymlinks: true });
           if (!copied) {
             throw new Error(directory.error);
           }

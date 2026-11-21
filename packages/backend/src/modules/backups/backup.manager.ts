@@ -1,3 +1,5 @@
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import fs from 'node:fs';
 import path from 'node:path';
 import { extractAppUrn } from '@/common/helpers/app-helpers';
@@ -197,7 +199,7 @@ export class BackupManager implements OnModuleInit {
 
             for (const name of ['app-data', 'app', 'user-config']) {
               await manager.archiveFiles.validateRestoreDirectory(path.join(contentDirectory, name), {
-                allowSymlinks: false,
+                allowSymlinks: true,
                 rejectHardLinks: true,
                 optional: name === 'user-config',
               });
@@ -275,17 +277,11 @@ export class BackupManager implements OnModuleInit {
 
             const runValidationFsOperation = pLimit(16);
 
-            await manager.archiveFiles.validateRestoreDirectory(
-              path.join(restoreDir, 'app-data'),
-              { allowSymlinks: true },
-              undefined,
-              runValidationFsOperation,
-            );
+            await manager.archiveFiles.validateRestoreDirectory(path.join(restoreDir, 'app-data'), { allowSymlinks: true }, runValidationFsOperation);
 
             await manager.archiveFiles.validateRestoreDirectory(
               path.join(restoreDir, 'app'),
               { allowSymlinks: true, rejectHardLinks: true },
-              undefined,
               runValidationFsOperation,
             );
 
@@ -301,11 +297,10 @@ export class BackupManager implements OnModuleInit {
             await manager.archiveFiles.validateRestoreDirectory(
               path.join(restoreDir, 'user-config'),
               {
-                allowSymlinks: false,
+                allowSymlinks: true,
                 optional: true,
                 rejectHardLinks: true,
               },
-              undefined,
               runValidationFsOperation,
             );
 
@@ -436,7 +431,7 @@ export class BackupManager implements OnModuleInit {
     return backupPath;
   }
 
-  public async uploadBackup(appUrn: AppUrn, filename: string, fileBuffer: Buffer): Promise<void> {
+  public async uploadBackupStream(appUrn: AppUrn, filename: string, source: Readable): Promise<void> {
     const { backupDir, backupPath, sanitizedFilename } = this.getBackupFilePath(appUrn, filename);
     await requireFilesystemSuccess(this.filesystem.createDirectory(backupDir), 'Failed to create backup directory');
     const manager = this;
@@ -447,12 +442,16 @@ export class BackupManager implements OnModuleInit {
           const privateDirectory = yield* manager.resources.temporaryDirectory(path.join(backupDir, '.runtipi-backup-'));
           const privateBackupPath = path.join(privateDirectory, sanitizedFilename);
 
-          yield* backupStep(() => fs.promises.writeFile(privateBackupPath, fileBuffer, { flag: 'wx', mode: 0o600 }));
+          yield* backupStep(() => pipeline(source, fs.createWriteStream(privateBackupPath, { flags: 'wx', mode: 0o600 })));
           yield* backupStep(() => manager.publishStagedBackup(privateBackupPath, backupPath));
         }),
       ),
     );
 
     this.logger.info(`Backup uploaded successfully: ${sanitizedFilename}`);
+  }
+
+  public uploadBackup(appUrn: AppUrn, filename: string, fileBuffer: Buffer): Promise<void> {
+    return this.uploadBackupStream(appUrn, filename, Readable.from([fileBuffer]));
   }
 }

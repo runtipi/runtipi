@@ -8,6 +8,7 @@ import { EnvUtils } from '@/modules/env/env.utils';
 import dotenv from 'dotenv';
 import { DATA_DIR } from '../constants';
 import { type } from 'arktype';
+import { getCliSecret } from './permissions-helpers';
 
 const OLD_DEFAULT_REPO_URL = 'https://github.com/meienberger/runtipi-appstore';
 export const DEFAULT_REPO_URL = 'https://github.com/runtipi/runtipi-appstore';
@@ -37,6 +38,8 @@ const getArchitecture = () => {
 };
 
 export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
+  await getCliSecret(DATA_DIR);
+
   const logger = new LoggerService('backend', path.join(path.join(DATA_DIR, 'logs')), process.env.LOG_LEVEL as LogLevel);
   logger.info('Generating system env file');
 
@@ -143,6 +146,10 @@ export const generateSystemEnvFile = async (): Promise<Map<string, string>> => {
     typeof settings.eventsTimeout === 'number' ? String(settings.eventsTimeout) : envMap.get('QUEUE_TIMEOUT_IN_MINUTES') || '5',
   );
   envMap.set('MAX_BACKUPS', typeof settings.maxBackups === 'number' ? String(settings.maxBackups) : envMap.get('MAX_BACKUPS') || '0');
+  envMap.set(
+    'SESSION_MAX_AGE_IN_DAYS',
+    typeof settings.sessionMaxAgeInDays === 'number' ? String(settings.sessionMaxAgeInDays) : envMap.get('SESSION_MAX_AGE_IN_DAYS') || '7',
+  );
   envMap.set(
     'ADVANCED_SETTINGS',
     typeof settings.advancedSettings === 'boolean' ? String(settings.advancedSettings) : envMap.get('ADVANCED_SETTINGS') || 'false',

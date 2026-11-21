@@ -5,10 +5,10 @@ import { CacheService } from '@/core/cache/cache.service';
 import { ConfigurationService } from '@/core/config/configuration.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
+import { PasswordConfirmationService } from '@/core/password/password-confirmation.service';
 import { PasswordService } from '@/core/password/password.service';
 import { UserRepository } from '@/modules/user/user.repository';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import psl from 'psl';
 import validator from 'validator';
 import type { LoginBody, RegisterBody } from './dto/auth.dto';
 import { SessionManager } from './session.manager';
@@ -27,20 +27,8 @@ export class AuthService {
     private cache: CacheService,
     private filesystem: FilesystemService,
     private passwordService: PasswordService,
+    private passwordConfirmation: PasswordConfirmationService,
   ) {}
-
-  public getCookieDomain(domain?: string) {
-    if (!domain || !validator.isFQDN(domain)) {
-      return undefined;
-    }
-
-    const parsed = psl.parse(domain);
-    if (parsed.error) {
-      return undefined;
-    }
-
-    return `.${parsed.input}`;
-  }
 
   /**
    * Given a username and password, login the user and return the session ID.
@@ -167,13 +155,6 @@ export class AuthService {
   };
 
   /**
-   * Logs out the currently logged in user.
-   */
-  public logout = async (sessionId: string) => {
-    await this.sessionManager.deleteSession(sessionId);
-  };
-
-  /**
    * Change the username of the currently logged in user.
    */
   public changeUsername = async (params: { password: string; userId: number; newUsername: string }) => {
@@ -189,7 +170,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await this.passwordService.verify(password, user.password);
+    const valid = await this.passwordConfirmation.verify(user.id, password, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -226,7 +207,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const valid = await this.passwordService.verify(currentPassword, user.password);
+    const valid = await this.passwordConfirmation.verify(user.id, currentPassword, user.password);
 
     if (!valid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
@@ -263,7 +244,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_USER_NOT_FOUND');
     }
 
-    const isPasswordValid = await this.passwordService.verify(password, user.password);
+    const isPasswordValid = await this.passwordConfirmation.verify(user.id, password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }
@@ -329,7 +310,7 @@ export class AuthService {
       throw new TranslatableError('AUTH_ERROR_TOTP_NOT_ENABLED');
     }
 
-    const isPasswordValid = await this.passwordService.verify(password, user.password);
+    const isPasswordValid = await this.passwordConfirmation.verify(user.id, password, user.password);
     if (!isPasswordValid) {
       throw new TranslatableError('AUTH_ERROR_INVALID_PASSWORD');
     }

@@ -97,7 +97,7 @@ describe('Input', () => {
     const input = screen.getByLabelText('Test Label');
 
     // assert
-    expect(input).toHaveClass('is-invalid');
+    expect(input).toHaveClass('is-invalid', 'is-invalid-lite');
   });
 
   it('should apply the disabled prop to the input element', () => {

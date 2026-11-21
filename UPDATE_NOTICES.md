@@ -19,23 +19,14 @@ Invalid notices invalidate the whole `config.json`, exactly like any other schem
       "severity": "warning",
       "title": "Database migration",
       "message": "The database format changes with this update. The first startup may take several minutes.",
-      "before_update": [
-        "Make sure you have enough free disk space.",
-        "Plan a backup before starting the update."
-      ],
-      "after_update": [
-        "Do not restart the app while the migration is running.",
-        "Check the logs and sign in to verify the data."
-      ],
+      "before_update": ["Make sure you have enough free disk space.", "Plan a backup before starting the update."],
+      "after_update": ["Do not restart the app while the migration is running.", "Check the logs and sign in to verify the data."],
       "require_confirmation": true,
       "translations": {
         "fr": {
           "title": "Migration de la base de données",
           "message": "Le format de la base change avec cette mise à jour. Le premier démarrage peut prendre plusieurs minutes.",
-          "before_update": [
-            "Vérifiez l'espace disque disponible.",
-            "Prévoyez une sauvegarde avant de lancer la mise à jour."
-          ],
+          "before_update": ["Vérifiez l'espace disque disponible.", "Prévoyez une sauvegarde avant de lancer la mise à jour."],
           "after_update": [
             "Ne redémarrez pas l'application pendant la migration.",
             "Vérifiez les journaux puis connectez-vous pour contrôler les données."
@@ -49,17 +40,17 @@ Invalid notices invalidate the whole `config.json`, exactly like any other schem
 
 ## Fields
 
-| Field | Required | Default | Description |
-| --- | --- | --- | --- |
-| `id` | yes | — | Unique notice id within the app. |
-| `tipi_version` | yes | — | Package revision that introduces the change. |
-| `severity` | no | `"warning"` | `"info"` or `"warning"` (visual only). |
-| `title` | yes | — | Short title shown in the wizard. |
-| `message` | yes | — | Explanation of the change. |
-| `before_update` | no | `[]` | Steps to take before updating. |
-| `after_update` | no | `[]` | Steps to take after updating. |
-| `require_confirmation` | no | `true` | Requires the user to acknowledge the notice before continuing. |
-| `translations` | no | — | Per-locale overrides (e.g. `fr`, `fr-FR`); any omitted field falls back to the English reference. |
+| Field                  | Required | Default     | Description                                                                                       |
+| ---------------------- | -------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| `id`                   | yes      | —           | Unique notice id within the app.                                                                  |
+| `tipi_version`         | yes      | —           | Package revision that introduces the change.                                                      |
+| `severity`             | no       | `"warning"` | `"info"` or `"warning"` (visual only).                                                            |
+| `title`                | yes      | —           | Short title shown in the wizard.                                                                  |
+| `message`              | yes      | —           | Explanation of the change.                                                                        |
+| `before_update`        | no       | `[]`        | Steps to take before updating.                                                                    |
+| `after_update`         | no       | `[]`        | Steps to take after updating.                                                                     |
+| `require_confirmation` | no       | `true`      | Requires the user to acknowledge the notice before continuing.                                    |
+| `translations`         | no       | —           | Per-locale overrides (e.g. `fr`, `fr-FR`); any omitted field falls back to the English reference. |
 
 ## Rules
 

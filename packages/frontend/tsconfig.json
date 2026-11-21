@@ -15,12 +15,12 @@
     "noImplicitOverride": true,
     "module": "preserve",
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "lib": ["es2022", "dom", "dom.iterable"],
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["@testing-library/jest-dom"],
+    "types": ["@testing-library/jest-dom/vitest"],
     "rootDirs": [".", "./.react-router/types"]
   },
   "exclude": ["./src/api-client/**/*"]

@@ -38,11 +38,6 @@ const updateAppBodySchema = type({
   noticesFingerprint: 'string?',
 });
 
-const updateAllAppsResultSchema = type({
-  updatedAppIds: 'number[]',
-  skippedAppUrns: 'string[]',
-});
-
 const lifecycleRequestSchema = type({
   requestId: 'string.uuid',
 });
@@ -52,8 +47,6 @@ export class AppFormBody extends createArkDto(appFormSchema, { name: 'AppFormBod
 export class UninstallAppBody extends createArkDto(uninstallAppBodySchema, { name: 'UninstallAppBody', input: true }) {}
 
 export class UpdateAppBody extends createArkDto(updateAppBodySchema, { name: 'UpdateAppBody', input: true }) {}
-
-export class UpdateAllAppsDto extends createArkDto(updateAllAppsResultSchema, { name: 'UpdateAllAppsDto' }) {}
 
 export class LifecycleRequestDto extends createArkDto(lifecycleRequestSchema, { name: 'LifecycleRequestDto' }) {}
 

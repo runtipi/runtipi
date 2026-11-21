@@ -1,3 +1,4 @@
+import { PasswordConfirmationService } from '@/core/password/password-confirmation.service';
 import { CacheService } from '@/core/cache/cache.service';
 import { EncryptionService } from '@/core/encryption/encryption.service';
 import { PasswordService } from '@/core/password/password.service';
@@ -31,13 +32,14 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [AuthService, PasswordConfirmationService],
     })
       .useMocker(mock)
       .compile();
 
     authService = moduleRef.get(AuthService);
     cacheService = moduleRef.get(CacheService);
+    cacheService.reserveAttempt.mockReturnValue('test-window');
     userRepository = moduleRef.get(UserRepository);
     passwordService = moduleRef.get(PasswordService);
     encryptionService = moduleRef.get(EncryptionService);
@@ -45,10 +47,6 @@ describe('AuthService', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  it('should be defined', () => {
-    expect(authService).toBeDefined();
   });
 
   it('stores TOTP login sessions for five minutes', async () => {
@@ -99,40 +97,5 @@ describe('AuthService', () => {
 
     expect(cacheService.del).toHaveBeenCalledWith('totp-attempts:session-id');
     expect(cacheService.del).toHaveBeenCalledWith('session-id');
-  });
-
-  describe('getCookieDomain', () => {
-    it('should return undefined if the domain is localhost', async () => {
-      const domain = 'localhost';
-      const result = await authService.getCookieDomain(domain);
-      expect(result).toBeUndefined();
-    });
-
-    it('should return undefined if the domain is an IP address', async () => {
-      const domain = '192.168.3.20';
-      const result = await authService.getCookieDomain(domain);
-      expect(result).toBeUndefined();
-    });
-
-    it('should return with subdomain', async () => {
-      const domain = 'example.duckdns.org';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe(`.${domain}`);
-    });
-
-    it('should return input if domain is not using a standard tld', async () => {
-      const domain = 'example.whatever';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe(`.${domain}`);
-    });
-
-    it('should return all subdomains when using multiple levels of subdomains', async () => {
-      const domain = 'sub.sub.duckdns.org';
-      const result = await authService.getCookieDomain(domain);
-
-      expect(result).toBe('.sub.sub.duckdns.org');
-    });
   });
 });

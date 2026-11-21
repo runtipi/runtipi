@@ -1,11 +1,15 @@
+import { EOL } from 'node:os';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { AppUrn } from '@runtipi/common/types';
+import { AppOperationsService } from '../app-lifecycle/services/app-operations.service';
 import { AppsRepository } from '../apps/apps.repository';
 import { TranslatableError } from '@/common/error/translatable-error';
 import { FilesystemService } from '@/core/filesystem/filesystem.service';
 import { AppFilesManager } from '../apps/app-files-manager';
 import { AppsService } from '../apps/apps.service';
 import { UpdateUserConfigDto } from './dto/user-config.dto';
+
+const withFinalNewline = (content: string) => (content.endsWith(EOL) ? content : `${content}${EOL}`);
 
 @Injectable()
 export class UserConfigService {
@@ -14,6 +18,7 @@ export class UserConfigService {
     private readonly appsRepository: AppsRepository,
     private readonly appsService: AppsService,
     private readonly filesystem: FilesystemService,
+    private readonly operations: AppOperationsService,
   ) {}
 
   async getUserConfig(appUrn: AppUrn) {
@@ -31,11 +36,28 @@ export class UserConfigService {
   }
 
   async updateUserConfig(appUrn: AppUrn, updateUserConfigDto: UpdateUserConfigDto) {
-    const userComposeFile = await this.appFilesManager.getUserComposeFile(appUrn);
-    await this.filesystem.writeTextFile(userComposeFile.path, updateUserConfigDto.dockerCompose);
+    return this.operations.admit(appUrn, async () => {
+      const app = await this.appsRepository.getAppByUrn(appUrn);
+      if (!app) throw new TranslatableError('APP_ERROR_APP_NOT_FOUND', { id: appUrn }, HttpStatus.NOT_FOUND);
 
-    const userEnvFile = await this.appFilesManager.getUserEnv(appUrn);
-    await this.filesystem.writeTextFile(userEnvFile.path, updateUserConfigDto.appEnv);
+      const userComposeFile = await this.appFilesManager.getUserComposeFile(appUrn);
+      const userEnvFile = await this.appFilesManager.getUserEnv(appUrn);
+      const compose = withFinalNewline(updateUserConfigDto.dockerCompose);
+      const env = withFinalNewline(updateUserConfigDto.appEnv);
+      const composeChanged = withFinalNewline(userComposeFile.content ?? '') !== compose;
+      const envChanged = withFinalNewline(userEnvFile.content ?? '') !== env;
+      if (!composeChanged && !envChanged) return;
+
+      // A failed write can still leave partial changes that require a restart.
+      if (app.userConfigEnabled) await this.appsRepository.updateAppById(app.id, { pendingRestart: true });
+
+      if (composeChanged && !(await this.filesystem.writeTextFile(userComposeFile.path, compose.slice(0, -EOL.length)))) {
+        throw new Error('Could not save the compose override');
+      }
+      if (envChanged && !(await this.filesystem.writeTextFile(userEnvFile.path, env.slice(0, -EOL.length)))) {
+        throw new Error('Could not save the environment override');
+      }
+    });
   }
 
   async enableUserConfig(appUrn: AppUrn): Promise<void> {
