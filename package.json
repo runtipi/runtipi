@@ -2,7 +2,7 @@
   "name": "runtipi",
   "version": "4.1.0",
   "description": "",
-  "packageManager": "bun@1.4.4",
+  "packageManager": "bun@1.4.5",
   "workspaces": {
     "catalog": {
       "arktype": "^2.1.29"
@@ -38,19 +38,19 @@
   "license": "GNU General Public License v3.0",
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.99.0",
-    "@playwright/test": "^1.65.0",
-    "@types/bun": "^1.4.4",
+    "@playwright/test": "^1.65.1",
+    "@types/bun": "^1.4.5",
     "@types/pg": "^8.23.1",
     "dotenv-cli": "^11.1.0",
-    "lefthook": "^2.2.2",
-    "turbo": "^2.11.11",
-    "oxlint": "^1.93.0"
+    "lefthook": "^2.2.3",
+    "turbo": "^2.11.13",
+    "oxlint": "^1.95.0"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.4"
   },
   "overrides": {
-    "arktype": "^2.2.9"
+    "arktype": "^2.2.10"
   },
   "patchedDependencies": {
     "better-ajv-errors@4.0.0": "patches/better-ajv-errors@4.0.0.patch"
